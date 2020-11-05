@@ -1,0 +1,55 @@
+package de.unitrier.st.insituprofiling.core.logging.settings;
+
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.options.Configurable;
+import de.unitrier.st.insituprofiling.core.localization.LocalizationUtil;
+import de.unitrier.st.insituprofiling.core.properties.PropertiesFile;
+import de.unitrier.st.insituprofiling.core.properties.PropertiesUtil;
+import de.unitrier.st.insituprofiling.core.properties.PropertyKey;
+import de.unitrier.st.insituprofiling.core.settings.CheckBoxComponentWrapper;
+import de.unitrier.st.insituprofiling.core.settings.CodeSparksSettings;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+
+final class UserActivityLoggingConfigurable implements Configurable
+{
+    public UserActivityLoggingConfigurable()
+    {
+        final CodeSparksSettings service = ServiceManager.getService(CodeSparksSettings.class);
+        service.registerConfigurable(this);
+    }
+
+    @Nls(capitalization = Nls.Capitalization.Title)
+    @Override
+    public String getDisplayName()
+    {
+        return LocalizationUtil.getLocalizedString("settings.useractivitylogging.title");
+    }
+
+    @Nullable
+    @Override
+    public JComponent createComponent()
+    {
+        return UserActivityLoggingConfigurableComponentWrapper.getInstance().getRootPanel();
+    }
+
+    @Override
+    public boolean isModified()
+    {
+        CheckBoxComponentWrapper instance = UserActivityLoggingConfigurableComponentWrapper.getInstance();
+        final boolean checkBoxValue = instance.getCheckBoxValue();
+        final boolean formerCheckBoxValue = instance.getFormerCheckBoxValue();
+        return checkBoxValue != formerCheckBoxValue;
+    }
+
+    @Override
+    public void apply()
+    {
+        CheckBoxComponentWrapper instance = UserActivityLoggingConfigurableComponentWrapper.getInstance();
+        final boolean checkBoxValue = instance.getCheckBoxValue();
+        PropertiesUtil.setPropertyValue(PropertiesFile.USER_INTERFACE_PROPERTIES, PropertyKey.USER_ACTIVITY_LOGGING_ENABLED, checkBoxValue);
+        instance.setFormerCheckBoxValue(checkBoxValue);
+    }
+}
