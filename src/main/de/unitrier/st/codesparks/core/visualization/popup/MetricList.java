@@ -2,7 +2,7 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBTextArea;
-import de.unitrier.st.codesparks.core.data.ANeighborProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +25,7 @@ public class MetricList extends JBList<JBTextArea>
         });
     }
 
-    private ANeighborProfilingArtifact getArtifactAt(int index)
+    private ANeighborArtifact getArtifactAt(int index)
     {
         return ((MetricListModel) getModel()).getArtifactAt(index);
     }
@@ -35,7 +35,7 @@ public class MetricList extends JBList<JBTextArea>
     {
         Point p = e.getPoint();
         int index = locationToIndex(p);
-        ANeighborProfilingArtifact neighborArtifactAt = getArtifactAt(index);
+        ANeighborArtifact neighborArtifactAt = getArtifactAt(index);
         if (neighborArtifactAt == null)
         {
             return "";

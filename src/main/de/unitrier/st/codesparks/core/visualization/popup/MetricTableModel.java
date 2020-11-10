@@ -1,8 +1,8 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
-import de.unitrier.st.codesparks.core.data.ANeighborProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.NeighborProfilingArtifactComparator;
+import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.NeighborArtifactComparator;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.table.DefaultTableModel;
@@ -11,24 +11,24 @@ import java.util.stream.Collectors;
 
 public class MetricTableModel extends DefaultTableModel
 {
-    private final List<ANeighborProfilingArtifact> successors;
-    private final List<ANeighborProfilingArtifact> predecessors;
+    private final List<ANeighborArtifact> successors;
+    private final List<ANeighborArtifact> predecessors;
     private final int size;
     private final int preSize;
     private final int sucSize;
 
-    private List<ANeighborProfilingArtifact> prepareNeighbors(AProfilingArtifact artifact, List<ANeighborProfilingArtifact> list)
+    private List<ANeighborArtifact> prepareNeighbors(AArtifact artifact, List<ANeighborArtifact> list)
     {
-        for (ANeighborProfilingArtifact aNeighborProfilingArtifact : list)
+        for (ANeighborArtifact aNeighborProfilingArtifact : list)
         {
             aNeighborProfilingArtifact.setRelativeMetricValue(artifact.getMetricValue());
         }
         return list;
     }
 
-    public MetricTableModel(@NotNull AProfilingArtifact artifact)
+    public MetricTableModel(@NotNull AArtifact artifact)
     {
-        NeighborProfilingArtifactComparator comparator = new NeighborProfilingArtifactComparator();
+        NeighborArtifactComparator comparator = new NeighborArtifactComparator();
         predecessors = prepareNeighbors(artifact, artifact.getPredecessorsList())
                 .stream()
                 .filter(npa -> npa.getThreadArtifacts()
@@ -87,7 +87,7 @@ public class MetricTableModel extends DefaultTableModel
         return false;
     }
 
-    public ANeighborProfilingArtifact getNeighborArtifactAt(int rowIndex, int columnIndex)
+    public ANeighborArtifact getNeighborArtifactAt(int rowIndex, int columnIndex)
     {
         if (rowIndex < 0)
         {
@@ -111,7 +111,7 @@ public class MetricTableModel extends DefaultTableModel
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-        ANeighborProfilingArtifact neighborArtifactAt = getNeighborArtifactAt(rowIndex, columnIndex);
+        ANeighborArtifact neighborArtifactAt = getNeighborArtifactAt(rowIndex, columnIndex);
         return neighborArtifactAt == null ? "" : neighborArtifactAt.getDisplayString(34);
     }
 }

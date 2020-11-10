@@ -3,9 +3,9 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 import com.intellij.ui.ExpandedItemListCellRendererWrapper;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBList;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ public class ThreadList extends AThreadSelectable
 {
     private final JBList<JBCheckBox> list;
 
-    public ThreadList(AProfilingArtifact artifact)
+    public ThreadList(AArtifact artifact)
     {
         list = new JBList<JBCheckBox>(new ThreadListModel(artifact))
         {
@@ -27,12 +27,12 @@ public class ThreadList extends AThreadSelectable
             {
                 Point point = event.getPoint();
                 int index = locationToIndex(point);
-                ThreadArtifact threadArtifactAt = ((ThreadListModel) getModel()).getThreadArtifactAt(index);
-                if (threadArtifactAt == null)
+                CodeSparksThread codeSparksThreadAt = ((ThreadListModel) getModel()).getThreadArtifactAt(index);
+                if (codeSparksThreadAt == null)
                 {
                     return "";
                 }
-                String identifier = threadArtifactAt.getIdentifier();
+                String identifier = codeSparksThreadAt.getIdentifier();
                 identifier = identifier.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
                 return identifier;
             }
@@ -97,7 +97,7 @@ public class ThreadList extends AThreadSelectable
     }
 
     @Override
-    public void toggleCluster(ThreadArtifactCluster cluster)
+    public void toggleCluster(CodeSparksThreadCluster cluster)
     {
         if (cluster == null) return;
         getThreadListCellRenderer().toggleCluster(cluster);
@@ -111,22 +111,22 @@ public class ThreadList extends AThreadSelectable
     }
 
     @Override
-    protected Set<ThreadArtifact> getThreadArtifacts(final boolean isSelected)
+    protected Set<CodeSparksThread> getThreadArtifacts(final boolean isSelected)
     {
         boolean[] selected = getThreadListCellRenderer().getSelected();
-        final Set<ThreadArtifact> threadArtifacts = new HashSet<>();
+        final Set<CodeSparksThread> codeSparksThreads = new HashSet<>();
         ThreadListModel model = (ThreadListModel) list.getModel();
         for (int i = 0; i < selected.length; i++)
         {
             if (selected[i] == isSelected)
             {
-                ThreadArtifact threadArtifactAt = model.getThreadArtifactAt(i);
-                if (threadArtifactAt != null)
+                CodeSparksThread codeSparksThreadAt = model.getThreadArtifactAt(i);
+                if (codeSparksThreadAt != null)
                 {
-                    threadArtifacts.add(threadArtifactAt);
+                    codeSparksThreads.add(codeSparksThreadAt);
                 }
             }
         }
-        return threadArtifacts;
+        return codeSparksThreads;
     }
 }

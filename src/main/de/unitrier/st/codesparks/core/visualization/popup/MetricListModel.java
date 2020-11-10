@@ -1,10 +1,10 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.components.JBTextArea;
-import de.unitrier.st.codesparks.core.data.ANeighborProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.DataUtil;
-import de.unitrier.st.codesparks.core.data.NeighborProfilingArtifactComparator;
+import de.unitrier.st.codesparks.core.data.NeighborArtifactComparator;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -14,14 +14,14 @@ import java.util.List;
 
 public class MetricListModel extends DefaultListModel<JBTextArea>
 {
-    private final List<ANeighborProfilingArtifact> neighborProfilingArtifacts;
+    private final List<ANeighborArtifact> neighborProfilingArtifacts;
     private final List<JBTextArea> textAreas;
     private static Font defaultFont;
 
-    private List<ANeighborProfilingArtifact> prepareNeighborMetricValues(AProfilingArtifact artifact, List<ANeighborProfilingArtifact> list)
+    private List<ANeighborArtifact> prepareNeighborMetricValues(AArtifact artifact, List<ANeighborArtifact> list)
     {
         double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact);
-        for (ANeighborProfilingArtifact aNeighborProfilingArtifact : list)
+        for (ANeighborArtifact aNeighborProfilingArtifact : list)
         {
             aNeighborProfilingArtifact.setMetricValue(DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact));
             aNeighborProfilingArtifact.setRelativeMetricValue(threadFilteredMetricValue);
@@ -29,10 +29,10 @@ public class MetricListModel extends DefaultListModel<JBTextArea>
         return list;
     }
 
-    public MetricListModel(final AProfilingArtifact artifact, final List<ANeighborProfilingArtifact> neighborProfilingArtifacts)
+    public MetricListModel(final AArtifact artifact, final List<ANeighborArtifact> neighborProfilingArtifacts)
     {
         this.neighborProfilingArtifacts = prepareNeighborMetricValues(artifact, neighborProfilingArtifacts);
-        this.neighborProfilingArtifacts.sort(new NeighborProfilingArtifactComparator());
+        this.neighborProfilingArtifacts.sort(new NeighborArtifactComparator());
         textAreas = new ArrayList<>(this.neighborProfilingArtifacts.size());
         for (int i = 0; i < this.neighborProfilingArtifacts.size(); i++)
         {
@@ -74,7 +74,7 @@ public class MetricListModel extends DefaultListModel<JBTextArea>
         }
     }
 
-    ANeighborProfilingArtifact getArtifactAt(int index)
+    ANeighborArtifact getArtifactAt(int index)
     {
         if (index > -1 && index < neighborProfilingArtifacts.size())
         {

@@ -1,9 +1,9 @@
 package de.unitrier.st.codesparks.core.visualization;
 
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
-import de.unitrier.st.codesparks.core.logging.ProfilingLogger;
-import de.unitrier.st.codesparks.core.IProfilingResult;
-import de.unitrier.st.codesparks.core.ProfilingResultManager;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
+import de.unitrier.st.codesparks.core.IArtifactPool;
+import de.unitrier.st.codesparks.core.ArtifactPoolManager;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
@@ -83,8 +83,8 @@ public class ArtifactVisualizationLabelFactoryCache
                     try
                     {
                         AArtifactVisualizationLabelFactory labelFactory = factory.getDeclaredConstructor().newInstance();
-                        IProfilingResult profilingResult = ProfilingResultManager.getInstance().getProfilingResult();
-                        AProfilingArtifact artifact = profilingResult.getArtifact(identifier);
+                        IArtifactPool profilingResult = ArtifactPoolManager.getInstance().getArtifactPool();
+                        AArtifact artifact = profilingResult.getArtifact(identifier);
                         if (artifact == null)
                         {
                             return null;
@@ -97,7 +97,7 @@ public class ArtifactVisualizationLabelFactoryCache
                     } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
                     {
 //                    e.printStackTrace();
-                        ProfilingLogger.addText(e.getMessage());
+                        CodeSparksLogger.addText(e.getMessage());
                     }
                 }
                 return null;

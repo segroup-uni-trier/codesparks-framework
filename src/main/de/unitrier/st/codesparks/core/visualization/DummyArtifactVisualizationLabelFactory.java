@@ -5,7 +5,7 @@ package de.unitrier.st.codesparks.core.visualization;
 
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -23,7 +23,7 @@ public class DummyArtifactVisualizationLabelFactory extends AArtifactVisualizati
     }
 
     @Override
-    public JLabel createArtifactLabel(@NotNull AProfilingArtifact artifact)
+    public JLabel createArtifactLabel(@NotNull AArtifact artifact)
     {
         ImageIcon imageIcon = new ImageIcon(getClass().getResource("/icons/pluginIcon.png"));
         GraphicsConfiguration defaultConfiguration =

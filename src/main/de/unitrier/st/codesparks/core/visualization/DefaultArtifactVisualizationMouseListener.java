@@ -3,8 +3,8 @@ package de.unitrier.st.codesparks.core.visualization;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTabbedPane;
 import de.unitrier.st.codesparks.core.CoreUtil;
-import de.unitrier.st.codesparks.core.data.ANeighborProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 
 public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
-    DefaultArtifactVisualizationMouseListener(JComponent component, AProfilingArtifact artifact)
+    DefaultArtifactVisualizationMouseListener(JComponent component, AArtifact artifact)
     {
         super(component, new Dimension(500, 175), artifact);
     }
 
     @Override
-    protected PopupPanel createPopupContent(AProfilingArtifact artifact)
+    protected PopupPanel createPopupContent(AArtifact artifact)
     {
         final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "MethodPopup");
         /*
@@ -49,7 +49,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
 
         JBTabbedPane tabbedPane = new JBTabbedPane();
 
-        List<ANeighborProfilingArtifact> artifactSuccessorsList = artifact.getSuccessorsList()
+        List<ANeighborArtifact> artifactSuccessorsList = artifact.getSuccessorsList()
                 .stream()
                 .filter(npa -> !npa.getName().toLowerCase().startsWith("self"))
                 .filter(npa -> npa.getThreadArtifacts()
@@ -61,7 +61,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
         successorsList.addMouseMotionListener(new MetricListMouseMotionAdapter(successorsList));
         successorsList.setCellRenderer(new MetricListCellRenderer());
 
-        List<ANeighborProfilingArtifact> artifactPredecessorsList =
+        List<ANeighborArtifact> artifactPredecessorsList =
                 artifact.getPredecessorsList()
                         .stream()
                         .filter(npa -> npa.getThreadArtifacts()
@@ -117,7 +117,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
     }
 
     @Override
-    protected String createPopupTitle(AProfilingArtifact artifact)
+    protected String createPopupTitle(AArtifact artifact)
     {
         String metricKind = "total";
         StringBuilder titleStringBuilder = new StringBuilder();

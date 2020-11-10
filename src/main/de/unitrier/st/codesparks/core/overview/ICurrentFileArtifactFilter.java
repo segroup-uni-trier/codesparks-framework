@@ -1,11 +1,11 @@
 package de.unitrier.st.codesparks.core.overview;
 
 import com.intellij.psi.PsiFile;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 
 import java.util.Collection;
 
 public interface ICurrentFileArtifactFilter
 {
-    Collection<AProfilingArtifact> filterArtifact(final Collection<? extends AProfilingArtifact> artifacts, final PsiFile psiFile);
+    Collection<AArtifact> filterArtifact(final Collection<? extends AArtifact> artifacts, final PsiFile psiFile);
 }

@@ -5,9 +5,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.ANeighborProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifact;
+import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.CodeSparksThread;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
@@ -37,8 +37,8 @@ public class DefaultArtifactCalleeVisualizationLabelFactory extends AArtifactCal
     }
 
     @Override
-    public JLabel createArtifactCalleeLabel(AProfilingArtifact artifact
-            , List<ANeighborProfilingArtifact> threadFilteredNeighborArtifactsOfLine
+    public JLabel createArtifactCalleeLabel(AArtifact artifact
+            , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
             , double threadFilteredMetricValue
             , Color metricColor)
     {
@@ -90,16 +90,16 @@ public class DefaultArtifactCalleeVisualizationLabelFactory extends AArtifactCal
 
         Map<String, Double> methodRuntimes = new HashMap<>();
 
-        for (ANeighborProfilingArtifact callee : threadFilteredNeighborArtifactsOfLine)
+        for (ANeighborArtifact callee : threadFilteredNeighborArtifactsOfLine)
         {
 
             double calleeRuntime = 0D;
-            Collection<ThreadArtifact> threadArtifacts = callee.getThreadArtifacts();
-            for (ThreadArtifact threadArtifact : threadArtifacts)
+            Collection<CodeSparksThread> codeSparksThreads = callee.getThreadArtifacts();
+            for (CodeSparksThread codeSparksThread : codeSparksThreads)
             {
-                if (!threadArtifact.isFiltered())
+                if (!codeSparksThread.isFiltered())
                 {
-                    calleeRuntime += threadArtifact.getMetricValue() * callee.getMetricValue();
+                    calleeRuntime += codeSparksThread.getMetricValue() * callee.getMetricValue();
                 }
             }
 

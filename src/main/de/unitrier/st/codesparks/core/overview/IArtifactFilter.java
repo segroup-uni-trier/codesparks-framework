@@ -1,8 +1,8 @@
 package de.unitrier.st.codesparks.core.overview;
 
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 
 public interface IArtifactFilter
 {
-    boolean filterArtifact(final AProfilingArtifact artifact);
+    boolean filterArtifact(final AArtifact artifact);
 }

@@ -3,12 +3,12 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.CodeSparksThread;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.CoreUtil;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -20,10 +20,10 @@ import java.util.List;
 
 public class RadialThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    private final IRadialThreadArtifactVisualizationDisplayData radialThreadVisualizationPopupData;
+    private final IRadialThreadVisualizationDisplayData radialThreadVisualizationPopupData;
 
     public RadialThreadVisualizationLabelFactory(int sequence, boolean isDefault,
-                                                 IRadialThreadArtifactVisualizationDisplayData radialThreadVisualizationPopupData)
+                                                 IRadialThreadVisualizationDisplayData radialThreadVisualizationPopupData)
     {
         super(sequence, isDefault);
         this.radialThreadVisualizationPopupData = radialThreadVisualizationPopupData;
@@ -31,35 +31,35 @@ public class RadialThreadVisualizationLabelFactory extends AArtifactVisualizatio
 
     public RadialThreadVisualizationLabelFactory(int sequence, boolean isDefault)
     {
-        this(sequence, isDefault, new DefaultRadialThreadArtifactVisualizationDisplayData());
+        this(sequence, isDefault, new DefaultRadialThreadVisualizationDisplayData());
     }
 
     public RadialThreadVisualizationLabelFactory(int sequence)
     {
-        this(sequence, false, new DefaultRadialThreadArtifactVisualizationDisplayData());
+        this(sequence, false, new DefaultRadialThreadVisualizationDisplayData());
     }
 
-    public RadialThreadVisualizationLabelFactory(IRadialThreadArtifactVisualizationDisplayData radialThreadVisualizationPopupData)
+    public RadialThreadVisualizationLabelFactory(IRadialThreadVisualizationDisplayData radialThreadVisualizationPopupData)
     {
         this(-1, false, radialThreadVisualizationPopupData);
     }
 
     public RadialThreadVisualizationLabelFactory()
     {
-        this(-1, false, new DefaultRadialThreadArtifactVisualizationDisplayData());
+        this(-1, false, new DefaultRadialThreadVisualizationDisplayData());
     }
 
     @Override
-    public JLabel createArtifactLabel(@NotNull AProfilingArtifact artifact)
+    public JLabel createArtifactLabel(@NotNull AArtifact artifact)
     {
-        Collection<ThreadArtifact> threadArtifacts = artifact.getThreadArtifacts();
+        Collection<CodeSparksThread> codeSparksThreads = artifact.getThreadArtifacts();
 
-        if (threadArtifacts.isEmpty())
+        if (codeSparksThreads.isEmpty())
         {
             return emptyLabel();
         }
 
-        List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedDefaultThreadArtifactClustering();
+        List<CodeSparksThreadCluster> codeSparksThreadClusters = artifact.getSortedDefaultThreadArtifactClustering();
         int startAngle = 90;
         boolean useDisabledColors = false;
         JBColor[] colors = {new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), new JBColor(Color.decode("#B25283"),
@@ -95,20 +95,20 @@ public class RadialThreadVisualizationLabelFactory extends AArtifactVisualizatio
         g2d.fillRect(0, 0, bi.getWidth(), bi.getHeight());
 
         double threadRationFromRunBefore = 0;
-        for (int i = 0; i < threadArtifactClusters.size(); i++)
+        for (int i = 0; i < codeSparksThreadClusters.size(); i++)
         {
-            VisualThreadArtifactClusterPropertiesManager propertiesManager = VisualThreadArtifactClusterPropertiesManager.getInstance();
-            RadialVisualThreadArtifactClusterProperties properties =
-                    new RadialVisualThreadArtifactClusterProperties(threadArtifactClusters.get(i), colors[i],
+            VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+            RadialVisualThreadClusterProperties properties =
+                    new RadialVisualThreadClusterProperties(codeSparksThreadClusters.get(i), colors[i],
                             artifact.getNumberOfThreads());
             propertiesManager.registerProperties(properties);
 
             //double filteredRuntimeRatio = properties.calculateFilteredRuntimeRatio(threadArtifactClusters.get(i), useDisabledColors);
-            double filteredRuntimeRatio = properties.calculateAvgFilteredRuntimeRatio(threadArtifactClusters.get(i), useDisabledColors);
+            double filteredRuntimeRatio = properties.calculateAvgFilteredRuntimeRatio(codeSparksThreadClusters.get(i), useDisabledColors);
 
-            double filteredThreadRatio = properties.calculateFilteredThreadRatio(threadArtifactClusters.get(i),
+            double filteredThreadRatio = properties.calculateFilteredThreadRatio(codeSparksThreadClusters.get(i),
                     (int) numberOfSelectedArtifactThreads, useDisabledColors);
-            double filteredRuntimeRatioSum = properties.calculateFilteredSumRuntimeRatio(threadArtifactClusters.get(i), useDisabledColors);
+            double filteredRuntimeRatioSum = properties.calculateFilteredSumRuntimeRatio(codeSparksThreadClusters.get(i), useDisabledColors);
 
             if (i != 0)
             {

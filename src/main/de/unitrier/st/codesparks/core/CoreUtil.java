@@ -7,7 +7,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -163,10 +163,10 @@ public final class CoreUtil
 
     public static void navigate(final String identifier)
     {
-        IProfilingResult profilingResult = ProfilingResultManager.getInstance().getProfilingResult();
+        IArtifactPool profilingResult = ArtifactPoolManager.getInstance().getArtifactPool();
         if (profilingResult != null)
         {
-            AProfilingArtifact artifact = profilingResult.getArtifact(identifier);
+            AArtifact artifact = profilingResult.getArtifact(identifier);
             if (artifact != null)
             {
                 artifact.navigate();

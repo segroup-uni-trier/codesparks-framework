@@ -2,11 +2,11 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.util.ui.ThreeStateCheckBox;
-import de.unitrier.st.codesparks.core.data.ThreadArtifact;
+import de.unitrier.st.codesparks.core.data.CodeSparksThread;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactComparator;
+import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.CodeSparksThreadComparator;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 public class ThreadTree extends AThreadSelectable
 {
     protected final List<ThreadTreeLeafNode> leafNodes;
-    protected final Map<List<ThreadArtifact>, ThreadTreeInnerNode> innerNodes;
+    protected final Map<List<CodeSparksThread>, ThreadTreeInnerNode> innerNodes;
 
-    public ThreadTree(Map<String, List<ThreadArtifact>> threadTreeContent)
+    public ThreadTree(Map<String, List<CodeSparksThread>> threadTreeContent)
     {
         leafNodes = new ArrayList<>();
         innerNodes = new HashMap<>();
@@ -56,10 +56,10 @@ public class ThreadTree extends AThreadSelectable
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
 
-        List<Map.Entry<String, List<ThreadArtifact>>> entries = new ArrayList<>(threadTreeContent.entrySet());
+        List<Map.Entry<String, List<CodeSparksThread>>> entries = new ArrayList<>(threadTreeContent.entrySet());
         entries.sort(Map.Entry.comparingByValue((o1, o2) -> {
-                    double sum1 = o1.stream().mapToDouble(ThreadArtifact::getMetricValue).sum();
-                    double sum2 = o2.stream().mapToDouble(ThreadArtifact::getMetricValue).sum();
+                    double sum1 = o1.stream().mapToDouble(CodeSparksThread::getMetricValue).sum();
+                    double sum2 = o2.stream().mapToDouble(CodeSparksThread::getMetricValue).sum();
                     return Double.compare(sum2, sum1);
 //                    if (sum1 > sum2) return -1;
 //                    if (sum1 < sum2) return 1;
@@ -67,17 +67,17 @@ public class ThreadTree extends AThreadSelectable
                 }
         ));
 
-        for (Map.Entry<String, List<ThreadArtifact>> entry : entries)
+        for (Map.Entry<String, List<CodeSparksThread>> entry : entries)
         {
             if (entry.getValue().isEmpty()) continue;
-            List<ThreadArtifact> threadArtifacts = entry.getValue();
-            threadArtifacts.sort(new ThreadArtifactComparator());
-            ThreadTreeInnerNode innerNode = new ThreadTreeInnerNode(entry.getKey(), threadArtifacts);
+            List<CodeSparksThread> codeSparksThreads = entry.getValue();
+            codeSparksThreads.sort(new CodeSparksThreadComparator());
+            ThreadTreeInnerNode innerNode = new ThreadTreeInnerNode(entry.getKey(), codeSparksThreads);
             boolean isInnerNodeSelected = true;
-            for (ThreadArtifact threadArtifact : threadArtifacts)
+            for (CodeSparksThread codeSparksThread : codeSparksThreads)
             {
-                ThreadTreeLeafNode threadTreeLeafNode = new ThreadTreeLeafNode(threadArtifact);
-                boolean filtered = threadArtifact.isFiltered();
+                ThreadTreeLeafNode threadTreeLeafNode = new ThreadTreeLeafNode(codeSparksThread);
+                boolean filtered = codeSparksThread.isFiltered();
                 ThreeStateCheckBox.State state = filtered ? ThreeStateCheckBox.State.NOT_SELECTED : ThreeStateCheckBox.State.SELECTED;
                 threadTreeLeafNode.setState(state);
                 isInnerNodeSelected = isInnerNodeSelected && !filtered;
@@ -85,7 +85,7 @@ public class ThreadTree extends AThreadSelectable
                 innerNode.add(threadTreeLeafNode);
             }
             innerNode.setState(retrieveInnerNodeState(innerNode));
-            innerNodes.put(threadArtifacts, innerNode);
+            innerNodes.put(codeSparksThreads, innerNode);
             root.add(innerNode);
         }
 
@@ -201,7 +201,7 @@ public class ThreadTree extends AThreadSelectable
     }
 
     @Override
-    protected Set<ThreadArtifact> getThreadArtifacts(final boolean isSelected)
+    protected Set<CodeSparksThread> getThreadArtifacts(final boolean isSelected)
     {
         return leafNodes.
                 stream()
@@ -236,7 +236,7 @@ public class ThreadTree extends AThreadSelectable
     }
 
     @Override
-    public void toggleCluster(ThreadArtifactCluster cluster)
+    public void toggleCluster(CodeSparksThreadCluster cluster)
     {
         if (cluster == null) return;
         if (innerNodes == null) return;

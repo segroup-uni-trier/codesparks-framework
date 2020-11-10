@@ -3,13 +3,13 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.CodeSparksThread;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -30,7 +30,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
     }
 
     @Override
-    public JLabel createArtifactLabel(@NotNull AProfilingArtifact artifact)
+    public JLabel createArtifactLabel(@NotNull AArtifact artifact)
     {
         final int threadsPerColumn = 3;
         int lineHeight = VisualizationUtil.getLineHeightCeil(VisConstants.getLineHeight(), threadsPerColumn);
@@ -52,23 +52,23 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
         int totalThreadCnt = 0;
 
-        List<ThreadArtifactCluster> threadArtifactClustering = artifact.getSortedDefaultThreadArtifactClustering();
+        List<CodeSparksThreadCluster> codeSparksThreadClustering = artifact.getSortedDefaultThreadArtifactClustering();
 
-        for (int i = 0; i < threadArtifactClustering.size(); i++)
+        for (int i = 0; i < codeSparksThreadClustering.size(); i++)
         {
             JBColor color = ThreadColor.getNextColor(i);
-            ThreadArtifactCluster cluster = threadArtifactClustering.get(i);
+            CodeSparksThreadCluster cluster = codeSparksThreadClustering.get(i);
 
-            VisualThreadArtifactClusterProperties clusterProperties = new VisualThreadArtifactClusterProperties(cluster, color);
-            VisualThreadArtifactClusterPropertiesManager propertiesManager = VisualThreadArtifactClusterPropertiesManager.getInstance();
+            VisualThreadClusterProperties clusterProperties = new VisualThreadClusterProperties(cluster, color);
+            VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
             propertiesManager.registerProperties(clusterProperties);
 
             graphics.setColor(color);
             //int size = cluster.size();
-            for (ThreadArtifact threadArtifact : cluster)
+            for (CodeSparksThread codeSparksThread : cluster)
             {
                 //boolean filtered = threadArtifact.isFiltered();
-                if (threadArtifact.isFiltered())
+                if (codeSparksThread.isFiltered())
                 {
                     graphics.setColor(JBColor.GRAY);
                 } else

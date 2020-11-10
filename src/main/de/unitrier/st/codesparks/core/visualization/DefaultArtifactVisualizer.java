@@ -3,7 +3,7 @@
  */
 package de.unitrier.st.codesparks.core.visualization;
 
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 
 public class DefaultArtifactVisualizer implements IArtifactVisualizer
 {
@@ -15,7 +15,7 @@ public class DefaultArtifactVisualizer implements IArtifactVisualizer
     {
         if (instance == null)
         {
-            synchronized (DefaultProfilingDataVisualizer.class)
+            synchronized (DefaultDataVisualizer.class)
             {
                 if (instance == null)
                 {
@@ -27,7 +27,7 @@ public class DefaultArtifactVisualizer implements IArtifactVisualizer
     }
 
     @Override
-    public AArtifactVisualization createArtifactVisualization(AProfilingArtifact artifact, AArtifactVisualizationLabelFactory... factories)
+    public AArtifactVisualization createArtifactVisualization(AArtifact artifact, AArtifactVisualizationLabelFactory... factories)
     {
         return new ArtifactVisualizationWrapper(artifact, factories);
     }

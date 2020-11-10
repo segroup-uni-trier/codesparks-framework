@@ -1,10 +1,10 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.components.JBCheckBox;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactComparator;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.CodeSparksThreadComparator;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -14,25 +14,25 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
 {
     private final int totalSize;
     private final String[] threadStrings;
-    private final List<ThreadArtifact> threadArtifacts;
+    private final List<CodeSparksThread> codeSparksThreads;
 
-    public ThreadListModel(AProfilingArtifact artifact)
+    public ThreadListModel(AArtifact artifact)
     {
         totalSize = artifact.getNumberOfThreads();
         threadStrings = new String[totalSize];
-        threadArtifacts = new ArrayList<>(totalSize);
+        codeSparksThreads = new ArrayList<>(totalSize);
         int artifactCnt = 0;
 
-        List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedDefaultThreadArtifactClustering();
+        List<CodeSparksThreadCluster> codeSparksThreadClusters = artifact.getSortedDefaultThreadArtifactClustering();
 
-        for (ThreadArtifactCluster threadArtifactCluster : threadArtifactClusters)
+        for (CodeSparksThreadCluster codeSparksThreadCluster : codeSparksThreadClusters)
         {
-            threadArtifactCluster.sort(new ThreadArtifactComparator());
-            for (ThreadArtifact threadArtifact : threadArtifactCluster)
+            codeSparksThreadCluster.sort(new CodeSparksThreadComparator());
+            for (CodeSparksThread codeSparksThread : codeSparksThreadCluster)
             {
-                String threadArtifactToString = threadArtifact.getDisplayString();
+                String threadArtifactToString = codeSparksThread.getDisplayString();
 
-                threadArtifacts.add(threadArtifact);
+                codeSparksThreads.add(codeSparksThread);
                 //threadArtifacts.set(artifactCnt, threadArtifact);
                 threadStrings[artifactCnt] = threadArtifactToString;
                 artifactCnt++;
@@ -54,12 +54,12 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
         return jbCheckBox;
     }
 
-    public ThreadArtifact getThreadArtifactAt(int index)
+    public CodeSparksThread getThreadArtifactAt(int index)
     {
-        if (index < 0 || index > threadArtifacts.size() - 1)
+        if (index < 0 || index > codeSparksThreads.size() - 1)
         {
             return null;
         }
-        return threadArtifacts.get(index);
+        return codeSparksThreads.get(index);
     }
 }

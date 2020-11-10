@@ -94,7 +94,7 @@ public final class UserActivityLogger implements IUserActivityLogger, IEditorCov
 
         if (!userActivityLoggingEnabled)
         {
-            ProfilingLogger.addText("User Activity Logging is disabled. Please visit CodeSparks settings to enable.");
+            CodeSparksLogger.addText("User Activity Logging is disabled. Please visit CodeSparks settings to enable.");
         }
 
         return userActivityLoggingEnabled;

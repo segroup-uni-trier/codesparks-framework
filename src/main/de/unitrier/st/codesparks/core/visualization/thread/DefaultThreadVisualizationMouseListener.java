@@ -4,7 +4,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.components.BorderLayoutPanel;
-import de.unitrier.st.codesparks.core.ProfilingFlowManager;
+import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationMouseListener;
@@ -17,13 +17,13 @@ import java.awt.*;
 
 public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
-    DefaultThreadVisualizationMouseListener(JComponent component, AProfilingArtifact artifact)
+    DefaultThreadVisualizationMouseListener(JComponent component, AArtifact artifact)
     {
         super(component, new Dimension(520, 170), artifact);
     }
 
     @Override
-    protected PopupPanel createPopupContent(AProfilingArtifact artifact)
+    protected PopupPanel createPopupContent(AArtifact artifact)
     {
         final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "DefaultThreadVisualizationPopup");
         JBPanel<BorderLayoutPanel> centerPanel = new JBPanel<>();
@@ -54,7 +54,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
                 LocalizationUtil.getLocalizedString("profiling.ui.button.reset.thread.filter.global"));
         resetThreadFilterGlobal.addActionListener(e -> {
             popupPanel.cancelPopup();
-            ProfilingFlowManager.getInstance().getCurrentProfilingFlow().applyThreadArtifactFilter(GlobalResetThreadArtifactFilter.getInstance());
+            CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(GlobalResetThreadFilter.getInstance());
         });
         JBPanel<BorderLayoutPanel> resetThreadFilterGlobalButtonWrapper = new JBPanel<>(new BorderLayout());
         resetThreadFilterGlobalButtonWrapper.add(resetThreadFilterGlobal, BorderLayout.CENTER);
@@ -75,15 +75,15 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         buttonsPanel.add(selectAllButtonWrapper);
 
         // Toggle cluster buttons.
-        ThreadArtifactClustering sortedDefaultThreadArtifactClustering = artifact.getSortedDefaultThreadArtifactClustering();
-        for (ThreadArtifactCluster cluster : sortedDefaultThreadArtifactClustering)
+        CodeSparksThreadClustering sortedDefaultCodeSparksThreadClustering = artifact.getSortedDefaultThreadArtifactClustering();
+        for (CodeSparksThreadCluster cluster : sortedDefaultCodeSparksThreadClustering)
         {
             if (cluster.isEmpty())
             {
                 continue;
             }
-            VisualThreadArtifactClusterProperties properties =
-                    VisualThreadArtifactClusterPropertiesManager.getInstance().getProperties(cluster);
+            VisualThreadClusterProperties properties =
+                    VisualThreadClusterPropertiesManager.getInstance().getProperties(cluster);
             Color foregroundColor;
             if (properties == null)
             {
@@ -107,8 +107,8 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
                 new JButton(LocalizationUtil.getLocalizedString("profiling.ui.popup.button.apply.thread.filter"));
         applyThreadFilter.addActionListener(e -> {
             popupPanel.cancelPopup();
-            final IThreadArtifactFilter threadArtifactFilter = new DefaultThreadArtifactFilter(threadSelectable);
-            ProfilingFlowManager.getInstance().getCurrentProfilingFlow().applyThreadArtifactFilter(threadArtifactFilter);
+            final ICodeSparksThreadFilter threadArtifactFilter = new DefaultThreadFilter(threadSelectable);
+            CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(threadArtifactFilter);
         });
         JBPanel<BorderLayoutPanel> applyThreadFilterButtonWrapper = new JBPanel<>(new BorderLayout());
         applyThreadFilterButtonWrapper.add(applyThreadFilter, BorderLayout.CENTER);
@@ -123,7 +123,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
     }
 
     @Override
-    protected String createPopupTitle(AProfilingArtifact artifact)
+    protected String createPopupTitle(AArtifact artifact)
     {
         return "Total number of threads: " + artifact.getNumberOfThreads() +
                 " | Different thread types: " + artifact.getThreadTypeLists().size();

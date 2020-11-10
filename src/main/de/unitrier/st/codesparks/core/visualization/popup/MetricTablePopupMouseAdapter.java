@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
-import de.unitrier.st.codesparks.core.data.ANeighborProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 import de.unitrier.st.codesparks.core.CoreUtil;
 
 import java.awt.*;
@@ -25,7 +25,7 @@ public class MetricTablePopupMouseAdapter extends MouseAdapter
         int col = table.columnAtPoint(point);
         int row = table.rowAtPoint(point);
 
-        ANeighborProfilingArtifact neighborArtifactAt = ((MetricTableModel) table.getModel()).getNeighborArtifactAt(row, col);
+        ANeighborArtifact neighborArtifactAt = ((MetricTableModel) table.getModel()).getNeighborArtifactAt(row, col);
         CoreUtil.navigate(neighborArtifactAt.getIdentifier());
 
         popupPanel.cancelPopup();

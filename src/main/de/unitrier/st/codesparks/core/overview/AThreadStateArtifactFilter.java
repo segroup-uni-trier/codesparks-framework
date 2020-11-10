@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.overview;
 
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,6 +41,6 @@ public abstract class AThreadStateArtifactFilter
         return states.keySet();
     }
 
-    public abstract Collection<AProfilingArtifact> filterArtifact(final Collection<? extends AProfilingArtifact> artifacts);
+    public abstract Collection<AArtifact> filterArtifact(final Collection<? extends AArtifact> artifacts);
 
 }

@@ -1,11 +1,11 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.ThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
-import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadArtifactClusterProperties;
-import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadArtifactClusterPropertiesManager;
+import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.CodeSparksThreadClustering;
+import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
+import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class ThreadTypeTree extends ThreadTree
 {
-    public ThreadTypeTree(Map<String, List<ThreadArtifact>> threadTreeContent, ThreadArtifactClustering clustering)
+    public ThreadTypeTree(Map<String, List<CodeSparksThread>> threadTreeContent, CodeSparksThreadClustering clustering)
     {
         super(threadTreeContent);
 
@@ -22,18 +22,18 @@ public class ThreadTypeTree extends ThreadTree
             return;
         }
 
-        VisualThreadArtifactClusterPropertiesManager propertiesManager = VisualThreadArtifactClusterPropertiesManager.getInstance();
+        VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
 
         for (ThreadTreeLeafNode leafNode : leafNodes)
         {
-            final ThreadArtifact threadArtifact = leafNode.getThreadArtifact();
+            final CodeSparksThread codeSparksThread = leafNode.getThreadArtifact();
 
-            Optional<ThreadArtifactCluster> first =
-                    clustering.parallelStream().filter(threadArtifacts -> threadArtifacts.contains(threadArtifact)).findFirst();
+            Optional<CodeSparksThreadCluster> first =
+                    clustering.parallelStream().filter(threadArtifacts -> threadArtifacts.contains(codeSparksThread)).findFirst();
 
             if (!first.isPresent()) continue;
 
-            VisualThreadArtifactClusterProperties properties = propertiesManager.getProperties(first.get());
+            VisualThreadClusterProperties properties = propertiesManager.getProperties(first.get());
 
             if (properties == null) continue;
 
@@ -66,14 +66,14 @@ public class ThreadTypeTree extends ThreadTree
     }
 
     @Override
-    public void toggleCluster(ThreadArtifactCluster cluster)
+    public void toggleCluster(CodeSparksThreadCluster cluster)
     {
-        for (ThreadArtifact threadArtifact : cluster)
+        for (CodeSparksThread codeSparksThread : cluster)
         {
             for (ThreadTreeLeafNode leafNode : leafNodes)
             {
-                final ThreadArtifact nodeThreadArtifact = leafNode.getThreadArtifact();
-                if (nodeThreadArtifact == threadArtifact)
+                final CodeSparksThread nodeCodeSparksThread = leafNode.getThreadArtifact();
+                if (nodeCodeSparksThread == codeSparksThread)
                 {
                     leafNode.toggleSelected();
                     break;

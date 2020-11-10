@@ -2,8 +2,8 @@ package de.unitrier.st.codesparks.core.visualization.callee;
 
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.ANeighborProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,8 +21,8 @@ public class DummyArtifactCalleeVisualizationLabelFactory extends AArtifactCalle
     }
 
     @Override
-    public JLabel createArtifactCalleeLabel(AProfilingArtifact artifact
-            , List<ANeighborProfilingArtifact> threadFilteredNeighborArtifactsOfLine
+    public JLabel createArtifactCalleeLabel(AArtifact artifact
+            , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
             , double threadFilteredMetricValue
             , Color metricColor
     )

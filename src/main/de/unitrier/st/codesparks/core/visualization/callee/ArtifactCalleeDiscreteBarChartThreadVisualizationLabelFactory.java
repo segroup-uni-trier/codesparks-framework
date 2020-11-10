@@ -8,8 +8,8 @@ import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
-import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadArtifactClusterProperties;
-import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadArtifactClusterPropertiesManager;
+import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
+import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,47 +29,47 @@ public class ArtifactCalleeDiscreteBarChartThreadVisualizationLabelFactory exten
     }
 
     @Override
-    public JLabel createArtifactCalleeLabel(AProfilingArtifact artifact
-            , List<ANeighborProfilingArtifact> threadFilteredNeighborArtifactsOfLine
+    public JLabel createArtifactCalleeLabel(AArtifact artifact
+            , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
             , double threadFilteredMetricValue
             , Color metricColor
     )
     {
         final double totalThreadFilteredCalleeTime = summedThreadMetricValuesOfNeighbors(threadFilteredNeighborArtifactsOfLine);
 
-        List<ThreadArtifactCluster> threadClusters =
+        List<CodeSparksThreadCluster> threadClusters =
                 artifact.getDefaultThreadArtifactClustering()
                         .stream()
-                        .sorted(ThreadArtifactClusterComparator.getInstance())
+                        .sorted(CodeSparksThreadClusterComparator.getInstance())
                         .filter(cluster -> !cluster.isEmpty())
                         .collect(Collectors.toList());
 
-        SortedMap<ThreadArtifactCluster, Set<String>> artifactClusterSets =
-                new TreeMap<>(ThreadArtifactClusterComparator.getInstance());
-        SortedMap<ThreadArtifactCluster, Set<ThreadArtifact>> neighborClusterSets =
-                new TreeMap<>(ThreadArtifactClusterComparator.getInstance());
+        SortedMap<CodeSparksThreadCluster, Set<String>> artifactClusterSets =
+                new TreeMap<>(CodeSparksThreadClusterComparator.getInstance());
+        SortedMap<CodeSparksThreadCluster, Set<CodeSparksThread>> neighborClusterSets =
+                new TreeMap<>(CodeSparksThreadClusterComparator.getInstance());
 
-        for (ThreadArtifactCluster threadCluster : threadClusters)
+        for (CodeSparksThreadCluster threadCluster : threadClusters)
         {
             artifactClusterSets.put(threadCluster,
-                    new HashSet<>(threadCluster.stream().map(ThreadArtifact::getIdentifier).collect(Collectors.toList())));
+                    new HashSet<>(threadCluster.stream().map(CodeSparksThread::getIdentifier).collect(Collectors.toList())));
             neighborClusterSets.put(threadCluster, new HashSet<>());
         }
 
-        for (ANeighborProfilingArtifact neighborArtifact : threadFilteredNeighborArtifactsOfLine)
+        for (ANeighborArtifact neighborArtifact : threadFilteredNeighborArtifactsOfLine)
         {
-            for (ThreadArtifact neighborThreadArtifact :
+            for (CodeSparksThread neighborCodeSparksThread :
                     neighborArtifact.getThreadArtifacts()
                             .stream()
                             .filter(threadArtifact -> !threadArtifact.isFiltered())
                             .collect(Collectors.toList()))
             {
-                String threadArtifactIdentifier = neighborThreadArtifact.getIdentifier();
-                for (Map.Entry<ThreadArtifactCluster, Set<String>> artifactClusterSetEntry : artifactClusterSets.entrySet())
+                String threadArtifactIdentifier = neighborCodeSparksThread.getIdentifier();
+                for (Map.Entry<CodeSparksThreadCluster, Set<String>> artifactClusterSetEntry : artifactClusterSets.entrySet())
                 {
                     if (artifactClusterSetEntry.getValue().contains(threadArtifactIdentifier))
                     {
-                        neighborClusterSets.get(artifactClusterSetEntry.getKey()).add(neighborThreadArtifact);
+                        neighborClusterSets.get(artifactClusterSetEntry.getKey()).add(neighborCodeSparksThread);
                     }
                 }
             }
@@ -130,11 +130,11 @@ public class ArtifactCalleeDiscreteBarChartThreadVisualizationLabelFactory exten
 
         VisualizationUtil.drawRectangle(graphics, threadVisualisationArea);
         int clusterCnt = 0;
-        VisualThreadArtifactClusterPropertiesManager clusterPropertiesManager = VisualThreadArtifactClusterPropertiesManager.getInstance();
-        for (Map.Entry<ThreadArtifactCluster, Set<ThreadArtifact>> threadArtifactClusterSetEntry : neighborClusterSets.entrySet())
+        VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+        for (Map.Entry<CodeSparksThreadCluster, Set<CodeSparksThread>> threadArtifactClusterSetEntry : neighborClusterSets.entrySet())
         {
-            ThreadArtifactCluster cluster = threadArtifactClusterSetEntry.getKey();
-            VisualThreadArtifactClusterProperties properties = clusterPropertiesManager.getProperties(cluster);
+            CodeSparksThreadCluster cluster = threadArtifactClusterSetEntry.getKey();
+            VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(cluster);
             JBColor color;
             if (properties != null)
             {
@@ -181,15 +181,15 @@ public class ArtifactCalleeDiscreteBarChartThreadVisualizationLabelFactory exten
         return jLabel;
     }
 
-    private double summedThreadMetricValues(Collection<ThreadArtifact> threadArtifacts)
+    private double summedThreadMetricValues(Collection<CodeSparksThread> codeSparksThreads)
     {
-        return threadArtifacts
+        return codeSparksThreads
                 .stream()
                 .filter(threadArtifact -> !threadArtifact.isFiltered())
-                .map(ThreadArtifact::getMetricValue).reduce(0d, Double::sum);
+                .map(CodeSparksThread::getMetricValue).reduce(0d, Double::sum);
     }
 
-    private double summedThreadMetricValuesOfNeighbors(Collection<ANeighborProfilingArtifact> neighborProfilingArtifacts)
+    private double summedThreadMetricValuesOfNeighbors(Collection<ANeighborArtifact> neighborProfilingArtifacts)
     {
         return neighborProfilingArtifacts.stream().map(aNeighborProfilingArtifact ->
                 summedThreadMetricValues(aNeighborProfilingArtifact.getThreadArtifacts())

@@ -3,10 +3,10 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.CodeSparksThread;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +17,7 @@ import java.util.Set;
 public abstract class ARadialThreadVisualization extends JPanel
 {
     protected Graphics2D g2d;
-    protected AProfilingArtifact artifact;
+    protected AArtifact artifact;
     private int circleDiameter = 0;
     private int circleFrameSize = 0;
     private int panelHeight = 0;
@@ -196,12 +196,12 @@ public abstract class ARadialThreadVisualization extends JPanel
     }
 
     @SuppressWarnings("unused")
-    static double calculateFilteredMedianRuntimeRatio(ThreadArtifactCluster cluster)
+    static double calculateFilteredMedianRuntimeRatio(CodeSparksThreadCluster cluster)
     {
         int unfilteredThreads = 0;
-        for (ThreadArtifact threadArtifact : cluster)
+        for (CodeSparksThread codeSparksThread : cluster)
         {
-            if (threadArtifact.isFiltered())
+            if (codeSparksThread.isFiltered())
                 continue;
 
             unfilteredThreads++;
@@ -226,14 +226,14 @@ public abstract class ARadialThreadVisualization extends JPanel
         return median;
     }
 
-    static double getFilteredMetricSumOfCluster(ThreadArtifactCluster cluster, Set<ThreadArtifact> filteredThreads)
+    static double getFilteredMetricSumOfCluster(CodeSparksThreadCluster cluster, Set<CodeSparksThread> filteredThreads)
     {
         double metric = 0;
-        for (ThreadArtifact threadArtifact : cluster)
+        for (CodeSparksThread codeSparksThread : cluster)
         {
-            if (filteredThreads.contains(threadArtifact))
+            if (filteredThreads.contains(codeSparksThread))
                 continue;
-            metric += threadArtifact.getMetricValue();
+            metric += codeSparksThread.getMetricValue();
         }
         return metric;
     }

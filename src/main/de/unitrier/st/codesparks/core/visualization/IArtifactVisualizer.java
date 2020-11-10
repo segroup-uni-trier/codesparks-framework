@@ -3,9 +3,9 @@
  */
 package de.unitrier.st.codesparks.core.visualization;
 
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 
 public interface IArtifactVisualizer
 {
-    AArtifactVisualization createArtifactVisualization(AProfilingArtifact artifact, AArtifactVisualizationLabelFactory... factories);
+    AArtifactVisualization createArtifactVisualization(AArtifact artifact, AArtifactVisualizationLabelFactory... factories);
 }

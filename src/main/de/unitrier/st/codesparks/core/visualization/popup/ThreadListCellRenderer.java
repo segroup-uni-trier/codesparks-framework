@@ -3,11 +3,11 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBTextArea;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
-import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadArtifactClusterProperties;
-import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadArtifactClusterPropertiesManager;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
+import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +21,7 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
     private final boolean[] selected;
     private final Map<String, Integer> threadIdIndex;
 
-    public ThreadListCellRenderer(AProfilingArtifact artifact)
+    public ThreadListCellRenderer(AArtifact artifact)
     {
         int numberOfThreads = artifact.getNumberOfThreads();
         this.displayColors = new Color[numberOfThreads];
@@ -29,15 +29,15 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
         this.selected = new boolean[numberOfThreads];
         this.threadIdIndex = new HashMap<>();
 
-        List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedDefaultThreadArtifactClustering();
+        List<CodeSparksThreadCluster> codeSparksThreadClusters = artifact.getSortedDefaultThreadArtifactClustering();
 
-        VisualThreadArtifactClusterPropertiesManager propertiesManager = VisualThreadArtifactClusterPropertiesManager.getInstance();
+        VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
 
         int colArrayIndex = 0;
 
-        for (ThreadArtifactCluster threadArtifactCluster : threadArtifactClusters)
+        for (CodeSparksThreadCluster codeSparksThreadCluster : codeSparksThreadClusters)
         {
-            VisualThreadArtifactClusterProperties properties = propertiesManager.getProperties(threadArtifactCluster);
+            VisualThreadClusterProperties properties = propertiesManager.getProperties(codeSparksThreadCluster);
             JBColor color;
             if (properties == null)
             {
@@ -46,13 +46,13 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
             {
                 color = properties.getColor();
             }
-            for (ThreadArtifact threadArtifact : threadArtifactCluster)
+            for (CodeSparksThread codeSparksThread : codeSparksThreadCluster)
             {
-                boolean filtered = threadArtifact.isFiltered();
+                boolean filtered = codeSparksThread.isFiltered();
                 this.displayColors[colArrayIndex] = filtered ? JBColor.GRAY : color;
                 this.selectedColors[colArrayIndex] = color;
                 this.selected[colArrayIndex] = !filtered;
-                threadIdIndex.put(threadArtifact.getIdentifier(), colArrayIndex);
+                threadIdIndex.put(codeSparksThread.getIdentifier(), colArrayIndex);
                 colArrayIndex += 1;
             }
         }
@@ -109,13 +109,13 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
         }
     }
 
-    public void toggleCluster(ThreadArtifactCluster cluster)
+    public void toggleCluster(CodeSparksThreadCluster cluster)
     {
         synchronized (selected)
         {
-            for (ThreadArtifact threadArtifact : cluster)
+            for (CodeSparksThread codeSparksThread : cluster)
             {
-                Integer index = threadIdIndex.get(threadArtifact.getIdentifier());
+                Integer index = threadIdIndex.get(codeSparksThread.getIdentifier());
                 updateColor(index);
                 selected[index] = !selected[index];
             }
@@ -123,14 +123,14 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
     }
 
     @SuppressWarnings("unused")
-    public void selectCluster(ThreadArtifactCluster cluster)
+    public void selectCluster(CodeSparksThreadCluster cluster)
     {
         synchronized (selected)
         {
             List<Integer> indices = new ArrayList<>();
-            for (ThreadArtifact threadArtifact : cluster)
+            for (CodeSparksThread codeSparksThread : cluster)
             {
-                Integer index = threadIdIndex.get(threadArtifact.getIdentifier());
+                Integer index = threadIdIndex.get(codeSparksThread.getIdentifier());
                 selected[index] = true;
                 indices.add(index);
             }

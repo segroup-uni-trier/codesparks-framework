@@ -3,8 +3,8 @@
  */
 package de.unitrier.st.codesparks.core.visualization.callee;
 
-import de.unitrier.st.codesparks.core.data.ANeighborProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,7 +31,7 @@ public class DefaultArtifactCalleeVisualizer implements IArtifactCalleeVisualize
     private DefaultArtifactCalleeVisualizer() { }
 
     @Override
-    public Collection<AArtifactCalleeVisualization> createArtifactCalleeVisualizations(AProfilingArtifact artifact,
+    public Collection<AArtifactCalleeVisualization> createArtifactCalleeVisualizations(AArtifact artifact,
                                                                                        AArtifactCalleeVisualizationLabelFactory... calleeFactories)
     {
         assert artifact != null;
@@ -40,7 +40,7 @@ public class DefaultArtifactCalleeVisualizer implements IArtifactCalleeVisualize
 
         //int lineHeight = VisConstants.getLineHeight();
 
-        Set<Map.Entry<Integer, List<ANeighborProfilingArtifact>>> threadFilteredSuccessors = artifact.getSuccessors()
+        Set<Map.Entry<Integer, List<ANeighborArtifact>>> threadFilteredSuccessors = artifact.getSuccessors()
                 .entrySet()
                 .stream()
                 .filter(integerListEntry ->
@@ -49,9 +49,9 @@ public class DefaultArtifactCalleeVisualizer implements IArtifactCalleeVisualize
                                         .stream()
                                         .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))).collect(Collectors.toSet());
 
-        for (Map.Entry<Integer, List<ANeighborProfilingArtifact>> entry : threadFilteredSuccessors)
+        for (Map.Entry<Integer, List<ANeighborArtifact>> entry : threadFilteredSuccessors)
         {
-            List<ANeighborProfilingArtifact> threadFilteredCalleesOfCurrentLine = entry.getValue()
+            List<ANeighborArtifact> threadFilteredCalleesOfCurrentLine = entry.getValue()
                     .stream()
                     .filter(aNeighborProfilingArtifact -> aNeighborProfilingArtifact.getThreadArtifacts()
                             .stream().anyMatch(threadArtifact -> !threadArtifact.isFiltered())).collect(Collectors.toList());

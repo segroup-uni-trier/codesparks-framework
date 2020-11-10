@@ -3,8 +3,8 @@
  */
 package de.unitrier.st.codesparks.core.visualization.callee;
 
-import de.unitrier.st.codesparks.core.data.ANeighborProfilingArtifact;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.DataUtil;
 import de.unitrier.st.codesparks.core.visualization.BottomFlowLayout;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
@@ -17,8 +17,8 @@ import java.util.List;
 
 class ArtifactCalleeVisualizationWrapper extends AArtifactCalleeVisualization
 {
-    ArtifactCalleeVisualizationWrapper(AProfilingArtifact artifact,
-                                       List<ANeighborProfilingArtifact> neighborArtifactsOfLine,
+    ArtifactCalleeVisualizationWrapper(AArtifact artifact,
+                                       List<ANeighborArtifact> neighborArtifactsOfLine,
 //                                       double totalMetricValue,
 //                                       Color metricColor,
                                        AArtifactCalleeVisualizationLabelFactory... factories)

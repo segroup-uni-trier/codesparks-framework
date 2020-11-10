@@ -3,12 +3,12 @@
  */
 package de.unitrier.st.codesparks.core.visualization.callee;
 
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 
 import java.util.Collection;
 
 public interface IArtifactCalleeVisualizer
 {
-    Collection<AArtifactCalleeVisualization> createArtifactCalleeVisualizations(AProfilingArtifact artifact,
+    Collection<AArtifactCalleeVisualization> createArtifactCalleeVisualizations(AArtifact artifact,
                                                                                 AArtifactCalleeVisualizationLabelFactory... calleeFactories);
 }

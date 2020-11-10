@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
-import de.unitrier.st.codesparks.core.data.ANeighborProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.CoreUtil;
@@ -27,7 +27,7 @@ public class MetricListPopupMouseAdapter extends MouseAdapter
 
         int index = list.locationToIndex(point);
 
-        ANeighborProfilingArtifact neighborArtifactAt = ((MetricListModel) list.getModel()).getArtifactAt(index);
+        ANeighborArtifact neighborArtifactAt = ((MetricListModel) list.getModel()).getArtifactAt(index);
         if (neighborArtifactAt != null)
         {
             String neighborArtifactAtIdentifier = neighborArtifactAt.getIdentifier();

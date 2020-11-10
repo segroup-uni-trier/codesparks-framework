@@ -1,9 +1,9 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
 public interface IClusterHoverable
 {
-    void onHover(ThreadArtifactCluster cluster);
+    void onHover(CodeSparksThreadCluster cluster);
     void onExit();
 }

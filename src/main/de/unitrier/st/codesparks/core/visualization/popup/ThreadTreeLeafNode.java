@@ -1,25 +1,25 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.ThreadArtifact;
+import de.unitrier.st.codesparks.core.data.CodeSparksThread;
 
 public class ThreadTreeLeafNode extends ColoredSelectableTreeNode
 {
-    private final ThreadArtifact threadArtifact;
+    private final CodeSparksThread codeSparksThread;
 
-    ThreadTreeLeafNode(ThreadArtifact threadArtifact, JBColor color)
+    ThreadTreeLeafNode(CodeSparksThread codeSparksThread, JBColor color)
     {
-        super(threadArtifact.getDisplayString(), color);
-        this.threadArtifact = threadArtifact;
+        super(codeSparksThread.getDisplayString(), color);
+        this.codeSparksThread = codeSparksThread;
     }
 
-    ThreadTreeLeafNode(ThreadArtifact threadArtifact)
+    ThreadTreeLeafNode(CodeSparksThread codeSparksThread)
     {
-        this(threadArtifact, null);
+        this(codeSparksThread, null);
     }
 
-    public ThreadArtifact getThreadArtifact()
+    public CodeSparksThread getThreadArtifact()
     {
-        return threadArtifact;
+        return codeSparksThread;
     }
 }

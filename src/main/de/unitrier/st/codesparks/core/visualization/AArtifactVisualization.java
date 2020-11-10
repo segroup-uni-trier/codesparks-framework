@@ -1,7 +1,7 @@
 package de.unitrier.st.codesparks.core.visualization;
 
 import com.intellij.psi.PsiElement;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 
 import javax.swing.*;
 
@@ -11,20 +11,20 @@ import javax.swing.*;
 public abstract class AArtifactVisualization extends JLabel
 {
     protected PsiElement psiElement;
-    protected AProfilingArtifact artifact;
+    protected AArtifact artifact;
 
     public PsiElement getPsiElement()
     {
         return this.psiElement;
     }
 
-    protected AArtifactVisualization(AProfilingArtifact artifact)
+    protected AArtifactVisualization(AArtifact artifact)
     {
         this.artifact = artifact;
         this.psiElement = artifact.getVisPsiElement();
     }
 
-    public AProfilingArtifact getArtifact()
+    public AArtifact getArtifact()
     {
         return artifact;
     }

@@ -2,7 +2,7 @@ package de.unitrier.st.codesparks.core.visualization;
 
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.DataUtil;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 //        return createArtifactImageIcon(artifact);
 //    }
 
-    public JLabel createArtifactLabel(@NotNull AProfilingArtifact artifact)
+    public JLabel createArtifactLabel(@NotNull AArtifact artifact)
     {
         int lineHeight = VisConstants.getLineHeight();
 
@@ -188,7 +188,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 //                Math.min((int) (c.getBlue() * factor), 255)), Gray._128);
 //    }
 
-    private static void drawCallers(@NotNull AProfilingArtifact artifact, Rectangle visualizationArea, Graphics graphics,
+    private static void drawCallers(@NotNull AArtifact artifact, Rectangle visualizationArea, Graphics graphics,
                                     int lineHeight, Color performanceColor)
     {
         long predecessorSize = artifact.getPredecessors()
@@ -227,7 +227,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         }
     }
 
-    private static void drawCallees(@NotNull AProfilingArtifact artifact, Rectangle visualizationArea, Graphics graphics,
+    private static void drawCallees(@NotNull AArtifact artifact, Rectangle visualizationArea, Graphics graphics,
                                     int lineHeight, Color performanceColor)
     {
         long successorSize =

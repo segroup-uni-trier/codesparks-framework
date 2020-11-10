@@ -10,7 +10,7 @@ import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.ui.components.BorderLayoutPanel;
-import de.unitrier.st.codesparks.core.data.AProfilingArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
@@ -27,18 +27,18 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
 {
     protected JComponent component;
     protected Dimension dimension;
-    protected AProfilingArtifact artifact;
+    protected AArtifact artifact;
 
-    protected AArtifactVisualizationMouseListener(JComponent component, Dimension dimension, AProfilingArtifact artifact)
+    protected AArtifactVisualizationMouseListener(JComponent component, Dimension dimension, AArtifact artifact)
     {
         this.component = component;
         this.dimension = dimension;
         this.artifact = artifact;
     }
 
-    protected abstract PopupPanel createPopupContent(AProfilingArtifact artifact);
+    protected abstract PopupPanel createPopupContent(AArtifact artifact);
 
-    protected abstract String createPopupTitle(AProfilingArtifact artifact);
+    protected abstract String createPopupTitle(AArtifact artifact);
 
     protected void visualizationMouseClicked(MouseEvent e)
     {
