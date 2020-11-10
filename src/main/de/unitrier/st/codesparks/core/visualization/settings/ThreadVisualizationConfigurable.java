@@ -25,7 +25,7 @@ public class ThreadVisualizationConfigurable implements Configurable
     @Override
     public String getDisplayName()
     {
-        return LocalizationUtil.getLocalizedString("settings.visualization.thread.title");
+        return LocalizationUtil.getLocalizedString("codesparks.settings.visualization.thread.title");
     }
 
     @Nullable

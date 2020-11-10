@@ -18,7 +18,7 @@ public final class PropertiesUtil
 
     static
     {
-        PluginId id = PluginId.getId("de.unitrier.st.insituprofiling.plugin");
+        PluginId id = PluginId.getId("de.unitrier.st.codesparks.jpt");
         IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(id);
         assert plugin != null;
         //PLUGIN_PATH = plugin.getPath().getAbsolutePath();

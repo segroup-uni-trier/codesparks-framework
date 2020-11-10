@@ -131,13 +131,13 @@ public class ArtifactOverview
         JBPanel<BorderLayoutPanel> applyArtifactFilterButtonPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
         applyArtifactFilterButtonPanel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 2));
         JButton applyArtifactFilterButton = new JButton(
-                LocalizationUtil.getLocalizedString("profiling.ui.overview.button.apply.artifact.filter"));
+                LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.apply.artifact.filter"));
         applyArtifactFilterButtonPanel.add(applyArtifactFilterButton, BorderLayout.CENTER);
 
         JBPanel<BorderLayoutPanel> resetArtifactFilterPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
         resetArtifactFilterPanel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 2));
         JButton resetArtifactFilterButton = new JButton(
-                LocalizationUtil.getLocalizedString("profiling.ui.overview.button.apply.artifact.filter.reset"));
+                LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.apply.artifact.filter.reset"));
         resetArtifactFilterPanel.add(resetArtifactFilterButton, BorderLayout.CENTER);
 
         filterArtifactButtonsPanelWrapper.add(resetArtifactFilterPanel);
@@ -185,7 +185,7 @@ public class ArtifactOverview
         threadFilterWrapper.add(globalRadialThreadVisualization);
 
         final JButton resetThreadFilterButton = new JButton(
-                LocalizationUtil.getLocalizedString("profiling.ui.button.reset.thread.filter.global"));
+                LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
         resetThreadFilterButton.addActionListener(e -> {
 
             UserActivityLogger.getInstance().log(UserActivityEnum.OverviewThreadFilterReset);

@@ -95,7 +95,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
         JPanel controlButtonsWrapper = new JPanel(new BorderLayout());
         JPanel controlButtonsBox = new JPanel();
         controlButtonsBox.setLayout(new BoxLayout(controlButtonsBox, BoxLayout.X_AXIS));
-        JButton selectAll = new JButton(LocalizationUtil.getLocalizedString("profiling.ui.popup.selectallbutton"));
+        JButton selectAll = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.selectallbutton"));
         selectAll.addActionListener(e -> {
 
             UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewSelectAllButtonClicked);
@@ -105,7 +105,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
                 threadSelectable.selectAll();
             }
         });
-        JButton deselectAll = new JButton(LocalizationUtil.getLocalizedString("profiling.ui.popup.deselectallbutton"));
+        JButton deselectAll = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.deselectallbutton"));
         deselectAll.addActionListener(e -> {
 
             UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewDeselectAllButtonClicked);
@@ -116,7 +116,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
             }
         });
 
-        JButton invert = new JButton(LocalizationUtil.getLocalizedString("profiling.ui.popup.invertallbutton"));
+        JButton invert = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.invertallbutton"));
         invert.addActionListener(e -> {
 
             UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewInvertSelectionButtonClicked);
@@ -127,7 +127,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
             }
         });
 
-        JButton reset = new JButton(LocalizationUtil.getLocalizedString("profiling.ui.button.reset.thread.filter.global"));
+        JButton reset = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
         reset.addActionListener(e -> {
 
             UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewResetThreadFilterButtonClicked);
@@ -138,7 +138,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
             currentProfilingFlow.applyThreadArtifactFilter(GlobalResetThreadFilter.getInstance());
         });
 
-        JButton apply = new JButton(LocalizationUtil.getLocalizedString("profiling.ui.popup.button.apply.thread.filter"));
+        JButton apply = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.button.apply.thread.filter"));
         apply.addActionListener(e -> {
 
             UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewApplyThreadFilterButtonClicked);
@@ -242,7 +242,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
         }
 
         JLabel radialButtonsToggleLabel =
-                new JLabel(LocalizationUtil.getLocalizedString("profiling.ui.overview.button.threads.togglecluster"));
+                new JLabel(LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.threads.togglecluster"));
         radialButtonsToggleLabel.setFont(radialButtonsToggleLabel.getFont().deriveFont(12.0f));
         radialButtonsToggleLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         radialVisualizationButtonsBox.add(radialButtonsToggleLabel);
@@ -261,7 +261,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
         }
         //final ThreadArtifactDisplayData finalSelectedData = selectedData;
 
-        final String metricString = LocalizationUtil.getLocalizedString("profiling.ui.popup.thread.metric");
+        final String metricString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.metric");
         JLabel selectedMetricLabel = new JLabel(metricString + " : " + CoreUtil.formatPercentage(selectedData.getMetricValueSum()))
         {
             @Override
@@ -280,7 +280,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
 
         // -------------------------------
 
-        final String numberOfThreadTypesString = LocalizationUtil.getLocalizedString("profiling.ui.popup.thread.numberoftypes");
+        final String numberOfThreadTypesString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberoftypes");
         JLabel selectedNumberOfThreadTypesLabel = new JLabel(numberOfThreadTypesString + " : " + selectedData.getNumberOfThreadTypes())
         {
             @Override
@@ -299,7 +299,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
 
         // -------------------------------
 
-        final String numberOfThreadsString = LocalizationUtil.getLocalizedString("profiling.ui.popup.thread.numberofthreads");
+        final String numberOfThreadsString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberofthreads");
         JLabel selectedNumberOfThreadsLabel = new JLabel(numberOfThreadsString + " : " + selectedData.getNumberOfThreads())
         {
             @Override
@@ -430,8 +430,8 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
         hoverLabels[0].setText("Metric (sum): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueSum()));
         hoverLabels[1].setText("Metric (avg): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueAvg()));
 
-        String numberOfThreadsString = LocalizationUtil.getLocalizedString("profiling.ui.popup.thread.numberofthreads");
-        String numberOfClassesString = LocalizationUtil.getLocalizedString("profiling.ui.popup.thread.numberoftypes");
+        String numberOfThreadsString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberofthreads");
+        String numberOfClassesString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberoftypes");
 
         hoverLabels[2].setText(numberOfClassesString + " : " + hoveredThreadData.getNumberOfThreadTypes());
         hoverLabels[3].setText(numberOfThreadsString + " : " + hoveredThreadData.getNumberOfThreads());

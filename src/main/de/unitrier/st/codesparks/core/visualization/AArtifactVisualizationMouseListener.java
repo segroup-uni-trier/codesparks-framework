@@ -80,7 +80,7 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
 //                                    .setShowShadow(true)
                 .setCouldPin(jbPopup -> {
                     Project project = CoreUtil.getCurrentlyOpenedProject();
-                    String name = LocalizationUtil.getLocalizedString("profiling.ui.artifactpopup.displayname");
+                    String name = LocalizationUtil.getLocalizedString("codesparks.ui.artifactpopup.displayname");
                     ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
                     final ToolWindow toolWindow = toolWindowManager.getToolWindow(name);
                     if (toolWindow != null)

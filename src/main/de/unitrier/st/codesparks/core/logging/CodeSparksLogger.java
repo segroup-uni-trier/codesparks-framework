@@ -25,7 +25,7 @@ public final class CodeSparksLogger
             if (profilingLogToolWindow == null)
             {
                 final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-                final String toolWindowIdName = LocalizationUtil.getLocalizedString("profiling.logger.view.displayname");
+                final String toolWindowIdName = LocalizationUtil.getLocalizedString("codesparks.logger.view.displayname");
                 profilingLogToolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
                         toolWindowIdName
                         , ToolWindowAnchor.RIGHT
@@ -35,7 +35,7 @@ public final class CodeSparksLogger
                         , true
                         , true
                         , null
-                        , IconLoader.getIcon("/icons/profiling_13x12.png")
+                        , IconLoader.getIcon("/icons/codesparks.png") // TODO: CodeSparks Logo
                         , () -> toolWindowIdName
                 ));
                 loggingTextView = new LoggingTextView();

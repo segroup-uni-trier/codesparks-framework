@@ -51,7 +51,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
 
         // Reset thread filter global button
         final JButton resetThreadFilterGlobal = new JButton(
-                LocalizationUtil.getLocalizedString("profiling.ui.button.reset.thread.filter.global"));
+                LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
         resetThreadFilterGlobal.addActionListener(e -> {
             popupPanel.cancelPopup();
             CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(GlobalResetThreadFilter.getInstance());
@@ -61,14 +61,14 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         buttonsPanel.add(resetThreadFilterGlobalButtonWrapper);
 
         // Deselect all button
-        final JButton deselectAll = new JButton(LocalizationUtil.getLocalizedString("profiling.ui.popup.deselectallbutton"));
+        final JButton deselectAll = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.deselectallbutton"));
         deselectAll.addActionListener(e -> threadSelectable.deselectAll());
         JBPanel<BorderLayoutPanel> deselectAllButtonWrapper = new JBPanel<>(new BorderLayout());
         deselectAllButtonWrapper.add(deselectAll, BorderLayout.CENTER);
         buttonsPanel.add(deselectAllButtonWrapper);
 
         // Select all button
-        final JButton selectAll = new JButton(LocalizationUtil.getLocalizedString("profiling.ui.popup.selectallbutton"));
+        final JButton selectAll = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.selectallbutton"));
         selectAll.addActionListener(e -> threadSelectable.selectAll());
         JBPanel<BorderLayoutPanel> selectAllButtonWrapper = new JBPanel<>(new BorderLayout());
         selectAllButtonWrapper.add(selectAll, BorderLayout.CENTER);
@@ -93,7 +93,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
                 foregroundColor = properties.getColor();
             }
             final JButton clusterToggle =
-                    new JButton(LocalizationUtil.getLocalizedString("profiling.ui.overview.button.threads.togglecluster"));
+                    new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.threads.togglecluster"));
             clusterToggle.setForeground(foregroundColor);
             clusterToggle.addActionListener(e ->
                     threadSelectable.toggleCluster(cluster));
@@ -104,7 +104,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
 
         // Apply thread filter button.
         final JButton applyThreadFilter =
-                new JButton(LocalizationUtil.getLocalizedString("profiling.ui.popup.button.apply.thread.filter"));
+                new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.button.apply.thread.filter"));
         applyThreadFilter.addActionListener(e -> {
             popupPanel.cancelPopup();
             final ICodeSparksThreadFilter threadArtifactFilter = new DefaultThreadFilter(threadSelectable);

@@ -11,8 +11,8 @@ public class ThreadVisualizationConfigurableComponentWrapper extends CheckBoxCom
     private ThreadVisualizationConfigurableComponentWrapper()
     {
         super(
-                LocalizationUtil.getLocalizedString("settings.visualization.thread.enable.border.title")
-                , LocalizationUtil.getLocalizedString("settings.visualization.thread.enable")
+                LocalizationUtil.getLocalizedString("codesparks.settings.visualization.thread.enable.border.title")
+                , LocalizationUtil.getLocalizedString("codesparks.settings.visualization.thread.enable")
                 , PropertiesUtil.getBooleanPropertyValueOrDefault(
                         PropertiesFile.USER_INTERFACE_PROPERTIES, PropertyKey.THREAD_VISUALIZATIONS_ENABLED, true)
         );

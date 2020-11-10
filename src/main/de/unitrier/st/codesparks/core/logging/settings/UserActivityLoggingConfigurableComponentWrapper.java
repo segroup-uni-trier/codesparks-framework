@@ -11,8 +11,8 @@ public class UserActivityLoggingConfigurableComponentWrapper extends CheckBoxCom
     private UserActivityLoggingConfigurableComponentWrapper()
     {
         super(
-                LocalizationUtil.getLocalizedString("settings.useractivitylogging.enable.border.title")
-                , LocalizationUtil.getLocalizedString("settings.useractivitylogging.enable")
+                LocalizationUtil.getLocalizedString("codesparks.settings.useractivitylogging.enable.border.title")
+                , LocalizationUtil.getLocalizedString("codesparks.settings.useractivitylogging.enable")
                 , PropertiesUtil.getBooleanPropertyValueOrDefault(
                         PropertiesFile.USER_INTERFACE_PROPERTIES, PropertyKey.USER_ACTIVITY_LOGGING_ENABLED, true)
         );

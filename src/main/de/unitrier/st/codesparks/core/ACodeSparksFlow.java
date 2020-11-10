@@ -290,7 +290,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
     private void displayArtifactOverview()
     {
         final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-        final String toolWindowIdName = LocalizationUtil.getLocalizedString("profiling.ui.artifactoverview.displayname");
+        final String toolWindowIdName = LocalizationUtil.getLocalizedString("codesparks.ui.artifactoverview.displayname");
         UIUtil.invokeLaterIfNeeded(() -> {
             ToolWindow toolWindow = toolWindowManager.getToolWindow(toolWindowIdName);
             if (toolWindow == null)
@@ -338,7 +338,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         editorCoverLayerManager.clearAllEditorCoverLayers();
 
         final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-        final String toolWindowIdName = LocalizationUtil.getLocalizedString("profiling.ui.artifactoverview.displayname");
+        final String toolWindowIdName = LocalizationUtil.getLocalizedString("codesparks.ui.artifactoverview.displayname");
         UIUtil.invokeLaterIfNeeded(() -> {
             ToolWindow toolWindow = toolWindowManager.getToolWindow(toolWindowIdName);
             if (toolWindow != null)

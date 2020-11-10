@@ -25,7 +25,7 @@ final class UserActivityLoggingConfigurable implements Configurable
     @Override
     public String getDisplayName()
     {
-        return LocalizationUtil.getLocalizedString("settings.useractivitylogging.title");
+        return LocalizationUtil.getLocalizedString("codesparks.settings.useractivitylogging.title");
     }
 
     @Nullable

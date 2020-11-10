@@ -37,7 +37,7 @@ public final class CodeSparksSettings implements SearchableConfigurable.Parent
     @Override
     public String getDisplayName()
     {
-        return LocalizationUtil.getLocalizedString("settings.codesparks.title");
+        return LocalizationUtil.getLocalizedString("codesparks.settings.displayname");
     }
 
     @NotNull

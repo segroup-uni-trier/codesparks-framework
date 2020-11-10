@@ -9,6 +9,6 @@ public final class LocalizationUtil
 
     public static String getLocalizedString(String key)
     {
-        return ResourceBundle.getBundle("strings", Locale.getDefault()).getString(key);
+        return ResourceBundle.getBundle("codesparks-strings", Locale.getDefault()).getString(key);
     }
 }

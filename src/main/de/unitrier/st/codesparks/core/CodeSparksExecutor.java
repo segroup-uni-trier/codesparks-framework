@@ -4,14 +4,21 @@ import com.intellij.execution.Executor;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
+/*
+This is a template executor. It does nothing but demonstrating the methods which have to be overridden. It can be used to create an own executor for a
+plugin project. An executor needs to be registered in the plugin.xml as a child node to the 'extensions' node:
+<extensions defaultExtensionNs="com.intellij">
+ <executor implementation="de.unitrier.st.codesparks.core.CodeSparksExecutor"/>
+ ...
+</extensions>
+ */
 public class CodeSparksExecutor extends Executor
 {
-    public static final String EXECUTOR_ID = LocalizationUtil.getLocalizedString("profiling.executor.displayname");
+    public static final String CODESPARKS_EXECUTOR_ID = "CodeSparks-Executor-ID";
 
     CodeSparksExecutor() {}
 
@@ -34,39 +41,39 @@ public class CodeSparksExecutor extends Executor
     {
         if (UIUtil.isUnderDarcula())
         {
-            return IconLoader.getIcon("/icons/profiling_darcula_16x15.png");
+            return IconLoader.getIcon("/icons/codesparks.png");
         }
-        return IconLoader.getIcon("/icons/profiling_16x15.png");
+        return IconLoader.getIcon("/icons/codesparks.png");
     }
 
     @Override
     public Icon getDisabledIcon()
     {
-        return IconLoader.getIcon("/icons/profiling_16x15_disabled.png");
+        return IconLoader.getIcon("/icons/codesparks.png");
     }
 
     @Override
     public String getDescription()
     {
-        return LocalizationUtil.getLocalizedString("profiling.executor.description");
+        return "CodeSparks-Description";
     }
 
     @NotNull
     public String getActionName()
     {
-        return LocalizationUtil.getLocalizedString("profiling.executor.actionname");
+        return "CodeSparks-Action-Name";
     }
 
     @NotNull
     public String getId()
     {
-        return EXECUTOR_ID;
+        return CODESPARKS_EXECUTOR_ID;
     }
 
     @NotNull
     public String getStartActionText()
     {
-        return LocalizationUtil.getLocalizedString("profiling.executor.startactiontext");
+        return "Run";
     }
 
     @NotNull
@@ -74,7 +81,7 @@ public class CodeSparksExecutor extends Executor
     public String getStartActionText(@NotNull String configurationName)
     {
         return super.getStartActionText(configurationName).concat(" ")
-                .concat(LocalizationUtil.getLocalizedString("profiling.executor.startactiontext.concat"));
+                .concat(" with CodeSparks");
     }
 
     @Override
@@ -89,3 +96,4 @@ public class CodeSparksExecutor extends Executor
         return null;
     }
 }
+

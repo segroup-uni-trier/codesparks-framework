@@ -39,13 +39,13 @@ public class ToggleVisualization extends AnAction
         if (visible)
         {
             presentation.setIcon(visualizationNotVisibleIcon);
-            String showDescription = LocalizationUtil.getLocalizedString("profiling.ui.show.visualization.action.description");
+            String showDescription = LocalizationUtil.getLocalizedString("codesparks.ui.show.visualization.action.description");
             presentation.setText(showDescription);
             presentation.setDescription(showDescription);
         } else
         {
             presentation.setIcon(visualizationVisibleIcon);
-            String hideDescription = LocalizationUtil.getLocalizedString("profiling.ui.hide.visualization.action.description");
+            String hideDescription = LocalizationUtil.getLocalizedString("codesparks.ui.hide.visualization.action.description");
             presentation.setText(hideDescription);
             presentation.setDescription(hideDescription);
             FileEditor[] editors = ApplicationManager.getApplication().runReadAction((Computable<FileEditor[]>) () ->
