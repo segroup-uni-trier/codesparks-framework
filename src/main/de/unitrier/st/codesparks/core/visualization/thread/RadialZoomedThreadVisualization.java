@@ -2,7 +2,7 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.visualization.popup.IThreadSelectable;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
@@ -52,8 +52,8 @@ public class RadialZoomedThreadVisualization extends AThreadRadar
 
         int index = indexProvider.getThreadSelectableIndex();
 
-        final Set<CodeSparksThread> filteredCodeSparksThreads = threadSelectables.get(index).getFilteredThreadArtifacts();
-        final Set<CodeSparksThread> selectedCodeSparksThreads = threadSelectables.get(index).getSelectedThreadArtifacts();
+        final Set<ACodeSparksThread> filteredCodeSparksThreads = threadSelectables.get(index).getFilteredThreadArtifacts();
+        final Set<ACodeSparksThread> selectedCodeSparksThreads = threadSelectables.get(index).getSelectedThreadArtifacts();
         final int numberOfSelectedArtifactThreads = selectedCodeSparksThreads.size();
 
         String completeNumberOfThreadsString = numberOfSelectedArtifactThreads + "";

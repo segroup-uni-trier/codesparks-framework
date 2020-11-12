@@ -1,7 +1,7 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadClustering;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class ThreadTypeTree extends ThreadTree
 {
-    public ThreadTypeTree(Map<String, List<CodeSparksThread>> threadTreeContent, CodeSparksThreadClustering clustering)
+    public ThreadTypeTree(Map<String, List<ACodeSparksThread>> threadTreeContent, CodeSparksThreadClustering clustering)
     {
         super(threadTreeContent);
 
@@ -26,7 +26,7 @@ public class ThreadTypeTree extends ThreadTree
 
         for (ThreadTreeLeafNode leafNode : leafNodes)
         {
-            final CodeSparksThread codeSparksThread = leafNode.getThreadArtifact();
+            final ACodeSparksThread codeSparksThread = leafNode.getThreadArtifact();
 
             Optional<CodeSparksThreadCluster> first =
                     clustering.parallelStream().filter(threadArtifacts -> threadArtifacts.contains(codeSparksThread)).findFirst();
@@ -68,11 +68,11 @@ public class ThreadTypeTree extends ThreadTree
     @Override
     public void toggleCluster(CodeSparksThreadCluster cluster)
     {
-        for (CodeSparksThread codeSparksThread : cluster)
+        for (ACodeSparksThread codeSparksThread : cluster)
         {
             for (ThreadTreeLeafNode leafNode : leafNodes)
             {
-                final CodeSparksThread nodeCodeSparksThread = leafNode.getThreadArtifact();
+                final ACodeSparksThread nodeCodeSparksThread = leafNode.getThreadArtifact();
                 if (nodeCodeSparksThread == codeSparksThread)
                 {
                     leafNode.toggleSelected();

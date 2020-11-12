@@ -4,7 +4,6 @@
 package de.unitrier.st.codesparks.core;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -13,7 +12,6 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.RegisterToolWindowTask;
 import com.intellij.openapi.wm.ToolWindow;
@@ -33,19 +31,19 @@ import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.overview.AThreadStateArtifactFilter;
+import de.unitrier.st.codesparks.core.overview.ArtifactOverview;
 import de.unitrier.st.codesparks.core.overview.IArtifactFilter;
 import de.unitrier.st.codesparks.core.overview.ICurrentFileArtifactFilter;
-import de.unitrier.st.codesparks.core.overview.ArtifactOverview;
 import de.unitrier.st.codesparks.core.properties.PropertiesFile;
 import de.unitrier.st.codesparks.core.properties.PropertiesUtil;
 import de.unitrier.st.codesparks.core.properties.PropertyKey;
-import de.unitrier.st.codesparks.core.service.CodeSparksInstanceService;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.ADataVisualizer;
 import de.unitrier.st.codesparks.core.visualization.ArtifactVisualizationLabelFactoryCache;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -82,22 +80,6 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                 ArtifactOverview.getInstance().filterOverView();
             }
         });
-    }
-
-    void checkLogger()
-    {
-
-    }
-
-    private boolean checkCodeSparksInstanceService()
-    {
-        final CodeSparksInstanceService service = ServiceManager.getService(CodeSparksInstanceService.class);
-        if (service == null)
-        {
-            System.err.printf("%s: Service interface %s not implemented. Please check plugin.xml.", getClass(), CodeSparksInstanceService.class);
-            return false;
-        }
-        return true;
     }
 
     public Project getProject()
@@ -171,10 +153,6 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
     @Override
     public final void run()
     {
-        if (!checkCodeSparksInstanceService())
-        {
-            return;
-        }
         try
         {
             clearVisualizations();
@@ -317,6 +295,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
             ToolWindow toolWindow = toolWindowManager.getToolWindow(toolWindowIdName);
             if (toolWindow == null)
             {
+                ImageIcon defaultImageIcon = CoreUtil.getDefaultImageIcon();
                 toolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
                         toolWindowIdName
                         , ToolWindowAnchor.RIGHT
@@ -326,7 +305,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                         , true
                         , true
                         , null
-                        , IconLoader.getIcon("/icons/codesparks.png") // TODO: CodeSparks Icon
+                        , defaultImageIcon
                         , () -> toolWindowIdName
                 ));
             }

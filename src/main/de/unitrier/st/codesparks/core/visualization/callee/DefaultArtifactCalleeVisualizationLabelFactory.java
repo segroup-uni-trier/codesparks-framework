@@ -7,7 +7,7 @@ import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
@@ -94,8 +94,8 @@ public class DefaultArtifactCalleeVisualizationLabelFactory extends AArtifactCal
         {
 
             double calleeRuntime = 0D;
-            Collection<CodeSparksThread> codeSparksThreads = callee.getThreadArtifacts();
-            for (CodeSparksThread codeSparksThread : codeSparksThreads)
+            Collection<ACodeSparksThread> codeSparksThreads = callee.getThreadArtifacts();
+            for (ACodeSparksThread codeSparksThread : codeSparksThreads)
             {
                 if (!codeSparksThread.isFiltered())
                 {

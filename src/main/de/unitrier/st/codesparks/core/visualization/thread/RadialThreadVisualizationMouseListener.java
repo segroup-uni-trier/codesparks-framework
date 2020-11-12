@@ -48,7 +48,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
         final JBTabbedPane tabbedPane = new JBTabbedPane();
 
         CodeSparksThreadClustering sortedDefaultCodeSparksThreadClustering = artifact.getSortedDefaultThreadArtifactClustering();
-        Map<String, List<CodeSparksThread>> map = new HashMap<>();
+        Map<String, List<ACodeSparksThread>> map = new HashMap<>();
         int clusterId = 1;
         for (CodeSparksThreadCluster threadArtifacts : sortedDefaultCodeSparksThreadClustering)
         {
@@ -61,7 +61,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
 
         // -------------
 
-        final Map<String, List<CodeSparksThread>> threadTypeLists = artifact.getThreadTypeLists();
+        final Map<String, List<ACodeSparksThread>> threadTypeLists = artifact.getThreadTypeLists();
         AThreadSelectable threadTypesTree = new ThreadTypeTree(threadTypeLists,
                 sortedDefaultCodeSparksThreadClustering);
         threadSelectables.add(threadTypesTree);

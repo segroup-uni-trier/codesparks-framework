@@ -4,7 +4,7 @@ import com.intellij.ui.ExpandedItemListCellRendererWrapper;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBList;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
 import javax.swing.*;
@@ -27,7 +27,7 @@ public class ThreadList extends AThreadSelectable
             {
                 Point point = event.getPoint();
                 int index = locationToIndex(point);
-                CodeSparksThread codeSparksThreadAt = ((ThreadListModel) getModel()).getThreadArtifactAt(index);
+                ACodeSparksThread codeSparksThreadAt = ((ThreadListModel) getModel()).getThreadArtifactAt(index);
                 if (codeSparksThreadAt == null)
                 {
                     return "";
@@ -111,16 +111,16 @@ public class ThreadList extends AThreadSelectable
     }
 
     @Override
-    protected Set<CodeSparksThread> getThreadArtifacts(final boolean isSelected)
+    protected Set<ACodeSparksThread> getThreadArtifacts(final boolean isSelected)
     {
         boolean[] selected = getThreadListCellRenderer().getSelected();
-        final Set<CodeSparksThread> codeSparksThreads = new HashSet<>();
+        final Set<ACodeSparksThread> codeSparksThreads = new HashSet<>();
         ThreadListModel model = (ThreadListModel) list.getModel();
         for (int i = 0; i < selected.length; i++)
         {
             if (selected[i] == isSelected)
             {
-                CodeSparksThread codeSparksThreadAt = model.getThreadArtifactAt(i);
+                ACodeSparksThread codeSparksThreadAt = model.getThreadArtifactAt(i);
                 if (codeSparksThreadAt != null)
                 {
                     codeSparksThreads.add(codeSparksThreadAt);

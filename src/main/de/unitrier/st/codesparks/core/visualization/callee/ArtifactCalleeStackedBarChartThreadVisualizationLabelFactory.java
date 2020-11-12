@@ -46,19 +46,19 @@ public class ArtifactCalleeStackedBarChartThreadVisualizationLabelFactory extend
 
         SortedMap<CodeSparksThreadCluster, Set<String>> artifactClusterSets =
                 new TreeMap<>(CodeSparksThreadClusterComparator.getInstance());
-        SortedMap<CodeSparksThreadCluster, Set<CodeSparksThread>> neighborClusterSets =
+        SortedMap<CodeSparksThreadCluster, Set<ACodeSparksThread>> neighborClusterSets =
                 new TreeMap<>(CodeSparksThreadClusterComparator.getInstance());
 
         for (CodeSparksThreadCluster threadCluster : threadClusters)
         {
             artifactClusterSets.put(threadCluster,
-                    new HashSet<>(threadCluster.stream().map(CodeSparksThread::getIdentifier).collect(Collectors.toList())));
+                    new HashSet<>(threadCluster.stream().map(ACodeSparksThread::getIdentifier).collect(Collectors.toList())));
             neighborClusterSets.put(threadCluster, new HashSet<>());
         }
 
         for (ANeighborArtifact neighborArtifact : threadFilteredNeighborArtifactsOfLine)
         {
-            for (CodeSparksThread neighborCodeSparksThread :
+            for (ACodeSparksThread neighborCodeSparksThread :
                     neighborArtifact.getThreadArtifacts()
                             .stream()
                             .filter(threadArtifact -> !threadArtifact.isFiltered())
@@ -100,7 +100,7 @@ public class ArtifactCalleeStackedBarChartThreadVisualizationLabelFactory extend
 
         int clusterCnt = 0;
         VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-        for (Map.Entry<CodeSparksThreadCluster, Set<CodeSparksThread>> threadArtifactClusterSetEntry : neighborClusterSets.entrySet())
+        for (Map.Entry<CodeSparksThreadCluster, Set<ACodeSparksThread>> threadArtifactClusterSetEntry : neighborClusterSets.entrySet())
         {
             CodeSparksThreadCluster cluster = threadArtifactClusterSetEntry.getKey();
             VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(cluster);
@@ -147,17 +147,17 @@ public class ArtifactCalleeStackedBarChartThreadVisualizationLabelFactory extend
         return jLabel;
     }
 
-    private int totalThreads(Map<CodeSparksThreadCluster, Set<CodeSparksThread>> neighborClusterSets)
+    private int totalThreads(Map<CodeSparksThreadCluster, Set<ACodeSparksThread>> neighborClusterSets)
     {
         return neighborClusterSets.values().stream().mapToInt(Set::size).sum();
     }
 
-    private double summedThreadMetricValues(Collection<CodeSparksThread> codeSparksThreads)
+    private double summedThreadMetricValues(Collection<ACodeSparksThread> codeSparksThreads)
     {
         return codeSparksThreads
                 .stream()
                 .filter(threadArtifact -> !threadArtifact.isFiltered())
-                .map(CodeSparksThread::getMetricValue).reduce(0d, Double::sum);
+                .map(ACodeSparksThread::getMetricValue).reduce(0d, Double::sum);
     }
 
     private double summedThreadMetricValuesOfNeighbors(Collection<ANeighborArtifact> neighborProfilingArtifacts)

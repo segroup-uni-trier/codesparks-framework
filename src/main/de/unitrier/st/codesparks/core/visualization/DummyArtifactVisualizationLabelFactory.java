@@ -3,11 +3,10 @@
  */
 package de.unitrier.st.codesparks.core.visualization;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
+import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.service.CodeSparksInstanceService;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -27,9 +26,7 @@ public class DummyArtifactVisualizationLabelFactory extends AArtifactVisualizati
     @Override
     public JLabel createArtifactLabel(@NotNull AArtifact artifact)
     {
-        //ImageIcon imageIcon = new ImageIcon(getClass().getResource("/icons/codesparks.png")); // TODO: CodeSparks icon
-        final CodeSparksInstanceService service = ServiceManager.getService(CodeSparksInstanceService.class);
-        final ImageIcon imageIcon = service.getDefaultImageIcon();
+        final ImageIcon imageIcon = CoreUtil.getDefaultImageIcon();
         GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage image = UIUtil.createImage(defaultConfiguration, imageIcon.getIconWidth(), imageIcon.getIconHeight(),

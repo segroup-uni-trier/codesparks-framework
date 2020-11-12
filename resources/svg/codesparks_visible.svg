@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid" width="40" height="40" viewBox="0 0 40 40">
+  
+    <!--rect x="0" y="0" height="40" width="40" style="fill:none;stroke:dimgrey"/-->  
+
+    <defs>
+        <path id="upper-eye" d="M2,18 q 15,-18 30,0" style="fill:none;stroke:dimgrey;stroke-width:2"/>
+        <path id="lower-eye" d="M2,20 q 15,15 30,0" style="fill:none;stroke:dimgrey;stroke-width:2"/>
+    </defs>
+    
+    <use xlink:href="#upper-eye"/>
+    <use xlink:href="#lower-eye"/>
+    
+    <circle r="6.5" fill="dimgrey" transform="translate(17,18.5)"/>
+    <circle r="2.5" fill="white" transform="translate(19,17)"/>
+    
+    <!--rect x="25" y="19" width="14" height="10" fill="white"/-->
+    
+    <!--text x="27" y="31" fill="dimgrey"
+    style="font:bold 20px monospace">
+    m
+    </text-->
+    
+</svg>

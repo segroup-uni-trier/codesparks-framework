@@ -55,7 +55,7 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
     }
 
     @Override
-    public CodeSparksThreadClustering clusterCodeSparksThreads(Collection<CodeSparksThread> codeSparksThreads)
+    public CodeSparksThreadClustering clusterCodeSparksThreads(Collection<ACodeSparksThread> codeSparksThreads)
     {
         final int k = 3;
         final int maxIterations = 100;
@@ -248,10 +248,10 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
         }
     }
 
-    private List<Point> createPoints(Collection<CodeSparksThread> codeSparksThreads)
+    private List<Point> createPoints(Collection<ACodeSparksThread> codeSparksThreads)
     {
         ArrayList<Point> points = new ArrayList<>();
-        for (CodeSparksThread codeSparksThread : codeSparksThreads)
+        for (ACodeSparksThread codeSparksThread : codeSparksThreads)
         {
             Point point = new Point(codeSparksThread);
             points.add(point);
@@ -308,9 +308,9 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
         private final double x;
         private final double y;
         private int clusterIndex;
-        private final CodeSparksThread codeSparksThread;
+        private final ACodeSparksThread codeSparksThread;
 
-        Point(CodeSparksThread codeSparksThread)
+        Point(ACodeSparksThread codeSparksThread)
         {
             this.x = 0;//getCharSum(threadArtifact.getCallSite());
             this.y = ((int) (100 * codeSparksThread.getMetricValue())) / 100D;
@@ -360,7 +360,7 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
             return Objects.hash(codeSparksThread);
         }
 
-        CodeSparksThread getThreadArtifact()
+        ACodeSparksThread getThreadArtifact()
         {
             return codeSparksThread;
         }

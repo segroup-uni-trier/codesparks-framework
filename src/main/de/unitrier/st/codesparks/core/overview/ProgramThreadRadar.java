@@ -1,7 +1,7 @@
 package de.unitrier.st.codesparks.core.overview;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 import de.unitrier.st.codesparks.core.visualization.thread.*;
 
@@ -89,8 +89,8 @@ public class ProgramThreadRadar extends AThreadRadar
 //            double completeFilteredRuntimeDurationOfCluster =
 //                    clusterArtifacts.stream().filter(c -> !c.isFiltered()).mapToDouble(ThreadArtifact::getMetricValue).sum();
             double completeFilteredRuntimeDurationOfCluster = (usingGrayColors) ?
-                    clusterArtifacts.stream().mapToDouble(CodeSparksThread::getMetricValue).sum() :
-                    clusterArtifacts.stream().filter(c -> !c.isFiltered()).mapToDouble(CodeSparksThread::getMetricValue).sum();
+                    clusterArtifacts.stream().mapToDouble(ACodeSparksThread::getMetricValue).sum() :
+                    clusterArtifacts.stream().filter(c -> !c.isFiltered()).mapToDouble(ACodeSparksThread::getMetricValue).sum();
 
             properties.setRuntimeRatio(filteredRuntimeRatio);
             properties.setThreadRatio(filteredThreadRatio);

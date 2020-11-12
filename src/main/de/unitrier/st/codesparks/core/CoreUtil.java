@@ -1,5 +1,6 @@
 package de.unitrier.st.codesparks.core;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -8,8 +9,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.service.ACodeSparksInstanceService;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -114,6 +117,13 @@ public final class CoreUtil
         Optional<Project> first = Arrays.stream(ProjectManager.getInstance().getOpenProjects()).filter(Project::isOpen)
                 .findFirst();
         return first.orElse(null);
+    }
+
+    public static ImageIcon getDefaultImageIcon()
+    {
+        ACodeSparksInstanceService service = ServiceManager.getService(ACodeSparksInstanceService.class);
+        assert service != null;
+        return service.getDefaultPluginImageIcon();
     }
 
     public static EditorEx getSelectedFileEditor(final Project project)

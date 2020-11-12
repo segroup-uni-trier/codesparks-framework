@@ -2,7 +2,7 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.components.JBCheckBox;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadComparator;
 
@@ -14,7 +14,7 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
 {
     private final int totalSize;
     private final String[] threadStrings;
-    private final List<CodeSparksThread> codeSparksThreads;
+    private final List<ACodeSparksThread> codeSparksThreads;
 
     public ThreadListModel(AArtifact artifact)
     {
@@ -28,7 +28,7 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
         for (CodeSparksThreadCluster codeSparksThreadCluster : codeSparksThreadClusters)
         {
             codeSparksThreadCluster.sort(new CodeSparksThreadComparator());
-            for (CodeSparksThread codeSparksThread : codeSparksThreadCluster)
+            for (ACodeSparksThread codeSparksThread : codeSparksThreadCluster)
             {
                 String threadArtifactToString = codeSparksThread.getDisplayString();
 
@@ -54,7 +54,7 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
         return jbCheckBox;
     }
 
-    public CodeSparksThread getThreadArtifactAt(int index)
+    public ACodeSparksThread getThreadArtifactAt(int index)
     {
         if (index < 0 || index > codeSparksThreads.size() - 1)
         {

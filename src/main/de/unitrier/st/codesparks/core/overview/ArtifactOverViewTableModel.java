@@ -3,11 +3,11 @@
  */
 package de.unitrier.st.codesparks.core.overview;
 
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.DataUtil;
-import de.unitrier.st.codesparks.core.data.CodeSparksThread;
 import de.unitrier.st.codesparks.core.ACodeSparksFlow;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.DataUtil;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.ArtifactVisualizationLabelFactoryCache;
 import de.unitrier.st.codesparks.core.visualization.DummyArtifactVisualizationLabelFactory;
@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +35,7 @@ public class ArtifactOverViewTableModel implements TableModel
                         {
                             if (artifact.hasThreads())
                             {
-                                return DataUtil.getThreadMetricValueRatio(artifact, CodeSparksThread::getMetricValue) > 0;
+                                return DataUtil.getThreadMetricValueRatio(artifact, ACodeSparksThread::getMetricValue) > 0;
                             } else
                             {
                                 return true;//artifact.getMetricValue() > 0;

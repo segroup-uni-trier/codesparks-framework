@@ -7,7 +7,7 @@ public final class DataUtil
     private DataUtil() {}
 
     public static double getThreadMetricValueRatio(ABaseArtifact artifact,
-                                                   ToDoubleFunction<CodeSparksThread> threadArtifactToDoubleFunc)
+                                                   ToDoubleFunction<ACodeSparksThread> threadArtifactToDoubleFunc)
     {
         return artifact.getThreadArtifacts()
                 .stream()
@@ -23,7 +23,7 @@ public final class DataUtil
         if (artifact.hasThreads())
         {
 //            final double threadMetricValueRatio = DataUtil.getThreadMetricValueRatio(artifact, CodeSparksThread::getMetricValue);
-            ratio = DataUtil.getThreadMetricValueRatio(artifact, CodeSparksThread::getMetricValue);
+            ratio = DataUtil.getThreadMetricValueRatio(artifact, ACodeSparksThread::getMetricValue);
         }
 //        final double threadFilteredMetricValue = metricValue * threadMetricValueRatio;
         final double threadFilteredMetricValue = metricValue * ratio;
@@ -34,7 +34,7 @@ public final class DataUtil
     public static double getThreadFilteredMetricValueSelf(ABaseArtifact artifact)
     {
         final double metricValue = artifact.getMetricValue();
-        final double threadMetricValueRatio = DataUtil.getThreadMetricValueRatio(artifact, CodeSparksThread::getMetricValueSelf);
+        final double threadMetricValueRatio = DataUtil.getThreadMetricValueRatio(artifact, ACodeSparksThread::getMetricValueSelf);
         final double threadFilteredMetricValueSelf = metricValue * threadMetricValueRatio;
         return threadFilteredMetricValueSelf;
     }

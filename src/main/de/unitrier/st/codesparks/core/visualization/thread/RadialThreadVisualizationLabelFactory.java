@@ -4,7 +4,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.CoreUtil;
@@ -52,7 +52,7 @@ public class RadialThreadVisualizationLabelFactory extends AArtifactVisualizatio
     @Override
     public JLabel createArtifactLabel(@NotNull AArtifact artifact)
     {
-        Collection<CodeSparksThread> codeSparksThreads = artifact.getThreadArtifacts();
+        Collection<ACodeSparksThread> codeSparksThreads = artifact.getThreadArtifacts();
 
         if (codeSparksThreads.isEmpty())
         {

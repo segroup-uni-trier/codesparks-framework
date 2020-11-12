@@ -1,22 +1,22 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.CoreUtil;
 
 import java.util.List;
 
 public class ThreadTreeInnerNode extends ColoredSelectableTreeNode
 {
-    private final List<CodeSparksThread> codeSparksThreads;
+    private final List<ACodeSparksThread> codeSparksThreads;
     private final String name;
 
-    public ThreadTreeInnerNode(String name, List<CodeSparksThread> codeSparksThreads)
+    public ThreadTreeInnerNode(String name, List<ACodeSparksThread> codeSparksThreads)
     {
         this(name, codeSparksThreads, null);
     }
 
-    public ThreadTreeInnerNode(String name, List<CodeSparksThread> codeSparksThreads, JBColor color)
+    public ThreadTreeInnerNode(String name, List<ACodeSparksThread> codeSparksThreads, JBColor color)
     {
         super(color);
         this.name = name;
@@ -58,7 +58,7 @@ public class ThreadTreeInnerNode extends ColoredSelectableTreeNode
         return "(" + selectedCount + "/" + childCount + ")";
     }
 
-    public List<CodeSparksThread> getThreadArtifacts()
+    public List<ACodeSparksThread> getThreadArtifacts()
     {
         return codeSparksThreads;
     }

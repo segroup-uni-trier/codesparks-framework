@@ -2,7 +2,7 @@ package de.unitrier.st.codesparks.core.data;
 
 import java.util.ArrayList;
 
-public class CodeSparksThreadCluster extends ArrayList<CodeSparksThread>
+public class CodeSparksThreadCluster extends ArrayList<ACodeSparksThread>
 {
     private static int clusterId = 0;
 
@@ -27,7 +27,7 @@ public class CodeSparksThreadCluster extends ArrayList<CodeSparksThread>
     public String toString()
     {
         StringBuilder strb = new StringBuilder();
-        for (CodeSparksThread codeSparksThread : this)
+        for (ACodeSparksThread codeSparksThread : this)
         {
             strb.append(codeSparksThread.getIdentifier()).append(",");
         }

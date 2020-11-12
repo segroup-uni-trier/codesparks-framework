@@ -25,8 +25,8 @@ public class ToggleVisualization extends AnAction
     public ToggleVisualization()
     {
         visible = true;
-        visualizationVisibleIcon = IconLoader.getIcon("/icons/visible_20x12.png");
-        visualizationNotVisibleIcon = IconLoader.getIcon("/icons/not_visible_20x15.png");
+        visualizationVisibleIcon = IconLoader.getIcon("/icons/codesparks_visible_20x13.png");
+        visualizationNotVisibleIcon = IconLoader.getIcon("/icons/codesparks_not_visible_20x14.png");
     }
 
     @Override

@@ -2,7 +2,7 @@ package de.unitrier.st.codesparks.core.data;
 
 import de.unitrier.st.codesparks.core.CoreUtil;
 
-public class DefaultCodeSparksThread extends CodeSparksThread
+public class DefaultCodeSparksThread extends ACodeSparksThread
 {
     public DefaultCodeSparksThread(String identifier)
     {

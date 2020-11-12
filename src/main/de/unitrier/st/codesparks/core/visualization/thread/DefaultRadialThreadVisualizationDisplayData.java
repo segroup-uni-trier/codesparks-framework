@@ -1,19 +1,19 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 
 import java.util.Set;
 
 public class DefaultRadialThreadVisualizationDisplayData implements IRadialThreadVisualizationDisplayData
 {
     @Override
-    public CodeSparksThreadDisplayData getSelectedThreadData(AArtifact artifact, Set<CodeSparksThread> selectedCodeSparksThreads)
+    public CodeSparksThreadDisplayData getSelectedThreadData(AArtifact artifact, Set<ACodeSparksThread> selectedCodeSparksThreads)
     {
         final CodeSparksThreadDisplayData codeSparksThreadDisplayData = new CodeSparksThreadDisplayData();
 
         double sum = 0;
-        for (CodeSparksThread selectedCodeSparksThread : selectedCodeSparksThreads)
+        for (ACodeSparksThread selectedCodeSparksThread : selectedCodeSparksThreads)
         {
             sum += selectedCodeSparksThread.getMetricValue();
         }
@@ -28,12 +28,12 @@ public class DefaultRadialThreadVisualizationDisplayData implements IRadialThrea
     }
 
     @Override
-    public CodeSparksThreadDisplayData getHoveredThreadData(AArtifact artifact, Set<CodeSparksThread> hoveredCodeSparksThreads)
+    public CodeSparksThreadDisplayData getHoveredThreadData(AArtifact artifact, Set<ACodeSparksThread> hoveredCodeSparksThreads)
     {
         final CodeSparksThreadDisplayData codeSparksThreadDisplayData = new CodeSparksThreadDisplayData();
 
         double sum = 0;
-        for (CodeSparksThread selectedCodeSparksThread : hoveredCodeSparksThreads)
+        for (ACodeSparksThread selectedCodeSparksThread : hoveredCodeSparksThreads)
         {
             sum += selectedCodeSparksThread.getMetricValue();
         }

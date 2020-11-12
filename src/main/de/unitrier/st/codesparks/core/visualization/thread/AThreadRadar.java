@@ -4,7 +4,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
@@ -215,7 +215,7 @@ public abstract class AThreadRadar extends JPanel
     static double calculateFilteredMedianRuntimeRatio(CodeSparksThreadCluster cluster)
     {
         int unfilteredThreads = 0;
-        for (CodeSparksThread codeSparksThread : cluster)
+        for (ACodeSparksThread codeSparksThread : cluster)
         {
             if (codeSparksThread.isFiltered())
                 continue;
@@ -242,10 +242,10 @@ public abstract class AThreadRadar extends JPanel
         return median;
     }
 
-    static double getFilteredMetricSumOfCluster(CodeSparksThreadCluster cluster, Set<CodeSparksThread> filteredThreads)
+    static double getFilteredMetricSumOfCluster(CodeSparksThreadCluster cluster, Set<ACodeSparksThread> filteredThreads)
     {
         double metric = 0;
-        for (CodeSparksThread codeSparksThread : cluster)
+        for (ACodeSparksThread codeSparksThread : cluster)
         {
             if (filteredThreads.contains(codeSparksThread))
                 continue;

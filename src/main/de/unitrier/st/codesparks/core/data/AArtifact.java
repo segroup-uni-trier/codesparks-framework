@@ -19,7 +19,7 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
         successors = new HashMap<>();
     }
 
-    protected AArtifact(String name, String identifier, Class<? extends CodeSparksThread> threadArtifactClass)
+    protected AArtifact(String name, String identifier, Class<? extends ACodeSparksThread> threadArtifactClass)
     {
         super(name, identifier, threadArtifactClass);
         predecessors = new HashMap<>();

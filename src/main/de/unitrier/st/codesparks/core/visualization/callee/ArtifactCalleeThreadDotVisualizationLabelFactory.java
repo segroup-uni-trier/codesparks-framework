@@ -44,19 +44,19 @@ public class ArtifactCalleeThreadDotVisualizationLabelFactory extends AArtifactC
 
         SortedMap<CodeSparksThreadCluster, Set<String>> artifactClusterSets =
                 new TreeMap<>(CodeSparksThreadClusterComparator.getInstance());
-        SortedMap<CodeSparksThreadCluster, Set<CodeSparksThread>> neighborClusterSets =
+        SortedMap<CodeSparksThreadCluster, Set<ACodeSparksThread>> neighborClusterSets =
                 new TreeMap<>(CodeSparksThreadClusterComparator.getInstance());
 
         for (CodeSparksThreadCluster threadCluster : threadClusters)
         {
             artifactClusterSets.put(threadCluster,
-                    new HashSet<>(threadCluster.stream().map(CodeSparksThread::getIdentifier).collect(Collectors.toList())));
+                    new HashSet<>(threadCluster.stream().map(ACodeSparksThread::getIdentifier).collect(Collectors.toList())));
             neighborClusterSets.put(threadCluster, new HashSet<>());
         }
 
         for (ANeighborArtifact neighborArtifact : threadFilteredNeighborArtifactsOfLine)
         {
-            for (CodeSparksThread neighborCodeSparksThread :
+            for (ACodeSparksThread neighborCodeSparksThread :
                     neighborArtifact.getThreadArtifacts()
                             .stream()
                             .filter(threadArtifact -> !threadArtifact.isFiltered())
@@ -109,7 +109,7 @@ public class ArtifactCalleeThreadDotVisualizationLabelFactory extends AArtifactC
         VisualizationUtil.drawRectangle(graphics, threadVisualisationArea);
         int clusterCnt = 0;
         VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-        for (Map.Entry<CodeSparksThreadCluster, Set<CodeSparksThread>> threadArtifactClusterSetEntry : neighborClusterSets.entrySet())
+        for (Map.Entry<CodeSparksThreadCluster, Set<ACodeSparksThread>> threadArtifactClusterSetEntry : neighborClusterSets.entrySet())
         {
             CodeSparksThreadCluster cluster = threadArtifactClusterSetEntry.getKey();
             VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(cluster);

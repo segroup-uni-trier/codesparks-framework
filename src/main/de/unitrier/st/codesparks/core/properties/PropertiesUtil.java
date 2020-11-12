@@ -4,7 +4,7 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.PluginId;
-import de.unitrier.st.codesparks.core.service.CodeSparksInstanceService;
+import de.unitrier.st.codesparks.core.service.ACodeSparksInstanceService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,7 +20,10 @@ public final class PropertiesUtil
 
     static
     {
-        final CodeSparksInstanceService service = ServiceManager.getService(CodeSparksInstanceService.class);
+        final ACodeSparksInstanceService service = ServiceManager.getService(ACodeSparksInstanceService.class);
+        assert service != null : "There is no implementation of the interface " + ACodeSparksInstanceService.class + "! Please create an implementation and " +
+                "register that implementation as 'applicationService' in the plugin-xml. See https://jetbrains" +
+                ".org/intellij/sdk/docs/basics/plugin_structure/plugin_services.html";
         final String pluginIdString = service.getPluginIdString();
         PluginId id = PluginId.getId(pluginIdString);
         IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(id);

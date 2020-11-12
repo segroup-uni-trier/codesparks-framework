@@ -1,7 +1,7 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
 
     private void calculateMaxRuntimeRatio(CodeSparksThreadCluster cluster) {
         double max = 0;
-        for (CodeSparksThread aCluster : cluster) {
+        for (ACodeSparksThread aCluster : cluster) {
             double metricValue = aCluster.getMetricValue();
             if (metricValue > max) {
                 max = metricValue;
@@ -47,7 +47,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
     private int calculateNumberOfFilteredThreads(CodeSparksThreadCluster cluster, boolean ignoreFilter) {
 
         int numberOfFilteredThreads = 0;
-        for (CodeSparksThread codeSparksThread : cluster) {
+        for (ACodeSparksThread codeSparksThread : cluster) {
             if (!codeSparksThread.isFiltered() || ignoreFilter) {
                 numberOfFilteredThreads++;
             }
@@ -62,7 +62,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
 
     double calculateFilteredRuntimeRatio(CodeSparksThreadCluster cluster, boolean ignoreFilter) {
         double max = 0;
-        for (CodeSparksThread aCluster : cluster) {
+        for (ACodeSparksThread aCluster : cluster) {
             if (aCluster.isFiltered() && !ignoreFilter)
                 continue;
 
@@ -77,7 +77,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
     double calculateAvgFilteredRuntimeRatio(CodeSparksThreadCluster cluster, boolean ignoreFilter) {
         double sum = 0;
         int threads = 0;
-        for (CodeSparksThread aCluster : cluster) {
+        for (ACodeSparksThread aCluster : cluster) {
             if (aCluster.isFiltered() && !ignoreFilter)
                 continue;
 
@@ -90,7 +90,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
 
     double calculateFilteredSumRuntimeRatio(CodeSparksThreadCluster cluster, boolean ignoreFilter) {
         double sum = 0;
-        for (CodeSparksThread aCluster : cluster) {
+        for (ACodeSparksThread aCluster : cluster) {
             if (aCluster.isFiltered() && !ignoreFilter)
                 continue;
 
@@ -105,7 +105,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
     @SuppressWarnings("unused")
     private double calculateFilteredMedianRuntimeRatio(CodeSparksThreadCluster cluster, boolean ignoreFilter) {
         int unfilteredThreads = 0;
-        for (CodeSparksThread codeSparksThread : cluster) {
+        for (ACodeSparksThread codeSparksThread : cluster) {
             if (codeSparksThread.isFiltered() && !ignoreFilter)
                 continue;
 

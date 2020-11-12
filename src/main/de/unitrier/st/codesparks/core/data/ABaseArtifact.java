@@ -11,15 +11,15 @@ import java.util.stream.Collectors;
 
 public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFilterable
 {
-    private final Map<String, CodeSparksThread> threadMap;
-    private final Class<? extends CodeSparksThread> threadClass;
+    private final Map<String, ACodeSparksThread> threadMap;
+    private final Class<? extends ACodeSparksThread> threadClass;
 
     ABaseArtifact(String name, String identifier)
     {
         this(name, identifier, DefaultCodeSparksThread.class);
     }
 
-    ABaseArtifact(String name, String identifier, Class<? extends CodeSparksThread> threadClass)
+    ABaseArtifact(String name, String identifier, Class<? extends ACodeSparksThread> threadClass)
     {
         this.name = name == null ? "" : name;
         this.identifier = identifier == null ? "" : identifier;
@@ -175,7 +175,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         return !getThreadArtifacts().isEmpty();
     }
 
-    public Collection<CodeSparksThread> getThreadArtifacts()
+    public Collection<ACodeSparksThread> getThreadArtifacts()
     {
         synchronized (threadMap)
         {
@@ -183,9 +183,9 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         }
     }
 
-    public abstract Map<String, List<CodeSparksThread>> getThreadTypeLists();
+    public abstract Map<String, List<ACodeSparksThread>> getThreadTypeLists();
 
-    public CodeSparksThread getThreadArtifact(String identifier)
+    public ACodeSparksThread getThreadArtifact(String identifier)
     {
         synchronized (threadMap)
         {
@@ -194,7 +194,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
     }
 
     @Deprecated
-    public void addThreadArtifact(CodeSparksThread codeSparksThread)
+    public void addThreadArtifact(ACodeSparksThread codeSparksThread)
     {
         synchronized (threadMap)
         {
@@ -206,12 +206,12 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
     {
         synchronized (threadMap)
         {
-            CodeSparksThread codeSparksThread = threadMap.get(identifier);
+            ACodeSparksThread codeSparksThread = threadMap.get(identifier);
             if (codeSparksThread == null)
             {
                 try
                 {
-                    final Constructor<? extends CodeSparksThread> constructor = threadClass.getConstructor(String.class,
+                    final Constructor<? extends ACodeSparksThread> constructor = threadClass.getConstructor(String.class,
                             double.class);
                     codeSparksThread = constructor.newInstance(identifier, toIncrease);
                     threadMap.put(identifier, codeSparksThread);
@@ -235,12 +235,12 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
     {
         synchronized (threadMap)
         {
-            CodeSparksThread codeSparksThread = threadMap.get(identifier);
+            ACodeSparksThread codeSparksThread = threadMap.get(identifier);
             if (codeSparksThread == null)
             {
                 try
                 {
-                    final Constructor<? extends CodeSparksThread> constructor = threadClass.getConstructor(String.class,
+                    final Constructor<? extends ACodeSparksThread> constructor = threadClass.getConstructor(String.class,
                             double.class);
                     codeSparksThread = constructor.newInstance(identifier, toIncrease);
                     threadMap.put(identifier, codeSparksThread);
@@ -290,7 +290,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
 
     public Set<String> getCodeSparksThreadIdentifiers()
     {
-        return getThreadArtifacts().stream().map(CodeSparksThread::getIdentifier).collect(Collectors.toSet());
+        return getThreadArtifacts().stream().map(ACodeSparksThread::getIdentifier).collect(Collectors.toSet());
     }
 
     /*

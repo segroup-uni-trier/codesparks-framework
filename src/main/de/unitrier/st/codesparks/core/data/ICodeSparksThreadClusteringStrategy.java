@@ -4,5 +4,5 @@ import java.util.Collection;
 
 interface ICodeSparksThreadClusteringStrategy
 {
-    CodeSparksThreadClustering clusterCodeSparksThreads(Collection<CodeSparksThread> codeSparksThreads);
+    CodeSparksThreadClustering clusterCodeSparksThreads(Collection<ACodeSparksThread> codeSparksThreads);
 }

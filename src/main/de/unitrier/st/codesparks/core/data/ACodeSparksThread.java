@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.data;
 
-public abstract class CodeSparksThread implements IDisplayable
+public abstract class ACodeSparksThread implements IDisplayable
 {
     private final String identifier;
     private double metricValue;
@@ -8,13 +8,13 @@ public abstract class CodeSparksThread implements IDisplayable
     private String callSite;
     private boolean filtered;
 
-    public CodeSparksThread(String identifier)
+    public ACodeSparksThread(String identifier)
     {
         this.identifier = identifier;
         filtered = false;
     }
 
-    public CodeSparksThread(String identifier, double metricValue)
+    public ACodeSparksThread(String identifier, double metricValue)
     {
         this.identifier = identifier;
         this.metricValue = metricValue;

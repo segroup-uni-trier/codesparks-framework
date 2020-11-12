@@ -4,7 +4,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.CodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
@@ -65,7 +65,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
             graphics.setColor(color);
             //int size = cluster.size();
-            for (CodeSparksThread codeSparksThread : cluster)
+            for (ACodeSparksThread codeSparksThread : cluster)
             {
                 //boolean filtered = threadArtifact.isFiltered();
                 if (codeSparksThread.isFiltered())

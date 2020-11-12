@@ -1,7 +1,6 @@
 package de.unitrier.st.codesparks.core.logging;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.RegisterToolWindowTask;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -9,7 +8,10 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
+import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
+
+import javax.swing.*;
 
 public final class CodeSparksLogger
 {
@@ -26,6 +28,7 @@ public final class CodeSparksLogger
             {
                 final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
                 final String toolWindowIdName = LocalizationUtil.getLocalizedString("codesparks.logger.view.displayname");
+                ImageIcon defaultImageIcon = CoreUtil.getDefaultImageIcon();
                 profilingLogToolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
                         toolWindowIdName
                         , ToolWindowAnchor.RIGHT
@@ -35,7 +38,7 @@ public final class CodeSparksLogger
                         , true
                         , true
                         , null
-                        , IconLoader.getIcon("/icons/codesparks.png") // TODO: CodeSparks Logo
+                        , defaultImageIcon//IconLoader.getIcon("/icons/codesparks.png") // TODO: CodeSparks Logo
                         , () -> toolWindowIdName
                 ));
                 loggingTextView = new LoggingTextView();
