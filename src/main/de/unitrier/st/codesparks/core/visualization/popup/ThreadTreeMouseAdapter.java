@@ -1,7 +1,7 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.openapi.application.ApplicationManager;
-import de.unitrier.st.codesparks.core.visualization.thread.ARadialThreadVisualization;
+import de.unitrier.st.codesparks.core.visualization.thread.AThreadRadar;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
@@ -10,9 +10,9 @@ import java.awt.event.MouseEvent;
 
 public class ThreadTreeMouseAdapter extends MouseAdapter
 {
-    private final ARadialThreadVisualization radialThreadVisualization;
+    private final AThreadRadar radialThreadVisualization;
 
-    public ThreadTreeMouseAdapter(ARadialThreadVisualization radialThreadVisualization)
+    public ThreadTreeMouseAdapter(AThreadRadar radialThreadVisualization)
     {
         this.radialThreadVisualization = radialThreadVisualization;
     }

@@ -170,6 +170,11 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
      * Threads
      */
 
+    public boolean hasThreads()
+    {
+        return !getThreadArtifacts().isEmpty();
+    }
+
     public Collection<CodeSparksThread> getThreadArtifacts()
     {
         synchronized (threadMap)

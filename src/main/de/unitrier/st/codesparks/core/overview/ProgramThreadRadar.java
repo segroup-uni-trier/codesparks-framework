@@ -9,12 +9,12 @@ import java.awt.*;
 import java.awt.event.MouseListener;
 import java.util.List;
 
-public class GlobalRadialThreadVisualization extends ARadialThreadVisualization
+public class ProgramThreadRadar extends AThreadRadar
 {
     //    private ARadialThreadArtifactVisualizationDisplayData radialThreadArtifactVisualizationDisplayData;
     private final ArtifactOverview artifactOverview;
 
-    GlobalRadialThreadVisualization(ArtifactOverview artifactOverview)
+    ProgramThreadRadar(ArtifactOverview artifactOverview)
     {
         setUpVisualizationParameter(30, 25);
 //        this.radialThreadArtifactVisualizationDisplayData = new DefaultRadialThreadArtifactVisualizationDisplayData();

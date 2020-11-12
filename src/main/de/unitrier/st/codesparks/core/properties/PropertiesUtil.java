@@ -2,7 +2,9 @@ package de.unitrier.st.codesparks.core.properties;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.PluginId;
+import de.unitrier.st.codesparks.core.service.CodeSparksInstanceService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,7 +20,9 @@ public final class PropertiesUtil
 
     static
     {
-        PluginId id = PluginId.getId("de.unitrier.st.codesparks.jpt");
+        final CodeSparksInstanceService service = ServiceManager.getService(CodeSparksInstanceService.class);
+        final String pluginIdString = service.getPluginIdString();
+        PluginId id = PluginId.getId(pluginIdString);
         IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(id);
         assert plugin != null;
         //PLUGIN_PATH = plugin.getPath().getAbsolutePath();

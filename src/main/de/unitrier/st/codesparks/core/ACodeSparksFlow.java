@@ -4,6 +4,7 @@
 package de.unitrier.st.codesparks.core;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -38,6 +39,7 @@ import de.unitrier.st.codesparks.core.overview.ArtifactOverview;
 import de.unitrier.st.codesparks.core.properties.PropertiesFile;
 import de.unitrier.st.codesparks.core.properties.PropertiesUtil;
 import de.unitrier.st.codesparks.core.properties.PropertyKey;
+import de.unitrier.st.codesparks.core.service.CodeSparksInstanceService;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.ADataVisualizer;
 import de.unitrier.st.codesparks.core.visualization.ArtifactVisualizationLabelFactoryCache;
@@ -53,7 +55,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
     protected IDataProvider dataProvider;
     protected ADataVisualizer dataVisualizer;
     protected IArtifactPoolToCodeMatcher matcher;
-    protected IArtifactPool result;
+    protected IArtifactPool artifactPool;
     protected final Project project;
 
     protected ACodeSparksFlow(Project project)
@@ -82,6 +84,22 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         });
     }
 
+    void checkLogger()
+    {
+
+    }
+
+    private boolean checkCodeSparksInstanceService()
+    {
+        final CodeSparksInstanceService service = ServiceManager.getService(CodeSparksInstanceService.class);
+        if (service == null)
+        {
+            System.err.printf("%s: Service interface %s not implemented. Please check plugin.xml.", getClass(), CodeSparksInstanceService.class);
+            return false;
+        }
+        return true;
+    }
+
     public Project getProject()
     {
         return project;
@@ -92,7 +110,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
     {
         synchronized (uiLock)
         {
-            Collection<AArtifact> matchedResults = matchResultsToCodeFiles(virtualFile);
+            Collection<AArtifact> matchedResults = matchArtifactsToCodeFiles(virtualFile);
 
             Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedResults);
 
@@ -138,14 +156,14 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         }
     }
 
-    private Collection<AArtifact> matchResultsToCodeFiles(VirtualFile... virtualFiles)
+    private Collection<AArtifact> matchArtifactsToCodeFiles(VirtualFile... virtualFiles)
     {
         if (matcher != null)
         {
-            return matcher.matchArtifactsToCodeFiles(result, project, virtualFiles);
+            return matcher.matchArtifactsToCodeFiles(artifactPool, project, virtualFiles);
         } else
         {
-            CodeSparksLogger.addText(String.format("%s: results to code matcher not setup!", getClass()));
+            CodeSparksLogger.addText(String.format("%s: artifact pool matcher not setup!", getClass()));
             return new ArrayList<>();
         }
     }
@@ -153,16 +171,20 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
     @Override
     public final void run()
     {
+        if (!checkCodeSparksInstanceService())
+        {
+            return;
+        }
         try
         {
             clearVisualizations();
             if (collectData())
             {
-                result = processData();
-                if (result != null)
+                artifactPool = processData();
+                if (artifactPool != null)
                 {
                     ArtifactPoolManager instance = ArtifactPoolManager.getInstance();
-                    instance.setArtifactPool(result);
+                    instance.setArtifactPool(artifactPool);
 
                     FileEditor[] editors = ApplicationManager.getApplication().runReadAction((Computable<FileEditor[]>) () ->
                             FileEditorManager.getInstance(project).getAllEditors());
@@ -194,9 +216,9 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                         VirtualFile[] virtualFiles = Arrays.stream(editors).map(FileEditor::getFile).toArray(VirtualFile[]::new);
                         clearVisualizationCache();
 
-                        Collection<AArtifact> matchedResults = matchResultsToCodeFiles(virtualFiles);
+                        Collection<AArtifact> matchedArtifacts = matchArtifactsToCodeFiles(virtualFiles);
 
-                        Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedResults);
+                        Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedArtifacts);
 
                         displayVisualizations(overlayElements);
                     }
@@ -247,7 +269,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                 }
                 VirtualFile[] virtualFiles = Arrays.stream(editors).map(FileEditor::getFile).toArray(VirtualFile[]::new);
 
-                Collection<AArtifact> matchedResults = matchResultsToCodeFiles(virtualFiles);
+                Collection<AArtifact> matchedResults = matchArtifactsToCodeFiles(virtualFiles);
 
                 Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedResults);
 
@@ -304,16 +326,16 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                         , true
                         , true
                         , null
-                        , IconLoader.getIcon("/icons/profiling_13x12.png")
+                        , IconLoader.getIcon("/icons/codesparks.png") // TODO: CodeSparks Icon
                         , () -> toolWindowIdName
                 ));
             }
-            addResultsToToolWindow(toolWindow);
+            addArtifactsTo(toolWindow);
             toolWindow.show(() -> {});
         });
     }
 
-    private void addResultsToToolWindow(ToolWindow toolWindow)
+    private void addArtifactsTo(ToolWindow toolWindow)
     {
         ContentManager contentManager = toolWindow.getContentManager();
         contentManager.removeAllContents(true);
@@ -324,7 +346,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                 PropertyKey.THREAD_VISUALIZATIONS_ENABLED, true);
         artifactOverview.setFilterByThreadPanelVisible(threadVisualizationsEnabled);
 
-        artifactOverview.setProfilingResult(result);
+        artifactOverview.setProfilingResult(artifactPool);
 
         contentManager.addContent(ContentFactory.SERVICE.getInstance().createContent
                 (artifactOverview.getRootPanel(), "", true));

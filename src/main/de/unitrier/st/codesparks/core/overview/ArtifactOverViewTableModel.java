@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +32,16 @@ public class ArtifactOverViewTableModel implements TableModel
     {
         this.artifacts =
                 artifacts.stream()
-                        .filter(artifact -> DataUtil.getThreadMetricValueRatio(artifact, CodeSparksThread::getMetricValue) > 0)
+                        .filter(artifact ->
+                        {
+                            if (artifact.hasThreads())
+                            {
+                                return DataUtil.getThreadMetricValueRatio(artifact, CodeSparksThread::getMetricValue) > 0;
+                            } else
+                            {
+                                return true;//artifact.getMetricValue() > 0;
+                            }
+                        })
                         .collect(Collectors.toList());
         this.artifacts.sort(Comparator.comparingDouble(DataUtil::getThreadFilteredMetricValue).reversed());
     }

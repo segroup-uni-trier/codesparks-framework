@@ -19,8 +19,14 @@ public final class DataUtil
     public static double getThreadFilteredMetricValue(ABaseArtifact artifact)
     {
         final double metricValue = artifact.getMetricValue();
-        final double threadMetricValueRatio = DataUtil.getThreadMetricValueRatio(artifact, CodeSparksThread::getMetricValue);
-        final double threadFilteredMetricValue = metricValue * threadMetricValueRatio;
+        double ratio = 1d;
+        if (artifact.hasThreads())
+        {
+//            final double threadMetricValueRatio = DataUtil.getThreadMetricValueRatio(artifact, CodeSparksThread::getMetricValue);
+            ratio = DataUtil.getThreadMetricValueRatio(artifact, CodeSparksThread::getMetricValue);
+        }
+//        final double threadFilteredMetricValue = metricValue * threadMetricValueRatio;
+        final double threadFilteredMetricValue = metricValue * ratio;
         return threadFilteredMetricValue;
     }
 

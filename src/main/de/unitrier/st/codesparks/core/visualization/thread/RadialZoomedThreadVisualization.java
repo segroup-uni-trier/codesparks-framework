@@ -10,7 +10,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Set;
 
-public class RadialZoomedThreadVisualization extends ARadialThreadVisualization
+public class RadialZoomedThreadVisualization extends AThreadRadar
 {
     private final List<IThreadSelectable> threadSelectables;
     private final IThreadSelectableIndexProvider indexProvider;

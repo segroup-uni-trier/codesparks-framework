@@ -11,10 +11,11 @@ import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Set;
 
-public abstract class ARadialThreadVisualization extends JPanel
+public abstract class AThreadRadar extends JPanel
 {
     protected Graphics2D g2d;
     protected AArtifact artifact;
@@ -22,7 +23,7 @@ public abstract class ARadialThreadVisualization extends JPanel
     private int circleFrameSize = 0;
     private int panelHeight = 0;
     private int panelWidth = 0;
-    private int middlePoint = 0;
+    private int centerPoint = 0;
     private int radiusZoomed = 0;
     private int labelDistance = 0;
     private int labelRadius = 0;
@@ -33,7 +34,7 @@ public abstract class ARadialThreadVisualization extends JPanel
         panelHeight = diameter + 4;
         panelWidth = panelHeight + panelWidthOffset;
         circleDiameter = diameter;
-        middlePoint = circleFrameSize / 2;
+        centerPoint = circleFrameSize / 2;
         radiusZoomed = circleDiameter / 2;
         labelDistance = 5;
         labelRadius = radiusZoomed + labelDistance;
@@ -47,11 +48,23 @@ public abstract class ARadialThreadVisualization extends JPanel
         drawRectangleBackground();
     }
 
-    private static final ImageIcon defaultIcon = new ImageIcon(ARadialThreadVisualization.class.getResource("/icons/pluginIcon.png"));
+    private static ImageIcon defaultIcon; // TODO: CodeSparks icon
+
+    static
+    {
+        final URL resource = AThreadRadar.class.getResource("/icons/codesparks.png");
+        if (resource != null)
+        {
+            defaultIcon = new ImageIcon(resource);
+        }
+    }
 
     private void initGraphics2D()
     {
-        panelHeight = Math.max(panelHeight, defaultIcon.getIconHeight());
+        if (defaultIcon != null)
+        {
+            panelHeight = Math.max(panelHeight, defaultIcon.getIconHeight());
+        }
         GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage bi = UIUtil.createImage(defaultConfiguration, panelWidth, panelHeight, BufferedImage.TYPE_INT_RGB,
@@ -95,10 +108,10 @@ public abstract class ARadialThreadVisualization extends JPanel
     protected void drawArcForSumAndAvg(Color color, int radiusSum, int radius, int startAngle, int angle)
     {
         g2d.setColor(VisualizationUtil.getBackgroundPerformanceColor(color, .25f));
-        g2d.fillArc(middlePoint - (radiusSum / 2), middlePoint - (radiusSum / 2), radiusSum, radiusSum,
+        g2d.fillArc(centerPoint - (radiusSum / 2), centerPoint - (radiusSum / 2), radiusSum, radiusSum,
                 startAngle, angle);
         g2d.setColor(color);
-        g2d.fillArc(middlePoint - (radius / 2), middlePoint - (radius / 2), radius, radius, startAngle,
+        g2d.fillArc(centerPoint - (radius / 2), centerPoint - (radius / 2), radius, radius, startAngle,
                 angle);
     }
 
@@ -111,15 +124,15 @@ public abstract class ARadialThreadVisualization extends JPanel
             Stroke stroke = new BasicStroke(2);
             g2d.setStroke(stroke);
 
-            int x1 = middlePoint;
-            int y1 = middlePoint;
-            int x2 = (int) (middlePoint + (markedRadius / 2 - 1) * Math.cos(Math.toRadians(360 - markedStartAngle)));
-            int y2 = (int) (middlePoint + (markedRadius / 2 - 1) * Math.sin(Math.toRadians(360 - markedStartAngle)));
-            int x3 = (int) (middlePoint + (markedRadius / 2 - 1) * Math.cos(Math.toRadians(360 - (markedStartAngle + markedAngle))));
-            int y3 = (int) (middlePoint + (markedRadius / 2 - 1) * Math.sin(Math.toRadians(360 - (markedStartAngle + markedAngle))));
+            int x1 = centerPoint;
+            int y1 = centerPoint;
+            int x2 = (int) (centerPoint + (markedRadius / 2 - 1) * Math.cos(Math.toRadians(360 - markedStartAngle)));
+            int y2 = (int) (centerPoint + (markedRadius / 2 - 1) * Math.sin(Math.toRadians(360 - markedStartAngle)));
+            int x3 = (int) (centerPoint + (markedRadius / 2 - 1) * Math.cos(Math.toRadians(360 - (markedStartAngle + markedAngle))));
+            int y3 = (int) (centerPoint + (markedRadius / 2 - 1) * Math.sin(Math.toRadians(360 - (markedStartAngle + markedAngle))));
 
-            g2d.drawArc((middlePoint - (markedRadius / 2)), (middlePoint - (markedRadius / 2)), markedRadius,
-                    markedRadius, markedStartAngle+1, markedAngle-1);
+            g2d.drawArc((centerPoint - (markedRadius / 2)), (centerPoint - (markedRadius / 2)), markedRadius,
+                    markedRadius, markedStartAngle + 1, markedAngle - 1);
             g2d.drawLine(x1, y1, x2, y2);
             g2d.drawLine(x1, y1, x3, y3);
             g2d.setStroke(defaultStroke);
@@ -131,8 +144,8 @@ public abstract class ARadialThreadVisualization extends JPanel
             Stroke stroke = new BasicStroke(3);
             g2d.setStroke(stroke);
             g2d.setColor(new JBColor(new Color(203, 119, 48), new Color(203, 119, 48)));
-            g2d.drawOval((middlePoint - (markedRadius / 2)+1), (middlePoint - (markedRadius / 2)+1), markedRadius-3,
-                    markedRadius-3);
+            g2d.drawOval((centerPoint - (markedRadius / 2) + 1), (centerPoint - (markedRadius / 2) + 1), markedRadius - 3,
+                    markedRadius - 3);
             g2d.setStroke(oldStroke);
         }
 
@@ -150,20 +163,21 @@ public abstract class ARadialThreadVisualization extends JPanel
         drawPedestal(labelWidth, true, fontSize, numberOfFilteredArtifactThreads, yOffsetForLabelText);
     }
 
-    private void drawPedestal(int labelWidth, boolean top, float fontSize, long number, int offset) {
+    private void drawPedestal(int labelWidth, boolean top, float fontSize, long number, int offset)
+    {
         final int factor = top ? -1 : 1;
         final int adjustment = top ? -1 : 0;
         int labelStartAngle = (int) ThreadVisualizationUtil.getStartAngle(radiusZoomed, labelRadius);
 
         int arcAngle = 32;
         final double angle = Math.toRadians(factor * (labelStartAngle - arcAngle));
-        int x1 = (int) ((labelRadius) * Math.cos(angle)+adjustment) + circleFrameSize / 2;
-        int y1 = (int) ((labelRadius) * Math.sin(angle)+adjustment) + circleFrameSize / 2;
+        int x1 = (int) ((labelRadius) * Math.cos(angle) + adjustment) + circleFrameSize / 2;
+        int y1 = (int) ((labelRadius) * Math.sin(angle) + adjustment) + circleFrameSize / 2;
         int x2 = x1 + labelWidth;
         @SuppressWarnings("UnnecessaryLocalVariable") int y2 = y1;
 
-        int x3 = (int) (labelRadius * Math.cos(Math.toRadians(factor * labelStartAngle))+adjustment) + circleFrameSize / 2;
-        int y3 = (int) (labelRadius * Math.sin(Math.toRadians(factor * labelStartAngle))+adjustment) + circleFrameSize / 2;
+        int x3 = (int) (labelRadius * Math.cos(Math.toRadians(factor * labelStartAngle)) + adjustment) + circleFrameSize / 2;
+        int y3 = (int) (labelRadius * Math.sin(Math.toRadians(factor * labelStartAngle)) + adjustment) + circleFrameSize / 2;
         int x4 = x3 + (x1 - x3) + labelWidth;
         @SuppressWarnings("UnnecessaryLocalVariable") int y4 = y3;
 
@@ -172,17 +186,19 @@ public abstract class ARadialThreadVisualization extends JPanel
         g2d.drawLine(x4, y4, x2, y2);
 
         int start;
-        if (top) {
-            start = labelStartAngle-arcAngle;
-        } else {
+        if (top)
+        {
+            start = labelStartAngle - arcAngle;
+        } else
+        {
             start = -labelStartAngle;
         }
         g2d.drawArc((circleFrameSize / 2) - ((circleDiameter + 2 * labelDistance) / 2),
                 (circleFrameSize / 2) - ((circleDiameter + 2 * labelDistance) / 2), circleDiameter + 2 * labelDistance,
-                circleDiameter + 2 * labelDistance, start, arcAngle+adjustment);
+                circleDiameter + 2 * labelDistance, start, arcAngle + adjustment);
 
         g2d.setFont(g2d.getFont().deriveFont(fontSize));
-        g2d.drawString(number + "", x1+2, y3+offset);
+        g2d.drawString(number + "", x1 + 2, y3 + offset);
     }
 
     protected int getRadius(double filteredRuntimeRatio)

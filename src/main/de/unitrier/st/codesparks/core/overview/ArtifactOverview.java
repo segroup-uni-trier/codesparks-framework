@@ -61,22 +61,22 @@ public class ArtifactOverview
         filterByThreadPanel.setVisible(threadVisualizationsEnabled);
     }
 
-    private IArtifactPool result;
+    private IArtifactPool artifactPool;
 
-    public void setProfilingResult(final IArtifactPool result)
+    public void setProfilingResult(final IArtifactPool artifactPool)
     {
-        if (result == null)
+        if (artifactPool == null)
         {
             return;
         }
-        this.result = result;
+        this.artifactPool = artifactPool;
         filterOverView();
         rootPanel.repaint();
     }
 
     IArtifactPool getProfilingResult()
     {
-        return this.result;
+        return this.artifactPool;
     }
 
     private ArtifactOverview()
@@ -86,8 +86,7 @@ public class ArtifactOverview
 
     private void setupUI()
     {
-        GlobalRadialThreadVisualization globalRadialThreadVisualization =
-                new GlobalRadialThreadVisualization(this);
+        ProgramThreadRadar programThreadRadar = new ProgramThreadRadar(this);
         rootPanel = new BorderLayoutPanel();//new JBPanel();
 //        rootPanel.setPreferredSize(new Dimension(300, 500));
 //        rootPanel.setMaximumSize(new Dimension(300, 500));
@@ -182,7 +181,7 @@ public class ArtifactOverview
 
         JBPanel<BorderLayoutPanel> threadFilterWrapper = new JBPanel<>();
         threadFilterWrapper.setLayout(new BoxLayout(threadFilterWrapper, BoxLayout.X_AXIS));
-        threadFilterWrapper.add(globalRadialThreadVisualization);
+        threadFilterWrapper.add(programThreadRadar);
 
         final JButton resetThreadFilterButton = new JButton(
                 LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
@@ -301,7 +300,7 @@ public class ArtifactOverview
 
     public void filterOverView()
     {
-        if (result == null)
+        if (artifactPool == null)
         {
             return;
         }
@@ -312,7 +311,12 @@ public class ArtifactOverview
         ApplicationManager.getApplication().invokeLater(() -> {
             Set<String> includeFilters = retrieveCustomFilters(includeFilter);
             Set<String> excludeFilters = retrieveCustomFilters(excludeFilter);
-            Map<String, List<AArtifact>> lists = result.getNamedArtifactTypeLists();
+            Map<String, List<AArtifact>> lists = artifactPool.getNamedArtifactTypeLists();
+
+            if (lists == null)
+            {
+                return;
+            }
 
             ArtifactMetricValueSelfComparator artifactMetricValueSelfComparator =
                     new ArtifactMetricValueSelfComparator();
