@@ -12,6 +12,12 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
     private final Map<Integer, List<ANeighborArtifact>> predecessors;
     private final Map<Integer, List<ANeighborArtifact>> successors;
 
+    protected AArtifact()
+    {
+        predecessors = new HashMap<>();
+        successors = new HashMap<>();
+    }
+
     protected AArtifact(String name, String identifier)
     {
         super(name, identifier);

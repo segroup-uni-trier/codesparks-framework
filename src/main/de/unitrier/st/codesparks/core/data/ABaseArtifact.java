@@ -12,7 +12,12 @@ import java.util.stream.Collectors;
 public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFilterable
 {
     private final Map<String, ACodeSparksThread> threadMap;
-    private final Class<? extends ACodeSparksThread> threadClass;
+    private Class<? extends ACodeSparksThread> threadClass;
+
+    ABaseArtifact()
+    {
+        threadMap = new HashMap<>();
+    }
 
     ABaseArtifact(String name, String identifier)
     {
@@ -29,7 +34,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         threadMap = new HashMap<>();
     }
 
-    protected final String name;
+    protected String name;
 
     public String getName()
     {
@@ -42,6 +47,14 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
     {
         return identifier;
     }
+
+    protected int lineNumber;
+
+    public int getLineNumber() { return lineNumber; }
+
+    protected String fileName;
+
+    public String getFileName() { return fileName; }
 
     /*
      * MetricValue

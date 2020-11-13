@@ -9,7 +9,7 @@ import java.util.Collection;
 public interface IArtifactPoolToCodeMatcher
 {
     Collection<AArtifact> matchArtifactsToCodeFiles(
-            final IArtifactPool profilingResult
+            final IArtifactPool artifactPool
             , final Project project
             , final VirtualFile... files
     );
