@@ -61,6 +61,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
      */
 
     double metricValue;
+    Map<String, Metric> metrics;
 
     private final Object metricValueLock = new Object();
 

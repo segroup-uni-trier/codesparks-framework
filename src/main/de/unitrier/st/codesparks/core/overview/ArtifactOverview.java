@@ -10,6 +10,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.ui.components.*;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ABaseArtifact;
 import de.unitrier.st.codesparks.core.data.GlobalResetThreadFilter;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;

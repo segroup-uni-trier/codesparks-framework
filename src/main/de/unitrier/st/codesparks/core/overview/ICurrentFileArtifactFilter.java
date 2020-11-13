@@ -4,6 +4,7 @@ import com.intellij.psi.PsiFile;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 public interface ICurrentFileArtifactFilter
 {

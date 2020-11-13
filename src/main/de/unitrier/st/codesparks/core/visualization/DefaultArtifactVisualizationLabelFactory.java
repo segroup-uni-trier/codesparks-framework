@@ -1,3 +1,6 @@
+/*
+ * Copyright (C) 2020, Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization;
 
 import com.intellij.ui.paint.PaintUtil;
@@ -11,9 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
-/*
- * Copyright (C) 2020, Oliver Moseler
- */
+
 import static com.intellij.ui.JBColor.BLACK;
 import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
 
@@ -143,8 +144,8 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
          * Set the actual image icon size
          */
         int actualIconWidth = X_OFFSET + RECTANGLE_WIDTH + 4 * CALLEE_TRIANGLES_WIDTH + 1;
-        BufferedImage subimage = bi.getSubimage(0, 0, actualIconWidth, bi.getHeight());
-        ImageIcon imageIcon = new ImageIcon(subimage);
+        BufferedImage subImage = bi.getSubimage(0, 0, actualIconWidth, bi.getHeight());
+        ImageIcon imageIcon = new ImageIcon(subImage);
 
 //        artifactImageIconCache.put(artifact, imageIcon);
 

@@ -33,7 +33,10 @@ public class ToggleVisualization extends AnAction
     public void actionPerformed(AnActionEvent e)
     {
         Project project = e.getProject();
-        if (project == null) return;
+        if (project == null)
+        {
+            return;
+        }
         EditorCoverLayerManager editorCoverLayerManager = EditorCoverLayerManager.getInstance(project);
         Presentation presentation = e.getPresentation();
         if (visible)
