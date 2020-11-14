@@ -14,6 +14,8 @@ import de.unitrier.st.codesparks.core.visualization.popup.ThreadList;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
+import java.util.Map;
 
 public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
@@ -125,7 +127,8 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
     @Override
     protected String createPopupTitle(AArtifact artifact)
     {
+        Map<String, List<ACodeSparksThread>> threadTypeLists = artifact.getThreadTypeLists();
         return "Total number of threads: " + artifact.getNumberOfThreads() +
-                " | Different thread types: " + artifact.getThreadTypeLists().size();
+                " | Different thread types: " + (threadTypeLists == null ? 0 : threadTypeLists.size());
     }
 }

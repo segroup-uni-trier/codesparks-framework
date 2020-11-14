@@ -4,6 +4,7 @@ import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -127,7 +128,12 @@ public final class ThreadVisualizationUtil
         {
             return 0;
         }
-        Set<String> collect = artifact.getThreadTypeLists().entrySet()
+        Map<String, List<ACodeSparksThread>> threadTypeLists = artifact.getThreadTypeLists();
+        if (threadTypeLists == null)
+        {
+            return 0;
+        }
+        Set<String> collect = threadTypeLists.entrySet()
                 .stream()
                 .filter(stringListEntry -> stringListEntry.getValue()
                         .stream()

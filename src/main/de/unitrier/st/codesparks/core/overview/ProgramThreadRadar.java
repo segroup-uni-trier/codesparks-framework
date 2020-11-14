@@ -8,6 +8,7 @@ import de.unitrier.st.codesparks.core.visualization.thread.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.util.List;
+import java.util.Map;
 
 public class ProgramThreadRadar extends AThreadRadar
 {
@@ -58,7 +59,8 @@ public class ProgramThreadRadar extends AThreadRadar
         if (numberOfSelectedArtifactThreads == 0)
         {
             numberOfSelectedArtifactThreads = artifact.getNumberOfThreads();
-            numberOfSelectedThreadTypes = artifact.getThreadTypeLists().size();
+            Map<String, List<ACodeSparksThread>> threadTypeLists = artifact.getThreadTypeLists();
+            numberOfSelectedThreadTypes = threadTypeLists == null ? 0 : threadTypeLists.size();
             usingGrayColors = true;
         }
 

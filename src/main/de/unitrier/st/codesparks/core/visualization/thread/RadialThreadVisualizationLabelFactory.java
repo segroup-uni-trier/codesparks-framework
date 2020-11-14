@@ -17,6 +17,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class RadialThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
@@ -73,7 +74,8 @@ public class RadialThreadVisualizationLabelFactory extends AArtifactVisualizatio
         if (numberOfSelectedArtifactThreads == 0)
         {
             numberOfSelectedArtifactThreads = artifact.getNumberOfThreads();
-            numberOfSelectedThreadTypes = artifact.getThreadTypeLists().size();
+            Map<String, List<ACodeSparksThread>> threadTypeLists = artifact.getThreadTypeLists();
+            numberOfSelectedThreadTypes = threadTypeLists == null ? 0 : threadTypeLists.size();
             useDisabledColors = true;
         }
 
@@ -131,9 +133,11 @@ public class RadialThreadVisualizationLabelFactory extends AArtifactVisualizatio
 
 
             g2d.setColor(VisualizationUtil.getBackgroundPerformanceColor(color, .25f));
-            g2d.fillArc(RadialThreadVisualizationConstants.MIDDLEPOINT - (radiusSum / 2), RadialThreadVisualizationConstants.MIDDLEPOINT - (radiusSum / 2), radiusSum, radiusSum, startAngle, angle);
+            g2d.fillArc(RadialThreadVisualizationConstants.MIDDLEPOINT - (radiusSum / 2), RadialThreadVisualizationConstants.MIDDLEPOINT - (radiusSum / 2),
+                    radiusSum, radiusSum, startAngle, angle);
             g2d.setColor(color);
-            g2d.fillArc(RadialThreadVisualizationConstants.MIDDLEPOINT - (radius / 2), RadialThreadVisualizationConstants.MIDDLEPOINT - (radius / 2), radius, radius, startAngle, angle);
+            g2d.fillArc(RadialThreadVisualizationConstants.MIDDLEPOINT - (radius / 2), RadialThreadVisualizationConstants.MIDDLEPOINT - (radius / 2), radius,
+                    radius, startAngle, angle);
             g2d.setColor(JBColor.BLACK);
 
             //if (startAngle < 0)
@@ -146,22 +150,28 @@ public class RadialThreadVisualizationLabelFactory extends AArtifactVisualizatio
 
         g2d.setColor(JBColor.DARK_GRAY);
         g2d.drawOval((RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE / 2) - (RadialThreadVisualizationConstants.CIRCLESIZE / 2),
-                (RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE / 2) - (RadialThreadVisualizationConstants.CIRCLESIZE / 2), RadialThreadVisualizationConstants.CIRCLESIZE, RadialThreadVisualizationConstants.CIRCLESIZE);
+                (RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE / 2) - (RadialThreadVisualizationConstants.CIRCLESIZE / 2),
+                RadialThreadVisualizationConstants.CIRCLESIZE, RadialThreadVisualizationConstants.CIRCLESIZE);
 
 
         // draw total number of threads label
         Font currentFont = g2d.getFont();
         Font newFont = currentFont.deriveFont(currentFont.getSize() * RadialThreadVisualizationConstants.CIRCLESIZE * 0.02f);
         g2d.setFont(newFont);
-        int labelStartAngle = (int) (ThreadVisualizationUtil.getStartAngle(RadialThreadVisualizationConstants.RADIUS, RadialThreadVisualizationConstants.LABELRADIUS) * -1);//calcStartAngle() * -1; //-65
+        int labelStartAngle = (int) (ThreadVisualizationUtil.getStartAngle(RadialThreadVisualizationConstants.RADIUS,
+                RadialThreadVisualizationConstants.LABELRADIUS) * -1);//calcStartAngle() * -1; //-65
         int arcAngle = 32;
-        int x1 = (int) ((RadialThreadVisualizationConstants.LABELRADIUS) * Math.cos(Math.toRadians(-labelStartAngle - arcAngle))) + RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE / 2;
-        int y1 = (int) ((RadialThreadVisualizationConstants.LABELRADIUS) * Math.sin(Math.toRadians(-labelStartAngle - arcAngle))) + RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE / 2;
+        int x1 =
+                (int) ((RadialThreadVisualizationConstants.LABELRADIUS) * Math.cos(Math.toRadians(-labelStartAngle - arcAngle))) + RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE / 2;
+        int y1 =
+                (int) ((RadialThreadVisualizationConstants.LABELRADIUS) * Math.sin(Math.toRadians(-labelStartAngle - arcAngle))) + RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE / 2;
         int x2 = x1 + labelWidth;
         int y2 = y1;
 
-        int x3 = (int) (RadialThreadVisualizationConstants.LABELRADIUS * Math.cos(Math.toRadians(-labelStartAngle))) + RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE / 2;
-        int y3 = (int) (RadialThreadVisualizationConstants.LABELRADIUS * Math.sin(Math.toRadians(-labelStartAngle))) + RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE / 2;
+        int x3 =
+                (int) (RadialThreadVisualizationConstants.LABELRADIUS * Math.cos(Math.toRadians(-labelStartAngle))) + RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE / 2;
+        int y3 =
+                (int) (RadialThreadVisualizationConstants.LABELRADIUS * Math.sin(Math.toRadians(-labelStartAngle))) + RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE / 2;
         int x4 = x3 + (x1 - x3) + labelWidth;
         int y4 = y3;
 
@@ -176,7 +186,8 @@ public class RadialThreadVisualizationLabelFactory extends AArtifactVisualizatio
         g2d.drawString(numberOfSelectedArtifactThreads + "", x1 + 2, y3 - 1);
 
         // draw number of different classes label
-        labelStartAngle = (int) ThreadVisualizationUtil.getStartAngle(RadialThreadVisualizationConstants.RADIUS, RadialThreadVisualizationConstants.LABELRADIUS);
+        labelStartAngle = (int) ThreadVisualizationUtil.getStartAngle(RadialThreadVisualizationConstants.RADIUS,
+                RadialThreadVisualizationConstants.LABELRADIUS);
         x1 = (int) ((RadialThreadVisualizationConstants.LABELRADIUS) * Math.cos(Math.toRadians(-(labelStartAngle - arcAngle)))) + RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE / 2;
         y1 = (int) ((RadialThreadVisualizationConstants.LABELRADIUS) * Math.sin(Math.toRadians(-(labelStartAngle - arcAngle)))) + RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE / 2;
         x2 = x1 + labelWidth;

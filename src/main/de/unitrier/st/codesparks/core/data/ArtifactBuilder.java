@@ -7,12 +7,12 @@ public class ArtifactBuilder
 {
     private AArtifact artifact;
 
-    public ArtifactBuilder(Class<? extends AArtifact> artifactClass)
+    public ArtifactBuilder(final String name, final String identifier, final Class<? extends AArtifact> artifactClass)
     {
         try
         {
-            final Constructor<? extends AArtifact> constructor = artifactClass.getConstructor();
-            artifact = constructor.newInstance();
+            final Constructor<? extends AArtifact> constructor = artifactClass.getDeclaredConstructor(String.class, String.class);
+            artifact = constructor.newInstance(name, identifier);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e)
         {
             e.printStackTrace();
@@ -28,18 +28,6 @@ public class ArtifactBuilder
     public ArtifactBuilder setLineNumber(int lineNumber)
     {
         artifact.lineNumber = lineNumber;
-        return this;
-    }
-
-    public ArtifactBuilder setIdentifier(String identifier)
-    {
-        artifact.identifier = identifier;
-        return this;
-    }
-
-    public ArtifactBuilder setName(String name)
-    {
-        artifact.name = name;
         return this;
     }
 

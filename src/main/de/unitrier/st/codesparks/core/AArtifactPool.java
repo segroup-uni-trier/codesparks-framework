@@ -6,10 +6,23 @@ import java.util.*;
 
 public abstract class AArtifactPool implements IArtifactPool
 {
+    private IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider;
+
+    public void registerArtifactClassDisplayNameProvider(IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
+    {
+        this.artifactClassDisplayNameProvider = artifactClassDisplayNameProvider;
+    }
+
     protected AArtifactPool()
     {
         artifacts = new HashMap<>();
         artifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
+    }
+
+    protected AArtifactPool(IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
+    {
+        this();
+        this.artifactClassDisplayNameProvider = artifactClassDisplayNameProvider;
     }
 
     /*
@@ -128,7 +141,16 @@ public abstract class AArtifactPool implements IArtifactPool
         {
             for (Map.Entry<Class<? extends AArtifact>, Map<String, AArtifact>> classMapEntry : artifacts.entrySet())
             {
-                map.put(classMapEntry.getKey().getName(), new ArrayList<>(classMapEntry.getValue().values()));
+                Class<? extends AArtifact> artifactClass = classMapEntry.getKey();
+                String classDisplayName;
+                if (artifactClassDisplayNameProvider == null)
+                {
+                    classDisplayName = artifactClass.getTypeName();
+                } else
+                {
+                    classDisplayName = artifactClassDisplayNameProvider.getDisplayName(artifactClass);
+                }
+                map.put(classDisplayName, new ArrayList<>(classMapEntry.getValue().values()));
             }
         }
         return map;

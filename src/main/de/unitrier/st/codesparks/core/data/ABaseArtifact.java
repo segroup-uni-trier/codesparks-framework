@@ -12,36 +12,31 @@ import java.util.stream.Collectors;
 public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFilterable
 {
     private final Map<String, ACodeSparksThread> threadMap;
-    private Class<? extends ACodeSparksThread> threadClass;
+    private final Class<? extends ACodeSparksThread> threadClass;
 
-    ABaseArtifact()
-    {
-        threadMap = new HashMap<>();
-    }
-
-    ABaseArtifact(String name, String identifier)
+    ABaseArtifact(final String name, final String identifier)
     {
         this(name, identifier, DefaultCodeSparksThread.class);
     }
 
-    ABaseArtifact(String name, String identifier, Class<? extends ACodeSparksThread> threadClass)
+    ABaseArtifact(final String name, final String identifier, final Class<? extends ACodeSparksThread> threadClass)
     {
         this.name = name == null ? "" : name;
         this.identifier = identifier == null ? "" : identifier;
         this.threadClass = threadClass;
+        threadMap = new HashMap<>();
         metricValue = 0D;
         metricValueSelf = 0D;
-        threadMap = new HashMap<>();
     }
 
-    protected String name;
+    protected final String name;
 
     public String getName()
     {
         return name;
     }
 
-    protected String identifier;
+    protected final String identifier;
 
     public String getIdentifier()
     {
@@ -175,6 +170,18 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
      * Visualization strings
      */
 
+    @Override
+    public String getDisplayString(final int maxLen)
+    {
+        return CoreUtil.reduceToLength(name, maxLen);
+    }
+
+    @Override
+    public String getDisplayString()
+    {
+        return name;
+    }
+
     public String getMetricValueString()
     {
         return String.format("%s => METRIC-VALUE: %s", name, CoreUtil.formatPercentage(metricValue));
@@ -189,9 +196,11 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         return !getThreadArtifacts().isEmpty();
     }
 
+    private final Object threadMapLock = new Object();
+
     public Collection<ACodeSparksThread> getThreadArtifacts()
     {
-        synchronized (threadMap)
+        synchronized (threadMapLock)
         {
             return threadMap.values();
         }
@@ -201,7 +210,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
 
     public ACodeSparksThread getThreadArtifact(String identifier)
     {
-        synchronized (threadMap)
+        synchronized (threadMapLock)
         {
             return threadMap.get(identifier);
         }
@@ -210,7 +219,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
     @Deprecated
     public void addThreadArtifact(ACodeSparksThread codeSparksThread)
     {
-        synchronized (threadMap)
+        synchronized (threadMapLock)
         {
             threadMap.put(codeSparksThread.getIdentifier(), codeSparksThread);
         }
@@ -218,7 +227,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
 
     public synchronized void increaseMetricValueSelfForThread(String identifier, double toIncrease)
     {
-        synchronized (threadMap)
+        synchronized (threadMapLock)
         {
             ACodeSparksThread codeSparksThread = threadMap.get(identifier);
             if (codeSparksThread == null)
@@ -247,7 +256,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
 
     public synchronized void increaseMetricValueThread(String identifier, double toIncrease)
     {
-        synchronized (threadMap)
+        synchronized (threadMapLock)
         {
             ACodeSparksThread codeSparksThread = threadMap.get(identifier);
             if (codeSparksThread == null)
@@ -277,7 +286,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
 
     public int getNumberOfThreads()
     {
-        synchronized (threadMap)
+        synchronized (threadMapLock)
         {
             return threadMap.size();
         }

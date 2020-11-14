@@ -12,20 +12,14 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
     private final Map<Integer, List<ANeighborArtifact>> predecessors;
     private final Map<Integer, List<ANeighborArtifact>> successors;
 
-    protected AArtifact()
-    {
-        predecessors = new HashMap<>();
-        successors = new HashMap<>();
-    }
-
-    protected AArtifact(String name, String identifier)
+    public AArtifact(final String name, final String identifier)
     {
         super(name, identifier);
         predecessors = new HashMap<>();
         successors = new HashMap<>();
     }
 
-    protected AArtifact(String name, String identifier, Class<? extends ACodeSparksThread> threadArtifactClass)
+    public AArtifact(final String name, final String identifier, final Class<? extends ACodeSparksThread> threadArtifactClass)
     {
         super(name, identifier, threadArtifactClass);
         predecessors = new HashMap<>();
@@ -118,11 +112,13 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
         }
     }
 
-    private ANeighborArtifact getOrCreateNeighborByIdentifier(List<ANeighborArtifact> neighborList,
-                                                              String name,
-                                                              String identifier,
-                                                              Class<? extends ANeighborArtifact> neighborArtifactClass,
-                                                              int line)
+    private ANeighborArtifact getOrCreateNeighborByIdentifier(
+            final List<ANeighborArtifact> neighborList
+            , final String name
+            , final String identifier
+            , final Class<? extends ANeighborArtifact> neighborArtifactClass
+            , final int line
+    )
     {
         ANeighborArtifact neighbor;
         for (ANeighborArtifact neighborProfilingArtifact : neighborList)
@@ -201,5 +197,8 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
                 + " OF TOTAL-METRIC-VALUE)";
     }
 
-    public abstract String getTitleName();
+    public String getTitleName()
+    {
+        return name;
+    }
 }
