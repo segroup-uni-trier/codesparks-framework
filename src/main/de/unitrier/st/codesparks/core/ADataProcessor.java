@@ -8,15 +8,15 @@ public abstract class ADataProcessor extends Task.WithResult<Boolean, Exception>
 {
     protected AArtifactPool artifactPool;
 
-    public ADataProcessor(Project project, String title, boolean canBeCancelled)
+    public ADataProcessor(final Project project, final String title, final boolean canBeCancelled)
     {
         super(project, title, canBeCancelled);
-        artifactPool = createProfilingResultInstance();
+        artifactPool = createArtifactPoolInstance();
     }
 
-    protected abstract AArtifactPool createProfilingResultInstance();
+    protected abstract AArtifactPool createArtifactPoolInstance();
 
-    public AArtifactPool getProfilingResult()
+    public AArtifactPool getArtifactPool()
     {
         return artifactPool;
     }

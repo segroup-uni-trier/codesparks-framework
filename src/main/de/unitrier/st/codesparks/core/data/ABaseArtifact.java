@@ -7,6 +7,8 @@ import de.unitrier.st.codesparks.core.ICodeSparksThreadFilterable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFilterable
@@ -56,7 +58,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
      */
 
     double metricValue;
-    Map<String, Metric> metrics;
+    Map<String, Metric> metrics; // TODO: OM!
 
     private final Object metricValueLock = new Object();
 
@@ -206,7 +208,30 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         }
     }
 
-    public abstract Map<String, List<ACodeSparksThread>> getThreadTypeLists();
+    public Map<String, List<ACodeSparksThread>> getThreadTypeLists()
+    {
+        return getThreadTypeLists(s -> {
+            int index = s.indexOf(":");
+            //noinspection UnnecessaryLocalVariable
+            String substring = s.substring(0, index);
+            return substring;
+        });
+    }
+
+    public Map<String, List<ACodeSparksThread>> getThreadTypeLists(final Function<String, String> threadIdentifierProcessor)
+    {
+        Collection<ACodeSparksThread> threadArtifacts = getThreadArtifacts();
+        Map<String, List<ACodeSparksThread>> threadTypeLists = new ConcurrentHashMap<>();
+        for (ACodeSparksThread codeSparksThread : threadArtifacts)
+        {
+            String identifier = codeSparksThread.getIdentifier();
+            String processed = threadIdentifierProcessor.apply(identifier);
+            List<ACodeSparksThread> threadArtifactList = threadTypeLists.getOrDefault(processed, new ArrayList<>());
+            threadArtifactList.add(codeSparksThread);
+            threadTypeLists.put(processed, threadArtifactList);
+        }
+        return threadTypeLists;
+    }
 
     public ACodeSparksThread getThreadArtifact(String identifier)
     {
