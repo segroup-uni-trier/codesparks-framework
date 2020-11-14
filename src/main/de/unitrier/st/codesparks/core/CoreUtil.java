@@ -173,10 +173,10 @@ public final class CoreUtil
 
     public static void navigate(final String identifier)
     {
-        IArtifactPool profilingResult = ArtifactPoolManager.getInstance().getArtifactPool();
-        if (profilingResult != null)
+        IArtifactPool artifactPool = ArtifactPoolManager.getInstance().getArtifactPool();
+        if (artifactPool != null)
         {
-            AArtifact artifact = profilingResult.getArtifact(identifier);
+            AArtifact artifact = artifactPool.getArtifact(identifier);
             if (artifact != null)
             {
                 artifact.navigate();

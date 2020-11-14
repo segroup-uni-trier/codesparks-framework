@@ -2,6 +2,7 @@ package de.unitrier.st.codesparks.core.data;
 
 import com.intellij.openapi.project.Project;
 import de.unitrier.st.codesparks.core.IArtifactPool;
+import de.unitrier.st.codesparks.core.IArtifactPoolExportStrategy;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 
 import java.io.BufferedWriter;
@@ -12,7 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public abstract class AArtifactPoolExportStrategy
+public abstract class AArtifactPoolExportStrategy implements IArtifactPoolExportStrategy
 {
     private final Project project;
 

@@ -6,19 +6,19 @@ import com.intellij.openapi.project.Project;
 
 public abstract class ADataProcessor extends Task.WithResult<Boolean, Exception> implements IDataProcessor
 {
-    protected AArtifactPool result;
+    protected AArtifactPool artifactPool;
 
     public ADataProcessor(Project project, String title, boolean canBeCancelled)
     {
         super(project, title, canBeCancelled);
-        result = createProfilingResultInstance();
+        artifactPool = createProfilingResultInstance();
     }
 
     protected abstract AArtifactPool createProfilingResultInstance();
 
     public AArtifactPool getProfilingResult()
     {
-        return result;
+        return artifactPool;
     }
 
     @Override
@@ -28,7 +28,7 @@ public abstract class ADataProcessor extends Task.WithResult<Boolean, Exception>
         {
             if (ProgressManager.getInstance().run(this))
             {
-                return result;
+                return artifactPool;
             }
             return null;
         } catch (Exception e)

@@ -2,41 +2,111 @@ package de.unitrier.st.codesparks.core;
 
 import de.unitrier.st.codesparks.core.data.*;
 
+import java.util.*;
+
 public abstract class AArtifactPool implements IArtifactPool
 {
-    private AArtifact globalArtifact;
-
-    public void export(AArtifactPoolExportStrategy strategy)
+    protected AArtifactPool()
     {
-        strategy.export(this);
+        artifacts = new HashMap<>();
+        artifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
     }
 
-    protected final Object globalArtifactLock = new Object();
+    /*
+
+     */
+
+    protected final Object programArtifactLock = new Object();
+
+    private AArtifact programArtifact;
 
     @Override
-    public void setProgramArtifact(AArtifact globalArtifact)
+    public void setProgramArtifact(AArtifact programArtifact)
     {
-        synchronized (globalArtifactLock)
+        synchronized (programArtifactLock)
         {
-            this.globalArtifact = globalArtifact;
+            this.programArtifact = programArtifact;
         }
     }
 
     @Override
     public AArtifact getProgramArtifact()
     {
-        synchronized (globalArtifactLock)
+        synchronized (programArtifactLock)
         {
-            return globalArtifact;
+            return programArtifact;
+        }
+    }
+
+    /*
+
+     */
+
+    protected final Object artifactsLock = new Object();
+
+    private final Map<Class<? extends AArtifact>, Map<String, AArtifact>> artifacts;
+
+    @Override
+    public List<AArtifact> getArtifacts(Class<? extends AArtifact> artifactClass)
+    {
+        synchronized (artifactsLock)
+        {
+            Map<String, AArtifact> artifactsOfClassMap = artifacts.computeIfAbsent(artifactClass, k -> new HashMap<>());
+
+            Collection<AArtifact> artifacts = artifactsOfClassMap.values();
+
+            return new ArrayList<>(artifacts);
+        }
+    }
+
+    @Override
+    public AArtifact getArtifact(final String identifier)
+    {
+        if (identifier == null || "".equals(identifier))
+        {
+            return null;
+        }
+        synchronized (artifactsLock)
+        {
+            for (Map<String, AArtifact> value : artifacts.values())
+            {
+                AArtifact artifact = value.get(identifier);
+
+                if (artifact != null)
+                {
+                    return artifact;
+                }
+            }
+            return null;
+        }
+    }
+
+    @Override
+    public AArtifact getArtifact(Class<? extends AArtifact> artifactClass, String identifier)
+    {
+        synchronized (artifactsLock)
+        {
+            Map<String, AArtifact> artifactsOfClassMap = artifacts.computeIfAbsent(artifactClass, k -> new HashMap<>());
+
+            //noinspection UnnecessaryLocalVariable
+            AArtifact artifact = artifactsOfClassMap.get(identifier);
+
+            return artifact;
+        }
+    }
+
+    @Override
+    public void addArtifact(AArtifact artifact)
+    {
+        synchronized (artifactsLock)
+        {
+            Map<String, AArtifact> artifactsOfClassMap = artifacts.computeIfAbsent(artifact.getClass(), k -> new HashMap<>());
+
+            artifactsOfClassMap.put(artifact.getIdentifier(), artifact);
         }
     }
 
     private final ArtifactTrie artifactTrie;
-
-    protected AArtifactPool()
-    {
-        artifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
-    }
 
     @Override
     public ArtifactTrie getArtifactTrie()
@@ -49,17 +119,58 @@ public abstract class AArtifactPool implements IArtifactPool
 //        threadArtifacts.forEach(threadArtifact -> threadArtifact.setFiltered(threadArtifactFilter.filterThreadArtifact(threadArtifact)));
 //    }
 
+
     @Override
-    public void applyThreadFilter(ICodeSparksThreadFilter threadFilter)
+    public Map<String, List<AArtifact>> getNamedArtifactTypeLists()
     {
-        synchronized (globalArtifactLock)
+        Map<String, List<AArtifact>> map = new HashMap<>();
+        synchronized (artifactsLock)
         {
-            AArtifact globalArtifact = getProgramArtifact();
-            if (globalArtifact != null)
+            for (Map.Entry<Class<? extends AArtifact>, Map<String, AArtifact>> classMapEntry : artifacts.entrySet())
             {
-//                applyFilter(globalArtifact.getThreadArtifacts(), threadArtifactFilter);
-                globalArtifact.applyThreadFilter(threadFilter);
+                map.put(classMapEntry.getKey().getName(), new ArrayList<>(classMapEntry.getValue().values()));
             }
         }
+        return map;
+    }
+
+    @Override
+    public void applyThreadFilter(final ICodeSparksThreadFilter threadFilter)
+    {
+        if (threadFilter == null)
+        {
+            return;
+        }
+        synchronized (programArtifactLock)
+        {
+            AArtifact programArtifact = getProgramArtifact();
+            if (programArtifact != null)
+            {
+//                applyFilter(programArtifact.getThreadArtifacts(), threadArtifactFilter);
+                programArtifact.applyThreadFilter(threadFilter);
+            }
+        }
+
+        synchronized (artifactsLock)
+        {
+            Collection<Map<String, AArtifact>> values = artifacts.values();
+
+            for (Map<String, AArtifact> value : values)
+            {
+                value.values().forEach(profilingMethod -> {
+                    profilingMethod.applyThreadFilter(threadFilter);
+                    profilingMethod.getSuccessorsList().forEach(aNeighborProfilingArtifact
+                            -> aNeighborProfilingArtifact.applyThreadFilter(threadFilter));
+                    profilingMethod.getPredecessorsList().forEach(aNeighborProfilingArtifact
+                            -> aNeighborProfilingArtifact.applyThreadFilter(threadFilter));
+                });
+            }
+        }
+    }
+
+    @Override
+    public void export(IArtifactPoolExportStrategy strategy)
+    {
+        strategy.export(this);
     }
 }

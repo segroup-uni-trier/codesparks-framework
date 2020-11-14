@@ -6,11 +6,15 @@ import de.unitrier.st.codesparks.core.data.ArtifactTrie;
 import java.util.List;
 import java.util.Map;
 
-public interface IArtifactPool extends ICodeSparksThreadFilterable
+public interface IArtifactPool extends ICodeSparksThreadFilterable, IArtifactPoolExportable
 {
-    AArtifact getArtifact(String identifier);
+    AArtifact getArtifact(final String identifier);
 
-    List<AArtifact> getArtifacts();
+    AArtifact getArtifact(final Class<? extends AArtifact> artifactClass, final String identifier);
+
+    List<AArtifact> getArtifacts(final Class<? extends AArtifact> artifactClass);
+
+    void addArtifact(final AArtifact artifact);
 
     /**
      * @return A map, where the keys represent title strings of the values which are lists of artifacts.
@@ -32,5 +36,6 @@ public interface IArtifactPool extends ICodeSparksThreadFilterable
     /**
      * @return A full trie of the collected profiling artifacts, if the data processor is configured to compute one. An empty trie, otherwise.
      */
+    @Deprecated // The idea is to make the trie an own metric of an artifact
     ArtifactTrie getArtifactTrie();
 }
