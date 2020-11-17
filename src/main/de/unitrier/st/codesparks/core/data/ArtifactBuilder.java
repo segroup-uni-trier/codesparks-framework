@@ -1,10 +1,23 @@
 package de.unitrier.st.codesparks.core.data;
 
+import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 public class ArtifactBuilder
 {
+    private static final class DefaultArtifact extends AArtifact
+    {
+        public DefaultArtifact(final String name, final String identifier)
+        {
+            super(name, identifier);
+        }
+
+        @Override
+        public void navigate() { CodeSparksLogger.addText("Navigation is unavailable for default artifacts."); }
+    }
+
     private AArtifact artifact;
 
     public ArtifactBuilder(final String name, final String identifier, final Class<? extends AArtifact> artifactClass)
@@ -15,8 +28,14 @@ public class ArtifactBuilder
             artifact = constructor.newInstance(name, identifier);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e)
         {
+            CodeSparksLogger.addText("%s: %s", getClass().getSimpleName(), e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public ArtifactBuilder(final String name, final String identifier)
+    {
+        artifact = new DefaultArtifact(name, identifier);
     }
 
     public ArtifactBuilder setFileName(String fileName)
