@@ -53,8 +53,14 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 //        return createArtifactImageIcon(artifact);
 //    }
 
-    public JLabel createArtifactLabel(@NotNull AArtifact artifact)
+    @Override
+    public JLabel createArtifactLabel(@NotNull AArtifact artifact, String... metricIdentifiers)
     {
+        if (metricIdentifiers.length < 2)
+        {
+            // TODO: return empty label and print message to logger
+        }
+
         int lineHeight = VisConstants.getLineHeight();
 
         GraphicsConfiguration defaultConfiguration =
@@ -78,6 +84,10 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 //        final double metricValue = artifact.getMetricValue();
 //        final double threadMetricValueRatio = DataUtil.getThreadMetricValueRatio(artifact, ThreadArtifact::getMetricValue);
 //        final double threadFilteredMetricValue = metricValue * threadMetricValueRatio;
+
+
+
+        final String primaryMetricIdentifier = metricIdentifiers[0];
 
         final double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact);
 

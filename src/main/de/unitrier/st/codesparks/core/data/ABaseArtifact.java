@@ -27,6 +27,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         this.identifier = identifier == null ? "" : identifier;
         this.threadClass = threadClass;
         threadMap = new HashMap<>();
+        metrics = new HashMap<>();
         metricValue = 0D;
         metricValueSelf = 0D;
     }
@@ -57,19 +58,154 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
      * MetricValue
      */
 
-    double metricValue;
-    Map<String, Metric> metrics; // TODO: OM!
+    Map<Class<? extends Metric<?>>, Metric<?>> metrics; // TODO: OM!
 
-    private final Object metricValueLock = new Object();
+    private final Object metricsLock = new Object();
 
-    public void increaseMetricValue(double toIncrease)
+    public void addMetric(final Metric<?> metric)
     {
-        synchronized (metricValueLock)
+        synchronized (metricsLock)
         {
-            this.metricValue += toIncrease;
+            //noinspection unchecked
+            final Class<? extends Metric<?>> aClass = (Class<? extends Metric<?>>) metric.getClass();
+            metrics.put(aClass, metric);
         }
     }
 
+    public Object getMetricValue(final Class<? extends Metric<?>> metricClass)
+    {
+        synchronized (metricsLock)
+        {
+            final Metric<?> metric = metrics.get(metricClass);
+
+            if (metric == null)
+            {
+                return null;
+            }
+
+            return metric.getValue();
+        }
+    }
+
+    public void setMetricValue(final Class<? extends Metric<?>> metricClass, final Object value)
+    {
+        synchronized (metricsLock)
+        {
+            final Metric<?> metric = metrics.get(metricClass);
+
+            if (metric == null)
+            {
+                return;
+            }
+
+            //metric.setValue(value);
+        }
+    }
+
+    public void increaseNumericalMetricValue(final Class<? extends NumericalMetric> numericalMetricClass, final double toIncrease)
+    {
+        synchronized (metricsLock)
+        {
+            NumericalMetric metric = (NumericalMetric) metrics.get(numericalMetricClass);
+
+            if (metric == null)
+            {
+
+                try
+                {
+                    final Constructor<? extends NumericalMetric> constructor = numericalMetricClass.getConstructor();
+                    metric = constructor.newInstance();
+
+                    metrics.put(numericalMetricClass, metric);
+
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            assert metric != null;
+
+            metric.increaseNumericalValue(toIncrease);
+        }
+    }
+
+    public double getNumericalMetricValue(final Class<? extends NumericalMetric> numericalMetricClass)
+    {
+        synchronized (metricsLock)
+        {
+            final NumericalMetric metric = (NumericalMetric) metrics.get(numericalMetricClass);
+
+            if (metric == null)
+            {
+                return Double.NaN;
+            }
+
+            return metric.getValue();
+        }
+    }
+
+    public void setNumericalMetricValue(final Class<? extends NumericalMetric> numericalMetricClass, final double metricValue)
+    {
+        synchronized (metricsLock)
+        {
+            NumericalMetric metric = (NumericalMetric) metrics.get(numericalMetricClass);
+
+            if (metric == null)
+            {
+                try
+                {
+                    final Constructor<? extends NumericalMetric> constructor = numericalMetricClass.getConstructor();
+                    metric = constructor.newInstance();
+
+                    metrics.put(numericalMetricClass, metric);
+
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            assert metric != null;
+
+            metric.setValue(metricValue);
+        }
+    }
+
+    public String getMetricValueText(final Class<? extends Metric<?>> metricClass)
+    {
+        synchronized (metricsLock)
+        {
+            final Metric<?> metric = metrics.get(metricClass);
+
+            if (metric == null)
+            {
+                return "n/a";
+            }
+
+            return metric.toString();
+        }
+    }
+
+    /*
+    Deprecated methods
+     */
+
+
+    double metricValue;
+
+    private final Object metricValueLock = new Object();
+
+//    @Deprecated
+//    public void increaseMetricValue(double toIncrease)
+//    {
+//        synchronized (metricValueLock)
+//        {
+//            this.metricValue += toIncrease;
+//        }
+//    }
+
+    @Deprecated
     public double getMetricValue()
     {
         synchronized (metricValueLock)
@@ -78,6 +214,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         }
     }
 
+    @Deprecated
     public String getMetricValueText()
     {
         synchronized (metricValueLock)
@@ -86,6 +223,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         }
     }
 
+    @Deprecated
     public void setMetricValue(double metricValue)
     {
         synchronized (metricValueLock)
@@ -102,6 +240,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
 
     private final Object metricValueSelfLock = new Object();
 
+    @Deprecated
     public double getMetricValueSelf()
     {
         synchronized (metricValueSelfLock)
@@ -110,6 +249,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         }
     }
 
+    @Deprecated
     public String getMetricValueSelfText()
     {
         synchronized (metricValueSelfLock)
@@ -118,6 +258,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         }
     }
 
+    @Deprecated
     public void setMetricValueSelf(double metricValueSelf)
     {
         synchronized (metricValueSelfLock)
@@ -126,6 +267,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         }
     }
 
+    @Deprecated
     public void increaseMetricValueSelf(double toIncrease)
     {
         synchronized (metricValueSelfLock)
@@ -135,6 +277,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         }
     }
 
+    @Deprecated
     @SuppressWarnings("unused")
     public void decreaseMetricValueSelf(double toDecrease)
     {
@@ -250,6 +393,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         }
     }
 
+    @Deprecated
     public synchronized void increaseMetricValueSelfForThread(String identifier, double toIncrease)
     {
         synchronized (threadMapLock)
@@ -279,6 +423,7 @@ public abstract class ABaseArtifact implements IDisplayable, ICodeSparksThreadFi
         }
     }
 
+    @Deprecated
     public synchronized void increaseMetricValueThread(String identifier, double toIncrease)
     {
         synchronized (threadMapLock)

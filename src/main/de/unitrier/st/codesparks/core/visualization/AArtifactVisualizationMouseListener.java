@@ -5,17 +5,21 @@ import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.wm.*;
+import com.intellij.openapi.wm.RegisterToolWindowTask;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowAnchor;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.ui.components.BorderLayoutPanel;
+import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.NumericalMetric;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
-import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.visualization.popup.PopupPanel;
 
 import javax.swing.*;
@@ -28,15 +32,22 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
     protected JComponent component;
     protected Dimension dimension;
     protected AArtifact artifact;
+    protected Class<? extends NumericalMetric>[] numericalMetricClasses;
 
-    protected AArtifactVisualizationMouseListener(JComponent component, Dimension dimension, AArtifact artifact)
+    protected AArtifactVisualizationMouseListener(
+            JComponent component
+            , Dimension dimension
+            , AArtifact artifact
+            , Class<? extends NumericalMetric>... numericalMetricClasses
+    )
     {
         this.component = component;
         this.dimension = dimension;
         this.artifact = artifact;
+        this.numericalMetricClasses = (numericalMetricClasses == null) ? new Class[0] : numericalMetricClasses;
     }
 
-    protected abstract PopupPanel createPopupContent(AArtifact artifact);
+    protected abstract PopupPanel createPopupContent(AArtifact artifact); // TODO: remove parameter artifact since it is in the constructor already
 
     protected abstract String createPopupTitle(AArtifact artifact);
 

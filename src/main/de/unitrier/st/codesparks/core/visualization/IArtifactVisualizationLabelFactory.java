@@ -7,5 +7,5 @@ import javax.swing.JLabel;
 
 public interface IArtifactVisualizationLabelFactory
 {
-    JLabel createArtifactLabel(@NotNull AArtifact artifact);
+    JLabel createArtifactLabel(@NotNull AArtifact artifact, String... metricIdentifiers);
 }

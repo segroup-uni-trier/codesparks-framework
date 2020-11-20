@@ -1,10 +1,7 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.components.JBTextArea;
-import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.DataUtil;
-import de.unitrier.st.codesparks.core.data.NeighborArtifactComparator;
+import de.unitrier.st.codesparks.core.data.*;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -18,20 +15,27 @@ public class MetricListModel extends DefaultListModel<JBTextArea>
     private final List<JBTextArea> textAreas;
     private static Font defaultFont;
 
-    private List<ANeighborArtifact> prepareNeighborMetricValues(AArtifact artifact, List<ANeighborArtifact> list)
+    private List<ANeighborArtifact> prepareNeighborMetricValues(
+            final AArtifact artifact
+            , final Class<? extends NumericalMetric> numericalMetricClass
+            , final List<ANeighborArtifact> list)
     {
         double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact);
         for (ANeighborArtifact aNeighborProfilingArtifact : list)
         {
-            aNeighborProfilingArtifact.setMetricValue(DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact));
+//            aNeighborProfilingArtifact.setMetricValue(DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact));
+            aNeighborProfilingArtifact.setMetricValue(numericalMetricClass, DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact));
             aNeighborProfilingArtifact.setRelativeMetricValue(threadFilteredMetricValue);
         }
         return list;
     }
 
-    public MetricListModel(final AArtifact artifact, final List<ANeighborArtifact> neighborProfilingArtifacts)
+    public MetricListModel(
+            final AArtifact artifact
+            , final Class<? extends NumericalMetric> numericalMetricClass
+            , final List<ANeighborArtifact> neighborProfilingArtifacts)
     {
-        this.neighborProfilingArtifacts = prepareNeighborMetricValues(artifact, neighborProfilingArtifacts);
+        this.neighborProfilingArtifacts = prepareNeighborMetricValues(artifact, numericalMetricClass, neighborProfilingArtifacts);
         this.neighborProfilingArtifacts.sort(new NeighborArtifactComparator());
         textAreas = new ArrayList<>(this.neighborProfilingArtifacts.size());
         for (int i = 0; i < this.neighborProfilingArtifacts.size(); i++)

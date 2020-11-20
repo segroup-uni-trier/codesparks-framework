@@ -15,7 +15,7 @@ public class ProgramThreadRadar extends AThreadRadar
     //    private ARadialThreadArtifactVisualizationDisplayData radialThreadArtifactVisualizationDisplayData;
     private final ArtifactOverview artifactOverview;
 
-    ProgramThreadRadar(ArtifactOverview artifactOverview)
+    ProgramThreadRadar(final ArtifactOverview artifactOverview)
     {
         setUpVisualizationParameter(30, 25);
 //        this.radialThreadArtifactVisualizationDisplayData = new DefaultRadialThreadArtifactVisualizationDisplayData();

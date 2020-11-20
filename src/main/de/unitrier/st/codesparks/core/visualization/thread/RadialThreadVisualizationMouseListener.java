@@ -27,9 +27,11 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
     private final IRadialThreadVisualizationDisplayData radialThreadVisualizationPopupData;
     private final JLabel[] hoverLabels;
 
-    public RadialThreadVisualizationMouseListener(JComponent component,
-                                                  AArtifact artifact,
-                                                  IRadialThreadVisualizationDisplayData radialThreadVisualizationPopupData)
+    public RadialThreadVisualizationMouseListener(
+            final JComponent component
+            , final AArtifact artifact
+            , final IRadialThreadVisualizationDisplayData radialThreadVisualizationPopupData
+    )
     {
         super(component, new Dimension(500, 340), artifact);
         this.component = component;

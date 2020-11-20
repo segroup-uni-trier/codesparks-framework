@@ -3,8 +3,9 @@ package de.unitrier.st.codesparks.core.visualization;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTabbedPane;
 import de.unitrier.st.codesparks.core.CoreUtil;
-import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
+import de.unitrier.st.codesparks.core.data.NumericalMetric;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
@@ -16,9 +17,14 @@ import java.util.stream.Collectors;
 
 public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
-    DefaultArtifactVisualizationMouseListener(JComponent component, AArtifact artifact)
+
+    DefaultArtifactVisualizationMouseListener(
+            JComponent component
+            , AArtifact artifact
+            , Class<? extends NumericalMetric>... numericalMetricClasses
+    )
     {
-        super(component, new Dimension(500, 175), artifact);
+        super(component, new Dimension(500, 175), artifact, numericalMetricClasses);
     }
 
     @Override
@@ -57,7 +63,10 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
                         .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
                 .collect(Collectors.toList());
 
-        MetricList successorsList = new MetricList(new MetricListModel(artifact, artifactSuccessorsList));
+        assert numericalMetricClasses.length > 0;
+        Class<? extends NumericalMetric> primaryMetric = numericalMetricClasses[0];
+
+        MetricList successorsList = new MetricList(new MetricListModel(artifact, primaryMetric, artifactSuccessorsList));
         successorsList.addMouseMotionListener(new MetricListMouseMotionAdapter(successorsList));
         successorsList.setCellRenderer(new MetricListCellRenderer());
 
@@ -69,7 +78,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
                                 .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
                         .collect(Collectors.toList());
 
-        MetricList predecessorList = new MetricList(new MetricListModel(artifact, artifactPredecessorsList));
+        MetricList predecessorList = new MetricList(new MetricListModel(artifact, primaryMetric, artifactPredecessorsList));
         predecessorList.addMouseMotionListener(new MetricListMouseMotionAdapter(predecessorList));
         predecessorList.setCellRenderer(new MetricListCellRenderer());
 
@@ -119,6 +128,8 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
     @Override
     protected String createPopupTitle(AArtifact artifact)
     {
+        assert numericalMetricClasses.length > 1;
+        Class<? extends NumericalMetric> secondaryMetric = numericalMetricClasses[1];
         String metricKind = "total";
         StringBuilder titleStringBuilder = new StringBuilder();
         titleStringBuilder.append(artifact.getTitleName());

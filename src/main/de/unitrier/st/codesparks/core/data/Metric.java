@@ -1,15 +1,9 @@
 package de.unitrier.st.codesparks.core.data;
 
-public class Metric
+public abstract class Metric<T>
 {
-    private String name;
-    private Object value;
-
-    public Metric(final String name, final Object value)
-    {
-        this.name = name;
-        this.value = value;
-    }
+    String name;
+    T value;
 
     public String getName()
     {
@@ -21,13 +15,19 @@ public class Metric
         this.name = name;
     }
 
-    public Object getValue()
+    public T getValue()
     {
         return value;
     }
 
-    public void setValue(Object value)
+    public void setValue(T value)
     {
         this.value = value;
+    }
+
+    @Override
+    public String toString()
+    {
+        return value.toString();
     }
 }
