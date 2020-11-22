@@ -271,13 +271,19 @@ final class ColorScale
     @Contract(pure = true)
     static Color getColor(double value)
     {
-        if (value < 0d)
+        if (Double.isNaN(value))
         {
             value = 0d;
-        }
-        if (value > 1d)
+        } else
         {
-            value = 1d;
+            if (value < 0d)
+            {
+                value = 0d;
+            }
+            if (value > 1d)
+            {
+                value = 1d;
+            }
         }
         //assert value >= -0.000000001 : "value=" + value + " is to below zero!";
         //assert value <= 1.000000001 : "value=" + value + " is to above one!";

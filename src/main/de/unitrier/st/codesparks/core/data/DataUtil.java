@@ -6,8 +6,10 @@ public final class DataUtil
 {
     private DataUtil() {}
 
-    public static double getThreadMetricValueRatio(ABaseArtifact artifact,
-                                                   ToDoubleFunction<ACodeSparksThread> threadArtifactToDoubleFunc)
+    public static double getThreadMetricValueRatio(
+            final ABaseArtifact artifact
+            , final ToDoubleFunction<ACodeSparksThread> threadArtifactToDoubleFunc
+    )
     {
         return artifact.getThreadArtifacts()
                 .stream()
@@ -16,16 +18,18 @@ public final class DataUtil
                 .reduce(0d, Double::sum);
     }
 
-    public static double getThreadFilteredMetricValue(ABaseArtifact artifact, final String metricIdentifier)
+    public static double getThreadFilteredMetricValue(
+            final ABaseArtifact artifact
+            , final String metricIdentifier
+    )
     {
-        final double metricValue = artifact.getNumericalMetricValue(metricIdentifier);
+        double metricValue = artifact.getNumericalMetricValue(metricIdentifier);
         double ratio = 1d;
         if (artifact.hasThreads())
         {
-//            final double threadMetricValueRatio = DataUtil.getThreadMetricValueRatio(artifact, CodeSparksThread::getMetricValue);
             ratio = DataUtil.getThreadMetricValueRatio(artifact, thread -> thread.getNumericalMetricValue(metricIdentifier));
         }
-//        final double threadFilteredMetricValue = metricValue * threadMetricValueRatio;
+        //noinspection UnnecessaryLocalVariable : Not inlined because of debugging reasons
         final double threadFilteredMetricValue = metricValue * ratio;
         return threadFilteredMetricValue;
     }

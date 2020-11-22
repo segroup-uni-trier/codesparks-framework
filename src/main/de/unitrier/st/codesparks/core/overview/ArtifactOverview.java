@@ -71,14 +71,15 @@ public class ArtifactOverview
             return;
         }
         this.artifactPool = artifactPool;
+        applyProgramArtifactVisualization();
         filterOverView();
         rootPanel.repaint();
     }
 
-    IArtifactPool getArtifactPool()
-    {
-        return this.artifactPool;
-    }
+//    IArtifactPool getArtifactPool()
+//    {
+//        return this.artifactPool;
+//    }
 
     private AArtifactVisualizationLabelFactory programArtifactVisualizationLabelFactory;
 
@@ -87,15 +88,31 @@ public class ArtifactOverview
         this.programArtifactVisualizationLabelFactory = factory;
     }
 
-    private ArtifactOverview()
+    private void applyProgramArtifactVisualization()
     {
-        setupUI();
+        if (programArtifactVisualizationLabelFactory == null || artifactPool == null)
+        {
+            return;
+        }
+        AArtifact programArtifact = artifactPool.getProgramArtifact();
+        if (programArtifact == null)
+        {
+            return;
+        }
+        JLabel artifactLabel = programArtifactVisualizationLabelFactory.createArtifactLabel(programArtifact);
+        programArtifactVisualizationPanel.removeAll();
+        programArtifactVisualizationPanel.add(artifactLabel);
+        rootPanel.repaint();
     }
+
+    private ArtifactOverview() { setupUI(); }
+
+    private JBPanel<BorderLayoutPanel> programArtifactVisualizationPanel;
 
     private void setupUI()
     {
-//        ProgramThreadRadar programThreadRadar = new ProgramThreadRadar(this);
 
+//        ProgramThreadRadar programThreadRadar = new ProgramThreadRadar(this);
 
         rootPanel = new BorderLayoutPanel();//new JBPanel();
 //        rootPanel.setPreferredSize(new Dimension(300, 500));
@@ -192,12 +209,8 @@ public class ArtifactOverview
         JBPanel<BorderLayoutPanel> threadFilterWrapper = new JBPanel<>();
         threadFilterWrapper.setLayout(new BoxLayout(threadFilterWrapper, BoxLayout.X_AXIS));
 
-        if (programArtifactVisualizationLabelFactory != null)
-        {
-            AArtifact programArtifact = artifactPool.getProgramArtifact();
-            JLabel artifactLabel = programArtifactVisualizationLabelFactory.createArtifactLabel(programArtifact);
-            threadFilterWrapper.add(artifactLabel);
-        }
+        programArtifactVisualizationPanel = new JBPanel<>();
+        threadFilterWrapper.add(programArtifactVisualizationPanel);
 
         final JButton resetThreadFilterButton = new JButton(
                 LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
@@ -314,16 +327,11 @@ public class ArtifactOverview
     private JBTextField excludeFilter;
     private JBTextField includeFilter;
 
-    private String metricIdentifier;
+    private String primaryMetricIdentifier;
 
-    public void registerMetricIdentifier(final String metricIdentifier)
+    public void registerPrimaryMetricIdentifier(final String primaryMetricIdentifier)
     {
-        this.metricIdentifier = metricIdentifier;
-    }
-
-    public String getMetricIdentifier()
-    {
-        return metricIdentifier;
+        this.primaryMetricIdentifier = primaryMetricIdentifier;
     }
 
     public void filterOverView()
@@ -347,7 +355,7 @@ public class ArtifactOverview
             }
 
             ArtifactNumericalMetricValueComparator artifactNumericalMetricValueComparator =
-                    new ArtifactNumericalMetricValueComparator(metricIdentifier);
+                    new ArtifactNumericalMetricValueComparator(primaryMetricIdentifier);
 
             tabbedPane.removeChangeListener(tabbedPaneChangeListener);
 
@@ -359,7 +367,7 @@ public class ArtifactOverview
                 artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
                 artifacts.sort(artifactNumericalMetricValueComparator);
                 String tabName = entry.getKey();
-                addTab(tabName, artifacts, metricIdentifier);
+                addTab(tabName, artifacts, primaryMetricIdentifier);
             }
 
             if (lastSelectedIndex > 0 && lastSelectedIndex < tabbedPane.getTabCount())

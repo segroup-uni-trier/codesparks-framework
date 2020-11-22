@@ -108,7 +108,7 @@ public abstract class AThreadRadar extends JPanel
 
     protected void drawArcForSumAndAvg(Color color, int radiusSum, int radius, int startAngle, int angle)
     {
-        g2d.setColor(VisualizationUtil.getBackgroundPerformanceColor(color, .25f));
+        g2d.setColor(VisualizationUtil.getBackgroundMetricColor(color, .25f));
         g2d.fillArc(centerPoint - (radiusSum / 2), centerPoint - (radiusSum / 2), radiusSum, radiusSum,
                 startAngle, angle);
         g2d.setColor(color);

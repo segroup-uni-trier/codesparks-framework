@@ -25,6 +25,16 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
     private final String secondaryMetricIdentifier;
 
     public ThreadRadarLabelFactory(
+            final String primaryMetricIdentifier
+            , final String secondaryMetricIdentifier
+    )
+    {
+        super(0, primaryMetricIdentifier);
+        this.radialThreadVisualizationPopupData = new DefaultThreadRadarDisplayData(primaryMetricIdentifier);
+        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
+    }
+
+    public ThreadRadarLabelFactory(
             IThreadRadarDisplayData radialThreadVisualizationPopupData
             , int sequence
             , boolean isDefault
@@ -145,7 +155,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             }
 
 
-            g2d.setColor(VisualizationUtil.getBackgroundPerformanceColor(color, .25f));
+            g2d.setColor(VisualizationUtil.getBackgroundMetricColor(color, .25f));
             g2d.fillArc(RadialThreadVisualizationConstants.MIDDLEPOINT - (radiusSum / 2), RadialThreadVisualizationConstants.MIDDLEPOINT - (radiusSum / 2),
                     radiusSum, radiusSum, startAngle, angle);
             g2d.setColor(color);

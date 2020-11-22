@@ -25,10 +25,10 @@ public final class CoreUtil
 
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
-    public static String formatPercentage(double value)
+    public static String formatPercentage(final double value)
     {
         String percentageText;
-        if (value < 0.0001)
+        if (Double.isNaN(value) || value < 0.0001)
         {
             percentageText = "<0.01%";
         } else
@@ -38,14 +38,6 @@ public final class CoreUtil
                 percentageText = df.format(value * 100) + "%";
             }
         }
-//        StringBuilder strb = new StringBuilder();
-//        int length = percentageText.length();
-//        for (int i = 0; i < 6 - length; i++)
-//        {
-//            strb.append(" ");
-//        }
-//        strb.append(percentageText);
-//        percentageText = strb.toString();
         String errorMessage = "did not format " + value + " properly: " + percentageText;
         assert percentageText.length() > 1 : errorMessage;
         assert percentageText.length() < 10 : errorMessage;

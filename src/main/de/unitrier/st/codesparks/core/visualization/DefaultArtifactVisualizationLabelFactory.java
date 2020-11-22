@@ -104,8 +104,8 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         /*
          * Draw the intensity rectangle
          */
-        Color performanceColor = VisualizationUtil.getPerformanceColor(threadFilteredMetricValue);
-        graphics.setColor(performanceColor);
+        Color metricColor = VisualizationUtil.getMetricColor(threadFilteredMetricValue);
+        graphics.setColor(metricColor);
         VisualizationUtil.fillRectangle(graphics, artifactVisualizationArea);
         /*
          * Draw the self metric
@@ -137,7 +137,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
             graphics.drawLine(X_OFFSET, 0, X_OFFSET + selfWidth, 0);
             graphics.drawLine(X_OFFSET, 0, X_OFFSET + selfWidth, 0);
         }
-        graphics.setColor(VisualizationUtil.getBackgroundPerformanceColor(performanceColor, .1f));
+        graphics.setColor(VisualizationUtil.getBackgroundMetricColor(metricColor, .1f));
         graphics.drawLine(X_OFFSET + selfWidth, 0, X_OFFSET + RECTANGLE_WIDTH, 0);
         graphics.drawLine(X_OFFSET + selfWidth, 0, X_OFFSET + RECTANGLE_WIDTH, 0);
         graphics.setColor(BORDER_COLOR);
@@ -149,7 +149,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         graphics.setColor(BLACK);
         Font font = new Font("Arial", Font.BOLD, 11);  // TODO: support different font sizes
         graphics.setFont(font);
-        Color textColor = VisualizationUtil.getTextColor(performanceColor);
+        Color textColor = VisualizationUtil.getTextColor(metricColor);
         graphics.setColor(textColor);
         graphics.drawString(percentageText, X_OFFSET + 1 + (int) ((RECTANGLE_WIDTH / 2d) - (textWidth / 2d)),
                 Y_OFFSET + (int) ((lineHeight - Y_OFFSET) * .75d));
@@ -157,8 +157,8 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         /*
          * Draw caller and callee triangles
          */
-        drawCallers(artifact, artifactVisualizationArea, graphics, lineHeight, performanceColor);
-        drawCallees(artifact, artifactVisualizationArea, graphics, lineHeight, performanceColor);
+        drawCallers(artifact, artifactVisualizationArea, graphics, lineHeight, metricColor);
+        drawCallees(artifact, artifactVisualizationArea, graphics, lineHeight, metricColor);
         /*
          * Set the actual image icon size
          */

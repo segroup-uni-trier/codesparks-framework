@@ -1,12 +1,10 @@
 package de.unitrier.st.codesparks.core.visualization;
 
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
-import de.unitrier.st.codesparks.core.IArtifactPool;
 import de.unitrier.st.codesparks.core.ArtifactPoolManager;
+import de.unitrier.st.codesparks.core.IArtifactPool;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 
 import javax.swing.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,14 +60,14 @@ public class ArtifactVisualizationLabelFactoryCache
     }
 
     public JLabel getCachedArtifactVisualizationLabel(
-            String identifier
-            , Class<? extends AArtifactVisualizationLabelFactory> factory
-            , boolean createIfAbsent
+            final String artifactIdentifier
+            , final AArtifactVisualizationLabelFactory factory
+            , final boolean createIfAbsent
     )
     {
         synchronized (this)
         {
-            Map<Class<? extends AArtifactVisualizationLabelFactory>, JLabel> classJLabelMap = cache.get(identifier);
+            Map<Class<? extends AArtifactVisualizationLabelFactory>, JLabel> classJLabelMap = cache.get(artifactIdentifier);
             if (classJLabelMap == null)
             {
                 if (createIfAbsent)
@@ -80,30 +78,22 @@ public class ArtifactVisualizationLabelFactoryCache
                     return null;
                 }
             }
-            JLabel jLabel = classJLabelMap.get(factory);
+            JLabel jLabel = classJLabelMap.get(factory.getClass());
             if (jLabel == null)
             {
                 if (createIfAbsent)
                 {
-                    try
+                    IArtifactPool profilingResult = ArtifactPoolManager.getInstance().getArtifactPool();
+                    AArtifact artifact = profilingResult.getArtifact(artifactIdentifier);
+                    if (artifact == null)
                     {
-                        AArtifactVisualizationLabelFactory labelFactory = factory.getDeclaredConstructor().newInstance();
-                        IArtifactPool profilingResult = ArtifactPoolManager.getInstance().getArtifactPool();
-                        AArtifact artifact = profilingResult.getArtifact(identifier);
-                        if (artifact == null)
-                        {
-                            return null;
-                        }
-                        JLabel artifactLabel = labelFactory.createArtifactLabel(artifact);
-                        artifactLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                        classJLabelMap.put(factory, artifactLabel);
-                        cache.put(identifier, classJLabelMap);
-                        return artifactLabel;
-                    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
-                    {
-//                    e.printStackTrace();
-                        CodeSparksLogger.addText(e.getMessage());
+                        return null;
                     }
+                    JLabel artifactLabel = factory.createArtifactLabel(artifact);
+                    artifactLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                    classJLabelMap.put(factory.getClass(), artifactLabel);
+                    cache.put(artifactIdentifier, classJLabelMap);
+                    return artifactLabel;
                 }
                 return null;
             }

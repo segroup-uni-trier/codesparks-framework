@@ -47,7 +47,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
     )
     {
         final double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, primaryMetricIdentifier);
-        final Color metricColor = VisualizationUtil.getPerformanceColor(threadFilteredMetricValue);
+        final Color metricColor = VisualizationUtil.getMetricColor(threadFilteredMetricValue);
 
         int numberOfCalleesInSameLine = threadFilteredNeighborArtifactsOfLine.size();
 
@@ -74,7 +74,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
         graphics.setColor(backgroundColor);
         graphics.fillRect(0, 0, bi.getWidth(), bi.getHeight());
 
-        final Color calleeBackgroundColor = VisualizationUtil.getBackgroundPerformanceColor(metricColor, .25f);
+        final Color calleeBackgroundColor = VisualizationUtil.getBackgroundMetricColor(metricColor, .25f);
         int numberOfShadowCalleesToDraw = Math.min(numberOfCalleesInSameLine, 3);
 
         // Draw the hints of multiple callees in a single line of code

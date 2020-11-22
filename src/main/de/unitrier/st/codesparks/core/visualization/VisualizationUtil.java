@@ -23,13 +23,13 @@ public final class VisualizationUtil
         }
     }
 
-    public static Color getPerformanceColor(double runtime)
+    public static Color getMetricColor(double metricValue)
     {
-        double colorParameter = Math.pow(runtime, .25);
+        double colorParameter = Math.pow(metricValue, .25);
         return ColorScale.getColor(colorParameter);
     }
 
-    public static Color getBackgroundPerformanceColor(Color performanceColor, float alpha)
+    public static Color getBackgroundMetricColor(Color performanceColor, float alpha)
     {
         return new JBColor(new Color(performanceColor.getRed() / 255f, performanceColor.getGreen() / 255f,
                 performanceColor.getBlue()

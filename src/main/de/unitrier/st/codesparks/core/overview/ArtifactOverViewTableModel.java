@@ -113,10 +113,10 @@ public class ArtifactOverViewTableModel implements TableModel
             case 0:
                 ACodeSparksFlow profilingFlow = CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow();
 
-                Class<? extends AArtifactVisualizationLabelFactory> defaultVisualizationLabelFactoryClass =
-                        profilingFlow.getDefaultVisualizationLabelFactoryClass();
+                AArtifactVisualizationLabelFactory defaultVisualizationLabelFactory =
+                        profilingFlow.getDefaultVisualizationLabelFactory();
 
-                if (defaultVisualizationLabelFactoryClass == null)
+                if (defaultVisualizationLabelFactory == null)
                 {
                     DummyArtifactVisualizationLabelFactory dummyArtifactVisualizationLabelFactory =
                             new DummyArtifactVisualizationLabelFactory();
@@ -126,7 +126,7 @@ public class ArtifactOverViewTableModel implements TableModel
                 //noinspection UnnecessaryLocalVariable : Not inlined because og debugging purposes
                 JLabel cachedArtifactVisualizationLabel =
                         ArtifactVisualizationLabelFactoryCache.getInstance()
-                                .getCachedArtifactVisualizationLabel(artifact.getIdentifier(), defaultVisualizationLabelFactoryClass, true);
+                                .getCachedArtifactVisualizationLabel(artifact.getIdentifier(), defaultVisualizationLabelFactory, true);
 
 //                if (cachedArtifactVisualizationLabel == null)
 //                {

@@ -323,8 +323,8 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
         final Boolean threadVisualizationsEnabled = PropertiesUtil.getBooleanPropertyValueOrDefault(PropertiesFile.USER_INTERFACE_PROPERTIES,
                 PropertyKey.THREAD_VISUALIZATIONS_ENABLED, true);
-        artifactOverview.setFilterByThreadPanelVisible(threadVisualizationsEnabled);
 
+        artifactOverview.setFilterByThreadPanelVisible(threadVisualizationsEnabled);
         artifactOverview.setArtifactPool(artifactPool);
 
         contentManager.addContent(ContentFactory.SERVICE.getInstance().createContent
@@ -379,7 +379,17 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         ArtifactOverview.getInstance().registerThreadStateArtifactFilter(threadStateArtifactFilter);
     }
 
-    public Class<? extends AArtifactVisualizationLabelFactory> getDefaultVisualizationLabelFactoryClass()
+    public void registerProgramArtifactVisualizationLabelFactory(AArtifactVisualizationLabelFactory factory)
+    {
+        ArtifactOverview.getInstance().registerProgramArtifactVisualizationLabelFactory(factory);
+    }
+
+    public void registerPrimaryMetricIdentifier(final String metricIdentifier)
+    {
+        ArtifactOverview.getInstance().registerPrimaryMetricIdentifier(metricIdentifier);
+    }
+
+    public AArtifactVisualizationLabelFactory getDefaultVisualizationLabelFactory()
     {
         if (dataVisualizer != null)
         {
@@ -389,7 +399,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                 CodeSparksLogger.addText(String.format("%s: artifact visualization label factory not setup!", getClass()));
                 return null;
             }
-            return defaultArtifactVisualizationLabelFactory.getClass();
+            return defaultArtifactVisualizationLabelFactory;
         } else
         {
             CodeSparksLogger.addText(String.format("%s: data visualizer not setup!", getClass()));
