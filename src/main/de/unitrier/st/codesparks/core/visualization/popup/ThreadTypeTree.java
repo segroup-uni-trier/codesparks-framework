@@ -13,9 +13,9 @@ import java.util.Optional;
 
 public class ThreadTypeTree extends ThreadTree
 {
-    public ThreadTypeTree(Map<String, List<ACodeSparksThread>> threadTreeContent, CodeSparksThreadClustering clustering)
+    public ThreadTypeTree(Map<String, List<ACodeSparksThread>> threadTreeContent, final String metricIdentifier, CodeSparksThreadClustering clustering)
     {
-        super(threadTreeContent);
+        super(threadTreeContent, metricIdentifier);
 
         if (clustering == null)
         {

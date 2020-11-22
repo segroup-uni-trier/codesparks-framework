@@ -1,4 +1,4 @@
-package de.unitrier.st.codesparks.core.visualization.callee;
+package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
@@ -18,36 +18,41 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ArtifactCalleeDiscreteBarChartThreadVisualizationLabelFactory extends AArtifactCalleeVisualizationLabelFactory
+@SuppressWarnings("unused")
+public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
-    @SuppressWarnings("unused")
-    public ArtifactCalleeDiscreteBarChartThreadVisualizationLabelFactory() {}
-
-    public ArtifactCalleeDiscreteBarChartThreadVisualizationLabelFactory(int sequence)
+    public NeighborArtifactStackedBarChartThreadVisualizationLabelFactory(final String primaryMetricIdentifier)
     {
-        super(sequence);
+        super(primaryMetricIdentifier);
+    }
+
+    public NeighborArtifactStackedBarChartThreadVisualizationLabelFactory(int sequence, final String primaryMetricIdentifier)
+    {
+        super(sequence, primaryMetricIdentifier);
     }
 
     @Override
-    public JLabel createArtifactCalleeLabel(AArtifact artifact
+    public JLabel createArtifactCalleeLabel(
+            AArtifact artifact
             , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
-            , double threadFilteredMetricValue
-            , Color metricColor
     )
     {
         final double totalThreadFilteredCalleeTime = summedThreadMetricValuesOfNeighbors(threadFilteredNeighborArtifactsOfLine);
 
+        Comparator<CodeSparksThreadCluster> codeSparksThreadClusterComparator = CodeSparksThreadClusterComparator.getInstance(primaryMetricIdentifier);
+
+
         List<CodeSparksThreadCluster> threadClusters =
-                artifact.getDefaultThreadArtifactClustering()
+                artifact.getDefaultThreadArtifactClustering(primaryMetricIdentifier)
                         .stream()
-                        .sorted(CodeSparksThreadClusterComparator.getInstance())
+                        .sorted(codeSparksThreadClusterComparator)
                         .filter(cluster -> !cluster.isEmpty())
                         .collect(Collectors.toList());
 
         SortedMap<CodeSparksThreadCluster, Set<String>> artifactClusterSets =
-                new TreeMap<>(CodeSparksThreadClusterComparator.getInstance());
+                new TreeMap<>(codeSparksThreadClusterComparator);
         SortedMap<CodeSparksThreadCluster, Set<ACodeSparksThread>> neighborClusterSets =
-                new TreeMap<>(CodeSparksThreadClusterComparator.getInstance());
+                new TreeMap<>(codeSparksThreadClusterComparator);
 
         for (CodeSparksThreadCluster threadCluster : threadClusters)
         {
@@ -74,23 +79,16 @@ public class ArtifactCalleeDiscreteBarChartThreadVisualizationLabelFactory exten
                 }
             }
         }
-        final int threadsPerColumn = 3;
-        final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
 
-        final int X_OFFSET_LEFT = 2;
+        final int lineHeight = VisualizationUtil.getLineHeightCeil(VisConstants.getLineHeight(), 3);
+
+//        int totalThreads = totalThreads(neighborClusterSets);
+        final int X_OFFSET_LEFT = 1;
         final int X_OFFSET_RIGHT = 1;
 
-        final int threadMetaphorWidth = 24;
-        final int barChartWidth = 24;
+        final int visWidth = 5;
 
-        final int clusterBarMaxWidth = 20;
-
-        final int totalWidth = X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT;
-
-        final int threadSquareEdgeLength = 3;//(lineHeight - 6) / threadsPerColumn;
-
-        int threadSquareYPos = lineHeight - threadSquareEdgeLength - 2;
-        final int threadSquareOffset = threadSquareEdgeLength + 1;
+        final int totalWidth = X_OFFSET_LEFT + visWidth + X_OFFSET_RIGHT;
 
         GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
@@ -99,36 +97,12 @@ public class ArtifactCalleeDiscreteBarChartThreadVisualizationLabelFactory exten
         Graphics graphics = bi.getGraphics();
 
         Color backgroundColor = CoreUtil.getSelectedFileEditorBackgroundColor();
+
         graphics.setColor(backgroundColor);
         graphics.fillRect(0, 0, totalWidth, lineHeight);
 
-        // Thread metaphor
-        graphics.setColor(VisConstants.BORDER_COLOR);
+        int yPos = lineHeight;
 
-        //graphics.fillRect(X_OFFSET_LEFT - 1, lineHeight / 2 - 1, 3, 3); // Leading square
-
-        final int barrierXPos = threadMetaphorWidth / 2;
-
-        // Leading arrow
-        graphics.fillRect(X_OFFSET_LEFT, lineHeight / 2, barrierXPos - 1, 1);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 3, lineHeight / 2 - 3, X_OFFSET_LEFT + barrierXPos, lineHeight / 2);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 3, lineHeight / 2 + 3, X_OFFSET_LEFT + barrierXPos, lineHeight / 2);
-
-        // Vertical bar or barrier, respectively
-        final int barrierWidth = 3;
-        graphics.fillRect(X_OFFSET_LEFT + barrierXPos, 0, barrierWidth, lineHeight);
-
-
-//        graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth / 2, 2, 1, lineHeight - 4); // vertical
-//        graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth / 2, 2, threadMetaphorWidth / 2, 1); // top horizontal
-//        graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth / 2, lineHeight - 3, threadMetaphorWidth / 2, 1); // bottom horizontal
-
-        //
-        Rectangle threadVisualisationArea = new Rectangle(
-                X_OFFSET_LEFT + threadMetaphorWidth, 0, barChartWidth - 1, lineHeight - 1);
-
-
-        VisualizationUtil.drawRectangle(graphics, threadVisualisationArea);
         int clusterCnt = 0;
         VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
         for (Map.Entry<CodeSparksThreadCluster, Set<ACodeSparksThread>> threadArtifactClusterSetEntry : neighborClusterSets.entrySet())
@@ -148,25 +122,22 @@ public class ArtifactCalleeDiscreteBarChartThreadVisualizationLabelFactory exten
 
             graphics.setColor(color);
 
-            int clusterWidth;
-            double percent = clusterThreadArtifactMetric / totalThreadFilteredCalleeTime;
+            int clusterHeight = (int) (Math.ceil(clusterThreadArtifactMetric / totalThreadFilteredCalleeTime * lineHeight));
 
-            if (percent > 0D)
-            {
-                int discrete = (int) (percent * 100 / 10 + 0.9999);
-                clusterWidth = clusterBarMaxWidth / 10 * discrete;
-            } else
-            {
-                clusterWidth = 0;
-            }
-            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, threadSquareYPos, clusterWidth, threadSquareEdgeLength);
+            graphics.fillRect(X_OFFSET_LEFT, yPos - clusterHeight, visWidth, clusterHeight);
 
-            if (clusterWidth > 0)
-            {
-                // Arrows after barrier
-                graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, threadSquareYPos + 1, barrierXPos - 1, 1);
-            }
-            threadSquareYPos -= threadSquareOffset;
+            yPos = yPos - clusterHeight;
+
+//            int size = threadArtifactClusterSetEntry.getValue().size();
+//
+//            graphics.setColor(color);
+//
+//            int clusterHeight = (int) ((size / (double) totalThreads) * lineHeight);
+//
+//            graphics.fillRect(xPos, yPos - clusterHeight, width, clusterHeight);
+//
+//            yPos = yPos - clusterHeight;
+
         }
 
         BufferedImage subimage = bi.getSubimage(0, 0, bi.getWidth(), bi.getHeight());
@@ -181,12 +152,17 @@ public class ArtifactCalleeDiscreteBarChartThreadVisualizationLabelFactory exten
         return jLabel;
     }
 
+    private int totalThreads(Map<CodeSparksThreadCluster, Set<ACodeSparksThread>> neighborClusterSets)
+    {
+        return neighborClusterSets.values().stream().mapToInt(Set::size).sum();
+    }
+
     private double summedThreadMetricValues(Collection<ACodeSparksThread> codeSparksThreads)
     {
         return codeSparksThreads
                 .stream()
-                .filter(threadArtifact -> !threadArtifact.isFiltered())
-                .map(ACodeSparksThread::getMetricValue).reduce(0d, Double::sum);
+                .filter(codeSparksThread -> !codeSparksThread.isFiltered())
+                .map(codeSparksThread -> codeSparksThread.getNumericalMetricValue(primaryMetricIdentifier)).reduce(0d, Double::sum);
     }
 
     private double summedThreadMetricValuesOfNeighbors(Collection<ANeighborArtifact> neighborProfilingArtifacts)

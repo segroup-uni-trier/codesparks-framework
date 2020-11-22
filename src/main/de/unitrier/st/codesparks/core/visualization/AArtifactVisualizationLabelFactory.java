@@ -6,9 +6,22 @@ package de.unitrier.st.codesparks.core.visualization;
 public abstract class AArtifactVisualizationLabelFactory extends AVisualizationSequence
         implements IArtifactVisualizationLabelFactory
 {
-    protected AArtifactVisualizationLabelFactory() {}
+    protected final String primaryMetricIdentifier;
 
-    protected AArtifactVisualizationLabelFactory(int sequence) {super(sequence, false);}
+    protected AArtifactVisualizationLabelFactory(final String primaryMetricIdentifier)
+    {
+        this.primaryMetricIdentifier = primaryMetricIdentifier;
+    }
 
-    protected AArtifactVisualizationLabelFactory(int sequence, boolean isDefault) {super(sequence, isDefault);}
+    protected AArtifactVisualizationLabelFactory(final int sequence, final String primaryMetricIdentifier)
+    {
+        super(sequence, false);
+        this.primaryMetricIdentifier = primaryMetricIdentifier;
+    }
+
+    protected AArtifactVisualizationLabelFactory(final int sequence, final boolean isDefault, final String primaryMetricIdentifier)
+    {
+        super(sequence, isDefault);
+        this.primaryMetricIdentifier = primaryMetricIdentifier;
+    }
 }

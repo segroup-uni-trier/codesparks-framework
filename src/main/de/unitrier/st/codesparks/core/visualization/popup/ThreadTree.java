@@ -25,7 +25,10 @@ public class ThreadTree extends AThreadSelectable
     protected final List<ThreadTreeLeafNode> leafNodes;
     protected final Map<List<ACodeSparksThread>, ThreadTreeInnerNode> innerNodes;
 
-    public ThreadTree(Map<String, List<ACodeSparksThread>> threadTreeContent)
+    public ThreadTree(
+            final Map<String, List<ACodeSparksThread>> threadTreeContent
+            , final String metricIdentifier
+    )
     {
         leafNodes = new ArrayList<>();
         innerNodes = new HashMap<>();
@@ -58,8 +61,8 @@ public class ThreadTree extends AThreadSelectable
 
         List<Map.Entry<String, List<ACodeSparksThread>>> entries = new ArrayList<>(threadTreeContent.entrySet());
         entries.sort(Map.Entry.comparingByValue((o1, o2) -> {
-                    double sum1 = o1.stream().mapToDouble(ACodeSparksThread::getMetricValue).sum();
-                    double sum2 = o2.stream().mapToDouble(ACodeSparksThread::getMetricValue).sum();
+                    double sum1 = o1.stream().mapToDouble((codeSparksThread) -> codeSparksThread.getNumericalMetricValue(metricIdentifier)).sum();
+                    double sum2 = o2.stream().mapToDouble((codeSparksThread) -> codeSparksThread.getNumericalMetricValue(metricIdentifier)).sum();
                     return Double.compare(sum2, sum1);
 //                    if (sum1 > sum2) return -1;
 //                    if (sum1 < sum2) return 1;
@@ -71,12 +74,12 @@ public class ThreadTree extends AThreadSelectable
         {
             if (entry.getValue().isEmpty()) continue;
             List<ACodeSparksThread> codeSparksThreads = entry.getValue();
-            codeSparksThreads.sort(new CodeSparksThreadComparator());
-            ThreadTreeInnerNode innerNode = new ThreadTreeInnerNode(entry.getKey(), codeSparksThreads);
+            codeSparksThreads.sort(new CodeSparksThreadComparator(metricIdentifier));
+            ThreadTreeInnerNode innerNode = new ThreadTreeInnerNode(entry.getKey(), codeSparksThreads, metricIdentifier);
             boolean isInnerNodeSelected = true;
             for (ACodeSparksThread codeSparksThread : codeSparksThreads)
             {
-                ThreadTreeLeafNode threadTreeLeafNode = new ThreadTreeLeafNode(codeSparksThread);
+                ThreadTreeLeafNode threadTreeLeafNode = new ThreadTreeLeafNode(codeSparksThread, metricIdentifier);
                 boolean filtered = codeSparksThread.isFiltered();
                 ThreeStateCheckBox.State state = filtered ? ThreeStateCheckBox.State.NOT_SELECTED : ThreeStateCheckBox.State.SELECTED;
                 threadTreeLeafNode.setState(state);

@@ -11,9 +11,9 @@ import java.util.Map;
 
 public class ThreadClusterTree extends ThreadTree
 {
-    public ThreadClusterTree(Map<String, List<ACodeSparksThread>> threadTreeContent)
+    public ThreadClusterTree(Map<String, List<ACodeSparksThread>> threadTreeContent, final String metricIdentifier)
     {
-        super(threadTreeContent);
+        super(threadTreeContent, metricIdentifier);
         VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
         for (Map.Entry<List<ACodeSparksThread>, ThreadTreeInnerNode> entry : innerNodes.entrySet())
         {

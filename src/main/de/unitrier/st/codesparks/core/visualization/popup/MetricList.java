@@ -19,7 +19,7 @@ public class MetricList extends JBList<JBTextArea>
             @Override
             public void mouseExited(MouseEvent e)
             {
-                ((MetricListModel) getModel()).resetFont();
+                ((NumericalMetricListModel) getModel()).resetFont();
                 updateUI();
             }
         });
@@ -27,7 +27,7 @@ public class MetricList extends JBList<JBTextArea>
 
     private ANeighborArtifact getArtifactAt(int index)
     {
-        return ((MetricListModel) getModel()).getArtifactAt(index);
+        return ((NumericalMetricListModel) getModel()).getArtifactAt(index);
     }
 
     @Override

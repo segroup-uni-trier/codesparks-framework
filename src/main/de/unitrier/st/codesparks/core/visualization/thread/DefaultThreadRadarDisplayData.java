@@ -5,8 +5,15 @@ import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 
 import java.util.Set;
 
-public class DefaultRadialThreadVisualizationDisplayData implements IRadialThreadVisualizationDisplayData
+public class DefaultThreadRadarDisplayData implements IThreadRadarDisplayData
 {
+    private final String metricIdentifier;
+
+    public DefaultThreadRadarDisplayData(final String metricIdentifier)
+    {
+        this.metricIdentifier = metricIdentifier;
+    }
+
     @Override
     public CodeSparksThreadDisplayData getSelectedThreadData(AArtifact artifact, Set<ACodeSparksThread> selectedCodeSparksThreads)
     {
@@ -15,7 +22,7 @@ public class DefaultRadialThreadVisualizationDisplayData implements IRadialThrea
         double sum = 0;
         for (ACodeSparksThread selectedCodeSparksThread : selectedCodeSparksThreads)
         {
-            sum += selectedCodeSparksThread.getMetricValue();
+            sum += selectedCodeSparksThread.getNumericalMetricValue(metricIdentifier);
         }
 
         codeSparksThreadDisplayData.setMetricValueSum(sum);
@@ -35,7 +42,7 @@ public class DefaultRadialThreadVisualizationDisplayData implements IRadialThrea
         double sum = 0;
         for (ACodeSparksThread selectedCodeSparksThread : hoveredCodeSparksThreads)
         {
-            sum += selectedCodeSparksThread.getMetricValue();
+            sum += selectedCodeSparksThread.getNumericalMetricValue(metricIdentifier);
         }
 
         codeSparksThreadDisplayData.setMetricValueSum(sum);

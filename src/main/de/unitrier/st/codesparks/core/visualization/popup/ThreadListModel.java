@@ -16,21 +16,21 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
     private final String[] threadStrings;
     private final List<ACodeSparksThread> codeSparksThreads;
 
-    public ThreadListModel(AArtifact artifact)
+    public ThreadListModel(AArtifact artifact, String metricIdentifier)
     {
         totalSize = artifact.getNumberOfThreads();
         threadStrings = new String[totalSize];
         codeSparksThreads = new ArrayList<>(totalSize);
         int artifactCnt = 0;
 
-        List<CodeSparksThreadCluster> codeSparksThreadClusters = artifact.getSortedDefaultThreadArtifactClustering();
+        List<CodeSparksThreadCluster> codeSparksThreadClusters = artifact.getSortedDefaultThreadArtifactClustering(metricIdentifier);
 
         for (CodeSparksThreadCluster codeSparksThreadCluster : codeSparksThreadClusters)
         {
-            codeSparksThreadCluster.sort(new CodeSparksThreadComparator());
+            codeSparksThreadCluster.sort(new CodeSparksThreadComparator(metricIdentifier));
             for (ACodeSparksThread codeSparksThread : codeSparksThreadCluster)
             {
-                String threadArtifactToString = codeSparksThread.getDisplayString();
+                String threadArtifactToString = codeSparksThread.getDisplayString(metricIdentifier);
 
                 codeSparksThreads.add(codeSparksThread);
                 //threadArtifacts.set(artifactCnt, threadArtifact);

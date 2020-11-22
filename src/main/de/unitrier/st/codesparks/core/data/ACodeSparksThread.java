@@ -1,49 +1,14 @@
 package de.unitrier.st.codesparks.core.data;
 
-public abstract class ACodeSparksThread implements IDisplayable
+public abstract class ACodeSparksThread extends AMetricArtifact implements IDisplayable
 {
-    private final String identifier;
-    private double metricValue;
-    private double metricValueSelf;
     private String callSite;
     private boolean filtered;
 
     public ACodeSparksThread(String identifier)
     {
-        this.identifier = identifier;
+        super(identifier, identifier);
         filtered = false;
-    }
-
-    public ACodeSparksThread(String identifier, double metricValue)
-    {
-        this.identifier = identifier;
-        this.metricValue = metricValue;
-        filtered = false;
-    }
-
-    public void increaseMetricValue(double toIncrease)
-    {
-        this.metricValue += toIncrease;
-    }
-
-    public void increaseMetricValueSelf(double toIncrease)
-    {
-        this.metricValueSelf += toIncrease;
-    }
-
-    public double getMetricValue()
-    {
-        return metricValue;
-    }
-
-    public void setMetricValue(double threadMetricValue)
-    {
-        this.metricValue = threadMetricValue;
-    }
-
-    public String getIdentifier()
-    {
-        return identifier;
     }
 
     public String getCallSite()
@@ -63,16 +28,6 @@ public abstract class ACodeSparksThread implements IDisplayable
     public void setCallSite(String callSite)
     {
         this.callSite = callSite;
-    }
-
-    public double getMetricValueSelf()
-    {
-        return metricValueSelf;
-    }
-
-    public void setMetricValueSelf(double metricValueSelf)
-    {
-        this.metricValueSelf = metricValueSelf;
     }
 
     public boolean isFiltered()

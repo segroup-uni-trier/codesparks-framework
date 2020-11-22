@@ -7,15 +7,15 @@ public class ThreadTreeLeafNode extends ColoredSelectableTreeNode
 {
     private final ACodeSparksThread codeSparksThread;
 
-    ThreadTreeLeafNode(ACodeSparksThread codeSparksThread, JBColor color)
+    ThreadTreeLeafNode(final ACodeSparksThread codeSparksThread, final String metricIdentifier, final JBColor color)
     {
-        super(codeSparksThread.getDisplayString(), color);
+        super(codeSparksThread.getDisplayString(metricIdentifier), color);
         this.codeSparksThread = codeSparksThread;
     }
 
-    ThreadTreeLeafNode(ACodeSparksThread codeSparksThread)
+    ThreadTreeLeafNode(final ACodeSparksThread codeSparksThread, final String metricIdentifier)
     {
-        this(codeSparksThread, null);
+        this(codeSparksThread, metricIdentifier, null);
     }
 
     public ACodeSparksThread getThreadArtifact()

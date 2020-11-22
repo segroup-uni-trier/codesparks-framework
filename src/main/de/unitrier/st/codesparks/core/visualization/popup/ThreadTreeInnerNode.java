@@ -10,17 +10,19 @@ public class ThreadTreeInnerNode extends ColoredSelectableTreeNode
 {
     private final List<ACodeSparksThread> codeSparksThreads;
     private final String name;
+    private final String metricIdentifier;
 
-    public ThreadTreeInnerNode(String name, List<ACodeSparksThread> codeSparksThreads)
+    public ThreadTreeInnerNode(String name, List<ACodeSparksThread> codeSparksThreads, final String metricIdentifier)
     {
-        this(name, codeSparksThreads, null);
+        this(name, codeSparksThreads, metricIdentifier, null);
     }
 
-    public ThreadTreeInnerNode(String name, List<ACodeSparksThread> codeSparksThreads, JBColor color)
+    public ThreadTreeInnerNode(String name, List<ACodeSparksThread> codeSparksThreads, final String metricIdentifier, JBColor color)
     {
         super(color);
         this.name = name;
         this.codeSparksThreads = codeSparksThreads;
+        this.metricIdentifier = metricIdentifier;
     }
 
     public String getFullDisplayString()
@@ -37,7 +39,7 @@ public class ThreadTreeInnerNode extends ColoredSelectableTreeNode
             ThreadTreeLeafNode childAt = (ThreadTreeLeafNode) getChildAt(i);
             if (childAt.isSelected())
             {
-                metricValueSum += childAt.getThreadArtifact().getMetricValue();
+                metricValueSum += childAt.getThreadArtifact().getNumericalMetricValue(metricIdentifier);
             }
         }
         return CoreUtil.formatPercentageWithLeadingWhitespace(metricValueSum);

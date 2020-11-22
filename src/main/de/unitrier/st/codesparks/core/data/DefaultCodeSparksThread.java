@@ -9,16 +9,16 @@ public class DefaultCodeSparksThread extends ACodeSparksThread
         super(identifier);
     }
 
-    public DefaultCodeSparksThread(String identifier, double metricValue)
-    {
-        super(identifier, metricValue);
-    }
+//    public DefaultCodeSparksThread(String identifier, double metricValue)
+//    {
+//        super(identifier, metricValue);
+//    }
 
     @Override
-    public String getDisplayString(int maxLen)
+    public String getDisplayString(final String metricIdentifier, int maxLen)
     {
         String identifier = getIdentifier();
-        double percentage = getMetricValue();
+        double percentage = getNumericalMetricValue(metricIdentifier);
         String formatPercentage = CoreUtil.formatPercentageWithLeadingWhitespace(percentage);
         //        for (int i = 0; i < 6 - formatPercentage.length(); i++)
 //        {
@@ -30,8 +30,8 @@ public class DefaultCodeSparksThread extends ACodeSparksThread
     }
 
     @Override
-    public String getDisplayString()
+    public String getDisplayString(final String metricIdentifier)
     {
-        return getDisplayString(39);
+        return getDisplayString(metricIdentifier, 39);
     }
 }

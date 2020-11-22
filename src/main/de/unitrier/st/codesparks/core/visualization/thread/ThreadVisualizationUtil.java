@@ -1,5 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
+import com.google.common.base.Function;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
@@ -14,24 +15,25 @@ public final class ThreadVisualizationUtil
 {
     private ThreadVisualizationUtil() { }
 
-    public static double calculateFilteredAvgRuntimeRatio(CodeSparksThreadCluster cluster, boolean ignoreFilter)
+    public static double calculateFilteredAvgNumericalMetricRatio(CodeSparksThreadCluster cluster, final String metricIdentifier, boolean ignoreFilter)
     {
         double sum = 0;
         int threads = 0;
-        for (ACodeSparksThread aCluster : cluster)
+        for (ACodeSparksThread codeSparksThread : cluster)
         {
-            if (aCluster.isFiltered() && !ignoreFilter)
+            if (codeSparksThread.isFiltered() && !ignoreFilter)
                 continue;
 
-            sum += aCluster.getMetricValue();
+            sum += codeSparksThread.getNumericalMetricValue(metricIdentifier);
             threads++;
         }
         return (threads == 0) ? 0 : sum / threads;
     }
 
-    public static double calculateFilteredAvgRuntimeRatioForZoomVisualization(
+    public static double calculateFilteredAvgNumericalMetricRatioForZoomVisualization(
             CodeSparksThreadCluster cluster
             , Set<ACodeSparksThread> selectedCodeSparksThreads
+            , final String metricIdentifier
             , boolean ignoreFilter
     )
     {
@@ -39,7 +41,7 @@ public final class ThreadVisualizationUtil
         {
             final int size = cluster.size();
             if (size == 0) return 0;
-            return cluster.stream().map(ACodeSparksThread::getMetricValue).reduce(Double::sum).get() / size;
+            return cluster.stream().map(thread -> thread.getNumericalMetricValue(metricIdentifier)).reduce(Double::sum).get() / size;
         }
         selectedCodeSparksThreads.retainAll(cluster);
         final int size = selectedCodeSparksThreads.size();
@@ -48,18 +50,18 @@ public final class ThreadVisualizationUtil
             return 0;
         }
         double sum = 0;
-        for (ACodeSparksThread ta : selectedCodeSparksThreads)
+        for (ACodeSparksThread codeSparksThread : selectedCodeSparksThreads)
         {
-            sum += ta.getMetricValue();
+            sum += codeSparksThread.getNumericalMetricValue(metricIdentifier);
         }
         return sum / size;
     }
 
-    public static double calculateFilteredSumRuntimeRatio(CodeSparksThreadCluster cluster, boolean ignoreFilter)
+    public static double calculateFilteredSumNumericalMetricRatio(CodeSparksThreadCluster cluster, final String metricIdentifier, boolean ignoreFilter)
     {
         if (ignoreFilter)
         {
-            final Optional<Double> reduce = cluster.stream().map(ACodeSparksThread::getMetricValue).reduce(Double::sum);
+            final Optional<Double> reduce = cluster.stream().map(thread -> thread.getNumericalMetricValue(metricIdentifier)).reduce(Double::sum);
             if (reduce.isPresent())
             {
                 return reduce.get();
@@ -67,28 +69,29 @@ public final class ThreadVisualizationUtil
             return 0;
         }
         double sum = 0;
-        for (ACodeSparksThread aCluster : cluster)
+        for (ACodeSparksThread codeSparksThread : cluster)
         {
-            if (aCluster.isFiltered())
+            if (codeSparksThread.isFiltered())
             {
                 continue;
             }
-            sum += aCluster.getMetricValue();
+            sum += codeSparksThread.getNumericalMetricValue(metricIdentifier);
         }
         return sum;
     }
 
-    public static double calculateFilteredSumRuntimeRatioForZoomVisualisation(CodeSparksThreadCluster cluster,
-                                                                              Set<ACodeSparksThread> selectedCodeSparksThreads,
-                                                                              boolean ignoreFilter)
+    public static double calculateFilteredSumNumericalMetricRatioForZoomVisualisation(CodeSparksThreadCluster cluster,
+                                                                                      final String metricIdentifier,
+                                                                                      Set<ACodeSparksThread> selectedCodeSparksThreads,
+                                                                                      boolean ignoreFilter)
     {
         double sum = 0;
-        for (ACodeSparksThread ta : selectedCodeSparksThreads)
+        for (ACodeSparksThread codeSparksThread : selectedCodeSparksThreads)
         {
-            if (!cluster.contains(ta) && !ignoreFilter)
+            if (!cluster.contains(codeSparksThread) && !ignoreFilter)
                 continue;
 
-            sum += ta.getMetricValue();
+            sum += codeSparksThread.getNumericalMetricValue(metricIdentifier);
         }
         return sum;
     }

@@ -23,20 +23,15 @@ public abstract class ANeighborArtifact extends ABaseArtifact
         return invocationLine;
     }
 
-    public void setRelativeMetricValue(double total)
+    public void setRelativeMetricValue(final String metricIdentifier, double total)
     {
-        relativeMetricValue = metricValue / total;
+        double numericalMetricValue = getNumericalMetricValue(metricIdentifier);
+        relativeMetricValue = numericalMetricValue / total;
     }
 
     protected double getRelativeMetricValue()
     {
         return relativeMetricValue;
-    }
-
-    @Override
-    public String getMetricValueString()
-    {
-        return String.format("%s => METRIC-VALUE: %s @LINE: %d", name, CoreUtil.formatPercentage(metricValue), invocationLine);
     }
 
     public PsiElement getInvocationLineElement()

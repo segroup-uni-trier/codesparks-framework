@@ -1,7 +1,5 @@
 package de.unitrier.st.codesparks.core.data;
 
-import de.unitrier.st.codesparks.core.CoreUtil;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -54,7 +52,7 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
             final String identifier,
             final Class<? extends ANeighborArtifact> neighborArtifactClass,
             final int invocationLine,
-            final Class<? extends NumericalMetric> numericalMetricClass,
+            final String metricIdentifier,
             final double neighborMetricValue,
             final String threadIdentifier
     )
@@ -67,9 +65,9 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
                     neighborArtifactClass, invocationLine);
             assert neighbor != null;
 //            neighbor.increaseMetricValue(neighborMetricValue);
-            neighbor.increaseNumericalMetricValue(numericalMetricClass, neighborMetricValue);
-            neighbor.increaseMetricValueThread(threadIdentifier, neighborMetricValue);
-            assertSecondaryMetricValue(neighbor.getMetricValue(), "predecessor");
+            neighbor.increaseNumericalMetricValue(metricIdentifier, neighborMetricValue);
+            neighbor.increaseNumericalMetricValueThread(metricIdentifier, threadIdentifier, neighborMetricValue);
+//            assertSecondaryMetricValue(neighbor.getMetricValue(), "predecessor");
         }
     }
 
@@ -90,7 +88,7 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
             final String identifier,
             final Class<? extends ANeighborArtifact> neighborArtifactClass,
             final int invocationLine,
-            final Class<? extends NumericalMetric> numericalMetricClass,
+            final String metricIdentifier,
             final double neighborMetricValue,
             final String threadIdentifier
     )
@@ -103,9 +101,9 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
                     neighborArtifactClass, invocationLine);
             assert neighbor != null;
 //            neighbor.increaseMetricValue(neighborMetricValue);
-            neighbor.increaseNumericalMetricValue(numericalMetricClass, neighborMetricValue);
-            neighbor.increaseMetricValueThread(threadIdentifier, neighborMetricValue);
-            assertSecondaryMetricValue(neighbor.getMetricValue(), "successor");
+            neighbor.increaseNumericalMetricValue(metricIdentifier, neighborMetricValue);
+            neighbor.increaseNumericalMetricValueThread(metricIdentifier, threadIdentifier, neighborMetricValue);
+//            assertSecondaryMetricValue(neighbor.getMetricValue(), "successor");
         }
     }
 
@@ -172,21 +170,22 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
         return lookupClustering(clusteringStrategy);
     }
 
-    public CodeSparksThreadClustering getDefaultThreadArtifactClustering()
+    public CodeSparksThreadClustering getDefaultThreadArtifactClustering(final String metricIdentifier)
     {
-        return lookupClustering(DefaultCodeSparksThreadClusteringStrategy.getInstance());
+        return lookupClustering(DefaultCodeSparksThreadClusteringStrategy.getInstance(metricIdentifier));
     }
 
-    public CodeSparksThreadClustering getSortedDefaultThreadArtifactClustering()
+    public CodeSparksThreadClustering getSortedDefaultThreadArtifactClustering(final String metricIdentifier)
     {
-        CodeSparksThreadClustering defaultThreadArtifactClusters = lookupClustering(DefaultCodeSparksThreadClusteringStrategy.getInstance());
-        defaultThreadArtifactClusters.sort(CodeSparksThreadClusterComparator.getInstance());
+        CodeSparksThreadClustering defaultThreadArtifactClusters = lookupClustering(DefaultCodeSparksThreadClusteringStrategy.getInstance(metricIdentifier));
+        Comparator<CodeSparksThreadCluster> codeSparksThreadClusterComparator = CodeSparksThreadClusterComparator.getInstance(metricIdentifier);
+        defaultThreadArtifactClusters.sort(codeSparksThreadClusterComparator);
         return defaultThreadArtifactClusters;
     }
 
-    public void initDefaultThreadArtifactClustering()
+    public void initDefaultThreadArtifactClustering(final String metricIdentifier)
     {
-        ICodeSparksThreadClusteringStrategy instance = DefaultCodeSparksThreadClusteringStrategy.getInstance();
+        ICodeSparksThreadClusteringStrategy instance = DefaultCodeSparksThreadClusteringStrategy.getInstance(metricIdentifier);
         synchronized (clusterings)
         {
             CodeSparksThreadClustering threadArtifactClusters = clusterings.get(instance);
@@ -198,12 +197,12 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
         }
     }
 
-    public String getMetricValuesString()
-    {
-        return identifier + " => " + "TOTAL-METRIC-VALUE = " + CoreUtil.formatPercentage(metricValue) + "; METRIC-VALUE-SELF = " + CoreUtil
-                .formatPercentage(metricValueSelf) + " (" + CoreUtil.formatPercentage(metricValueSelf / metricValue)
-                + " OF TOTAL-METRIC-VALUE)";
-    }
+//    public String getMetricValuesString()
+//    {
+//        return identifier + " => " + "TOTAL-METRIC-VALUE = " + CoreUtil.formatPercentage(metricValue) + "; METRIC-VALUE-SELF = " + CoreUtil
+//                .formatPercentage(metricValueSelf) + " (" + CoreUtil.formatPercentage(metricValueSelf / metricValue)
+//                + " OF TOTAL-METRIC-VALUE)";
+//    }
 
     public String getTitleName()
     {

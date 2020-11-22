@@ -46,8 +46,11 @@ public class ArtifactVisualizationLabelFactoryCache
         }
     }
 
-    public void addToCache(String identifier, Class<? extends AArtifactVisualizationLabelFactory> factory,
-                                        JLabel artifactVisualizationLabel)
+    public void addToCache(
+            String identifier
+            , Class<? extends AArtifactVisualizationLabelFactory> factory
+            , JLabel artifactVisualizationLabel
+    )
     {
         JLabel jLabel = new JLabel(artifactVisualizationLabel.getIcon());
         synchronized (this)
@@ -58,9 +61,11 @@ public class ArtifactVisualizationLabelFactoryCache
         }
     }
 
-    public JLabel getCachedArtifactVisualizationLabel(String identifier,
-                                                                   Class<? extends AArtifactVisualizationLabelFactory> factory,
-                                                                   boolean createIfAbsent)
+    public JLabel getCachedArtifactVisualizationLabel(
+            String identifier
+            , Class<? extends AArtifactVisualizationLabelFactory> factory
+            , boolean createIfAbsent
+    )
     {
         synchronized (this)
         {

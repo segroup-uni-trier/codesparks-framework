@@ -19,9 +19,9 @@ import java.util.Map;
 
 public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
-    DefaultThreadVisualizationMouseListener(JComponent component, AArtifact artifact)
+    DefaultThreadVisualizationMouseListener(JComponent component, AArtifact artifact, String primaryMetricIdentifier)
     {
-        super(component, new Dimension(520, 170), artifact);
+        super(component, new Dimension(520, 170), artifact, primaryMetricIdentifier);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
          * Switch between thread tree and thread list
          */
 
-        threadSelectable = new ThreadList(artifact);
+        threadSelectable = new ThreadList(artifact, primaryMetricIdentifier);
 //        threadSelectable = new ThreadTree(artifact);
 
         final JBScrollPane threadScrollPane = new JBScrollPane(threadSelectable.getComponent());
@@ -77,7 +77,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         buttonsPanel.add(selectAllButtonWrapper);
 
         // Toggle cluster buttons.
-        CodeSparksThreadClustering sortedDefaultCodeSparksThreadClustering = artifact.getSortedDefaultThreadArtifactClustering();
+        CodeSparksThreadClustering sortedDefaultCodeSparksThreadClustering = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
         for (CodeSparksThreadCluster cluster : sortedDefaultCodeSparksThreadClustering)
         {
             if (cluster.isEmpty())

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2020, Oliver Moseler
  */
-package de.unitrier.st.codesparks.core.visualization.callee;
+package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 import de.unitrier.st.codesparks.core.data.AArtifact;
@@ -9,34 +9,34 @@ import de.unitrier.st.codesparks.core.data.AArtifact;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DefaultArtifactCalleeVisualizer implements IArtifactCalleeVisualizer
+public class DefaultNeighborArtifactVisualizer implements INeighborArtifactVisualizer
 {
-    private static volatile IArtifactCalleeVisualizer instance;
+    private static volatile INeighborArtifactVisualizer instance;
 
-    public static IArtifactCalleeVisualizer getInstance()
+    public static INeighborArtifactVisualizer getInstance()
     {
         if (instance == null)
         {
-            synchronized (DefaultArtifactCalleeVisualizer.class)
+            synchronized (DefaultNeighborArtifactVisualizer.class)
             {
                 if (instance == null)
                 {
-                    instance = new DefaultArtifactCalleeVisualizer();
+                    instance = new DefaultNeighborArtifactVisualizer();
                 }
             }
         }
         return instance;
     }
 
-    private DefaultArtifactCalleeVisualizer() { }
+    private DefaultNeighborArtifactVisualizer() { }
 
     @Override
-    public Collection<AArtifactCalleeVisualization> createArtifactCalleeVisualizations(AArtifact artifact,
-                                                                                       AArtifactCalleeVisualizationLabelFactory... calleeFactories)
+    public Collection<ANeighborArtifactVisualization> createArtifactCalleeVisualizations(AArtifact artifact,
+                                                                                         ANeighborArtifactVisualizationLabelFactory... calleeFactories)
     {
         assert artifact != null;
 
-        List<AArtifactCalleeVisualization> calleeVisualizations = new ArrayList<>();
+        List<ANeighborArtifactVisualization> calleeVisualizations = new ArrayList<>();
 
         //int lineHeight = VisConstants.getLineHeight();
 
@@ -56,10 +56,10 @@ public class DefaultArtifactCalleeVisualizer implements IArtifactCalleeVisualize
                     .filter(aNeighborProfilingArtifact -> aNeighborProfilingArtifact.getThreadArtifacts()
                             .stream().anyMatch(threadArtifact -> !threadArtifact.isFiltered())).collect(Collectors.toList());
 
-            ArtifactCalleeVisualizationWrapper artifactCalleeVisualizationWrapper =
-                    new ArtifactCalleeVisualizationWrapper(artifact, threadFilteredCalleesOfCurrentLine, calleeFactories);
+            NeighborNeighborArtifactVisualizationWrapper neighborArtifactVisualizationWrapper =
+                    new NeighborNeighborArtifactVisualizationWrapper(artifact, threadFilteredCalleesOfCurrentLine, calleeFactories);
 
-            calleeVisualizations.add(artifactCalleeVisualizationWrapper);
+            calleeVisualizations.add(neighborArtifactVisualizationWrapper);
         }
         return calleeVisualizations;
     }

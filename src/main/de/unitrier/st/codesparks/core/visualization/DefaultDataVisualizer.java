@@ -8,41 +8,41 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerItem;
-import de.unitrier.st.codesparks.core.visualization.callee.AArtifactCalleeVisualization;
-import de.unitrier.st.codesparks.core.visualization.callee.AArtifactCalleeVisualizationLabelFactory;
-import de.unitrier.st.codesparks.core.visualization.callee.DefaultArtifactCalleeVisualizer;
-import de.unitrier.st.codesparks.core.visualization.callee.IArtifactCalleeVisualizer;
+import de.unitrier.st.codesparks.core.visualization.neighbor.ANeighborArtifactVisualization;
+import de.unitrier.st.codesparks.core.visualization.neighbor.ANeighborArtifactVisualizationLabelFactory;
+import de.unitrier.st.codesparks.core.visualization.neighbor.DefaultNeighborArtifactVisualizer;
+import de.unitrier.st.codesparks.core.visualization.neighbor.INeighborArtifactVisualizer;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class DefaultDataVisualizer extends ADataVisualizer//implements IProfilingDataVisualizer
 {
-    private final IArtifactCalleeVisualizer artifactCalleeVisualizer;
-    private AArtifactCalleeVisualizationLabelFactory[] calleeFactories;
+    private final INeighborArtifactVisualizer artifactCalleeVisualizer;
+    private ANeighborArtifactVisualizationLabelFactory[] calleeFactories;
 
     public DefaultDataVisualizer()
     {
-        this(DefaultArtifactVisualizer.getInstance(), DefaultArtifactCalleeVisualizer.getInstance(), null, null);
+        this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), null, null);
     }
 
     @SuppressWarnings("unused")
     public DefaultDataVisualizer(AArtifactVisualizationLabelFactory[] artifactFactories)
     {
-        this(DefaultArtifactVisualizer.getInstance(), DefaultArtifactCalleeVisualizer.getInstance(), artifactFactories, null);
+        this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), artifactFactories, null);
     }
 
     public DefaultDataVisualizer(AArtifactVisualizationLabelFactory[] artifactFactories,
-                                 AArtifactCalleeVisualizationLabelFactory[] calleeFactories)
+                                 ANeighborArtifactVisualizationLabelFactory[] calleeFactories)
     {
-        this(DefaultArtifactVisualizer.getInstance(), DefaultArtifactCalleeVisualizer.getInstance(), artifactFactories, calleeFactories);
+        this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), artifactFactories, calleeFactories);
     }
 
     @SuppressWarnings("WeakerAccess")
     public DefaultDataVisualizer(IArtifactVisualizer artifactVisualizer,
-                                 IArtifactCalleeVisualizer artifactCalleeVisualizer,
+                                 INeighborArtifactVisualizer artifactCalleeVisualizer,
                                  AArtifactVisualizationLabelFactory[] artifactFactories,
-                                 AArtifactCalleeVisualizationLabelFactory[] calleeFactories)
+                                 ANeighborArtifactVisualizationLabelFactory[] calleeFactories)
     {
         //this.artifactVisualizer = artifactVisualizer;
         super(artifactVisualizer, artifactFactories);
@@ -50,7 +50,7 @@ public class DefaultDataVisualizer extends ADataVisualizer//implements IProfilin
         init(calleeFactories);
     }
 
-    private void init(AArtifactCalleeVisualizationLabelFactory[] calleeFactories)
+    private void init(ANeighborArtifactVisualizationLabelFactory[] calleeFactories)
     {
         if (calleeFactories == null || calleeFactories.length == 0)
         {
@@ -84,10 +84,10 @@ public class DefaultDataVisualizer extends ADataVisualizer//implements IProfilin
 
                 overlayElements.add(layerItem);
 
-                Collection<AArtifactCalleeVisualization> calleeVisualizations =
+                Collection<ANeighborArtifactVisualization> calleeVisualizations =
                         artifactCalleeVisualizer.createArtifactCalleeVisualizations(artifact, calleeFactories);
 
-                for (AArtifactCalleeVisualization calleeVisualization : calleeVisualizations)
+                for (ANeighborArtifactVisualization calleeVisualization : calleeVisualizations)
                 {
                     EditorCoverLayerItem item = new EditorCoverLayerItem(calleeVisualization.getPsiElement(), calleeVisualization);
                     overlayElements.add(item);

@@ -20,24 +20,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RadialThreadVisualizationMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable
+public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable
 {
-    private RadialZoomedThreadVisualization radialVisualization;
+    private ZoomedThreadRadar zoomedThreadRadar;
     private final List<IThreadSelectable> threadSelectables;
-    private final IRadialThreadVisualizationDisplayData radialThreadVisualizationPopupData;
+    private final IThreadRadarDisplayData radialThreadVisualizationPopupData;
     private final JLabel[] hoverLabels;
+    private final String primaryMetricIdentifier;
+    private final String secondaryMetricIdentifier;
 
-    public RadialThreadVisualizationMouseListener(
+    public ThreadRadarMouseListener(
             final JComponent component
             , final AArtifact artifact
-            , final IRadialThreadVisualizationDisplayData radialThreadVisualizationPopupData
+            , final IThreadRadarDisplayData radialThreadVisualizationPopupData
+            , final String primaryMetricIdentifier
+            , final String secondaryMetricIdentifier
     )
     {
-        super(component, new Dimension(500, 340), artifact);
+        super(component, new Dimension(500, 340), artifact, primaryMetricIdentifier);
         this.component = component;
         this.hoverLabels = new JLabel[4];
         this.threadSelectables = new ArrayList<>();
         this.radialThreadVisualizationPopupData = radialThreadVisualizationPopupData;
+        this.primaryMetricIdentifier = primaryMetricIdentifier;
+        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
         component.addMouseMotionListener(this);
     }
 
@@ -49,7 +55,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
         threadSelectables.clear();
         final JBTabbedPane tabbedPane = new JBTabbedPane();
 
-        CodeSparksThreadClustering sortedDefaultCodeSparksThreadClustering = artifact.getSortedDefaultThreadArtifactClustering();
+        CodeSparksThreadClustering sortedDefaultCodeSparksThreadClustering = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
         Map<String, List<ACodeSparksThread>> map = new HashMap<>();
         int clusterId = 1;
         for (CodeSparksThreadCluster threadArtifacts : sortedDefaultCodeSparksThreadClustering)
@@ -57,14 +63,14 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
             map.put("Cluster:" + clusterId++, threadArtifacts);
         }
 
-        AThreadSelectable threadClustersTree = new ThreadClusterTree(map);
+        AThreadSelectable threadClustersTree = new ThreadClusterTree(map, primaryMetricIdentifier);
         threadSelectables.add(threadClustersTree);
         tabbedPane.addTab("Clusters", new JBScrollPane(threadClustersTree.getComponent()));
 
         // -------------
 
         final Map<String, List<ACodeSparksThread>> threadTypeLists = artifact.getThreadTypeLists();
-        AThreadSelectable threadTypesTree = new ThreadTypeTree(threadTypeLists,
+        AThreadSelectable threadTypesTree = new ThreadTypeTree(threadTypeLists, primaryMetricIdentifier,
                 sortedDefaultCodeSparksThreadClustering);
         threadSelectables.add(threadTypesTree);
         tabbedPane.addTab("Types", new JBScrollPane(threadTypesTree.getComponent()));
@@ -191,14 +197,14 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
 
         //Radial Visualization
 
-        radialVisualization = new RadialZoomedThreadVisualization(artifact,
+        zoomedThreadRadar = new ZoomedThreadRadar(artifact,
                 indexProvider,
-                threadSelectables);
-        radialVisualization.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
-        RadialZoomedThreadVisualizationMouseAdapter mouseAdapter =
-                new RadialZoomedThreadVisualizationMouseAdapter(radialVisualization, artifact, this, northLeftWrapper);
-        radialVisualization.addMouseMotionListener(mouseAdapter);
-        radialVisualization.addMouseListener(mouseAdapter);
+                threadSelectables, primaryMetricIdentifier);
+        zoomedThreadRadar.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
+        ZoomedThreadRadarMouseAdapter mouseAdapter =
+                new ZoomedThreadRadarMouseAdapter(zoomedThreadRadar, artifact, primaryMetricIdentifier, this, northLeftWrapper);
+        zoomedThreadRadar.addMouseMotionListener(mouseAdapter);
+        zoomedThreadRadar.addMouseListener(mouseAdapter);
 
 
         final int numberOfClusters = sortedDefaultCodeSparksThreadClustering.size();
@@ -339,7 +345,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
         hoveredDataDisplayWrapper.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 "Hovered cluster"));
 
-        radialVisualizationBox.add(radialVisualization);
+        radialVisualizationBox.add(zoomedThreadRadar);
         radialVisualizationWrapper.add(radialVisualizationBox, BorderLayout.CENTER);
         radialVisualizationButtonsWrapper.add(radialVisualizationButtonsBox, BorderLayout.CENTER);
         northLeftBox.add(radialVisualizationBox);
@@ -362,7 +368,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
 
         for (IThreadSelectable threadSelectable : threadSelectables)
         {
-            threadSelectable.registerComponentToRepaintOnSelection(radialVisualization);
+            threadSelectable.registerComponentToRepaintOnSelection(zoomedThreadRadar);
             threadSelectable.registerComponentToRepaintOnSelection(selectedMetricLabel);
             threadSelectable.registerComponentToRepaintOnSelection(selectedNumberOfThreadsLabel);
             threadSelectable.registerComponentToRepaintOnSelection(selectedNumberOfThreadTypesLabel);
@@ -374,22 +380,31 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
     @Override
     protected String createPopupTitle(AArtifact artifact)
     {
-        String metricKind = "total";
-        StringBuilder titleStringBuilder = new StringBuilder();
+        final Metric primaryMetric = artifact.getMetric(primaryMetricIdentifier);
+        final Metric secondaryMetric = artifact.getMetric(secondaryMetricIdentifier);
+
+        final String primaryMetricName = primaryMetric.getName();
+
+        final StringBuilder titleStringBuilder = new StringBuilder();
         titleStringBuilder.append(artifact.getTitleName());
         titleStringBuilder.append(": ");
-        titleStringBuilder.append(metricKind);
+        titleStringBuilder.append(primaryMetricName);
         titleStringBuilder.append(": ");
-        titleStringBuilder.append(artifact.getMetricValueText());
+        titleStringBuilder.append(primaryMetric.getMetricValueString());
         titleStringBuilder.append(" - ");
-        titleStringBuilder.append("self: ");
-        titleStringBuilder.append(artifact.getMetricValueSelfText());
-        if (artifact.getMetricValue() > 0)
+
+        final String secondaryMetricName = secondaryMetric.getName();
+        titleStringBuilder.append(secondaryMetricName);
+        titleStringBuilder.append(": ");
+        titleStringBuilder.append(secondaryMetric.getMetricValueString()); // Secondary = self here
+        final double numericalMetricValue = (double) primaryMetric.getValue();
+        if (numericalMetricValue > 0)
         {
             titleStringBuilder.append(" (");
-            titleStringBuilder.append(CoreUtil.formatPercentage(artifact.getMetricValueSelf() / artifact.getMetricValue()));
+            double secondary = (double) secondaryMetric.getValue();
+            titleStringBuilder.append(CoreUtil.formatPercentage(secondary / numericalMetricValue));
             titleStringBuilder.append(" of ");
-            titleStringBuilder.append(metricKind);
+            titleStringBuilder.append(primaryMetricName);
             titleStringBuilder.append(" )");
         }
         return titleStringBuilder.toString();
@@ -398,7 +413,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
     @Override
     public void onHover(CodeSparksThreadCluster cluster)
     {
-        radialVisualization.onHoverCluster(cluster.getId());
+        zoomedThreadRadar.onHoverCluster(cluster.getId());
         updateHoverLabels(cluster);
     }
 
@@ -410,7 +425,7 @@ public class RadialThreadVisualizationMouseListener extends AArtifactVisualizati
             hoverLabel.setText("");
         }
         hoverLabels[0].setText("Hover over a thread cluster for more information");
-        radialVisualization.unHoverCluster();
+        zoomedThreadRadar.unHoverCluster();
     }
 
     private void updateHoverLabels(CodeSparksThreadCluster cluster)

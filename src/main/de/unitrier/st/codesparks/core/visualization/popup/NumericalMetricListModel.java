@@ -9,38 +9,39 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetricListModel extends DefaultListModel<JBTextArea>
+public class NumericalMetricListModel extends DefaultListModel<JBTextArea>
 {
-    private final List<ANeighborArtifact> neighborProfilingArtifacts;
+    private final List<ANeighborArtifact> neighborArtifacts;
     private final List<JBTextArea> textAreas;
     private static Font defaultFont;
 
     private List<ANeighborArtifact> prepareNeighborMetricValues(
             final AArtifact artifact
-            , final Class<? extends NumericalMetric> numericalMetricClass
+            , final String numericalMetricIdentifier
             , final List<ANeighborArtifact> list)
     {
-        double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact);
+        double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, numericalMetricIdentifier);
         for (ANeighborArtifact aNeighborProfilingArtifact : list)
         {
 //            aNeighborProfilingArtifact.setMetricValue(DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact));
-            aNeighborProfilingArtifact.setMetricValue(numericalMetricClass, DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact));
-            aNeighborProfilingArtifact.setRelativeMetricValue(threadFilteredMetricValue);
+            aNeighborProfilingArtifact.setMetricValue(numericalMetricIdentifier, DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact,
+                    numericalMetricIdentifier));
+            aNeighborProfilingArtifact.setRelativeMetricValue(numericalMetricIdentifier, threadFilteredMetricValue);
         }
         return list;
     }
 
-    public MetricListModel(
+    public NumericalMetricListModel(
             final AArtifact artifact
-            , final Class<? extends NumericalMetric> numericalMetricClass
-            , final List<ANeighborArtifact> neighborProfilingArtifacts)
+            , final String numericalMetricIdentifier
+            , final List<ANeighborArtifact> neighborArtifacts)
     {
-        this.neighborProfilingArtifacts = prepareNeighborMetricValues(artifact, numericalMetricClass, neighborProfilingArtifacts);
-        this.neighborProfilingArtifacts.sort(new NeighborArtifactComparator());
-        textAreas = new ArrayList<>(this.neighborProfilingArtifacts.size());
-        for (int i = 0; i < this.neighborProfilingArtifacts.size(); i++)
+        this.neighborArtifacts = prepareNeighborMetricValues(artifact, numericalMetricIdentifier, neighborArtifacts);
+        this.neighborArtifacts.sort(new NeighborArtifactComparator(numericalMetricIdentifier));
+        textAreas = new ArrayList<>(this.neighborArtifacts.size());
+        for (int i = 0; i < this.neighborArtifacts.size(); i++)
         {
-            textAreas.add(new JBTextArea(neighborProfilingArtifacts.get(i).getDisplayString(60)));
+            textAreas.add(new JBTextArea(neighborArtifacts.get(i).getDisplayString(numericalMetricIdentifier, 60)));
         }
         defaultFont = new JBTextArea().getFont();
     }
@@ -48,7 +49,7 @@ public class MetricListModel extends DefaultListModel<JBTextArea>
     @Override
     public int getSize()
     {
-        return neighborProfilingArtifacts.size();
+        return neighborArtifacts.size();
     }
 
     @Override
@@ -80,9 +81,9 @@ public class MetricListModel extends DefaultListModel<JBTextArea>
 
     ANeighborArtifact getArtifactAt(int index)
     {
-        if (index > -1 && index < neighborProfilingArtifacts.size())
+        if (index > -1 && index < neighborArtifacts.size())
         {
-            return neighborProfilingArtifacts.get(index);
+            return neighborArtifacts.get(index);
         }
         return null;
     }

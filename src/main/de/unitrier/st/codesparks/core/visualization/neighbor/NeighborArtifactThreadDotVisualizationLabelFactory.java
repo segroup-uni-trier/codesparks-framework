@@ -1,4 +1,4 @@
-package de.unitrier.st.codesparks.core.visualization.callee;
+package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
@@ -19,33 +19,36 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public class ArtifactCalleeThreadDotVisualizationLabelFactory extends AArtifactCalleeVisualizationLabelFactory
+public class NeighborArtifactThreadDotVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
-    public ArtifactCalleeThreadDotVisualizationLabelFactory() {}
-
-    public ArtifactCalleeThreadDotVisualizationLabelFactory(int sequence)
+    public NeighborArtifactThreadDotVisualizationLabelFactory(final String primaryMetricIdentifier)
     {
-        super(sequence);
+        super(primaryMetricIdentifier);
+    }
+
+    public NeighborArtifactThreadDotVisualizationLabelFactory(int sequence, final String primaryMetricIdentifier)
+    {
+        super(sequence, primaryMetricIdentifier);
     }
 
     @Override
-    public JLabel createArtifactCalleeLabel(AArtifact artifact
+    public JLabel createArtifactCalleeLabel(
+            AArtifact artifact
             , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
-            , double threadFilteredMetricValue
-            , Color metricColor
     )
     {
+        Comparator<CodeSparksThreadCluster> codeSparksThreadClusterComparator = CodeSparksThreadClusterComparator.getInstance(primaryMetricIdentifier);
         List<CodeSparksThreadCluster> threadClusters =
-                artifact.getDefaultThreadArtifactClustering()
+                artifact.getDefaultThreadArtifactClustering(primaryMetricIdentifier)
                         .stream()
-                        .sorted(CodeSparksThreadClusterComparator.getInstance())
+                        .sorted(codeSparksThreadClusterComparator)
                         .filter(cluster -> !cluster.isEmpty())
                         .collect(Collectors.toList());
 
         SortedMap<CodeSparksThreadCluster, Set<String>> artifactClusterSets =
-                new TreeMap<>(CodeSparksThreadClusterComparator.getInstance());
+                new TreeMap<>(codeSparksThreadClusterComparator);
         SortedMap<CodeSparksThreadCluster, Set<ACodeSparksThread>> neighborClusterSets =
-                new TreeMap<>(CodeSparksThreadClusterComparator.getInstance());
+                new TreeMap<>(codeSparksThreadClusterComparator);
 
         for (CodeSparksThreadCluster threadCluster : threadClusters)
         {

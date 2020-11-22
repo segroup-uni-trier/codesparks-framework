@@ -1,32 +1,41 @@
 package de.unitrier.st.codesparks.core.data;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.ToDoubleFunction;
 
 public class CodeSparksThreadClusterComparator implements Comparator<CodeSparksThreadCluster>
 {
-    private static Comparator<CodeSparksThreadCluster> instance;
+    private final static Map<String, Comparator<CodeSparksThreadCluster>> comparators = new HashMap<>();
 
-    public static Comparator<CodeSparksThreadCluster> getInstance(){
-        if (instance == null)
+    public static Comparator<CodeSparksThreadCluster> getInstance(final String metricIdentifier)
+    {
+        synchronized (CodeSparksThreadClusterComparator.class)
         {
-            synchronized (CodeSparksThreadClusterComparator.class)
+            Comparator<CodeSparksThreadCluster> codeSparksThreadClusterComparator = comparators.get(metricIdentifier);
+            if (codeSparksThreadClusterComparator == null)
             {
-                if (instance == null)
-                {
-                    instance = new CodeSparksThreadClusterComparator();
-                }
+                codeSparksThreadClusterComparator = new CodeSparksThreadClusterComparator(metricIdentifier);
+                comparators.put(metricIdentifier, codeSparksThreadClusterComparator);
             }
+            return codeSparksThreadClusterComparator;
         }
-        return instance;
     }
 
-    private CodeSparksThreadClusterComparator(){}
+    private final String metricIdentifier;
+
+    private CodeSparksThreadClusterComparator(final String metricIdentifier)
+    {
+        this.metricIdentifier = metricIdentifier;
+    }
 
     @Override
     public int compare(CodeSparksThreadCluster o1, CodeSparksThreadCluster o2)
     {
-        double sum1 = o1.stream().mapToDouble(ACodeSparksThread::getMetricValue).sum() / o1.size();
-        double sum2 = o2.stream().mapToDouble(ACodeSparksThread::getMetricValue).sum() / o2.size();
+        final ToDoubleFunction<ACodeSparksThread> f = thread -> thread.getNumericalMetricValue(metricIdentifier);
+        double sum1 = o1.stream().mapToDouble(f).sum() / o1.size();
+        double sum2 = o2.stream().mapToDouble(f).sum() / o2.size();
         return Double.compare(sum1, sum2) * -1;
     }
 }

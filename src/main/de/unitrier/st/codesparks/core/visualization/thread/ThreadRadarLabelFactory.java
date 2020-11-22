@@ -19,39 +19,50 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class RadialThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
+public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    private final IRadialThreadVisualizationDisplayData radialThreadVisualizationPopupData;
+    private final IThreadRadarDisplayData radialThreadVisualizationPopupData;
+    private final String secondaryMetricIdentifier;
 
-    public RadialThreadVisualizationLabelFactory(int sequence, boolean isDefault,
-                                                 IRadialThreadVisualizationDisplayData radialThreadVisualizationPopupData)
+    public ThreadRadarLabelFactory(
+            IThreadRadarDisplayData radialThreadVisualizationPopupData
+            , int sequence
+            , boolean isDefault
+            , final String primaryMetricIdentifier
+            , final String secondaryMetricIdentifier
+    )
     {
-        super(sequence, isDefault);
+        super(sequence, isDefault, primaryMetricIdentifier);
         this.radialThreadVisualizationPopupData = radialThreadVisualizationPopupData;
+        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
     }
 
-    public RadialThreadVisualizationLabelFactory(int sequence, boolean isDefault)
+    public ThreadRadarLabelFactory(
+            final int sequence
+            , final boolean isDefault
+            , final String primaryMetricIdentifier
+            , final String secondaryMetricIdentifier
+    )
     {
-        this(sequence, isDefault, new DefaultRadialThreadVisualizationDisplayData());
+        super(sequence, isDefault, primaryMetricIdentifier);
+        this.radialThreadVisualizationPopupData = new DefaultThreadRadarDisplayData(primaryMetricIdentifier);
+//        this(new DefaultThreadRadarDisplayData(), sequence, isDefault, primaryMetricIdentifier);
+        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
     }
 
-    public RadialThreadVisualizationLabelFactory(int sequence)
+    public ThreadRadarLabelFactory(
+            int sequence
+            , final String primaryMetricIdentifier
+            , final String secondaryMetricIdentifier
+    )
     {
-        this(sequence, false, new DefaultRadialThreadVisualizationDisplayData());
-    }
-
-    public RadialThreadVisualizationLabelFactory(IRadialThreadVisualizationDisplayData radialThreadVisualizationPopupData)
-    {
-        this(-1, false, radialThreadVisualizationPopupData);
-    }
-
-    public RadialThreadVisualizationLabelFactory()
-    {
-        this(-1, false, new DefaultRadialThreadVisualizationDisplayData());
+        this(new DefaultThreadRadarDisplayData(primaryMetricIdentifier), sequence, false, primaryMetricIdentifier, secondaryMetricIdentifier);
     }
 
     @Override
-    public JLabel createArtifactLabel(@NotNull AArtifact artifact)
+    public JLabel createArtifactLabel(
+            @NotNull final AArtifact artifact
+    )
     {
         Collection<ACodeSparksThread> codeSparksThreads = artifact.getThreadArtifacts();
 
@@ -60,7 +71,7 @@ public class RadialThreadVisualizationLabelFactory extends AArtifactVisualizatio
             return emptyLabel();
         }
 
-        List<CodeSparksThreadCluster> codeSparksThreadClusters = artifact.getSortedDefaultThreadArtifactClustering();
+        List<CodeSparksThreadCluster> codeSparksThreadClusters = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
         int startAngle = 90;
         boolean useDisabledColors = false;
         JBColor[] colors = {new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), new JBColor(Color.decode("#B25283"),
@@ -102,15 +113,17 @@ public class RadialThreadVisualizationLabelFactory extends AArtifactVisualizatio
             VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
             RadialVisualThreadClusterProperties properties =
                     new RadialVisualThreadClusterProperties(codeSparksThreadClusters.get(i), colors[i],
-                            artifact.getNumberOfThreads());
+                            artifact.getNumberOfThreads(), primaryMetricIdentifier);
             propertiesManager.registerProperties(properties);
 
             //double filteredRuntimeRatio = properties.calculateFilteredRuntimeRatio(threadArtifactClusters.get(i), useDisabledColors);
-            double filteredRuntimeRatio = properties.calculateAvgFilteredRuntimeRatio(codeSparksThreadClusters.get(i), useDisabledColors);
+            double filteredRuntimeRatio = properties.calculateAvgFilteredNumericalMetricRatio(codeSparksThreadClusters.get(i), primaryMetricIdentifier,
+                    useDisabledColors);
 
             double filteredThreadRatio = properties.calculateFilteredThreadRatio(codeSparksThreadClusters.get(i),
                     (int) numberOfSelectedArtifactThreads, useDisabledColors);
-            double filteredRuntimeRatioSum = properties.calculateFilteredSumRuntimeRatio(codeSparksThreadClusters.get(i), useDisabledColors);
+            double filteredRuntimeRatioSum = properties.calculateFilteredSumNumericalMetricRatio(codeSparksThreadClusters.get(i), primaryMetricIdentifier,
+                    useDisabledColors);
 
             if (i != 0)
             {
@@ -217,7 +230,8 @@ public class RadialThreadVisualizationLabelFactory extends AArtifactVisualizatio
             // trigger each time a click occurs. For each click a new listener will be attached!
             jLabel.removeMouseListener(mouseListener);
         }
-        jLabel.addMouseListener(new RadialThreadVisualizationMouseListener(jLabel, artifact, radialThreadVisualizationPopupData));
+        jLabel.addMouseListener(new ThreadRadarMouseListener(jLabel, artifact, radialThreadVisualizationPopupData, primaryMetricIdentifier,
+                secondaryMetricIdentifier));
 
         return jLabel;
     }

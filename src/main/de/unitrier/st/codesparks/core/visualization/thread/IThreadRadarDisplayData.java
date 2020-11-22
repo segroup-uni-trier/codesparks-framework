@@ -5,7 +5,7 @@ import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 
 import java.util.Set;
 
-public interface IRadialThreadVisualizationDisplayData
+public interface IThreadRadarDisplayData
 {
     CodeSparksThreadDisplayData getSelectedThreadData(AArtifact artifact, Set<ACodeSparksThread> selectedCodeSparksThreads);
 

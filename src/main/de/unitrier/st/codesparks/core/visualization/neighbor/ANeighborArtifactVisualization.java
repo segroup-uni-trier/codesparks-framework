@@ -1,11 +1,11 @@
-package de.unitrier.st.codesparks.core.visualization.callee;
+package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualization;
 
-public class AArtifactCalleeVisualization extends AArtifactVisualization
+public class ANeighborArtifactVisualization extends AArtifactVisualization
 {
-    public AArtifactCalleeVisualization(AArtifact artifact)
+    public ANeighborArtifactVisualization(AArtifact artifact)
     {
         super(artifact);
         this.psiElement = null;

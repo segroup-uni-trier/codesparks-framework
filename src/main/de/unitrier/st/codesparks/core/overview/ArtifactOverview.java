@@ -10,7 +10,6 @@ import com.intellij.psi.PsiManager;
 import com.intellij.ui.components.*;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ABaseArtifact;
 import de.unitrier.st.codesparks.core.data.GlobalResetThreadFilter;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
@@ -18,9 +17,10 @@ import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.IArtifactPool;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
-import de.unitrier.st.codesparks.core.data.ArtifactMetricValueSelfComparator;
+import de.unitrier.st.codesparks.core.data.ArtifactNumericalMetricValueComparator;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
+import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTable;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTableCellRenderer;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTableMouseMotionAdapter;
@@ -64,7 +64,7 @@ public class ArtifactOverview
 
     private IArtifactPool artifactPool;
 
-    public void setProfilingResult(final IArtifactPool artifactPool)
+    public void setArtifactPool(final IArtifactPool artifactPool)
     {
         if (artifactPool == null)
         {
@@ -75,9 +75,16 @@ public class ArtifactOverview
         rootPanel.repaint();
     }
 
-    IArtifactPool getProfilingResult()
+    IArtifactPool getArtifactPool()
     {
         return this.artifactPool;
+    }
+
+    private AArtifactVisualizationLabelFactory programArtifactVisualizationLabelFactory;
+
+    public void registerProgramArtifactVisualizationLabelFactory(AArtifactVisualizationLabelFactory factory)
+    {
+        this.programArtifactVisualizationLabelFactory = factory;
     }
 
     private ArtifactOverview()
@@ -87,7 +94,9 @@ public class ArtifactOverview
 
     private void setupUI()
     {
-        ProgramThreadRadar programThreadRadar = new ProgramThreadRadar(this);
+//        ProgramThreadRadar programThreadRadar = new ProgramThreadRadar(this);
+
+
         rootPanel = new BorderLayoutPanel();//new JBPanel();
 //        rootPanel.setPreferredSize(new Dimension(300, 500));
 //        rootPanel.setMaximumSize(new Dimension(300, 500));
@@ -182,7 +191,13 @@ public class ArtifactOverview
 
         JBPanel<BorderLayoutPanel> threadFilterWrapper = new JBPanel<>();
         threadFilterWrapper.setLayout(new BoxLayout(threadFilterWrapper, BoxLayout.X_AXIS));
-        threadFilterWrapper.add(programThreadRadar);
+
+        if (programArtifactVisualizationLabelFactory != null)
+        {
+            AArtifact programArtifact = artifactPool.getProgramArtifact();
+            JLabel artifactLabel = programArtifactVisualizationLabelFactory.createArtifactLabel(programArtifact);
+            threadFilterWrapper.add(artifactLabel);
+        }
 
         final JButton resetThreadFilterButton = new JButton(
                 LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
@@ -299,6 +314,18 @@ public class ArtifactOverview
     private JBTextField excludeFilter;
     private JBTextField includeFilter;
 
+    private String metricIdentifier;
+
+    public void registerMetricIdentifier(final String metricIdentifier)
+    {
+        this.metricIdentifier = metricIdentifier;
+    }
+
+    public String getMetricIdentifier()
+    {
+        return metricIdentifier;
+    }
+
     public void filterOverView()
     {
         if (artifactPool == null)
@@ -319,8 +346,8 @@ public class ArtifactOverview
                 return;
             }
 
-            ArtifactMetricValueSelfComparator artifactMetricValueSelfComparator =
-                    new ArtifactMetricValueSelfComparator();
+            ArtifactNumericalMetricValueComparator artifactNumericalMetricValueComparator =
+                    new ArtifactNumericalMetricValueComparator(metricIdentifier);
 
             tabbedPane.removeChangeListener(tabbedPaneChangeListener);
 
@@ -330,9 +357,9 @@ public class ArtifactOverview
             {
                 List<AArtifact> artifacts = entry.getValue();
                 artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
-                artifacts.sort(artifactMetricValueSelfComparator);
+                artifacts.sort(artifactNumericalMetricValueComparator);
                 String tabName = entry.getKey();
-                addTab(tabName, artifacts);
+                addTab(tabName, artifacts, metricIdentifier);
             }
 
             if (lastSelectedIndex > 0 && lastSelectedIndex < tabbedPane.getTabCount())
@@ -349,9 +376,9 @@ public class ArtifactOverview
         });
     }
 
-    private void addTab(String title, List<AArtifact> artifacts)
+    private void addTab(final String title, final List<AArtifact> artifacts, final String metricIdentifier)
     {
-        final ArtifactOverViewTableModel tableModel = new ArtifactOverViewTableModel(artifacts);
+        final ArtifactOverViewTableModel tableModel = new ArtifactOverViewTableModel(artifacts, metricIdentifier);
         final MetricTable jbTable = new MetricTable(tableModel)
         {
             @Override

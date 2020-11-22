@@ -22,15 +22,20 @@ import static com.intellij.ui.JBColor.WHITE;
 public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
     @SuppressWarnings("unused")
-    public DefaultThreadVisualizationLabelFactory() { }
-
-    public DefaultThreadVisualizationLabelFactory(int sequence)
+    public DefaultThreadVisualizationLabelFactory(final String primaryMetricIdentifier)
     {
-        super(sequence);
+        super(primaryMetricIdentifier);
+    }
+
+    public DefaultThreadVisualizationLabelFactory(int sequence, final String primaryMetricIdentifier)
+    {
+        super(sequence, primaryMetricIdentifier);
     }
 
     @Override
-    public JLabel createArtifactLabel(@NotNull AArtifact artifact)
+    public JLabel createArtifactLabel(
+            @NotNull final AArtifact artifact
+    )
     {
         final int threadsPerColumn = 3;
         int lineHeight = VisualizationUtil.getLineHeightCeil(VisConstants.getLineHeight(), threadsPerColumn);
@@ -52,7 +57,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
         int totalThreadCnt = 0;
 
-        List<CodeSparksThreadCluster> codeSparksThreadClustering = artifact.getSortedDefaultThreadArtifactClustering();
+        List<CodeSparksThreadCluster> codeSparksThreadClustering = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
 
         for (int i = 0; i < codeSparksThreadClustering.size(); i++)
         {
@@ -114,7 +119,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
         jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
         //jLabel.addMouseListener(new DefaultArtifactVisualizationMouseListener(jLabel, artifact));
-        jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact));
+        jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
 
         return jLabel;
     }

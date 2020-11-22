@@ -1,34 +1,27 @@
 /*
  * Copyright (C) 2020, Oliver Moseler
  */
-package de.unitrier.st.codesparks.core.visualization.callee;
+package de.unitrier.st.codesparks.core.visualization.neighbor;
 
-import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.DataUtil;
+import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 import de.unitrier.st.codesparks.core.visualization.BottomFlowLayout;
-import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-class ArtifactCalleeVisualizationWrapper extends AArtifactCalleeVisualization
+class NeighborNeighborArtifactVisualizationWrapper extends ANeighborArtifactVisualization
 {
-    ArtifactCalleeVisualizationWrapper(AArtifact artifact,
-                                       List<ANeighborArtifact> neighborArtifactsOfLine,
-//                                       double totalMetricValue,
-//                                       Color metricColor,
-                                       AArtifactCalleeVisualizationLabelFactory... factories)
+    NeighborNeighborArtifactVisualizationWrapper(
+            AArtifact artifact
+            , List<ANeighborArtifact> neighborArtifactsOfLine
+            , ANeighborArtifactVisualizationLabelFactory... factories
+    )
     {
         super(artifact);
         assert neighborArtifactsOfLine.size() > 0;
-
-
-        final double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact);
-        final Color metricColor = VisualizationUtil.getPerformanceColor(threadFilteredMetricValue);
 
         psiElement = neighborArtifactsOfLine.get(0).getVisPsiElement();
 
@@ -42,15 +35,11 @@ class ArtifactCalleeVisualizationWrapper extends AArtifactCalleeVisualization
         int width = 0;
         int height = 0;
 
-        Arrays.sort(factories, Comparator.comparingInt(AArtifactCalleeVisualizationLabelFactory::getSequence));
+        Arrays.sort(factories, Comparator.comparingInt(ANeighborArtifactVisualizationLabelFactory::getSequence));
 
-        for (AArtifactCalleeVisualizationLabelFactory factory : factories)
+        for (ANeighborArtifactVisualizationLabelFactory factory : factories)
         {
-            JLabel artifactCalleeLabel = factory.createArtifactCalleeLabel(artifact
-                    , neighborArtifactsOfLine
-                    , threadFilteredMetricValue
-                    , metricColor
-            );
+            JLabel artifactCalleeLabel = factory.createArtifactCalleeLabel(artifact, neighborArtifactsOfLine);
             if (artifactCalleeLabel == null)
             {
                 continue;

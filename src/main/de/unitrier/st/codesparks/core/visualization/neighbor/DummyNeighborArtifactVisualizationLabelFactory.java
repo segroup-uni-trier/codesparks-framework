@@ -1,4 +1,4 @@
-package de.unitrier.st.codesparks.core.visualization.callee;
+package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
@@ -11,20 +11,22 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class DummyArtifactCalleeVisualizationLabelFactory extends AArtifactCalleeVisualizationLabelFactory
+public class DummyNeighborArtifactVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
-    public DummyArtifactCalleeVisualizationLabelFactory() { }
-
-    public DummyArtifactCalleeVisualizationLabelFactory(int sequence)
+    public DummyNeighborArtifactVisualizationLabelFactory()
     {
-        super(sequence);
+        super("");
+    }
+
+    public DummyNeighborArtifactVisualizationLabelFactory(int sequence)
+    {
+        super(sequence, "");
     }
 
     @Override
-    public JLabel createArtifactCalleeLabel(AArtifact artifact
+    public JLabel createArtifactCalleeLabel(
+            AArtifact artifact
             , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
-            , double threadFilteredMetricValue
-            , Color metricColor
     )
     {
         ImageIcon imageIcon = new ImageIcon(getClass().getResource("/icons/pluginIcon.png"));

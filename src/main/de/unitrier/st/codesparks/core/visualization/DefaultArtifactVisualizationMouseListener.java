@@ -5,7 +5,7 @@ import com.intellij.ui.components.JBTabbedPane;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
-import de.unitrier.st.codesparks.core.data.NumericalMetric;
+import de.unitrier.st.codesparks.core.data.Metric;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
@@ -17,14 +17,17 @@ import java.util.stream.Collectors;
 
 public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
+    private final String secondaryMetricIdentifier;
 
     DefaultArtifactVisualizationMouseListener(
             JComponent component
             , AArtifact artifact
-            , Class<? extends NumericalMetric>... numericalMetricClasses
+            , String primaryMetricIdentifier
+            , final String secondaryMetricIdentifier
     )
     {
-        super(component, new Dimension(500, 175), artifact, numericalMetricClasses);
+        super(component, new Dimension(500, 175), artifact, primaryMetricIdentifier);
+        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
     }
 
     @Override
@@ -63,10 +66,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
                         .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
                 .collect(Collectors.toList());
 
-        assert numericalMetricClasses.length > 0;
-        Class<? extends NumericalMetric> primaryMetric = numericalMetricClasses[0];
-
-        MetricList successorsList = new MetricList(new MetricListModel(artifact, primaryMetric, artifactSuccessorsList));
+        MetricList successorsList = new MetricList(new NumericalMetricListModel(artifact, primaryMetricIdentifier, artifactSuccessorsList));
         successorsList.addMouseMotionListener(new MetricListMouseMotionAdapter(successorsList));
         successorsList.setCellRenderer(new MetricListCellRenderer());
 
@@ -78,12 +78,12 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
                                 .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
                         .collect(Collectors.toList());
 
-        MetricList predecessorList = new MetricList(new MetricListModel(artifact, primaryMetric, artifactPredecessorsList));
+        MetricList predecessorList = new MetricList(new NumericalMetricListModel(artifact, primaryMetricIdentifier, artifactPredecessorsList));
         predecessorList.addMouseMotionListener(new MetricListMouseMotionAdapter(predecessorList));
         predecessorList.setCellRenderer(new MetricListCellRenderer());
 
-        tabbedPane.add("Callers", new JBScrollPane(predecessorList));
-        tabbedPane.add("Callees", new JBScrollPane(successorsList));
+        tabbedPane.add("Callers", new JBScrollPane(predecessorList)); // TODO: this is JPT code
+        tabbedPane.add("Callees", new JBScrollPane(successorsList)); // TODO: this is JPT code
 
         final int selectedIndex = 1;
 
@@ -126,28 +126,35 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
     }
 
     @Override
-    protected String createPopupTitle(AArtifact artifact)
+    protected String createPopupTitle(final AArtifact artifact)
     {
-        assert numericalMetricClasses.length > 1;
-        Class<? extends NumericalMetric> secondaryMetric = numericalMetricClasses[1];
-        String metricKind = "total";
-        StringBuilder titleStringBuilder = new StringBuilder();
+        // TODO: Move this to CodeSparks-JPT! It makes use of the term 'self' etc.
+
+        final Metric primaryMetric = artifact.getMetric(primaryMetricIdentifier);
+        final Metric secondaryMetric = artifact.getMetric(secondaryMetricIdentifier);
+
+        final String primaryMetricName = primaryMetric.getName();
+
+        final StringBuilder titleStringBuilder = new StringBuilder();
         titleStringBuilder.append(artifact.getTitleName());
         titleStringBuilder.append(": ");
-        titleStringBuilder.append(metricKind);
+        titleStringBuilder.append(primaryMetricName);
         titleStringBuilder.append(": ");
-        //titleStringBuilder.append(CoreUtil.formatPercentage(artifact.getRuntime()));
-        titleStringBuilder.append(artifact.getMetricValueText());
+        titleStringBuilder.append(primaryMetric.getMetricValueString());
         titleStringBuilder.append(" - ");
-        titleStringBuilder.append("self: ");
-//        titleStringBuilder.append(CoreUtil.formatPercentage(artifact.getRuntimeSelf()));
-        titleStringBuilder.append(artifact.getMetricValueSelfText());
-        if (artifact.getMetricValue() > 0)
+
+        final String secondaryMetricName = secondaryMetric.getName();
+        titleStringBuilder.append(secondaryMetricName);
+        titleStringBuilder.append(": ");
+        titleStringBuilder.append(secondaryMetric.getMetricValueString()); // Secondary = self here
+        final double numericalMetricValue = (double) primaryMetric.getValue();
+        if (numericalMetricValue > 0)
         {
             titleStringBuilder.append(" (");
-            titleStringBuilder.append(CoreUtil.formatPercentage(artifact.getMetricValueSelf() / artifact.getMetricValue()));
+            double secondary = (double) secondaryMetric.getValue();
+            titleStringBuilder.append(CoreUtil.formatPercentage(secondary / numericalMetricValue));
             titleStringBuilder.append(" of ");
-            titleStringBuilder.append(metricKind);
+            titleStringBuilder.append(primaryMetricName);
             titleStringBuilder.append(" )");
         }
         return titleStringBuilder.toString();

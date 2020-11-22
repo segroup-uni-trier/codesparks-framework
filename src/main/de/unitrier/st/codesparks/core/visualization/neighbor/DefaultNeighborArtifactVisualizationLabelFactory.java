@@ -1,4 +1,4 @@
-package de.unitrier.st.codesparks.core.visualization.callee;
+package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.psi.PsiElement;
@@ -8,6 +8,7 @@ import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.DataUtil;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
@@ -27,21 +28,27 @@ import java.util.stream.Collectors;
 
 import static com.intellij.ui.JBColor.WHITE;
 
-public class DefaultArtifactCalleeVisualizationLabelFactory extends AArtifactCalleeVisualizationLabelFactory
+public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
-    public DefaultArtifactCalleeVisualizationLabelFactory() { }
-
-    public DefaultArtifactCalleeVisualizationLabelFactory(int sequence)
+    public DefaultNeighborArtifactVisualizationLabelFactory(final String primaryMetricIdentifier)
     {
-        super(sequence);
+        super(primaryMetricIdentifier);
+    }
+
+    public DefaultNeighborArtifactVisualizationLabelFactory(int sequence, final String primaryMetricIdentifier)
+    {
+        super(sequence, primaryMetricIdentifier);
     }
 
     @Override
-    public JLabel createArtifactCalleeLabel(AArtifact artifact
+    public JLabel createArtifactCalleeLabel(
+            AArtifact artifact
             , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
-            , double threadFilteredMetricValue
-            , Color metricColor)
+    )
     {
+        final double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, primaryMetricIdentifier);
+        final Color metricColor = VisualizationUtil.getPerformanceColor(threadFilteredMetricValue);
+
         int numberOfCalleesInSameLine = threadFilteredNeighborArtifactsOfLine.size();
 
         long selftimeCnt = threadFilteredNeighborArtifactsOfLine
@@ -90,29 +97,30 @@ public class DefaultArtifactCalleeVisualizationLabelFactory extends AArtifactCal
 
         Map<String, Double> methodRuntimes = new HashMap<>();
 
-        for (ANeighborArtifact callee : threadFilteredNeighborArtifactsOfLine)
+        for (ANeighborArtifact neighborArtifact : threadFilteredNeighborArtifactsOfLine)
         {
 
             double calleeRuntime = 0D;
-            Collection<ACodeSparksThread> codeSparksThreads = callee.getThreadArtifacts();
+            Collection<ACodeSparksThread> codeSparksThreads = neighborArtifact.getThreadArtifacts();
             for (ACodeSparksThread codeSparksThread : codeSparksThreads)
             {
                 if (!codeSparksThread.isFiltered())
                 {
-                    calleeRuntime += codeSparksThread.getMetricValue() * callee.getMetricValue();
+                    calleeRuntime += codeSparksThread.getNumericalMetricValue(primaryMetricIdentifier) * neighborArtifact.getNumericalMetricValue(primaryMetricIdentifier);
                 }
             }
 
             calleeRuntimeSum += calleeRuntime;
 
             // Draw the text.
-            methodRuntimes.put(callee.getName(), calleeRuntime);
+            methodRuntimes.put(neighborArtifact.getName(), calleeRuntime);
             if (psiElement == null)
-                psiElement = callee.getInvocationLineElement();
+                psiElement = neighborArtifact.getInvocationLineElement();
         }
 
         // Draw background
-        Rectangle calleeVisualizationArea = new Rectangle(VisConstants.CALLEE_X_OFFSET, VisConstants.CALLEE_Y_OFFSET, VisConstants.INVOCATION_WIDTH, lineHeight - 6);
+        Rectangle calleeVisualizationArea = new Rectangle(VisConstants.CALLEE_X_OFFSET, VisConstants.CALLEE_Y_OFFSET, VisConstants.INVOCATION_WIDTH,
+                lineHeight - 6);
         graphics.setColor(WHITE);
         VisualizationUtil.fillRectangle(graphics, calleeVisualizationArea);
         graphics.setColor(calleeBackgroundColor);

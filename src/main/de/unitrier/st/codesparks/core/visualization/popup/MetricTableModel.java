@@ -17,18 +17,25 @@ public class MetricTableModel extends DefaultTableModel
     private final int preSize;
     private final int sucSize;
 
-    private List<ANeighborArtifact> prepareNeighbors(AArtifact artifact, List<ANeighborArtifact> list)
+    private List<ANeighborArtifact> prepareNeighbors(
+            final AArtifact artifact
+            , final List<ANeighborArtifact> list
+    )
     {
         for (ANeighborArtifact aNeighborProfilingArtifact : list)
         {
-            aNeighborProfilingArtifact.setRelativeMetricValue(artifact.getMetricValue());
+            final double numericalMetricValue = artifact.getNumericalMetricValue(metricIdentifier);
+            aNeighborProfilingArtifact.setRelativeMetricValue(metricIdentifier, numericalMetricValue);
         }
         return list;
     }
 
-    public MetricTableModel(@NotNull AArtifact artifact)
+    private final String metricIdentifier;
+
+    public MetricTableModel(@NotNull AArtifact artifact, final String metricIdentifier)
     {
-        NeighborArtifactComparator comparator = new NeighborArtifactComparator();
+        this.metricIdentifier = metricIdentifier;
+        NeighborArtifactComparator comparator = new NeighborArtifactComparator(metricIdentifier);
         predecessors = prepareNeighbors(artifact, artifact.getPredecessorsList())
                 .stream()
                 .filter(npa -> npa.getThreadArtifacts()
@@ -112,6 +119,6 @@ public class MetricTableModel extends DefaultTableModel
     public Object getValueAt(int rowIndex, int columnIndex)
     {
         ANeighborArtifact neighborArtifactAt = getNeighborArtifactAt(rowIndex, columnIndex);
-        return neighborArtifactAt == null ? "" : neighborArtifactAt.getDisplayString(34);
+        return neighborArtifactAt == null ? "" : neighborArtifactAt.getDisplayString(metricIdentifier, 34);
     }
 }

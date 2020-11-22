@@ -27,7 +27,7 @@ public class MetricListPopupMouseAdapter extends MouseAdapter
 
         int index = list.locationToIndex(point);
 
-        ANeighborArtifact neighborArtifactAt = ((MetricListModel) list.getModel()).getArtifactAt(index);
+        ANeighborArtifact neighborArtifactAt = ((NumericalMetricListModel) list.getModel()).getArtifactAt(index);
         if (neighborArtifactAt != null)
         {
             String neighborArtifactAtIdentifier = neighborArtifactAt.getIdentifier();

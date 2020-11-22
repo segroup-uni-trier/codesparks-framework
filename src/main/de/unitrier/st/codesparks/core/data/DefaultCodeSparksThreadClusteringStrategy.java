@@ -7,24 +7,30 @@ import java.util.*;
  */
 public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThreadClusteringStrategy
 {
-    private static volatile ICodeSparksThreadClusteringStrategy instance;
+//    private static volatile ICodeSparksThreadClusteringStrategy instance;
 
-    public static ICodeSparksThreadClusteringStrategy getInstance()
+    private static final Map<String, ICodeSparksThreadClusteringStrategy> strategies = new HashMap<>();
+
+    public static ICodeSparksThreadClusteringStrategy getInstance(final String metricIdentifier)
     {
-        if (instance == null)
+        synchronized (DefaultCodeSparksThreadClusteringStrategy.class)
         {
-            synchronized (DefaultCodeSparksThreadClusteringStrategy.class)
+            ICodeSparksThreadClusteringStrategy instance = strategies.get(metricIdentifier);
+            if (instance == null)
             {
-                if (instance == null)
-                {
-                    instance = new DefaultCodeSparksThreadClusteringStrategy();
-                }
+                instance = new DefaultCodeSparksThreadClusteringStrategy(metricIdentifier);
+                strategies.put(metricIdentifier, instance);
             }
+            return instance;
         }
-        return instance;
     }
 
-    private DefaultCodeSparksThreadClusteringStrategy() { }
+    private final String metricIdentifier;
+
+    private DefaultCodeSparksThreadClusteringStrategy(final String metricIdentifier)
+    {
+        this.metricIdentifier = metricIdentifier;
+    }
 
     private List<PointCluster> initClusters(List<Point> points, int k)
     {
@@ -71,7 +77,7 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
 
         int kToUse = Math.min(size, k);
 
-        List<Point> points = createPoints(codeSparksThreads);
+        List<Point> points = createPoints(codeSparksThreads, metricIdentifier);
 
         List<PointCluster> pointClusters = initClusters(points, kToUse);
 
@@ -248,12 +254,12 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
         }
     }
 
-    private List<Point> createPoints(Collection<ACodeSparksThread> codeSparksThreads)
+    private List<Point> createPoints(final Collection<ACodeSparksThread> codeSparksThreads, final String metricIdentifier)
     {
         ArrayList<Point> points = new ArrayList<>();
         for (ACodeSparksThread codeSparksThread : codeSparksThreads)
         {
-            Point point = new Point(codeSparksThread);
+            Point point = new Point(codeSparksThread, metricIdentifier);
             points.add(point);
         }
         return points;
@@ -310,10 +316,10 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
         private int clusterIndex;
         private final ACodeSparksThread codeSparksThread;
 
-        Point(ACodeSparksThread codeSparksThread)
+        Point(final ACodeSparksThread codeSparksThread, final String metricIdentifier)
         {
             this.x = 0;//getCharSum(threadArtifact.getCallSite());
-            this.y = ((int) (100 * codeSparksThread.getMetricValue())) / 100D;
+            this.y = ((int) (100 * codeSparksThread.getNumericalMetricValue(metricIdentifier))) / 100D;
             this.codeSparksThread = codeSparksThread;
             clusterIndex = -1;
         }

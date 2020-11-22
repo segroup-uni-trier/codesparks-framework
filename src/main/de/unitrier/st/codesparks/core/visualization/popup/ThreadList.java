@@ -18,9 +18,9 @@ public class ThreadList extends AThreadSelectable
 {
     private final JBList<JBCheckBox> list;
 
-    public ThreadList(AArtifact artifact)
+    public ThreadList(AArtifact artifact, final String metricIdentifier)
     {
-        list = new JBList<JBCheckBox>(new ThreadListModel(artifact))
+        list = new JBList<JBCheckBox>(new ThreadListModel(artifact, metricIdentifier))
         {
             @Override
             public String getToolTipText(MouseEvent event)
@@ -52,7 +52,7 @@ public class ThreadList extends AThreadSelectable
             }
         };
         component = list;
-        final ThreadListCellRenderer threadListCellRenderer = new ThreadListCellRenderer(artifact);
+        final ThreadListCellRenderer threadListCellRenderer = new ThreadListCellRenderer(artifact, metricIdentifier);
         list.setCellRenderer(threadListCellRenderer);
         final JBList<JBCheckBox> that = list;
         list.addMouseListener(new MouseAdapter()
@@ -83,7 +83,8 @@ public class ThreadList extends AThreadSelectable
     }
 
     @Override
-    public void invertAll() {
+    public void invertAll()
+    {
         for (int i = 0; i < list.getItemsCount(); i++)
         {
             getThreadListCellRenderer().toggleSelected(i);

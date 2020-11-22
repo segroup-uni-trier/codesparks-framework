@@ -10,20 +10,25 @@ import java.awt.*;
 import java.util.List;
 import java.util.Set;
 
-public class RadialZoomedThreadVisualization extends AThreadRadar
+public class ZoomedThreadRadar extends AThreadRadar
 {
     private final List<IThreadSelectable> threadSelectables;
     private final IThreadSelectableIndexProvider indexProvider;
     private int hoveredCluster = -1;
+    private final String metricIdentifier;
 
-    RadialZoomedThreadVisualization(AArtifact artifact,
-                                    IThreadSelectableIndexProvider indexProvider,
-                                    List<IThreadSelectable> threadSelectables)
+    ZoomedThreadRadar(
+            AArtifact artifact
+            , IThreadSelectableIndexProvider indexProvider
+            , List<IThreadSelectable> threadSelectables
+            , final String metricIdentifier
+    )
     {
         setUpVisualizationParameter(154, 50);
         this.indexProvider = indexProvider;
         this.artifact = artifact;
         this.threadSelectables = threadSelectables;
+        this.metricIdentifier = metricIdentifier;
     }
 
     @Override
@@ -39,7 +44,7 @@ public class RadialZoomedThreadVisualization extends AThreadRadar
         {
             return;
         }
-        List<CodeSparksThreadCluster> codeSparksThreadClusters = artifact.getSortedDefaultThreadArtifactClustering();
+        List<CodeSparksThreadCluster> codeSparksThreadClusters = artifact.getSortedDefaultThreadArtifactClustering(metricIdentifier);
         int startAngle = 90; //set start angle to 90 for starting at 12 o'clock
         JBColor[] colors = {new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), new JBColor(Color.decode("#B25283"),
                 Color.decode("#B25283")), new JBColor(Color.decode("#3E877F"), Color.decode("#3E877F"))};
@@ -67,25 +72,25 @@ public class RadialZoomedThreadVisualization extends AThreadRadar
             VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
             RadialVisualThreadClusterProperties properties =
                     new RadialVisualThreadClusterProperties(codeSparksThreadClusters.get(i), colors[i],
-                            artifact.getNumberOfThreads());
+                            artifact.getNumberOfThreads(), metricIdentifier);
 
             double filteredRuntimeRatio =
-                    ThreadVisualizationUtil.calculateFilteredAvgRuntimeRatioForZoomVisualization(codeSparksThreadClusters.get(i),
-                            selectedCodeSparksThreads, false);
+                    ThreadVisualizationUtil.calculateFilteredAvgNumericalMetricRatioForZoomVisualization(codeSparksThreadClusters.get(i),
+                            selectedCodeSparksThreads, metricIdentifier, false);
             double filteredRuntimeRatioSum =
-                    ThreadVisualizationUtil.calculateFilteredSumRuntimeRatioForZoomVisualisation(codeSparksThreadClusters.get(i), selectedCodeSparksThreads,
-                            false);
+                    ThreadVisualizationUtil.calculateFilteredSumNumericalMetricRatioForZoomVisualisation(codeSparksThreadClusters.get(i),
+                            metricIdentifier, selectedCodeSparksThreads, false);
 
             final CodeSparksThreadCluster clusterArtifacts = (CodeSparksThreadCluster) codeSparksThreadClusters.get(i).clone();
             clusterArtifacts.removeAll(filteredCodeSparksThreads);
             double filteredThreadRatio = clusterArtifacts.size() / (double) numberOfSelectedArtifactThreads;
-            double completeFilteredRuntimeDurationOfCluster = getFilteredMetricSumOfCluster(codeSparksThreadClusters.get(i),
+            double completeFilteredRuntimeDurationOfCluster = getFilteredMetricSumOfCluster(codeSparksThreadClusters.get(i), metricIdentifier,
                     filteredCodeSparksThreads);
 
-            properties.setRuntimeRatio(filteredRuntimeRatio);
+            properties.setNumericalMetricRatio(filteredRuntimeRatio);
             properties.setThreadRatio(filteredThreadRatio);
-            properties.setCompleteFilteredRuntime(completeFilteredRuntimeDurationOfCluster);
-            properties.setRuntimeRationSum(filteredRuntimeRatioSum);
+            properties.setCompleteFilteredNumericalMetricValue(completeFilteredRuntimeDurationOfCluster);
+            properties.setNumericalMetricRationSum(filteredRuntimeRatioSum);
             propertiesManager.registerProperties(properties);
 
             if (i != 0)

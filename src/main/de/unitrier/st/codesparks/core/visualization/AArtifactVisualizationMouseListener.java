@@ -15,7 +15,6 @@ import com.intellij.ui.content.ContentManager;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.NumericalMetric;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
@@ -32,19 +31,19 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
     protected JComponent component;
     protected Dimension dimension;
     protected AArtifact artifact;
-    protected Class<? extends NumericalMetric>[] numericalMetricClasses;
+    protected String primaryMetricIdentifier;
 
     protected AArtifactVisualizationMouseListener(
             JComponent component
             , Dimension dimension
             , AArtifact artifact
-            , Class<? extends NumericalMetric>... numericalMetricClasses
+            , String primaryMetricIdentifier
     )
     {
         this.component = component;
         this.dimension = dimension;
         this.artifact = artifact;
-        this.numericalMetricClasses = (numericalMetricClasses == null) ? new Class[0] : numericalMetricClasses;
+        this.primaryMetricIdentifier = primaryMetricIdentifier;
     }
 
     protected abstract PopupPanel createPopupContent(AArtifact artifact); // TODO: remove parameter artifact since it is in the constructor already

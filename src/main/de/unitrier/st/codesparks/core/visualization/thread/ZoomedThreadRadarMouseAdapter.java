@@ -9,20 +9,26 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class RadialZoomedThreadVisualizationMouseAdapter extends MouseAdapter
+public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
 {
     private final AArtifact artifact;
+    private final String metricIdentifier;
     private final int frameSize;
     private final IClusterHoverable clusterHover;
-    private final RadialZoomedThreadVisualization threadArtifactVisualization;
+    private final ZoomedThreadRadar threadArtifactVisualization;
     private final JPanel visualizationWrapper;
 
-    RadialZoomedThreadVisualizationMouseAdapter(
-            RadialZoomedThreadVisualization threadArtifactVisualization,
-            AArtifact artifact, IClusterHoverable clusterHover, JPanel visualizationWrapper)
+    ZoomedThreadRadarMouseAdapter(
+            ZoomedThreadRadar threadArtifactVisualization
+            , AArtifact artifact
+            , final String metricIdentifier
+            , IClusterHoverable clusterHover
+            , JPanel visualizationWrapper
+    )
     {
         this.threadArtifactVisualization = threadArtifactVisualization;
         this.artifact = artifact;
+        this.metricIdentifier = metricIdentifier;
         this.frameSize = RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE_ZOOMED;
         this.clusterHover = clusterHover;
         this.visualizationWrapper = visualizationWrapper;
@@ -33,7 +39,7 @@ public class RadialZoomedThreadVisualizationMouseAdapter extends MouseAdapter
     {
         super.mouseMoved(e);
         int hoverCount = 0;
-        for (CodeSparksThreadCluster cluster : artifact.getSortedDefaultThreadArtifactClustering())
+        for (CodeSparksThreadCluster cluster : artifact.getSortedDefaultThreadArtifactClustering(metricIdentifier))
         {
             if (isPointInArc(e.getX(), e.getY(), cluster))
             {
@@ -68,10 +74,10 @@ public class RadialZoomedThreadVisualizationMouseAdapter extends MouseAdapter
         double distance = Math.sqrt(Math.pow(frameSize / 2D - x, 2) + Math.pow(frameSize / 2D - y, 2));
 
         double discreteRuntimeRatio;
-        if (properties.getRuntimeRationSum() <= 0.33)
+        if (properties.getNumericalMetricRationSum() <= 0.33)
         {
             discreteRuntimeRatio = 0.33;
-        } else if (properties.getRuntimeRationSum() > 0.33 && properties.getRuntimeRationSum() <= 0.66)
+        } else if (properties.getNumericalMetricRationSum() > 0.33 && properties.getNumericalMetricRationSum() <= 0.66)
         {
             discreteRuntimeRatio = 0.66;
         } else

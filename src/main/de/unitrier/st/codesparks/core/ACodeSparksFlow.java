@@ -325,7 +325,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                 PropertyKey.THREAD_VISUALIZATIONS_ENABLED, true);
         artifactOverview.setFilterByThreadPanelVisible(threadVisualizationsEnabled);
 
-        artifactOverview.setProfilingResult(artifactPool);
+        artifactOverview.setArtifactPool(artifactPool);
 
         contentManager.addContent(ContentFactory.SERVICE.getInstance().createContent
                 (artifactOverview.getRootPanel(), "", true));

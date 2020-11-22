@@ -8,47 +8,59 @@ import java.util.Arrays;
 
 public class RadialVisualThreadClusterProperties extends VisualThreadClusterProperties
 {
-
     private int numberOfThreads;
     private double threadRatio;
-    private double runtimeRatio;
-    private double runtimeRationSum;
+    private double numericalMetricRatio;
+    private double numericalMetricRationSum;
     private double arcStartAngle;
     private double arcAngle;
     private boolean isSelected;
-    private double completeFilteredRuntime;
+    private double completeFilteredNumericalMetricValue;
 
-    public RadialVisualThreadClusterProperties(CodeSparksThreadCluster cluster, JBColor color, int numberOfArtifactThreads) {
+    public RadialVisualThreadClusterProperties(
+            final CodeSparksThreadCluster cluster
+            , final JBColor color
+            , final int numberOfArtifactThreads
+            , final String metricIdentifier)
+    {
         super(cluster, color);
         calculateNumberOfThreads(cluster);
         calculateThreadRatio(cluster, numberOfArtifactThreads);
-        calculateMaxRuntimeRatio(cluster);
+        calculateMaxNumericalMetricRatio(cluster, metricIdentifier);
     }
 
-    private void calculateNumberOfThreads(CodeSparksThreadCluster cluster) {
+    private void calculateNumberOfThreads(CodeSparksThreadCluster cluster)
+    {
         numberOfThreads = cluster.size();
     }
 
-    private void calculateThreadRatio(CodeSparksThreadCluster cluster, int numberOfArtifactThreads) {
+    private void calculateThreadRatio(CodeSparksThreadCluster cluster, int numberOfArtifactThreads)
+    {
         threadRatio = (double) cluster.size() / numberOfArtifactThreads;
     }
 
-    private void calculateMaxRuntimeRatio(CodeSparksThreadCluster cluster) {
+    private void calculateMaxNumericalMetricRatio(CodeSparksThreadCluster cluster, final String metricIdentifier)
+    {
         double max = 0;
-        for (ACodeSparksThread aCluster : cluster) {
-            double metricValue = aCluster.getMetricValue();
-            if (metricValue > max) {
+        for (ACodeSparksThread aCluster : cluster)
+        {
+            double metricValue = aCluster.getNumericalMetricValue(metricIdentifier);
+            if (metricValue > max)
+            {
                 max = metricValue;
             }
         }
-        runtimeRatio = max;
+        numericalMetricRatio = max;
     }
 
-    private int calculateNumberOfFilteredThreads(CodeSparksThreadCluster cluster, boolean ignoreFilter) {
+    private int calculateNumberOfFilteredThreads(CodeSparksThreadCluster cluster, boolean ignoreFilter)
+    {
 
         int numberOfFilteredThreads = 0;
-        for (ACodeSparksThread codeSparksThread : cluster) {
-            if (!codeSparksThread.isFiltered() || ignoreFilter) {
+        for (ACodeSparksThread codeSparksThread : cluster)
+        {
+            if (!codeSparksThread.isFiltered() || ignoreFilter)
+            {
                 numberOfFilteredThreads++;
             }
         }
@@ -56,56 +68,65 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
         return numberOfFilteredThreads;
     }
 
-    double calculateFilteredThreadRatio(CodeSparksThreadCluster cluster, int numberOfArtifactThreads, boolean ignoreFilter) {
+    double calculateFilteredThreadRatio(CodeSparksThreadCluster cluster, int numberOfArtifactThreads, boolean ignoreFilter)
+    {
         return (double) calculateNumberOfFilteredThreads(cluster, ignoreFilter) / numberOfArtifactThreads;
     }
 
-    double calculateFilteredRuntimeRatio(CodeSparksThreadCluster cluster, boolean ignoreFilter) {
-        double max = 0;
-        for (ACodeSparksThread aCluster : cluster) {
-            if (aCluster.isFiltered() && !ignoreFilter)
-                continue;
+//    double calculateFilteredRuntimeRatio(CodeSparksThreadCluster cluster, boolean ignoreFilter)
+//    {
+//        double max = 0;
+//        for (ACodeSparksThread aCluster : cluster)
+//        {
+//            if (aCluster.isFiltered() && !ignoreFilter)
+//                continue;
+//
+//            double metricValue = aCluster.getMetricValue();
+//            if (metricValue > max)
+//            {
+//                max = metricValue;
+//            }
+//        }
+//        return max;
+//    }
 
-            double metricValue = aCluster.getMetricValue();
-            if (metricValue > max) {
-                max = metricValue;
-            }
-        }
-        return max;
-    }
-
-    double calculateAvgFilteredRuntimeRatio(CodeSparksThreadCluster cluster, boolean ignoreFilter) {
+    double calculateAvgFilteredNumericalMetricRatio(CodeSparksThreadCluster cluster, final String metricIdentfier, boolean ignoreFilter)
+    {
         double sum = 0;
         int threads = 0;
-        for (ACodeSparksThread aCluster : cluster) {
-            if (aCluster.isFiltered() && !ignoreFilter)
+        for (ACodeSparksThread codeSparksThread : cluster)
+        {
+            if (codeSparksThread.isFiltered() && !ignoreFilter)
                 continue;
 
-            sum += aCluster.getMetricValue();
+            sum += codeSparksThread.getNumericalMetricValue(metricIdentfier);
             threads++;
         }
-        runtimeRatio = sum/threads;
-        return sum/threads;
+        numericalMetricRatio = sum / threads;
+        return sum / threads;
     }
 
-    double calculateFilteredSumRuntimeRatio(CodeSparksThreadCluster cluster, boolean ignoreFilter) {
+    double calculateFilteredSumNumericalMetricRatio(CodeSparksThreadCluster cluster, final String metricIdentifier, boolean ignoreFilter)
+    {
         double sum = 0;
-        for (ACodeSparksThread aCluster : cluster) {
-            if (aCluster.isFiltered() && !ignoreFilter)
+        for (ACodeSparksThread codeSparksThread : cluster)
+        {
+            if (codeSparksThread.isFiltered() && !ignoreFilter)
                 continue;
 
-            sum += aCluster.getMetricValue();
+            sum += codeSparksThread.getNumericalMetricValue(metricIdentifier);
         }
-        runtimeRationSum = sum;
+        numericalMetricRationSum = sum;
         return sum;
     }
 
 
-
     @SuppressWarnings("unused")
-    private double calculateFilteredMedianRuntimeRatio(CodeSparksThreadCluster cluster, boolean ignoreFilter) {
+    private double calculateFilteredMedianNumericalMetricRatio(CodeSparksThreadCluster cluster, final String metricIdentifier, boolean ignoreFilter)
+    {
         int unfilteredThreads = 0;
-        for (ACodeSparksThread codeSparksThread : cluster) {
+        for (ACodeSparksThread codeSparksThread : cluster)
+        {
             if (codeSparksThread.isFiltered() && !ignoreFilter)
                 continue;
 
@@ -113,82 +134,98 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
         }
 
         Double[] metricArray = new Double[cluster.size()];
-        for (int i = 0; i < unfilteredThreads; i++) {
-            if (cluster.get(i).isFiltered() && ignoreFilter)
+        for (int i = 0; i < unfilteredThreads; i++)
+        {
+            ACodeSparksThread codeSparksThread = cluster.get(i);
+            if (codeSparksThread.isFiltered() && ignoreFilter)
                 continue;
 
-            metricArray[i] = cluster.get(i).getMetricValue();
+            metricArray[i] = codeSparksThread.getNumericalMetricValue(metricIdentifier);
         }
 
         Arrays.sort(metricArray);
         double median;
         if (metricArray.length % 2 == 0)
-            median = (metricArray[metricArray.length/2] + metricArray[metricArray.length/2 - 1])/2;
+            median = (metricArray[metricArray.length / 2] + metricArray[metricArray.length / 2 - 1]) / 2;
         else
-            median = metricArray[metricArray.length/2];
+            median = metricArray[metricArray.length / 2];
 
         return median;
     }
 
 
-
-    public int getNumberOfThreads() {
+    public int getNumberOfThreads()
+    {
         return numberOfThreads;
     }
 
-    public double getThreadRatio() {
+    public double getThreadRatio()
+    {
         return threadRatio;
     }
 
-    public double getRuntimeRatio() {
-        return runtimeRatio;
+    public double getNumericalMetricRatio()
+    {
+        return numericalMetricRatio;
     }
 
-    public boolean isSelected() {
+    public boolean isSelected()
+    {
         return isSelected;
     }
 
-    public void setSelected(boolean selected) {
+    public void setSelected(boolean selected)
+    {
         isSelected = selected;
     }
 
-    double getArcStartAngle() {
+    double getArcStartAngle()
+    {
         return arcStartAngle;
     }
 
-    double getArcAngle() {
+    double getArcAngle()
+    {
         return arcAngle;
     }
 
-    public void setArcStartAngle(double arcStartAngle) {
+    public void setArcStartAngle(double arcStartAngle)
+    {
         this.arcStartAngle = arcStartAngle;
     }
 
-    public void setArcAngle(double arcAngle) {
+    public void setArcAngle(double arcAngle)
+    {
         this.arcAngle = arcAngle;
     }
 
-    public void setThreadRatio(double threadRatio) {
+    public void setThreadRatio(double threadRatio)
+    {
         this.threadRatio = threadRatio;
     }
 
-    public void setRuntimeRatio(double runtimeRatio) {
-        this.runtimeRatio = runtimeRatio;
+    public void setNumericalMetricRatio(double numericalMetricRatio)
+    {
+        this.numericalMetricRatio = numericalMetricRatio;
     }
 
-    public double getCompleteFilteredRuntime() {
-        return completeFilteredRuntime;
+    public double getCompleteFilteredNumericalMetricValue()
+    {
+        return completeFilteredNumericalMetricValue;
     }
 
-    public void setCompleteFilteredRuntime(double completeFilteredRuntime) {
-        this.completeFilteredRuntime = completeFilteredRuntime;
+    public void setCompleteFilteredNumericalMetricValue(double completeFilteredNumericalMetricValue)
+    {
+        this.completeFilteredNumericalMetricValue = completeFilteredNumericalMetricValue;
     }
 
-    double getRuntimeRationSum() {
-        return runtimeRationSum;
+    double getNumericalMetricRationSum()
+    {
+        return numericalMetricRationSum;
     }
 
-    public void setRuntimeRationSum(double runtimeRationSum) {
-        this.runtimeRationSum = runtimeRationSum;
+    public void setNumericalMetricRationSum(double numericalMetricRationSum)
+    {
+        this.numericalMetricRationSum = numericalMetricRationSum;
     }
 }

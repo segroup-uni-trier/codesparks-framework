@@ -6,7 +6,7 @@ package de.unitrier.st.codesparks.core.overview;
 import de.unitrier.st.codesparks.core.ACodeSparksFlow;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ABaseArtifact;
 import de.unitrier.st.codesparks.core.data.DataUtil;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.ArtifactVisualizationLabelFactoryCache;
@@ -18,6 +18,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -26,23 +27,29 @@ import java.util.stream.Collectors;
 public class ArtifactOverViewTableModel implements TableModel
 {
     private final List<AArtifact> artifacts;
+    private final String metricIdentifier;
 
-    ArtifactOverViewTableModel(@NotNull List<AArtifact> artifacts)
+    ArtifactOverViewTableModel(@NotNull List<AArtifact> artifacts, final String metricIdentifier)
     {
+        this.metricIdentifier = metricIdentifier;
         this.artifacts =
                 artifacts.stream()
                         .filter(artifact ->
                         {
                             if (artifact.hasThreads())
                             {
-                                return DataUtil.getThreadMetricValueRatio(artifact, ACodeSparksThread::getMetricValue) > 0;
+                                return DataUtil.getThreadMetricValueRatio(artifact,
+                                        (codeSparksThread) -> codeSparksThread.getNumericalMetricValue(metricIdentifier)) > 0;
                             } else
                             {
                                 return true;//artifact.getMetricValue() > 0;
                             }
                         })
                         .collect(Collectors.toList());
-        this.artifacts.sort(Comparator.comparingDouble(DataUtil::getThreadFilteredMetricValue).reversed());
+//        this.artifacts.sort(Comparator.comparingDouble(DataUtil::getThreadFilteredMetricValue).reversed());
+        final ToDoubleFunction<ABaseArtifact> f = value -> DataUtil.getThreadFilteredMetricValue(value, metricIdentifier);
+        this.artifacts.sort(Comparator.comparingDouble(f).reversed());
+
     }
 
     @Override
@@ -119,8 +126,7 @@ public class ArtifactOverViewTableModel implements TableModel
                 //noinspection UnnecessaryLocalVariable : Not inlined because og debugging purposes
                 JLabel cachedArtifactVisualizationLabel =
                         ArtifactVisualizationLabelFactoryCache.getInstance()
-                                .getCachedArtifactVisualizationLabel(artifact.getIdentifier(),
-                                        defaultVisualizationLabelFactoryClass, true);
+                                .getCachedArtifactVisualizationLabel(artifact.getIdentifier(), defaultVisualizationLabelFactoryClass, true);
 
 //                if (cachedArtifactVisualizationLabel == null)
 //                {
@@ -130,7 +136,7 @@ public class ArtifactOverViewTableModel implements TableModel
 //                }
                 return cachedArtifactVisualizationLabel;
             case 1:
-                return artifact.getDisplayString(55);
+                return artifact.getDisplayString(metricIdentifier, 55);
             default:
                 break;
         }

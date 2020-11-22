@@ -20,17 +20,35 @@ import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
 
 public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    @SuppressWarnings("WeakerAccess")
-    public DefaultArtifactVisualizationLabelFactory() { }
+    private final String secondaryMetricIdentifier;
 
-    public DefaultArtifactVisualizationLabelFactory(int sequence)
+    public DefaultArtifactVisualizationLabelFactory(
+            final String primaryMetricIdentifier
+            , final String secondaryMetricIdentifier
+    )
     {
-        this(sequence, false);
+        super(primaryMetricIdentifier);
+        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
     }
 
-    public DefaultArtifactVisualizationLabelFactory(int sequence, boolean isDefault)
+    public DefaultArtifactVisualizationLabelFactory(
+            int sequence
+            , final String primaryMetricIdentifier
+            , final String secondaryMetricIdentifier
+    )
     {
-        super(sequence, isDefault);
+        this(sequence, false, primaryMetricIdentifier, secondaryMetricIdentifier);
+    }
+
+    public DefaultArtifactVisualizationLabelFactory(
+            int sequence
+            , boolean isDefault
+            , final String primaryMetricIdentifier
+            , final String secondaryMetricIdentifier
+    )
+    {
+        super(sequence, isDefault, primaryMetricIdentifier);
+        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
     }
 
 //    private static Map<AProfilingArtifact, ImageIcon> artifactImageIconCache = new HashMap<>();
@@ -54,13 +72,8 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 //    }
 
     @Override
-    public JLabel createArtifactLabel(@NotNull AArtifact artifact, String... metricIdentifiers)
+    public JLabel createArtifactLabel(@NotNull final AArtifact artifact)
     {
-        if (metricIdentifiers.length < 2)
-        {
-            // TODO: return empty label and print message to logger
-        }
-
         int lineHeight = VisConstants.getLineHeight();
 
         GraphicsConfiguration defaultConfiguration =
@@ -85,11 +98,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 //        final double threadMetricValueRatio = DataUtil.getThreadMetricValueRatio(artifact, ThreadArtifact::getMetricValue);
 //        final double threadFilteredMetricValue = metricValue * threadMetricValueRatio;
 
-
-
-        final String primaryMetricIdentifier = metricIdentifiers[0];
-
-        final double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact);
+        final double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, primaryMetricIdentifier);
 
         String percentageText = CoreUtil.formatPercentage(threadFilteredMetricValue);
         /*
@@ -109,7 +118,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 //        final double threadMetricValueSelfRatio = DataUtil.getThreadMetricValueRatio(artifact, ThreadArtifact::getMetricValueSelf);
 //        final double threadFilteredMetricValueSelf = metricValueSelf * threadMetricValueSelfRatio;
 
-        final double threadFilteredMetricValueSelf = DataUtil.getThreadFilteredMetricValueSelf(artifact);
+        final double threadFilteredMetricValueSelf = DataUtil.getThreadFilteredMetricValue(artifact, secondaryMetricIdentifier);
 
         double selfPercentage = threadFilteredMetricValueSelf / threadFilteredMetricValue;
         if (selfPercentage > 0D)
@@ -163,7 +172,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         jLabel.setIcon(imageIcon);
 
         jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
-        jLabel.addMouseListener(new DefaultArtifactVisualizationMouseListener(jLabel, artifact));
+        jLabel.addMouseListener(new DefaultArtifactVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier, secondaryMetricIdentifier));
 
         return jLabel;
     }

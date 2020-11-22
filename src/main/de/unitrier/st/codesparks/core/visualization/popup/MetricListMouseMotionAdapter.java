@@ -31,7 +31,7 @@ public class MetricListMouseMotionAdapter extends MouseMotionAdapter
     {
         Point point = e.getPoint();
         int i = list.locationToIndex(point);
-        MetricListModel model = (MetricListModel) list.getModel();
+        NumericalMetricListModel model = (NumericalMetricListModel) list.getModel();
         model.resetFont();
         JTextArea elementAt = model.getElementAt(i);
         elementAt.setFont(underlinedFont);

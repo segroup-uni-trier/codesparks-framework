@@ -19,6 +19,7 @@ public abstract class AThreadRadar extends JPanel
 {
     protected Graphics2D g2d;
     protected AArtifact artifact;
+    protected String metricIdentifier;
     private int circleDiameter = 0;
     private int circleFrameSize = 0;
     private int panelHeight = 0;
@@ -212,7 +213,7 @@ public abstract class AThreadRadar extends JPanel
     }
 
     @SuppressWarnings("unused")
-    static double calculateFilteredMedianRuntimeRatio(CodeSparksThreadCluster cluster)
+    static double calculateFilteredMedianRuntimeRatio(CodeSparksThreadCluster cluster, final String metricIdentifier)
     {
         int unfilteredThreads = 0;
         for (ACodeSparksThread codeSparksThread : cluster)
@@ -229,7 +230,7 @@ public abstract class AThreadRadar extends JPanel
             if (cluster.get(i).isFiltered())
                 continue;
 
-            metricArray[i] = cluster.get(i).getMetricValue();
+            metricArray[i] = cluster.get(i).getNumericalMetricValue(metricIdentifier);
         }
 
         Arrays.sort(metricArray);
@@ -242,14 +243,14 @@ public abstract class AThreadRadar extends JPanel
         return median;
     }
 
-    static double getFilteredMetricSumOfCluster(CodeSparksThreadCluster cluster, Set<ACodeSparksThread> filteredThreads)
+    static double getFilteredMetricSumOfCluster(CodeSparksThreadCluster cluster, String metricIdentifier, Set<ACodeSparksThread> filteredThreads)
     {
         double metric = 0;
         for (ACodeSparksThread codeSparksThread : cluster)
         {
             if (filteredThreads.contains(codeSparksThread))
                 continue;
-            metric += codeSparksThread.getMetricValue();
+            metric += codeSparksThread.getNumericalMetricValue(metricIdentifier);
         }
         return metric;
     }

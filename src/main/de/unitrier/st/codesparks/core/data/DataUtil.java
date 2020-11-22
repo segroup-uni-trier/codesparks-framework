@@ -16,27 +16,17 @@ public final class DataUtil
                 .reduce(0d, Double::sum);
     }
 
-    public static double getThreadFilteredMetricValue(ABaseArtifact artifact)
+    public static double getThreadFilteredMetricValue(ABaseArtifact artifact, final String metricIdentifier)
     {
-        final double metricValue = artifact.getMetricValue();
+        final double metricValue = artifact.getNumericalMetricValue(metricIdentifier);
         double ratio = 1d;
         if (artifact.hasThreads())
         {
 //            final double threadMetricValueRatio = DataUtil.getThreadMetricValueRatio(artifact, CodeSparksThread::getMetricValue);
-            ratio = DataUtil.getThreadMetricValueRatio(artifact, ACodeSparksThread::getMetricValue);
+            ratio = DataUtil.getThreadMetricValueRatio(artifact, thread -> thread.getNumericalMetricValue(metricIdentifier));
         }
 //        final double threadFilteredMetricValue = metricValue * threadMetricValueRatio;
         final double threadFilteredMetricValue = metricValue * ratio;
         return threadFilteredMetricValue;
     }
-
-
-    public static double getThreadFilteredMetricValueSelf(ABaseArtifact artifact)
-    {
-        final double metricValue = artifact.getMetricValue();
-        final double threadMetricValueRatio = DataUtil.getThreadMetricValueRatio(artifact, ACodeSparksThread::getMetricValueSelf);
-        final double threadFilteredMetricValueSelf = metricValue * threadMetricValueRatio;
-        return threadFilteredMetricValueSelf;
-    }
-
 }

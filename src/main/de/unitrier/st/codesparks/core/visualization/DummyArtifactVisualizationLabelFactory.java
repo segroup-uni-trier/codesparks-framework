@@ -16,15 +16,15 @@ import java.awt.image.BufferedImage;
 @SuppressWarnings("unused")
 public class DummyArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    public DummyArtifactVisualizationLabelFactory() { }
+    public DummyArtifactVisualizationLabelFactory() { super(null);}
 
-    public DummyArtifactVisualizationLabelFactory(int sequence)
+    public DummyArtifactVisualizationLabelFactory(final int sequence)
     {
-        super(sequence);
+        super(sequence, null);
     }
 
     @Override
-    public JLabel createArtifactLabel(@NotNull AArtifact artifact)
+    public JLabel createArtifactLabel(@NotNull final AArtifact artifact)
     {
         final ImageIcon imageIcon = CoreUtil.getDefaultImageIcon();
         GraphicsConfiguration defaultConfiguration =
