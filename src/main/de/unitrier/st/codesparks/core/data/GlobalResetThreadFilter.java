@@ -1,6 +1,7 @@
 package de.unitrier.st.codesparks.core.data;
 
 import de.unitrier.st.codesparks.core.ArtifactPoolManager;
+import de.unitrier.st.codesparks.core.IArtifactPool;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,6 +41,17 @@ public class GlobalResetThreadFilter implements ICodeSparksThreadFilter
     @Override
     public Set<String> getSelectedThreadIdentifiers()
     {
-        return ArtifactPoolManager.getInstance().getArtifactPool().getProgramArtifact().getCodeSparksThreadIdentifiers();
+        final ArtifactPoolManager artifactPoolManager = ArtifactPoolManager.getInstance();
+        final IArtifactPool artifactPool = artifactPoolManager.getArtifactPool();
+        if (artifactPool == null)
+        {
+            return new HashSet<>();
+        }
+        final AArtifact programArtifact = artifactPool.getProgramArtifact();
+        if (programArtifact == null)
+        {
+            return new HashSet<>();
+        }
+        return programArtifact.getCodeSparksThreadIdentifiers();
     }
 }

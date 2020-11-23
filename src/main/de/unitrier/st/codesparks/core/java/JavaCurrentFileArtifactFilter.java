@@ -17,20 +17,16 @@ public class JavaCurrentFileArtifactFilter implements ICurrentFileArtifactFilter
 
     public static ICurrentFileArtifactFilter getInstance(final Function<AArtifact, String> artifactStringFunc)
     {
-        ICurrentFileArtifactFilter filter = instances.get(artifactStringFunc);
-        if (filter == null)
+        synchronized (JavaCurrentFileArtifactFilter.class)
         {
-            synchronized (JavaCurrentFileArtifactFilter.class)
+            ICurrentFileArtifactFilter filter = instances.get(artifactStringFunc);
+            if (filter == null)
             {
-                filter = instances.get(artifactStringFunc);
-                if (filter == null)
-                {
-                    filter = new JavaCurrentFileArtifactFilter(artifactStringFunc);
-                    instances.put(artifactStringFunc, filter);
-                }
+                filter = new JavaCurrentFileArtifactFilter(artifactStringFunc);
+                instances.put(artifactStringFunc, filter);
             }
+            return filter;
         }
-        return filter;
     }
 
     public static ICurrentFileArtifactFilter getInstance()

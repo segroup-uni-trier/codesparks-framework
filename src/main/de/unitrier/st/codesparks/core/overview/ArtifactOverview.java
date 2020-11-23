@@ -9,17 +9,16 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.components.*;
 import com.intellij.util.ui.components.BorderLayoutPanel;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.GlobalResetThreadFilter;
-import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
-import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
-import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
+import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.IArtifactPool;
-import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
-import de.unitrier.st.codesparks.core.data.ArtifactNumericalMetricValueComparator;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.GlobalResetThreadFilter;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
+import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
+import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
+import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTable;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTableCellRenderer;
@@ -354,8 +353,8 @@ public class ArtifactOverview
                 return;
             }
 
-            ArtifactNumericalMetricValueComparator artifactNumericalMetricValueComparator =
-                    new ArtifactNumericalMetricValueComparator(primaryMetricIdentifier);
+//            ArtifactNumericalMetricValueComparator artifactNumericalMetricValueComparator =
+//                    new ArtifactNumericalMetricValueComparator(primaryMetricIdentifier);
 
             tabbedPane.removeChangeListener(tabbedPaneChangeListener);
 
@@ -365,7 +364,7 @@ public class ArtifactOverview
             {
                 List<AArtifact> artifacts = entry.getValue();
                 artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
-                artifacts.sort(artifactNumericalMetricValueComparator);
+                //artifacts.sort(artifactNumericalMetricValueComparator);
                 String tabName = entry.getKey();
                 addTab(tabName, artifacts, primaryMetricIdentifier);
             }

@@ -8,6 +8,7 @@ import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ABaseArtifact;
 import de.unitrier.st.codesparks.core.data.DataUtil;
+import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.ArtifactVisualizationLabelFactoryCache;
 import de.unitrier.st.codesparks.core.visualization.DummyArtifactVisualizationLabelFactory;
@@ -32,6 +33,11 @@ public class ArtifactOverViewTableModel implements TableModel
     ArtifactOverViewTableModel(@NotNull List<AArtifact> artifacts, final String metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
+        if (this.metricIdentifier == null)
+        {
+            CodeSparksLogger.addText("%s: Metric identifier not setup! Please register a metric identifier to the overview through the CodeSparksFlow.",
+                    getClass());
+        }
         this.artifacts =
                 artifacts.stream()
                         .filter(artifact ->
