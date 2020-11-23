@@ -47,6 +47,14 @@ public abstract class AMetricArtifact
         }
     }
 
+    public Metric getMetric(final IMetricIdentifier metricIdentifier)
+    {
+        synchronized (metricsLock)
+        {
+            return metrics.get(metricIdentifier.toString());
+        }
+    }
+
     public Object getMetricValue(final String identifier)
     {
         synchronized (metricsLock)

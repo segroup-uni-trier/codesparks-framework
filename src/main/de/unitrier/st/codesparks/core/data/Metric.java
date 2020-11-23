@@ -3,7 +3,7 @@ package de.unitrier.st.codesparks.core.data;
 public class Metric
 {
     private final String identifier;
-    String name;
+    private IMetricIdentifier metricIdentifier;
     //    T value;
     Object value;
 
@@ -12,20 +12,15 @@ public class Metric
         this.identifier = identifier;
     }
 
-    public String getIdentifier()
-    {
-        return identifier;
-    }
+//    protected Metric(final IMetricIdentifier metricIdentifier)
+//    {
+//        this.metricIdentifier = metricIdentifier;
+//    }
 
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+//    public String getIdentifier()
+//    {
+//        return identifier;
+//    }
 
     public Object getValue()
     {
@@ -40,11 +35,12 @@ public class Metric
     @Override
     public String toString()
     {
-        return String.format("%s: %s\n", identifier, value.toString());
+        return identifier + ": " + value.toString();
     }
 
-    public String getMetricValueString()
-    {
-        return value.toString();
-    }
+//    @Override
+//    public String toString()
+//    {
+//        return metricIdentifier.toString() + ": " + value.toString();
+//    }
 }

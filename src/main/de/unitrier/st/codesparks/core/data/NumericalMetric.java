@@ -1,7 +1,5 @@
 package de.unitrier.st.codesparks.core.data;
 
-import de.unitrier.st.codesparks.core.CoreUtil;
-
 public class NumericalMetric extends Metric
 {
     public NumericalMetric(final String identifier)
@@ -18,12 +16,6 @@ public class NumericalMetric extends Metric
     double getNumericValue()
     {
         return (Double) value;
-    }
-
-    @Override
-    public String getMetricValueString()
-    {
-        return String.format("%s => METRIC-VALUE: %s", name, CoreUtil.formatPercentage((Double) value));
     }
 
     public void decreaseNumericalMetricValue(double toDecrease)

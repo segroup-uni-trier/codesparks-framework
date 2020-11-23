@@ -5,7 +5,6 @@ import com.intellij.ui.components.JBTabbedPane;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
-import de.unitrier.st.codesparks.core.data.Metric;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
@@ -20,9 +19,9 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
     private final String secondaryMetricIdentifier;
 
     DefaultArtifactVisualizationMouseListener(
-            JComponent component
-            , AArtifact artifact
-            , String primaryMetricIdentifier
+            final JComponent component
+            , final AArtifact artifact
+            , final String primaryMetricIdentifier
             , final String secondaryMetricIdentifier
     )
     {
@@ -82,8 +81,8 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
         predecessorList.addMouseMotionListener(new MetricListMouseMotionAdapter(predecessorList));
         predecessorList.setCellRenderer(new MetricListCellRenderer());
 
-        tabbedPane.add("Callers", new JBScrollPane(predecessorList)); // TODO: this is JPT code
-        tabbedPane.add("Callees", new JBScrollPane(successorsList)); // TODO: this is JPT code
+        tabbedPane.add("Callers", new JBScrollPane(predecessorList)); // TODO: this is JPT code because of the term callers
+        tabbedPane.add("Callees", new JBScrollPane(successorsList)); // TODO: this is JPT code because of the term callees
 
         final int selectedIndex = 1;
 
@@ -128,34 +127,26 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
     @Override
     protected String createPopupTitle(final AArtifact artifact)
     {
-        // TODO: Move this to CodeSparks-JPT! It makes use of the term 'self' etc.
-
-        final Metric primaryMetric = artifact.getMetric(primaryMetricIdentifier);
-        final Metric secondaryMetric = artifact.getMetric(secondaryMetricIdentifier);
-
-        final String primaryMetricName = primaryMetric.getName();
-
         final StringBuilder titleStringBuilder = new StringBuilder();
         titleStringBuilder.append(artifact.getTitleName());
-        titleStringBuilder.append(": ");
-        titleStringBuilder.append(primaryMetricName);
-        titleStringBuilder.append(": ");
-        titleStringBuilder.append(primaryMetric.getMetricValueString());
-        titleStringBuilder.append(" - ");
+        titleStringBuilder.append(" primary: ");
+        final double metricValue = artifact.getNumericalMetricValue(primaryMetricIdentifier);
+        final String percentage = CoreUtil.formatPercentage(metricValue);
+        titleStringBuilder.append(percentage);
 
-        final String secondaryMetricName = secondaryMetric.getName();
-        titleStringBuilder.append(secondaryMetricName);
-        titleStringBuilder.append(": ");
-        titleStringBuilder.append(secondaryMetric.getMetricValueString()); // Secondary = self here
-        final double numericalMetricValue = (double) primaryMetric.getValue();
-        if (numericalMetricValue > 0)
+        if (secondaryMetricIdentifier != null)
         {
-            titleStringBuilder.append(" (");
-            double secondary = (double) secondaryMetric.getValue();
-            titleStringBuilder.append(CoreUtil.formatPercentage(secondary / numericalMetricValue));
-            titleStringBuilder.append(" of ");
-            titleStringBuilder.append(primaryMetricName);
-            titleStringBuilder.append(" )");
+            titleStringBuilder.append(" secondary: ");
+            final double secondaryMetricValue = artifact.getNumericalMetricValue(secondaryMetricIdentifier);
+            titleStringBuilder.append(CoreUtil.formatPercentage(secondaryMetricValue));
+            if (metricValue > 0)
+            {
+                titleStringBuilder.append(" (");
+                titleStringBuilder.append(CoreUtil.formatPercentage(secondaryMetricValue / metricValue));
+                titleStringBuilder.append(" of ");
+                titleStringBuilder.append(percentage);
+                titleStringBuilder.append(")");
+            }
         }
         return titleStringBuilder.toString();
     }
