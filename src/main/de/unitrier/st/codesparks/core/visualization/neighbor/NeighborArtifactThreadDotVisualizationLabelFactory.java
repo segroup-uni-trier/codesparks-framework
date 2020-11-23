@@ -100,7 +100,7 @@ public class NeighborArtifactThreadDotVisualizationLabelFactory extends ANeighbo
                 PaintUtil.RoundingMode.CEIL);
         Graphics graphics = bi.getGraphics();
 
-        Color backgroundColor = CoreUtil.getSelectedFileEditorBackgroundColor();
+        Color backgroundColor = VisualizationUtil.getSelectedFileEditorBackgroundColor();
 
         graphics.setColor(backgroundColor);
         graphics.fillRect(0, 0, totalWidth, lineHeight);

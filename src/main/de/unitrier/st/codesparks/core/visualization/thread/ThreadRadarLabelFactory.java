@@ -47,18 +47,17 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
         this.secondaryMetricIdentifier = secondaryMetricIdentifier;
     }
 
-    public ThreadRadarLabelFactory(
-            final int sequence
-            , final boolean isDefault
-            , final String primaryMetricIdentifier
-            , final String secondaryMetricIdentifier
-    )
-    {
-        super(sequence, isDefault, primaryMetricIdentifier);
-        this.radialThreadVisualizationPopupData = new DefaultThreadRadarDisplayData(primaryMetricIdentifier);
-//        this(new DefaultThreadRadarDisplayData(), sequence, isDefault, primaryMetricIdentifier);
-        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
-    }
+//    public ThreadRadarLabelFactory(
+//            final int sequence
+//            , final boolean isDefault
+//            , final String primaryMetricIdentifier
+//            , final String secondaryMetricIdentifier
+//    )
+//    {
+//        super(sequence, isDefault, primaryMetricIdentifier);
+//        this.radialThreadVisualizationPopupData = new DefaultThreadRadarDisplayData(primaryMetricIdentifier);
+//        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
+//    }
 
     public ThreadRadarLabelFactory(
             int sequence
@@ -113,7 +112,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
         Graphics graphics = bi.getGraphics();
         Graphics2D g2d = (Graphics2D) graphics;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Color backgroundColor = CoreUtil.getSelectedFileEditorBackgroundColor();
+        Color backgroundColor = VisualizationUtil.getSelectedFileEditorBackgroundColor();
         g2d.setColor(backgroundColor);
         g2d.fillRect(0, 0, bi.getWidth(), bi.getHeight());
 

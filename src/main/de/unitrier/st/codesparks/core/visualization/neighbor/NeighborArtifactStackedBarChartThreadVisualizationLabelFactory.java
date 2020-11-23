@@ -3,7 +3,6 @@ package de.unitrier.st.codesparks.core.visualization.neighbor;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
@@ -96,7 +95,7 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
                 PaintUtil.RoundingMode.CEIL);
         Graphics graphics = bi.getGraphics();
 
-        Color backgroundColor = CoreUtil.getSelectedFileEditorBackgroundColor();
+        Color backgroundColor = VisualizationUtil.getSelectedFileEditorBackgroundColor();
 
         graphics.setColor(backgroundColor);
         graphics.fillRect(0, 0, totalWidth, lineHeight);

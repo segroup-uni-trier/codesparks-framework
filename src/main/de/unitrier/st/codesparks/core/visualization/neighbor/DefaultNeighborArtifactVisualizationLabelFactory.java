@@ -69,7 +69,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
 //        BufferedImage bi = UIUtil.createImage(CALLEE_X_OFFSET + INVOCATION_WIDTH + 7, lineHeight, BufferedImage.TYPE_INT_RGB);
         Graphics graphics = bi.getGraphics();
 
-        Color backgroundColor = CoreUtil.getSelectedFileEditorBackgroundColor();
+        Color backgroundColor = VisualizationUtil.getSelectedFileEditorBackgroundColor();
 
         graphics.setColor(backgroundColor);
         graphics.fillRect(0, 0, bi.getWidth(), bi.getHeight());

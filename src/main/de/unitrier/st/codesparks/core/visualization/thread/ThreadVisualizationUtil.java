@@ -1,6 +1,5 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-import com.google.common.base.Function;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;

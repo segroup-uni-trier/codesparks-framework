@@ -7,13 +7,11 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.service.ACodeSparksInstanceService;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -127,25 +125,6 @@ public final class CoreUtil
         FileEditorManager instance = FileEditorManager.getInstance(project);
         FileEditor selectedEditor = instance.getSelectedEditor();
         return EditorUtil.getEditorEx(selectedEditor);
-    }
-
-    public static Color getSelectedFileEditorBackgroundColor()
-    {
-        Color backgroundColor = null;
-        Project currentlyOpenedProject = CoreUtil.getCurrentlyOpenedProject();
-        if (currentlyOpenedProject != null)
-        {
-            EditorEx selectedFileEditor = CoreUtil.getSelectedFileEditor(currentlyOpenedProject);
-            if (selectedFileEditor != null)
-            {
-                backgroundColor = selectedFileEditor.getBackgroundColor();
-            }
-        }
-        if (backgroundColor == null)
-        {
-            return UIUtil.isUnderDarcula() ? Color.decode("#2b2b2b") : Color.decode("#ffffff");
-        }
-        return backgroundColor;
     }
 
 //    public static EditorEx getShowingFileEditor(final Project project)

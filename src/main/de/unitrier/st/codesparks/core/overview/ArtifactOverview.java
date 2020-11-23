@@ -75,14 +75,9 @@ public class ArtifactOverview
         rootPanel.repaint();
     }
 
-//    IArtifactPool getArtifactPool()
-//    {
-//        return this.artifactPool;
-//    }
-
     private AArtifactVisualizationLabelFactory programArtifactVisualizationLabelFactory;
 
-    public void registerProgramArtifactVisualizationLabelFactory(AArtifactVisualizationLabelFactory factory)
+    public void registerProgramArtifactVisualizationLabelFactory(final AArtifactVisualizationLabelFactory factory)
     {
         this.programArtifactVisualizationLabelFactory = factory;
     }
@@ -353,9 +348,6 @@ public class ArtifactOverview
                 return;
             }
 
-//            ArtifactNumericalMetricValueComparator artifactNumericalMetricValueComparator =
-//                    new ArtifactNumericalMetricValueComparator(primaryMetricIdentifier);
-
             tabbedPane.removeChangeListener(tabbedPaneChangeListener);
 
             clear();
@@ -364,7 +356,6 @@ public class ArtifactOverview
             {
                 List<AArtifact> artifacts = entry.getValue();
                 artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
-                //artifacts.sort(artifactNumericalMetricValueComparator);
                 String tabName = entry.getKey();
                 addTab(tabName, artifacts, primaryMetricIdentifier);
             }
@@ -426,11 +417,11 @@ public class ArtifactOverview
         return this.rootPanel;
     }
 
-    private Set<String> retrieveCustomFilters(JBTextField filter)
+    private Set<String> retrieveCustomFilters(final JBTextField filter)
     {
-        String str = filter.getText().trim();
-        String[] split = str.split(",");
-        Set<String> strings = new HashSet<>();
+        final String str = filter.getText().trim();
+        final String[] split = str.split(",");
+        final Set<String> strings = new HashSet<>();
         for (String s : split)
         {
             s = s.trim();
@@ -444,7 +435,7 @@ public class ArtifactOverview
 
     private ICurrentFileArtifactFilter currentFileArtifactFilter;
 
-    public void registerCurrentFileArtifactFilter(ICurrentFileArtifactFilter currentFileArtifactFilter)
+    public void registerCurrentFileArtifactFilter(final ICurrentFileArtifactFilter currentFileArtifactFilter)
     {
         this.currentFileArtifactFilter = currentFileArtifactFilter;
         if (this.currentFileArtifactFilter != null)
@@ -455,7 +446,7 @@ public class ArtifactOverview
 
     private IArtifactFilter standardLibraryArtifactFilter;
 
-    public void registerStandardLibraryArtifactFilter(IArtifactFilter standardLibraryArtifactFilter)
+    public void registerStandardLibraryArtifactFilter(final IArtifactFilter standardLibraryArtifactFilter)
     {
         this.standardLibraryArtifactFilter = standardLibraryArtifactFilter;
         if (this.standardLibraryArtifactFilter != null)
@@ -467,7 +458,7 @@ public class ArtifactOverview
     private AThreadStateArtifactFilter threadStateArtifactFilter;
     private JBPanel<BorderLayoutPanel> threadStateFilterWrapper;
 
-    public void registerThreadStateArtifactFilter(AThreadStateArtifactFilter threadStateArtifactFilter)
+    public void registerThreadStateArtifactFilter(final AThreadStateArtifactFilter threadStateArtifactFilter)
     {
         // This method is currently disabled because the feature of differentiating between the runtime components: running, blocked, waiting, sleeping is
         // not yet implemented!
@@ -495,10 +486,13 @@ public class ArtifactOverview
 //        threadStateFilterWrapper.add(threadStatesGrid, BorderLayout.CENTER);
     }
 
-    private List<AArtifact> filterArtifacts(Collection<? extends AArtifact> artifacts, Set<String> includeElements,
-                                            Set<String> excludeElements)
+    private List<AArtifact> filterArtifacts(
+            final Collection<? extends AArtifact> artifacts
+            , final Set<String> includeElements
+            , final Set<String> excludeElements
+    )
     {
-        List<AArtifact> filtered = new ArrayList<>();
+        final List<AArtifact> filtered = new ArrayList<>();
         if (artifacts == null)
         {
             return filtered;

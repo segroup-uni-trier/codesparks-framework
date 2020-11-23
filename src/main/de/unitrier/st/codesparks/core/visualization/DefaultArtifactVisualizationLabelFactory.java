@@ -83,7 +83,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 
         Graphics graphics = bi.getGraphics();
 
-        Color backgroundColor = CoreUtil.getSelectedFileEditorBackgroundColor();
+        Color backgroundColor = VisualizationUtil.getSelectedFileEditorBackgroundColor();
 
         graphics.setColor(backgroundColor);
         graphics.fillRect(0, 0, bi.getWidth(), bi.getHeight());

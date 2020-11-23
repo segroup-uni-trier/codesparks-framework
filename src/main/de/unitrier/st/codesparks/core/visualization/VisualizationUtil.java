@@ -1,6 +1,10 @@
 package de.unitrier.st.codesparks.core.visualization;
 
+import com.intellij.openapi.editor.ex.EditorEx;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.UIUtil;
+import de.unitrier.st.codesparks.core.CoreUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -21,6 +25,25 @@ public final class VisualizationUtil
         {
             setCursorRecursively((JComponent) subComp, cursor);
         }
+    }
+
+    public static Color getSelectedFileEditorBackgroundColor()
+    {
+        Color backgroundColor = null;
+        Project currentlyOpenedProject = CoreUtil.getCurrentlyOpenedProject();
+        if (currentlyOpenedProject != null)
+        {
+            EditorEx selectedFileEditor = CoreUtil.getSelectedFileEditor(currentlyOpenedProject);
+            if (selectedFileEditor != null)
+            {
+                backgroundColor = selectedFileEditor.getBackgroundColor();
+            }
+        }
+        if (backgroundColor == null)
+        {
+            return UIUtil.isUnderDarcula() ? Color.decode("#2b2b2b") : Color.decode("#ffffff");
+        }
+        return backgroundColor;
     }
 
     public static Color getMetricColor(double metricValue)
