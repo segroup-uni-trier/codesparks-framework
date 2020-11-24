@@ -52,10 +52,10 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
 
     protected void visualizationMouseClicked(MouseEvent e)
     {
-        if (artifact.getThreadArtifacts().isEmpty())
-        {
-            return;
-        }
+//        if (artifact.getThreadArtifacts().isEmpty())
+//        {
+//            return;
+//        }
 
         final IUserActivityLogger logger = UserActivityLogger.getInstance();
         final String identifier = artifact.getIdentifier();

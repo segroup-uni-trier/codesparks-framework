@@ -18,7 +18,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
 {
     private final String secondaryMetricIdentifier;
 
-    DefaultArtifactVisualizationMouseListener(
+    public DefaultArtifactVisualizationMouseListener(
             final JComponent component
             , final AArtifact artifact
             , final String primaryMetricIdentifier
