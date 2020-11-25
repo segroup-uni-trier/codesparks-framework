@@ -18,18 +18,18 @@ public class MetricTableModel extends DefaultTableModel
     private final int preSize;
     private final int sucSize;
 
-    private List<ANeighborArtifact> prepareNeighbors(
-            final AArtifact artifact
-            , final List<ANeighborArtifact> list
-    )
-    {
-        for (ANeighborArtifact aNeighborProfilingArtifact : list)
-        {
-            final double numericalMetricValue = artifact.getNumericalMetricValue(metricIdentifier);
-            aNeighborProfilingArtifact.setRelativeMetricValue(metricIdentifier, numericalMetricValue);
-        }
-        return list;
-    }
+//    private List<ANeighborArtifact> prepareNeighbors(
+//            final AArtifact artifact
+//            , final List<ANeighborArtifact> list
+//    )
+//    {
+//        for (ANeighborArtifact aNeighborProfilingArtifact : list)
+//        {
+//            final double numericalMetricValue = artifact.getNumericalMetricValue(metricIdentifier);
+//            aNeighborProfilingArtifact.setRelativeMetricValue(metricIdentifier, numericalMetricValue);
+//        }
+//        return list;
+//    }
 
     private final IMetricIdentifier metricIdentifier;
 
@@ -37,14 +37,14 @@ public class MetricTableModel extends DefaultTableModel
     {
         this.metricIdentifier = metricIdentifier;
         NeighborArtifactComparator comparator = new NeighborArtifactComparator(metricIdentifier);
-        predecessors = prepareNeighbors(artifact, artifact.getPredecessorsList())
+        predecessors = artifact.getPredecessorsList()
                 .stream()
                 .filter(npa -> npa.getThreadArtifacts()
                         .stream()
                         .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
                 .collect(Collectors.toList());
         predecessors.sort(comparator);
-        successors = prepareNeighbors(artifact, artifact.getSuccessorsList())
+        successors = artifact.getSuccessorsList()
                 .stream()
                 .filter(npa -> !npa.getName().toLowerCase().startsWith("self"))
                 .filter(npa -> npa.getThreadArtifacts()

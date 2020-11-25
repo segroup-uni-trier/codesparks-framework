@@ -8,39 +8,52 @@ import de.unitrier.st.codesparks.core.CoreUtil;
  */
 public abstract class ANeighborArtifact extends ABaseArtifact
 {
-    private double relativeMetricValue;
-    private final int invocationLine;
+    //private double relativeMetricValue;
+    //private final int invocationLine;
 
-    protected ANeighborArtifact(final String name, final String identifier, final int invocationLine)
+    protected ANeighborArtifact(final String name, final String identifier, final int lineNumber)
     {
         super(name, identifier);
-        relativeMetricValue = 0d;
-        this.invocationLine = invocationLine;
+        //this.relativeMetricValue = 0d;
+        //this.invocationLine = invocationLine;
+        this.lineNumber = lineNumber;
     }
 
-    public int getInvocationLine()
-    {
-        return invocationLine;
-    }
+//    public int getInvocationLine()
+//    {
+//        return lineNumber;
+//    }
 
-    public void setRelativeMetricValue(final IMetricIdentifier metricIdentifier, final double total)
-    {
-        double numericalMetricValue = getNumericalMetricValue(metricIdentifier);
-        relativeMetricValue = numericalMetricValue / total;
-    }
-
-    protected double getRelativeMetricValue()
-    {
-        return relativeMetricValue;
-    }
+//    public void setRelativeMetricValue(final IMetricIdentifier metricIdentifier, final double total)
+//    {
+//        double numericalMetricValue = getNumericalMetricValue(metricIdentifier);
+//        relativeMetricValue = numericalMetricValue / total;
+//    }
+//
+//    protected double getRelativeMetricValue()
+//    {
+//        return relativeMetricValue;
+//    }
 
     public PsiElement getInvocationLineElement()
     {
         return getVisPsiElement();
     }
 
-    public void setInvocationLineElement(PsiElement invocationLineElement)
+    public void setInvocationLineElement(final PsiElement invocationLineElement)
     {
         setVisPsiElement(invocationLineElement);
+    }
+
+    @Override
+    public String getDisplayString(final IMetricIdentifier metricIdentifier, final int maxLen)
+    {
+        return CoreUtil.reduceToLength(getDisplayString(metricIdentifier), maxLen);
+    }
+
+    @Override
+    public String getDisplayString(final IMetricIdentifier metricIdentifier)
+    {
+        return name + " - " + metricIdentifier.getDisplayString() + ": " + CoreUtil.formatPercentage(getNumericalMetricValue(metricIdentifier));
     }
 }

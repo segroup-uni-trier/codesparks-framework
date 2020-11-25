@@ -15,28 +15,28 @@ public class NumericalMetricListModel extends DefaultListModel<JBTextArea>
     private final List<JBTextArea> textAreas;
     private static Font defaultFont;
 
-    private List<ANeighborArtifact> prepareNeighborMetricValues(
-            final AArtifact artifact
-            , final IMetricIdentifier metricIdentifier
-            , final List<ANeighborArtifact> list)
-    {
-        double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, metricIdentifier);
-        for (ANeighborArtifact aNeighborProfilingArtifact : list)
-        {
-//            aNeighborProfilingArtifact.setMetricValue(DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact));
-            aNeighborProfilingArtifact.setMetricValue(metricIdentifier, DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact,
-                    metricIdentifier));
-            aNeighborProfilingArtifact.setRelativeMetricValue(metricIdentifier, threadFilteredMetricValue);
-        }
-        return list;
-    }
+//    private List<ANeighborArtifact> prepareNeighborMetricValues(
+//            final AArtifact artifact
+//            , final IMetricIdentifier metricIdentifier
+//            , final List<ANeighborArtifact> list)
+//    {
+//        double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, metricIdentifier);
+//        for (ANeighborArtifact aNeighborProfilingArtifact : list)
+//        {
+////            aNeighborProfilingArtifact.setMetricValue(DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact));
+//            aNeighborProfilingArtifact.setMetricValue(metricIdentifier, DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact,
+//                    metricIdentifier));
+//            aNeighborProfilingArtifact.setRelativeMetricValue(metricIdentifier, threadFilteredMetricValue);
+//        }
+//        return list;
+//    }
 
     public NumericalMetricListModel(
             final AArtifact artifact
             , final IMetricIdentifier numericalMetricIdentifier
             , final List<ANeighborArtifact> neighborArtifacts)
     {
-        this.neighborArtifacts = prepareNeighborMetricValues(artifact, numericalMetricIdentifier, neighborArtifacts);
+        this.neighborArtifacts = neighborArtifacts;//prepareNeighborMetricValues(artifact, numericalMetricIdentifier, neighborArtifacts);
         this.neighborArtifacts.sort(new NeighborArtifactComparator(numericalMetricIdentifier));
         textAreas = new ArrayList<>(this.neighborArtifacts.size());
         for (int i = 0; i < this.neighborArtifacts.size(); i++)

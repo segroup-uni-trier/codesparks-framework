@@ -84,21 +84,25 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
     }
 
     public void increaseMetricValueSuccessor(
-            final String name,
-            final String identifier,
-            final Class<? extends ANeighborArtifact> neighborArtifactClass,
-            final int invocationLine,
-            final IMetricIdentifier metricIdentifier,
-            final double neighborMetricValue,
-            final String threadIdentifier
+            final String name
+            , final String identifier
+            , final Class<? extends ANeighborArtifact> neighborArtifactClass
+            , final int invocationLine
+            , final IMetricIdentifier metricIdentifier
+            , final double neighborMetricValue
+            , final String threadIdentifier
     )
     {
         synchronized (successors)
         {
-            List<ANeighborArtifact> neighborProfilingArtifacts = successors.computeIfAbsent(invocationLine,
-                    integer -> new ArrayList<>());
-            ANeighborArtifact neighbor = getOrCreateNeighborByIdentifier(neighborProfilingArtifacts, name, identifier,
-                    neighborArtifactClass, invocationLine);
+            final List<ANeighborArtifact> neighborArtifacts = successors.computeIfAbsent(invocationLine, integer -> new ArrayList<>());
+            final ANeighborArtifact neighbor = getOrCreateNeighborByIdentifier(
+                    neighborArtifacts
+                    , name
+                    , identifier
+                    , neighborArtifactClass
+                    , invocationLine
+            );
             assert neighbor != null;
 //            neighbor.increaseMetricValue(neighborMetricValue);
             neighbor.increaseNumericalMetricValue(metricIdentifier, neighborMetricValue);
