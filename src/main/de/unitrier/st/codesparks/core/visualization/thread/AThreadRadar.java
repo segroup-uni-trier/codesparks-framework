@@ -5,6 +5,7 @@ import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
@@ -29,7 +30,7 @@ public abstract class AThreadRadar extends JPanel
     private int labelDistance = 0;
     private int labelRadius = 0;
 
-    protected void setUpVisualizationParameter(int diameter, int panelWidthOffset)
+    protected void setUpVisualizationParameter(final int diameter, final int panelWidthOffset)
     {
         circleFrameSize = diameter;
         panelHeight = diameter + 4;
@@ -213,7 +214,7 @@ public abstract class AThreadRadar extends JPanel
     }
 
     @SuppressWarnings("unused")
-    static double calculateFilteredMedianRuntimeRatio(CodeSparksThreadCluster cluster, final String metricIdentifier)
+    static double calculateFilteredMedianRuntimeRatio(final CodeSparksThreadCluster cluster, final IMetricIdentifier metricIdentifier)
     {
         int unfilteredThreads = 0;
         for (ACodeSparksThread codeSparksThread : cluster)
@@ -243,7 +244,11 @@ public abstract class AThreadRadar extends JPanel
         return median;
     }
 
-    static double getFilteredMetricSumOfCluster(CodeSparksThreadCluster cluster, String metricIdentifier, Set<ACodeSparksThread> filteredThreads)
+    static double getFilteredMetricSumOfCluster(
+            final CodeSparksThreadCluster cluster
+            , final IMetricIdentifier metricIdentifier
+            , final Set<ACodeSparksThread> filteredThreads
+    )
     {
         double metric = 0;
         for (ACodeSparksThread codeSparksThread : cluster)

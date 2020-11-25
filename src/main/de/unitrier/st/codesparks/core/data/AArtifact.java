@@ -52,7 +52,7 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
             final String identifier,
             final Class<? extends ANeighborArtifact> neighborArtifactClass,
             final int invocationLine,
-            final String metricIdentifier,
+            final IMetricIdentifier metricIdentifier,
             final double neighborMetricValue,
             final String threadIdentifier
     )
@@ -88,7 +88,7 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
             final String identifier,
             final Class<? extends ANeighborArtifact> neighborArtifactClass,
             final int invocationLine,
-            final String metricIdentifier,
+            final IMetricIdentifier metricIdentifier,
             final double neighborMetricValue,
             final String threadIdentifier
     )
@@ -170,12 +170,12 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
         return lookupClustering(clusteringStrategy);
     }
 
-    public CodeSparksThreadClustering getDefaultThreadArtifactClustering(final String metricIdentifier)
+    public CodeSparksThreadClustering getDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
     {
         return lookupClustering(DefaultCodeSparksThreadClusteringStrategy.getInstance(metricIdentifier));
     }
 
-    public CodeSparksThreadClustering getSortedDefaultThreadArtifactClustering(final String metricIdentifier)
+    public CodeSparksThreadClustering getSortedDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
     {
         CodeSparksThreadClustering defaultThreadArtifactClusters = lookupClustering(DefaultCodeSparksThreadClusteringStrategy.getInstance(metricIdentifier));
         Comparator<CodeSparksThreadCluster> codeSparksThreadClusterComparator = CodeSparksThreadClusterComparator.getInstance(metricIdentifier);
@@ -183,7 +183,7 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
         return defaultThreadArtifactClusters;
     }
 
-    public void initDefaultThreadArtifactClustering(final String metricIdentifier)
+    public void initDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
     {
         ICodeSparksThreadClusteringStrategy instance = DefaultCodeSparksThreadClusteringStrategy.getInstance(metricIdentifier);
         synchronized (clusterings)

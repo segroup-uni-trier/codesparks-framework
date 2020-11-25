@@ -4,9 +4,9 @@ import java.util.Comparator;
 
 public class ArtifactNumericalMetricValueComparator implements Comparator<AArtifact>
 {
-    private final String metricIdentifier;
+    private final IMetricIdentifier metricIdentifier;
 
-    public ArtifactNumericalMetricValueComparator(final String metricIdentifier)
+    public ArtifactNumericalMetricValueComparator(final IMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }

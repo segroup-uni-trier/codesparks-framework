@@ -15,12 +15,12 @@ public class DummyNeighborArtifactVisualizationLabelFactory extends ANeighborArt
 {
     public DummyNeighborArtifactVisualizationLabelFactory()
     {
-        super("");
+        super(null);
     }
 
     public DummyNeighborArtifactVisualizationLabelFactory(int sequence)
     {
-        super(sequence, "");
+        super(null, sequence);
     }
 
     @Override

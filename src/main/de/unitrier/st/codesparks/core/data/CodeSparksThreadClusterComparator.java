@@ -7,9 +7,9 @@ import java.util.function.ToDoubleFunction;
 
 public class CodeSparksThreadClusterComparator implements Comparator<CodeSparksThreadCluster>
 {
-    private final static Map<String, Comparator<CodeSparksThreadCluster>> comparators = new HashMap<>();
+    private final static Map<IMetricIdentifier, Comparator<CodeSparksThreadCluster>> comparators = new HashMap<>();
 
-    public static Comparator<CodeSparksThreadCluster> getInstance(final String metricIdentifier)
+    public static Comparator<CodeSparksThreadCluster> getInstance(final IMetricIdentifier metricIdentifier)
     {
         synchronized (CodeSparksThreadClusterComparator.class)
         {
@@ -23,9 +23,9 @@ public class CodeSparksThreadClusterComparator implements Comparator<CodeSparksT
         }
     }
 
-    private final String metricIdentifier;
+    private final IMetricIdentifier metricIdentifier;
 
-    private CodeSparksThreadClusterComparator(final String metricIdentifier)
+    private CodeSparksThreadClusterComparator(final IMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }

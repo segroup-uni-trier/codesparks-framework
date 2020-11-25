@@ -2,7 +2,7 @@ package de.unitrier.st.codesparks.core.data;
 
 public interface IDisplayable
 {
-    String getDisplayString(final String metricIdentifier, final int maxLen);
+    String getDisplayString(final IMetricIdentifier metricIdentifier, final int maxLen);
 
-    String getDisplayString(final String metricIdentifier);
+    String getDisplayString(final IMetricIdentifier metricIdentifier);
 }

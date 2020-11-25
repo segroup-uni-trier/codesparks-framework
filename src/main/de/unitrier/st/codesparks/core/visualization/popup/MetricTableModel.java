@@ -2,6 +2,7 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.NeighborArtifactComparator;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,9 +31,9 @@ public class MetricTableModel extends DefaultTableModel
         return list;
     }
 
-    private final String metricIdentifier;
+    private final IMetricIdentifier metricIdentifier;
 
-    public MetricTableModel(@NotNull AArtifact artifact, final String metricIdentifier)
+    public MetricTableModel(@NotNull final AArtifact artifact, final IMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
         NeighborArtifactComparator comparator = new NeighborArtifactComparator(metricIdentifier);

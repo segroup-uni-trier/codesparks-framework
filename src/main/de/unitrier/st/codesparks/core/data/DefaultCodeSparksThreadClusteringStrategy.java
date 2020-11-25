@@ -9,10 +9,11 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
 {
 //    private static volatile ICodeSparksThreadClusteringStrategy instance;
 
-    private static final Map<String, ICodeSparksThreadClusteringStrategy> strategies = new HashMap<>();
+    private static final Map<IMetricIdentifier, ICodeSparksThreadClusteringStrategy> strategies = new HashMap<>();
 
-    public static ICodeSparksThreadClusteringStrategy getInstance(final String metricIdentifier)
+    public static ICodeSparksThreadClusteringStrategy getInstance(final IMetricIdentifier metricIdentifier)
     {
+        final String id = metricIdentifier.toString();
         synchronized (DefaultCodeSparksThreadClusteringStrategy.class)
         {
             ICodeSparksThreadClusteringStrategy instance = strategies.get(metricIdentifier);
@@ -25,9 +26,9 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
         }
     }
 
-    private final String metricIdentifier;
+    private final IMetricIdentifier metricIdentifier;
 
-    private DefaultCodeSparksThreadClusteringStrategy(final String metricIdentifier)
+    private DefaultCodeSparksThreadClusteringStrategy(final IMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }
@@ -254,7 +255,7 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
         }
     }
 
-    private List<Point> createPoints(final Collection<ACodeSparksThread> codeSparksThreads, final String metricIdentifier)
+    private List<Point> createPoints(final Collection<ACodeSparksThread> codeSparksThreads, final IMetricIdentifier metricIdentifier)
     {
         ArrayList<Point> points = new ArrayList<>();
         for (ACodeSparksThread codeSparksThread : codeSparksThreads)
@@ -316,7 +317,7 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
         private int clusterIndex;
         private final ACodeSparksThread codeSparksThread;
 
-        Point(final ACodeSparksThread codeSparksThread, final String metricIdentifier)
+        Point(final ACodeSparksThread codeSparksThread, final IMetricIdentifier metricIdentifier)
         {
             this.x = 0;//getCharSum(threadArtifact.getCallSite());
             this.y = ((int) (100 * codeSparksThread.getNumericalMetricValue(metricIdentifier))) / 100D;

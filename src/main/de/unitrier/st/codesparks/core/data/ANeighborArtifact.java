@@ -11,7 +11,7 @@ public abstract class ANeighborArtifact extends ABaseArtifact
     private double relativeMetricValue;
     private final int invocationLine;
 
-    protected ANeighborArtifact(String name, String identifier, int invocationLine)
+    protected ANeighborArtifact(final String name, final String identifier, final int invocationLine)
     {
         super(name, identifier);
         relativeMetricValue = 0d;
@@ -23,7 +23,7 @@ public abstract class ANeighborArtifact extends ABaseArtifact
         return invocationLine;
     }
 
-    public void setRelativeMetricValue(final String metricIdentifier, double total)
+    public void setRelativeMetricValue(final IMetricIdentifier metricIdentifier, final double total)
     {
         double numericalMetricValue = getNumericalMetricValue(metricIdentifier);
         relativeMetricValue = numericalMetricValue / total;

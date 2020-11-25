@@ -4,9 +4,9 @@ import java.util.Comparator;
 
 public class CodeSparksThreadComparator implements Comparator<ACodeSparksThread>
 {
-    private final String metricIdentifier;
+    private final IMetricIdentifier metricIdentifier;
 
-    public CodeSparksThreadComparator(final String metricIdentifier)
+    public CodeSparksThreadComparator(final IMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }

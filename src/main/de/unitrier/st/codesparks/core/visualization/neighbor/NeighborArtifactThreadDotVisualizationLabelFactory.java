@@ -3,7 +3,6 @@ package de.unitrier.st.codesparks.core.visualization.neighbor;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
@@ -21,14 +20,14 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class NeighborArtifactThreadDotVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
-    public NeighborArtifactThreadDotVisualizationLabelFactory(final String primaryMetricIdentifier)
+    public NeighborArtifactThreadDotVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
     }
 
-    public NeighborArtifactThreadDotVisualizationLabelFactory(int sequence, final String primaryMetricIdentifier)
+    public NeighborArtifactThreadDotVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
-        super(sequence, primaryMetricIdentifier);
+        super(primaryMetricIdentifier, sequence);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadClustering;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 
@@ -13,7 +14,11 @@ import java.util.Optional;
 
 public class ThreadTypeTree extends ThreadTree
 {
-    public ThreadTypeTree(Map<String, List<ACodeSparksThread>> threadTreeContent, final String metricIdentifier, CodeSparksThreadClustering clustering)
+    public ThreadTypeTree(
+            final Map<String, List<ACodeSparksThread>> threadTreeContent
+            , final IMetricIdentifier metricIdentifier
+            , final CodeSparksThreadClustering clustering
+    )
     {
         super(threadTreeContent, metricIdentifier);
 

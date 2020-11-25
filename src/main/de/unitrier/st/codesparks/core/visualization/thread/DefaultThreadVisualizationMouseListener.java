@@ -19,7 +19,11 @@ import java.util.Map;
 
 public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
-    DefaultThreadVisualizationMouseListener(JComponent component, AArtifact artifact, String primaryMetricIdentifier)
+    DefaultThreadVisualizationMouseListener(
+            final JComponent component
+            , final AArtifact artifact
+            , final IMetricIdentifier primaryMetricIdentifier
+    )
     {
         super(component, new Dimension(520, 170), artifact, primaryMetricIdentifier);
     }

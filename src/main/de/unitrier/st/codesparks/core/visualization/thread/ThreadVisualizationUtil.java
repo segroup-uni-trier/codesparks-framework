@@ -3,6 +3,7 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,11 @@ public final class ThreadVisualizationUtil
 {
     private ThreadVisualizationUtil() { }
 
-    public static double calculateFilteredAvgNumericalMetricRatio(CodeSparksThreadCluster cluster, final String metricIdentifier, boolean ignoreFilter)
+    public static double calculateFilteredAvgNumericalMetricRatio(
+            final CodeSparksThreadCluster cluster
+            , final IMetricIdentifier metricIdentifier
+            , final boolean ignoreFilter
+    )
     {
         double sum = 0;
         int threads = 0;
@@ -30,10 +35,10 @@ public final class ThreadVisualizationUtil
     }
 
     public static double calculateFilteredAvgNumericalMetricRatioForZoomVisualization(
-            CodeSparksThreadCluster cluster
-            , Set<ACodeSparksThread> selectedCodeSparksThreads
-            , final String metricIdentifier
-            , boolean ignoreFilter
+            final CodeSparksThreadCluster cluster
+            , final Set<ACodeSparksThread> selectedCodeSparksThreads
+            , final IMetricIdentifier metricIdentifier
+            , final boolean ignoreFilter
     )
     {
         if (!ignoreFilter)
@@ -56,7 +61,11 @@ public final class ThreadVisualizationUtil
         return sum / size;
     }
 
-    public static double calculateFilteredSumNumericalMetricRatio(CodeSparksThreadCluster cluster, final String metricIdentifier, boolean ignoreFilter)
+    public static double calculateFilteredSumNumericalMetricRatio(
+            final CodeSparksThreadCluster cluster
+            , final IMetricIdentifier metricIdentifier
+            , final boolean ignoreFilter
+    )
     {
         if (ignoreFilter)
         {
@@ -80,7 +89,7 @@ public final class ThreadVisualizationUtil
     }
 
     public static double calculateFilteredSumNumericalMetricRatioForZoomVisualisation(CodeSparksThreadCluster cluster,
-                                                                                      final String metricIdentifier,
+                                                                                      final IMetricIdentifier metricIdentifier,
                                                                                       Set<ACodeSparksThread> selectedCodeSparksThreads,
                                                                                       boolean ignoreFilter)
     {

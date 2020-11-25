@@ -15,7 +15,7 @@ public class DefaultCodeSparksThread extends ACodeSparksThread
 //    }
 
     @Override
-    public String getDisplayString(final String metricIdentifier, int maxLen)
+    public String getDisplayString(final IMetricIdentifier metricIdentifier, int maxLen)
     {
         String identifier = getIdentifier();
         double percentage = getNumericalMetricValue(metricIdentifier);
@@ -30,7 +30,7 @@ public class DefaultCodeSparksThread extends ACodeSparksThread
     }
 
     @Override
-    public String getDisplayString(final String metricIdentifier)
+    public String getDisplayString(final IMetricIdentifier metricIdentifier)
     {
         return getDisplayString(metricIdentifier, 39);
     }

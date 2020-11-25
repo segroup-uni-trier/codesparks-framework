@@ -14,6 +14,7 @@ import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.IArtifactPool;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.GlobalResetThreadFilter;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
@@ -321,9 +322,9 @@ public class ArtifactOverview
     private JBTextField excludeFilter;
     private JBTextField includeFilter;
 
-    private String primaryMetricIdentifier;
+    private IMetricIdentifier primaryMetricIdentifier;
 
-    public void registerPrimaryMetricIdentifier(final String primaryMetricIdentifier)
+    public void registerPrimaryMetricIdentifier(final IMetricIdentifier primaryMetricIdentifier)
     {
         this.primaryMetricIdentifier = primaryMetricIdentifier;
     }
@@ -374,7 +375,7 @@ public class ArtifactOverview
         });
     }
 
-    private void addTab(final String title, final List<AArtifact> artifacts, final String metricIdentifier)
+    private void addTab(final String title, final List<AArtifact> artifacts, final IMetricIdentifier metricIdentifier)
     {
         final ArtifactOverViewTableModel tableModel = new ArtifactOverViewTableModel(artifacts, metricIdentifier);
         final MetricTable jbTable = new MetricTable(tableModel)

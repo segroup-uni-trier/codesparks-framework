@@ -2,29 +2,28 @@ package de.unitrier.st.codesparks.core.data;
 
 public class Metric
 {
-    private final String identifier;
-    private IMetricIdentifier metricIdentifier;
-    //    T value;
+    private final String name;
     Object value;
 
-    protected Metric(final String identifier)
+    protected Metric(final String name)
     {
-        this.identifier = identifier;
+        this.name = name;
     }
 
-//    protected Metric(final IMetricIdentifier metricIdentifier)
-//    {
-//        this.metricIdentifier = metricIdentifier;
-//    }
-
-//    public String getIdentifier()
-//    {
-//        return identifier;
-//    }
+    protected Metric(final String name, final Object value)
+    {
+        this.name = name;
+        this.value = value;
+    }
 
     public Object getValue()
     {
         return value;
+    }
+
+    public String getName()
+    {
+        return name;
     }
 
     public void setValue(Object value)
@@ -35,12 +34,6 @@ public class Metric
     @Override
     public String toString()
     {
-        return identifier + ": " + value.toString();
+        return name + ": " + value.toString();
     }
-
-//    @Override
-//    public String toString()
-//    {
-//        return metricIdentifier.toString() + ": " + value.toString();
-//    }
 }

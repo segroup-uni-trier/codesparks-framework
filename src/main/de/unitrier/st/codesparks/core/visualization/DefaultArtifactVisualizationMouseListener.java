@@ -5,6 +5,7 @@ import com.intellij.ui.components.JBTabbedPane;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
@@ -16,13 +17,13 @@ import java.util.stream.Collectors;
 
 public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
-    private final String secondaryMetricIdentifier;
+    private final IMetricIdentifier secondaryMetricIdentifier;
 
     public DefaultArtifactVisualizationMouseListener(
             final JComponent component
             , final AArtifact artifact
-            , final String primaryMetricIdentifier
-            , final String secondaryMetricIdentifier
+            , final IMetricIdentifier primaryMetricIdentifier
+            , final IMetricIdentifier secondaryMetricIdentifier
     )
     {
         super(component, new Dimension(500, 175), artifact, primaryMetricIdentifier);
@@ -129,14 +130,18 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
     {
         final StringBuilder titleStringBuilder = new StringBuilder();
         titleStringBuilder.append(artifact.getTitleName());
-        titleStringBuilder.append(" primary: ");
+        titleStringBuilder.append(" ");
+        titleStringBuilder.append(primaryMetricIdentifier.getDisplayString());
+        titleStringBuilder.append(": ");
         final double metricValue = artifact.getNumericalMetricValue(primaryMetricIdentifier);
         final String percentage = CoreUtil.formatPercentage(metricValue);
         titleStringBuilder.append(percentage);
 
         if (secondaryMetricIdentifier != null)
         {
-            titleStringBuilder.append(" secondary: ");
+            titleStringBuilder.append(" ");
+            titleStringBuilder.append(secondaryMetricIdentifier.getDisplayString());
+            titleStringBuilder.append(": ");
             final double secondaryMetricValue = artifact.getNumericalMetricValue(secondaryMetricIdentifier);
             titleStringBuilder.append(CoreUtil.formatPercentage(secondaryMetricValue));
             if (metricValue > 0)

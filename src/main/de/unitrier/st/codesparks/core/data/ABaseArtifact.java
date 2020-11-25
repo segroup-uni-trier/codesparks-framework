@@ -65,13 +65,13 @@ public abstract class ABaseArtifact extends AMetricArtifact implements IDisplaya
      */
 
     @Override
-    public String getDisplayString(final String metricIdentifier, final int maxLen)
+    public String getDisplayString(final IMetricIdentifier metricIdentifier, final int maxLen)
     {
         return CoreUtil.reduceToLength(name, maxLen);
     }
 
     @Override
-    public String getDisplayString(final String metricIdentifier)
+    public String getDisplayString(final IMetricIdentifier metricIdentifier)
     {
         return name;
     }
@@ -168,7 +168,7 @@ public abstract class ABaseArtifact extends AMetricArtifact implements IDisplaya
 //        }
 //    }
 
-    public synchronized void increaseNumericalMetricValueThread(final String metricIdentifier, final String threadIdentifier, double toIncrease)
+    public synchronized void increaseNumericalMetricValueThread(final IMetricIdentifier metricIdentifier, final String threadIdentifier, double toIncrease)
     {
         synchronized (threadMapLock)
         {
@@ -195,6 +195,34 @@ public abstract class ABaseArtifact extends AMetricArtifact implements IDisplaya
 //            assertSecondaryMetricValue(threadMetricValue, "thread");
         }
     }
+
+//    public synchronized void increaseNumericalMetricValueThread(final String metricIdentifier, final String threadIdentifier, double toIncrease)
+//    {
+//        synchronized (threadMapLock)
+//        {
+//            ACodeSparksThread codeSparksThread = threadMap.get(threadIdentifier);
+//            if (codeSparksThread == null)
+//            {
+//                try
+//                {
+//                    final Constructor<? extends ACodeSparksThread> constructor = threadClass.getConstructor(String.class);
+//                    codeSparksThread = constructor.newInstance(threadIdentifier);
+//                    threadMap.put(threadIdentifier, codeSparksThread);
+//                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e)
+//                {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            assert codeSparksThread != null;
+//
+//            codeSparksThread.increaseNumericalMetricValue(metricIdentifier, toIncrease);
+//
+//            double threadMetricValue = codeSparksThread.getNumericalMetricValue(metricIdentifier);
+//
+////            assertSecondaryMetricValue(threadMetricValue, "thread");
+//        }
+//    }
 
     public int getNumberOfThreads()
     {

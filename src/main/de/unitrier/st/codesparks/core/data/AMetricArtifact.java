@@ -1,8 +1,6 @@
 package de.unitrier.st.codesparks.core.data;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public abstract class AMetricArtifact
 {
@@ -27,126 +25,113 @@ public abstract class AMetricArtifact
         metrics = new HashMap<>();
     }
 
-    Map<String, Metric> metrics; // TODO: OM!
+    private final Map<IMetricIdentifier, Object> metrics;
 
     private final Object metricsLock = new Object();
 
     public Collection<Metric> getMetrics()
     {
+        Set<Map.Entry<IMetricIdentifier, Object>> entries;
         synchronized (metricsLock)
         {
-            return metrics.values();
+            entries = metrics.entrySet();
         }
-    }
+        Collection<Metric> ret = new ArrayList<>(entries.size());
 
-    public Metric getMetric(final String metricIdentifier)
-    {
-        synchronized (metricsLock)
+        for (final Map.Entry<IMetricIdentifier, Object> entry : entries)
         {
-            return metrics.get(metricIdentifier);
+            final String name = entry.getKey().getDisplayString();
+            final Object value = entry.getValue();
+            final Metric metric = new Metric(name, value);
+            ret.add(metric);
         }
+
+        return ret;
     }
 
     public Metric getMetric(final IMetricIdentifier metricIdentifier)
     {
+        final String name = metricIdentifier.getDisplayString();
+        Metric m = new Metric(name);
+        Object value;
         synchronized (metricsLock)
         {
-            return metrics.get(metricIdentifier.toString());
+            value = metrics.get(metricIdentifier);
+        }
+        m.setValue(value);
+        return m;
+    }
+
+    public Object getMetricValue(IMetricIdentifier metricIdentifier)
+    {
+        Object value;
+        synchronized (metricsLock)
+        {
+            value = metrics.get(metricIdentifier);
+        }
+        return value;
+    }
+
+    public void setMetricValue(final IMetricIdentifier metricIdentifier, final Object value)
+    {
+        if (metricIdentifier == null || value == null)
+        {
+            return;
+        }
+        synchronized (metricsLock)
+        {
+            metrics.put(metricIdentifier, value);
         }
     }
 
-    public Object getMetricValue(final String identifier)
+    public void increaseNumericalMetricValue(final IMetricIdentifier metricIdentifier, final double toIncrease)
     {
-        synchronized (metricsLock)
+        if (metricIdentifier.isNumerical())
         {
-            final Metric metric = metrics.get(identifier);
-            if (metric == null)
+            synchronized (metricsLock)
             {
-                return null;
+                Double val = (Double) metrics.get(metricIdentifier);
+                if (val == null)
+                {
+                    val = 0d;
+                }
+                val += toIncrease;
+                metrics.put(metricIdentifier, val);
             }
-            return metric.getValue();
         }
     }
 
-    public void setMetricValue(final String identifier, final Object value)
+    public void decreaseNumericalMetricValue(final IMetricIdentifier metricIdentifier, final double toDecrease)
     {
-        synchronized (metricsLock)
-        {
-            Metric metric = metrics.get(identifier);
-            if (metric == null)
-            {
-                metric = new Metric(identifier);
-                metrics.put(identifier, metric);
-            }
-            metric.setValue(value);
-        }
+        increaseNumericalMetricValue(metricIdentifier, (-1) * toDecrease);
     }
 
-    public void increaseNumericalMetricValue(final String identifier, final double toIncrease)
+    public double getNumericalMetricValue(final IMetricIdentifier metricIdentifier)
     {
+        if (!metricIdentifier.isNumerical())
+        {
+            return Double.NaN;
+        }
+        Double val;
         synchronized (metricsLock)
         {
-            NumericalMetric metric = (NumericalMetric) metrics.get(identifier);
-            if (metric == null)
-            {
-                metric = new NumericalMetric(identifier);
-                metrics.put(identifier, metric);
-            }
-            metric.increaseNumericalValue(toIncrease);
+            val = (Double) metrics.get(metricIdentifier);
         }
+        if (val == null)
+        {
+            return 0D;
+        }
+        return val;
     }
 
-    public void decreaseNumericalMetricValue(final String metricIdentifier, double toDecrease)
+    public void setNumericalMetricValue(final IMetricIdentifier metricIdentifier, final double value)
     {
-        synchronized (metricsLock)
+        if (metricIdentifier.isNumerical())
         {
-            NumericalMetric metric = (NumericalMetric) metrics.get(identifier);
-            if (metric == null)
+            synchronized (metricsLock)
             {
-                metric = new NumericalMetric(identifier);
-                metrics.put(identifier, metric);
+                metrics.put(metricIdentifier, value);
             }
-            metric.decreaseNumericalMetricValue(toDecrease);
-        }
-    }
-
-    public double getNumericalMetricValue(final String identifier)
-    {
-        synchronized (metricsLock)
-        {
-            final NumericalMetric metric = (NumericalMetric) metrics.get(identifier);
-            if (metric == null)
-            {
-                return Double.NaN;
-            }
-            return metric.getNumericValue();
-        }
-    }
-
-    public void setNumericalMetricValue(final String identifier, final double value)
-    {
-        synchronized (metricsLock)
-        {
-            NumericalMetric metric = (NumericalMetric) metrics.get(identifier);
-            if (metric == null)
-            {
-                metric = new NumericalMetric(identifier);
-                metrics.put(identifier, metric);
-            }
-            metric.setValue(value);
-        }
-    }
-
-    public String getMetricValueText(final String identifier)
-    {
-        synchronized (metricsLock)
-        {
-            final Metric metric = metrics.get(identifier);
-            if (metric == null)
-            {
-                return "n/a";
-            }
-            return metric.toString();
         }
     }
 }

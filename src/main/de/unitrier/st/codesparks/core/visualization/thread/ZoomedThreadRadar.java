@@ -3,6 +3,7 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.popup.IThreadSelectable;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
@@ -15,13 +16,13 @@ public class ZoomedThreadRadar extends AThreadRadar
     private final List<IThreadSelectable> threadSelectables;
     private final IThreadSelectableIndexProvider indexProvider;
     private int hoveredCluster = -1;
-    private final String metricIdentifier;
+    private final IMetricIdentifier metricIdentifier;
 
     ZoomedThreadRadar(
-            AArtifact artifact
-            , IThreadSelectableIndexProvider indexProvider
-            , List<IThreadSelectable> threadSelectables
-            , final String metricIdentifier
+            final AArtifact artifact
+            , final IThreadSelectableIndexProvider indexProvider
+            , final List<IThreadSelectable> threadSelectables
+            , final IMetricIdentifier metricIdentifier
     )
     {
         setUpVisualizationParameter(154, 50);

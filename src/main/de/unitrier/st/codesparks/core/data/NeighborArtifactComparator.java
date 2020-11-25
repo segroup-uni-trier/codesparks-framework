@@ -4,9 +4,9 @@ import java.util.Comparator;
 
 public class NeighborArtifactComparator implements Comparator<ANeighborArtifact>
 {
-    private final String metricIdentifier;
+    private final IMetricIdentifier metricIdentifier;
 
-    public NeighborArtifactComparator(final String metricIdentifier)
+    public NeighborArtifactComparator(final IMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }

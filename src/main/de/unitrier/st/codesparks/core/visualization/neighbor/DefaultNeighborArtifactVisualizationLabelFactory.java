@@ -5,10 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
-import de.unitrier.st.codesparks.core.data.DataUtil;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
@@ -30,14 +27,14 @@ import static com.intellij.ui.JBColor.WHITE;
 
 public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
-    public DefaultNeighborArtifactVisualizationLabelFactory(final String primaryMetricIdentifier)
+    public DefaultNeighborArtifactVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
     }
 
-    public DefaultNeighborArtifactVisualizationLabelFactory(int sequence, final String primaryMetricIdentifier)
+    public DefaultNeighborArtifactVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
-        super(sequence, primaryMetricIdentifier);
+        super(primaryMetricIdentifier, sequence);
     }
 
     @Override

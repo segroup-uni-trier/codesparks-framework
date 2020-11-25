@@ -5,10 +5,10 @@ import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
-import de.unitrier.st.codesparks.core.CoreUtil;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -22,29 +22,36 @@ import java.util.Map;
 public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 {
     private final IThreadRadarDisplayData radialThreadVisualizationPopupData;
-    private final String secondaryMetricIdentifier;
+    private final IMetricIdentifier secondaryMetricIdentifier;
 
     public ThreadRadarLabelFactory(
-            final String primaryMetricIdentifier
-            , final String secondaryMetricIdentifier
+            final IMetricIdentifier primaryMetricIdentifier
+            , final IMetricIdentifier secondaryMetricIdentifier
     )
     {
-        super(0, primaryMetricIdentifier);
-        this.radialThreadVisualizationPopupData = new DefaultThreadRadarDisplayData(primaryMetricIdentifier);
-        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
+        this(primaryMetricIdentifier, secondaryMetricIdentifier, 0, false, new DefaultThreadRadarDisplayData(primaryMetricIdentifier));
     }
 
     public ThreadRadarLabelFactory(
-            IThreadRadarDisplayData radialThreadVisualizationPopupData
-            , int sequence
-            , boolean isDefault
-            , final String primaryMetricIdentifier
-            , final String secondaryMetricIdentifier
+            final IMetricIdentifier primaryMetricIdentifier
+            , final IMetricIdentifier secondaryMetricIdentifier
+            , final int sequence
     )
     {
-        super(sequence, isDefault, primaryMetricIdentifier);
-        this.radialThreadVisualizationPopupData = radialThreadVisualizationPopupData;
+        this(primaryMetricIdentifier, secondaryMetricIdentifier, sequence, false, new DefaultThreadRadarDisplayData(primaryMetricIdentifier));
+    }
+
+    public ThreadRadarLabelFactory(
+            final IMetricIdentifier primaryMetricIdentifier
+            , final IMetricIdentifier secondaryMetricIdentifier
+            , final int sequence
+            , boolean isDefault
+            , final IThreadRadarDisplayData radialThreadVisualizationPopupData
+    )
+    {
+        super(primaryMetricIdentifier, sequence, isDefault);
         this.secondaryMetricIdentifier = secondaryMetricIdentifier;
+        this.radialThreadVisualizationPopupData = radialThreadVisualizationPopupData;
     }
 
 //    public ThreadRadarLabelFactory(
@@ -59,14 +66,6 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 //        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
 //    }
 
-    public ThreadRadarLabelFactory(
-            int sequence
-            , final String primaryMetricIdentifier
-            , final String secondaryMetricIdentifier
-    )
-    {
-        this(new DefaultThreadRadarDisplayData(primaryMetricIdentifier), sequence, false, primaryMetricIdentifier, secondaryMetricIdentifier);
-    }
 
     @Override
     public JLabel createArtifactLabel(

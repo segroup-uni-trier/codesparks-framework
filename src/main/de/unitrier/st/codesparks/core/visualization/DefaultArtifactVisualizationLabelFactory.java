@@ -8,6 +8,7 @@ import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.DataUtil;
 import de.unitrier.st.codesparks.core.CoreUtil;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -20,34 +21,33 @@ import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
 
 public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    private final String secondaryMetricIdentifier;
+    private final IMetricIdentifier secondaryMetricIdentifier;
 
     public DefaultArtifactVisualizationLabelFactory(
-            final String primaryMetricIdentifier
-            , final String secondaryMetricIdentifier
+            final IMetricIdentifier primaryMetricIdentifier
+            , final IMetricIdentifier secondaryMetricIdentifier
     )
     {
-        super(primaryMetricIdentifier);
-        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
+        this(primaryMetricIdentifier, secondaryMetricIdentifier, 0, false);
     }
 
     public DefaultArtifactVisualizationLabelFactory(
-            int sequence
-            , final String primaryMetricIdentifier
-            , final String secondaryMetricIdentifier
+            final IMetricIdentifier primaryMetricIdentifier
+            , final IMetricIdentifier secondaryMetricIdentifier
+            , final int sequence
     )
     {
-        this(sequence, false, primaryMetricIdentifier, secondaryMetricIdentifier);
+        this(primaryMetricIdentifier, secondaryMetricIdentifier, sequence, false);
     }
 
     public DefaultArtifactVisualizationLabelFactory(
-            int sequence
-            , boolean isDefault
-            , final String primaryMetricIdentifier
-            , final String secondaryMetricIdentifier
+            final IMetricIdentifier primaryMetricIdentifier
+            , final IMetricIdentifier secondaryMetricIdentifier
+            , final int sequence
+            , final boolean isDefault
     )
     {
-        super(sequence, isDefault, primaryMetricIdentifier);
+        super(primaryMetricIdentifier, sequence, isDefault);
         this.secondaryMetricIdentifier = secondaryMetricIdentifier;
     }
 

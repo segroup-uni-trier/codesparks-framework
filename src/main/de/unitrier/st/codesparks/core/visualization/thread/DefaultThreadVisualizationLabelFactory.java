@@ -5,6 +5,7 @@ import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
@@ -22,14 +23,14 @@ import static com.intellij.ui.JBColor.WHITE;
 public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
     @SuppressWarnings("unused")
-    public DefaultThreadVisualizationLabelFactory(final String primaryMetricIdentifier)
+    public DefaultThreadVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
     }
 
-    public DefaultThreadVisualizationLabelFactory(int sequence, final String primaryMetricIdentifier)
+    public DefaultThreadVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
-        super(sequence, primaryMetricIdentifier);
+        super(primaryMetricIdentifier, sequence);
     }
 
     @Override

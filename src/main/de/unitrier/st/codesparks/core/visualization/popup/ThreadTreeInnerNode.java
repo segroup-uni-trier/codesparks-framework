@@ -3,6 +3,7 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.CoreUtil;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 
 import java.util.List;
 
@@ -10,14 +11,14 @@ public class ThreadTreeInnerNode extends ColoredSelectableTreeNode
 {
     private final List<ACodeSparksThread> codeSparksThreads;
     private final String name;
-    private final String metricIdentifier;
+    private final IMetricIdentifier metricIdentifier;
 
-    public ThreadTreeInnerNode(String name, List<ACodeSparksThread> codeSparksThreads, final String metricIdentifier)
+    public ThreadTreeInnerNode(String name, List<ACodeSparksThread> codeSparksThreads, final IMetricIdentifier metricIdentifier)
     {
         this(name, codeSparksThreads, metricIdentifier, null);
     }
 
-    public ThreadTreeInnerNode(String name, List<ACodeSparksThread> codeSparksThreads, final String metricIdentifier, JBColor color)
+    public ThreadTreeInnerNode(String name, List<ACodeSparksThread> codeSparksThreads, final IMetricIdentifier metricIdentifier, JBColor color)
     {
         super(color);
         this.name = name;

@@ -1,10 +1,7 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.components.JBCheckBox;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadComparator;
+import de.unitrier.st.codesparks.core.data.*;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -16,7 +13,7 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
     private final String[] threadStrings;
     private final List<ACodeSparksThread> codeSparksThreads;
 
-    public ThreadListModel(AArtifact artifact, String metricIdentifier)
+    public ThreadListModel(final AArtifact artifact, final IMetricIdentifier metricIdentifier)
     {
         totalSize = artifact.getNumberOfThreads();
         threadStrings = new String[totalSize];

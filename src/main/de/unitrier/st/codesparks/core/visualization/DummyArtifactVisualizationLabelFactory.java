@@ -20,7 +20,7 @@ public class DummyArtifactVisualizationLabelFactory extends AArtifactVisualizati
 
     public DummyArtifactVisualizationLabelFactory(final int sequence)
     {
-        super(sequence, null);
+        super(null, sequence);
     }
 
     @Override

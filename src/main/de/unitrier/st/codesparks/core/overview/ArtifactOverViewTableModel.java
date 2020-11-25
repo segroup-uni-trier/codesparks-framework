@@ -8,6 +8,7 @@ import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ABaseArtifact;
 import de.unitrier.st.codesparks.core.data.DataUtil;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.ArtifactVisualizationLabelFactoryCache;
@@ -28,9 +29,9 @@ import java.util.stream.Collectors;
 public class ArtifactOverViewTableModel implements TableModel
 {
     private final List<AArtifact> artifacts;
-    private final String metricIdentifier;
+    private final IMetricIdentifier metricIdentifier;
 
-    ArtifactOverViewTableModel(@NotNull List<AArtifact> artifacts, final String metricIdentifier)
+    ArtifactOverViewTableModel(@NotNull final List<AArtifact> artifacts, final IMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
         if (this.metricIdentifier == null)

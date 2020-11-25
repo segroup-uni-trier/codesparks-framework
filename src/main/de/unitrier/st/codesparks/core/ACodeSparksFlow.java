@@ -23,6 +23,7 @@ import com.intellij.util.messages.MessageBus;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ICodeSparksThreadFilter;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerItem;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerManager;
 import de.unitrier.st.codesparks.core.editorcoverlayer.IEditorCoverLayerUpdater;
@@ -384,7 +385,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         ArtifactOverview.getInstance().registerProgramArtifactVisualizationLabelFactory(factory);
     }
 
-    public void registerPrimaryMetricIdentifier(final String metricIdentifier)
+    public void registerPrimaryMetricIdentifier(final IMetricIdentifier metricIdentifier)
     {
         ArtifactOverview.getInstance().registerPrimaryMetricIdentifier(metricIdentifier);
     }

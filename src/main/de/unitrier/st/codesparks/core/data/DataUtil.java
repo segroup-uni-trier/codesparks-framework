@@ -20,7 +20,7 @@ public final class DataUtil
 
     public static double getThreadFilteredMetricValue(
             final ABaseArtifact artifact
-            , final String metricIdentifier
+            , final IMetricIdentifier metricIdentifier
     )
     {
         double metricValue = artifact.getNumericalMetricValue(metricIdentifier);

@@ -5,7 +5,9 @@ package de.unitrier.st.codesparks.core.data;
  */
 public interface IMetricIdentifier
 {
+    String getName();
+
     String getDisplayString();
 
-    String toString();
+    boolean isNumerical();
 }

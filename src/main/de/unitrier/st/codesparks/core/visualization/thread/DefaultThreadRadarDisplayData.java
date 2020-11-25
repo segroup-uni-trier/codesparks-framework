@@ -2,14 +2,15 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 
 import java.util.Set;
 
 public class DefaultThreadRadarDisplayData implements IThreadRadarDisplayData
 {
-    private final String metricIdentifier;
+    private final IMetricIdentifier metricIdentifier;
 
-    public DefaultThreadRadarDisplayData(final String metricIdentifier)
+    public DefaultThreadRadarDisplayData(final IMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }

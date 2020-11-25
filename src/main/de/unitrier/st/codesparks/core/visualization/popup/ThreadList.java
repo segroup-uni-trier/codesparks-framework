@@ -6,6 +6,7 @@ import com.intellij.ui.components.JBList;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,7 @@ public class ThreadList extends AThreadSelectable
 {
     private final JBList<JBCheckBox> list;
 
-    public ThreadList(AArtifact artifact, final String metricIdentifier)
+    public ThreadList(final AArtifact artifact, final IMetricIdentifier metricIdentifier)
     {
         list = new JBList<JBCheckBox>(new ThreadListModel(artifact, metricIdentifier))
         {

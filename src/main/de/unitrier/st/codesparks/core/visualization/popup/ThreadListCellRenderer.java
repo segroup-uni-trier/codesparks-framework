@@ -6,6 +6,7 @@ import com.intellij.ui.components.JBTextArea;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 
@@ -21,7 +22,7 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
     private final boolean[] selected;
     private final Map<String, Integer> threadIdIndex;
 
-    public ThreadListCellRenderer(AArtifact artifact, String metricIdentifier)
+    public ThreadListCellRenderer(final AArtifact artifact, final IMetricIdentifier metricIdentifier)
     {
         int numberOfThreads = artifact.getNumberOfThreads();
         this.displayColors = new Color[numberOfThreads];

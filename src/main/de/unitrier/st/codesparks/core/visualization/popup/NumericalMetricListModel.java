@@ -17,23 +17,23 @@ public class NumericalMetricListModel extends DefaultListModel<JBTextArea>
 
     private List<ANeighborArtifact> prepareNeighborMetricValues(
             final AArtifact artifact
-            , final String numericalMetricIdentifier
+            , final IMetricIdentifier metricIdentifier
             , final List<ANeighborArtifact> list)
     {
-        double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, numericalMetricIdentifier);
+        double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, metricIdentifier);
         for (ANeighborArtifact aNeighborProfilingArtifact : list)
         {
 //            aNeighborProfilingArtifact.setMetricValue(DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact));
-            aNeighborProfilingArtifact.setMetricValue(numericalMetricIdentifier, DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact,
-                    numericalMetricIdentifier));
-            aNeighborProfilingArtifact.setRelativeMetricValue(numericalMetricIdentifier, threadFilteredMetricValue);
+            aNeighborProfilingArtifact.setMetricValue(metricIdentifier, DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact,
+                    metricIdentifier));
+            aNeighborProfilingArtifact.setRelativeMetricValue(metricIdentifier, threadFilteredMetricValue);
         }
         return list;
     }
 
     public NumericalMetricListModel(
             final AArtifact artifact
-            , final String numericalMetricIdentifier
+            , final IMetricIdentifier numericalMetricIdentifier
             , final List<ANeighborArtifact> neighborArtifacts)
     {
         this.neighborArtifacts = prepareNeighborMetricValues(artifact, numericalMetricIdentifier, neighborArtifacts);

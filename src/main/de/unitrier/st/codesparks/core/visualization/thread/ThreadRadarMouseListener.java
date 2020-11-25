@@ -26,15 +26,14 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
     private final List<IThreadSelectable> threadSelectables;
     private final IThreadRadarDisplayData radialThreadVisualizationPopupData;
     private final JLabel[] hoverLabels;
-    private final String primaryMetricIdentifier;
-    private final String secondaryMetricIdentifier;
+    private final IMetricIdentifier secondaryMetricIdentifier;
 
     public ThreadRadarMouseListener(
             final JComponent component
             , final AArtifact artifact
             , final IThreadRadarDisplayData radialThreadVisualizationPopupData
-            , final String primaryMetricIdentifier
-            , final String secondaryMetricIdentifier
+            , final IMetricIdentifier primaryMetricIdentifier
+            , final IMetricIdentifier secondaryMetricIdentifier
     )
     {
         super(component, new Dimension(500, 340), artifact, primaryMetricIdentifier);
@@ -42,7 +41,6 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         this.hoverLabels = new JLabel[4];
         this.threadSelectables = new ArrayList<>();
         this.radialThreadVisualizationPopupData = radialThreadVisualizationPopupData;
-        this.primaryMetricIdentifier = primaryMetricIdentifier;
         this.secondaryMetricIdentifier = secondaryMetricIdentifier;
         component.addMouseMotionListener(this);
     }
@@ -382,14 +380,18 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
     {
         final StringBuilder titleStringBuilder = new StringBuilder();
         titleStringBuilder.append(artifact.getTitleName());
-        titleStringBuilder.append(" primary: ");
+        titleStringBuilder.append(" ");
+        titleStringBuilder.append(primaryMetricIdentifier.getDisplayString());
+        titleStringBuilder.append(": ");
         final double metricValue = artifact.getNumericalMetricValue(primaryMetricIdentifier);
         final String percentage = CoreUtil.formatPercentage(metricValue);
         titleStringBuilder.append(percentage);
 
         if (secondaryMetricIdentifier != null)
         {
-            titleStringBuilder.append(" secondary: ");
+            titleStringBuilder.append(" ");
+            titleStringBuilder.append(secondaryMetricIdentifier.getDisplayString());
+            titleStringBuilder.append(": ");
             final double secondaryMetricValue = artifact.getNumericalMetricValue(secondaryMetricIdentifier);
             titleStringBuilder.append(CoreUtil.formatPercentage(secondaryMetricValue));
             if (metricValue > 0)

@@ -3,6 +3,7 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 
 import java.util.Arrays;
 
@@ -21,7 +22,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
             final CodeSparksThreadCluster cluster
             , final JBColor color
             , final int numberOfArtifactThreads
-            , final String metricIdentifier)
+            , final IMetricIdentifier metricIdentifier)
     {
         super(cluster, color);
         calculateNumberOfThreads(cluster);
@@ -39,12 +40,12 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
         threadRatio = (double) cluster.size() / numberOfArtifactThreads;
     }
 
-    private void calculateMaxNumericalMetricRatio(CodeSparksThreadCluster cluster, final String metricIdentifier)
+    private void calculateMaxNumericalMetricRatio(CodeSparksThreadCluster threadCluster, final IMetricIdentifier metricIdentifier)
     {
         double max = 0;
-        for (ACodeSparksThread aCluster : cluster)
+        for (ACodeSparksThread thread : threadCluster)
         {
-            double metricValue = aCluster.getNumericalMetricValue(metricIdentifier);
+            double metricValue = thread.getNumericalMetricValue(metricIdentifier);
             if (metricValue > max)
             {
                 max = metricValue;
@@ -90,7 +91,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
 //        return max;
 //    }
 
-    double calculateAvgFilteredNumericalMetricRatio(CodeSparksThreadCluster cluster, final String metricIdentfier, boolean ignoreFilter)
+    double calculateAvgFilteredNumericalMetricRatio(CodeSparksThreadCluster cluster, final IMetricIdentifier metricIdentifier, boolean ignoreFilter)
     {
         double sum = 0;
         int threads = 0;
@@ -99,17 +100,17 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
             if (codeSparksThread.isFiltered() && !ignoreFilter)
                 continue;
 
-            sum += codeSparksThread.getNumericalMetricValue(metricIdentfier);
+            sum += codeSparksThread.getNumericalMetricValue(metricIdentifier);
             threads++;
         }
         numericalMetricRatio = sum / threads;
         return sum / threads;
     }
 
-    double calculateFilteredSumNumericalMetricRatio(CodeSparksThreadCluster cluster, final String metricIdentifier, boolean ignoreFilter)
+    double calculateFilteredSumNumericalMetricRatio(CodeSparksThreadCluster threadCluster, final IMetricIdentifier metricIdentifier, boolean ignoreFilter)
     {
         double sum = 0;
-        for (ACodeSparksThread codeSparksThread : cluster)
+        for (ACodeSparksThread codeSparksThread : threadCluster)
         {
             if (codeSparksThread.isFiltered() && !ignoreFilter)
                 continue;
@@ -122,10 +123,11 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
 
 
     @SuppressWarnings("unused")
-    private double calculateFilteredMedianNumericalMetricRatio(CodeSparksThreadCluster cluster, final String metricIdentifier, boolean ignoreFilter)
+    private double calculateFilteredMedianNumericalMetricRatio(CodeSparksThreadCluster threadCluster, final IMetricIdentifier metricIdentifier,
+                                                               boolean ignoreFilter)
     {
         int unfilteredThreads = 0;
-        for (ACodeSparksThread codeSparksThread : cluster)
+        for (ACodeSparksThread codeSparksThread : threadCluster)
         {
             if (codeSparksThread.isFiltered() && !ignoreFilter)
                 continue;
@@ -133,10 +135,10 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
             unfilteredThreads++;
         }
 
-        Double[] metricArray = new Double[cluster.size()];
+        Double[] metricArray = new Double[threadCluster.size()];
         for (int i = 0; i < unfilteredThreads; i++)
         {
-            ACodeSparksThread codeSparksThread = cluster.get(i);
+            ACodeSparksThread codeSparksThread = threadCluster.get(i);
             if (codeSparksThread.isFiltered() && ignoreFilter)
                 continue;
 
