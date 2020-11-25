@@ -10,6 +10,11 @@ public abstract class AArtifactVisualizationLabelFactory extends AVisualizationS
 {
     protected final IMetricIdentifier primaryMetricIdentifier;
 
+    public IMetricIdentifier getPrimaryMetricIdentifier()
+    {
+        return primaryMetricIdentifier;
+    }
+
     protected AArtifactVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
     {
         this.primaryMetricIdentifier = primaryMetricIdentifier;

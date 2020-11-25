@@ -21,13 +21,18 @@ public class ArtifactOverviewTableMouseAdapter extends MouseAdapter
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        Point point = e.getPoint();
-        int row = table.rowAtPoint(point);
+        final Point point = e.getPoint();
+        final int column = table.columnAtPoint(point);
+        if (column < 1)
+        {
+            return;
+        }
+        final int row = table.rowAtPoint(point);
         if (row < 0)
         {
             return;
         }
-        AArtifact artifactAt = ((ArtifactOverViewTableModel) table.getModel()).getArtifactAt(row);
+        final AArtifact artifactAt = ((ArtifactOverViewTableModel) table.getModel()).getArtifactAt(row);
         if (artifactAt == null)
         {
             return;

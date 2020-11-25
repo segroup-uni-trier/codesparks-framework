@@ -51,6 +51,10 @@ public abstract class AMetricArtifact
 
     public Metric getMetric(final IMetricIdentifier metricIdentifier)
     {
+        if (metricIdentifier == null)
+        {
+            return null;
+        }
         final String name = metricIdentifier.getDisplayString();
         Metric m = new Metric(name);
         Object value;
@@ -62,8 +66,12 @@ public abstract class AMetricArtifact
         return m;
     }
 
-    public Object getMetricValue(IMetricIdentifier metricIdentifier)
+    public Object getMetricValue(final IMetricIdentifier metricIdentifier)
     {
+        if (metricIdentifier == null)
+        {
+            return null;
+        }
         Object value;
         synchronized (metricsLock)
         {
@@ -86,18 +94,19 @@ public abstract class AMetricArtifact
 
     public void increaseNumericalMetricValue(final IMetricIdentifier metricIdentifier, final double toIncrease)
     {
-        if (metricIdentifier.isNumerical())
+        if (metricIdentifier == null || !metricIdentifier.isNumerical())
         {
-            synchronized (metricsLock)
+            return;
+        }
+        synchronized (metricsLock)
+        {
+            Double val = (Double) metrics.get(metricIdentifier);
+            if (val == null)
             {
-                Double val = (Double) metrics.get(metricIdentifier);
-                if (val == null)
-                {
-                    val = 0d;
-                }
-                val += toIncrease;
-                metrics.put(metricIdentifier, val);
+                val = 0d;
             }
+            val += toIncrease;
+            metrics.put(metricIdentifier, val);
         }
     }
 
@@ -108,7 +117,7 @@ public abstract class AMetricArtifact
 
     public double getNumericalMetricValue(final IMetricIdentifier metricIdentifier)
     {
-        if (!metricIdentifier.isNumerical())
+        if (metricIdentifier == null || !metricIdentifier.isNumerical())
         {
             return Double.NaN;
         }
@@ -126,12 +135,13 @@ public abstract class AMetricArtifact
 
     public void setNumericalMetricValue(final IMetricIdentifier metricIdentifier, final double value)
     {
-        if (metricIdentifier.isNumerical())
+        if (metricIdentifier == null || !metricIdentifier.isNumerical())
         {
-            synchronized (metricsLock)
-            {
-                metrics.put(metricIdentifier, value);
-            }
+            return;
+        }
+        synchronized (metricsLock)
+        {
+            metrics.put(metricIdentifier, value);
         }
     }
 }

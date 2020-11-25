@@ -21,6 +21,7 @@ import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
+import de.unitrier.st.codesparks.core.visualization.BottomFlowLayout;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTable;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTableCellRenderer;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTableMouseMotionAdapter;
@@ -71,21 +72,43 @@ public class ArtifactOverview
             return;
         }
         this.artifactPool = artifactPool;
-        applyProgramArtifactVisualization();
+        applyProgramArtifactVisualizations();
         filterOverView();
         rootPanel.repaint();
     }
 
-    private AArtifactVisualizationLabelFactory programArtifactVisualizationLabelFactory;
+    private Set<AArtifactVisualizationLabelFactory> programArtifactVisualizationLabelFactories;
 
     public void registerProgramArtifactVisualizationLabelFactory(final AArtifactVisualizationLabelFactory factory)
     {
-        this.programArtifactVisualizationLabelFactory = factory;
+        if (programArtifactVisualizationLabelFactories == null)
+        {
+            programArtifactVisualizationLabelFactories = new HashSet<>();
+        }
+        final boolean noneMatch = programArtifactVisualizationLabelFactories
+                .stream()
+                .noneMatch(f -> f.getClass().equals(factory.getClass())
+                        &&
+                        f.getPrimaryMetricIdentifier().equals(factory.getPrimaryMetricIdentifier()
+                        ));
+        if (noneMatch)
+        {
+            programArtifactVisualizationLabelFactories.add(factory);
+        }
     }
 
-    private void applyProgramArtifactVisualization()
+    public boolean removeProgramArtifactVisualizationLabelFactory(final AArtifactVisualizationLabelFactory factory)
     {
-        if (programArtifactVisualizationLabelFactory == null || artifactPool == null)
+        if (programArtifactVisualizationLabelFactories == null)
+        {
+            return false;
+        }
+        return programArtifactVisualizationLabelFactories.remove(factory);
+    }
+
+    private void applyProgramArtifactVisualizations()
+    {
+        if (programArtifactVisualizationLabelFactories == null || artifactPool == null)
         {
             return;
         }
@@ -94,9 +117,14 @@ public class ArtifactOverview
         {
             return;
         }
-        JLabel artifactLabel = programArtifactVisualizationLabelFactory.createArtifactLabel(programArtifact);
+        JPanel wrapper = new JPanel(new BottomFlowLayout());
+        for (final AArtifactVisualizationLabelFactory programArtifactVisualizationLabelFactory : programArtifactVisualizationLabelFactories)
+        {
+            JLabel artifactLabel = programArtifactVisualizationLabelFactory.createArtifactLabel(programArtifact);
+            wrapper.add(artifactLabel);
+        }
         programArtifactVisualizationPanel.removeAll();
-        programArtifactVisualizationPanel.add(artifactLabel);
+        programArtifactVisualizationPanel.add(wrapper);
         rootPanel.repaint();
     }
 
