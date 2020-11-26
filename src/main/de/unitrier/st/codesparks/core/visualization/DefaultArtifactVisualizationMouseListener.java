@@ -129,8 +129,8 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
     protected String createPopupTitle(final AArtifact artifact)
     {
         final StringBuilder titleStringBuilder = new StringBuilder();
-        titleStringBuilder.append(artifact.getTitleName());
-        titleStringBuilder.append(" ");
+        titleStringBuilder.append(artifact.getName());
+        titleStringBuilder.append(" - ");
         titleStringBuilder.append(primaryMetricIdentifier.getDisplayString());
         titleStringBuilder.append(": ");
         final double metricValue = artifact.getNumericalMetricValue(primaryMetricIdentifier);

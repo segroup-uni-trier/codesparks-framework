@@ -8,8 +8,12 @@ import java.awt.*;
 public class MetricListCellRenderer implements ListCellRenderer<JBTextArea>
 {
     @Override
-    public Component getListCellRendererComponent(JList<? extends JBTextArea> list, JBTextArea value, int index, boolean isSelected,
-                                                  boolean cellHasFocus)
+    public Component getListCellRendererComponent(
+            final JList<? extends JBTextArea> list
+            , final JBTextArea value
+            , final int index, final boolean isSelected
+            , final boolean cellHasFocus
+    )
     {
         return value;
     }

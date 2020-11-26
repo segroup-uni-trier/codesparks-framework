@@ -61,7 +61,7 @@ public abstract class ABaseArtifact extends AMetricArtifact implements IDisplaya
     }
 
     /*
-     * Visualization strings
+     * Display strings
      */
 
     @Override
@@ -136,37 +136,6 @@ public abstract class ABaseArtifact extends AMetricArtifact implements IDisplaya
             threadMap.put(codeSparksThread.getIdentifier(), codeSparksThread);
         }
     }
-//
-//    @Deprecated
-//    public synchronized void increaseMetricValueSelfForThread(final String metricIdentifier, final String threadIdentifier, double toIncrease)
-//    {
-//        synchronized (threadMapLock)
-//        {
-//            ACodeSparksThread codeSparksThread = threadMap.get(threadIdentifier);
-//            if (codeSparksThread == null)
-//            {
-//                try
-//                {
-//                    final Constructor<? extends ACodeSparksThread> constructor = threadClass.getConstructor(String.class,
-//                            double.class);
-//                    codeSparksThread = constructor.newInstance(threadIdentifier, toIncrease);
-//                    threadMap.put(threadIdentifier, codeSparksThread);
-//                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e)
-//                {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            assert codeSparksThread != null;
-//
-////            codeSparksThread.increaseMetricValueSelf(toIncrease);
-//            codeSparksThread.increaseNumericalMetricValue(metricIdentifier, toIncrease);
-//
-//            double threadMetricValue = codeSparksThread.getNumericalMetricValue(metricIdentifier);
-//
-////            assertSecondaryMetricValue(threadMetricValue, "thread");
-//        }
-//    }
 
     public synchronized void increaseNumericalMetricValueThread(final IMetricIdentifier metricIdentifier, final String threadIdentifier, double toIncrease)
     {
@@ -195,34 +164,6 @@ public abstract class ABaseArtifact extends AMetricArtifact implements IDisplaya
 //            assertSecondaryMetricValue(threadMetricValue, "thread");
         }
     }
-
-//    public synchronized void increaseNumericalMetricValueThread(final String metricIdentifier, final String threadIdentifier, double toIncrease)
-//    {
-//        synchronized (threadMapLock)
-//        {
-//            ACodeSparksThread codeSparksThread = threadMap.get(threadIdentifier);
-//            if (codeSparksThread == null)
-//            {
-//                try
-//                {
-//                    final Constructor<? extends ACodeSparksThread> constructor = threadClass.getConstructor(String.class);
-//                    codeSparksThread = constructor.newInstance(threadIdentifier);
-//                    threadMap.put(threadIdentifier, codeSparksThread);
-//                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e)
-//                {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            assert codeSparksThread != null;
-//
-//            codeSparksThread.increaseNumericalMetricValue(metricIdentifier, toIncrease);
-//
-//            double threadMetricValue = codeSparksThread.getNumericalMetricValue(metricIdentifier);
-//
-////            assertSecondaryMetricValue(threadMetricValue, "thread");
-//        }
-//    }
 
     public int getNumberOfThreads()
     {
@@ -259,6 +200,8 @@ public abstract class ABaseArtifact extends AMetricArtifact implements IDisplaya
     /*
      * Helpers
      */
+     // TODO: enable assertion again!
+
 //    @Deprecated
 //    void assertSecondaryMetricValue(double secondaryMetricValue, String name)
 //    {

@@ -18,23 +18,12 @@ public class MetricTableModel extends DefaultTableModel
     private final int preSize;
     private final int sucSize;
 
-//    private List<ANeighborArtifact> prepareNeighbors(
-//            final AArtifact artifact
-//            , final List<ANeighborArtifact> list
-//    )
-//    {
-//        for (ANeighborArtifact aNeighborProfilingArtifact : list)
-//        {
-//            final double numericalMetricValue = artifact.getNumericalMetricValue(metricIdentifier);
-//            aNeighborProfilingArtifact.setRelativeMetricValue(metricIdentifier, numericalMetricValue);
-//        }
-//        return list;
-//    }
-
     private final IMetricIdentifier metricIdentifier;
+    private final AArtifact artifact;
 
     public MetricTableModel(@NotNull final AArtifact artifact, final IMetricIdentifier metricIdentifier)
     {
+        this.artifact = artifact;
         this.metricIdentifier = metricIdentifier;
         NeighborArtifactComparator comparator = new NeighborArtifactComparator(metricIdentifier);
         predecessors = artifact.getPredecessorsList()
@@ -120,6 +109,6 @@ public class MetricTableModel extends DefaultTableModel
     public Object getValueAt(int rowIndex, int columnIndex)
     {
         ANeighborArtifact neighborArtifactAt = getNeighborArtifactAt(rowIndex, columnIndex);
-        return neighborArtifactAt == null ? "" : neighborArtifactAt.getDisplayString(metricIdentifier, 34);
+        return neighborArtifactAt == null ? "" : neighborArtifactAt.getDisplayStringRelativeTo(artifact, metricIdentifier, 34);
     }
 }

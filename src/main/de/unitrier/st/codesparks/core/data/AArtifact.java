@@ -51,7 +51,7 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
             final String name,
             final String identifier,
             final Class<? extends ANeighborArtifact> neighborArtifactClass,
-            final int invocationLine,
+            final int lineNumber,
             final IMetricIdentifier metricIdentifier,
             final double neighborMetricValue,
             final String threadIdentifier
@@ -59,10 +59,15 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
     {
         synchronized (predecessors)
         {
-            List<ANeighborArtifact> neighborProfilingArtifacts = predecessors.computeIfAbsent(invocationLine,
+            List<ANeighborArtifact> neighborArtifacts = predecessors.computeIfAbsent(lineNumber,
                     integer -> new ArrayList<>());
-            ANeighborArtifact neighbor = getOrCreateNeighborByIdentifier(neighborProfilingArtifacts, name, identifier,
-                    neighborArtifactClass, invocationLine);
+            ANeighborArtifact neighbor = getOrCreateNeighborByIdentifier(
+                    neighborArtifacts
+                    , neighborArtifactClass
+                    , name
+                    , identifier
+                    , lineNumber
+            );
             assert neighbor != null;
 //            neighbor.increaseMetricValue(neighborMetricValue);
             neighbor.increaseNumericalMetricValue(metricIdentifier, neighborMetricValue);
@@ -87,7 +92,7 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
             final String name
             , final String identifier
             , final Class<? extends ANeighborArtifact> neighborArtifactClass
-            , final int invocationLine
+            , final int lineNumber
             , final IMetricIdentifier metricIdentifier
             , final double neighborMetricValue
             , final String threadIdentifier
@@ -95,13 +100,13 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
     {
         synchronized (successors)
         {
-            final List<ANeighborArtifact> neighborArtifacts = successors.computeIfAbsent(invocationLine, integer -> new ArrayList<>());
+            final List<ANeighborArtifact> neighborArtifacts = successors.computeIfAbsent(lineNumber, integer -> new ArrayList<>());
             final ANeighborArtifact neighbor = getOrCreateNeighborByIdentifier(
                     neighborArtifacts
+                    , neighborArtifactClass
                     , name
                     , identifier
-                    , neighborArtifactClass
-                    , invocationLine
+                    , lineNumber
             );
             assert neighbor != null;
 //            neighbor.increaseMetricValue(neighborMetricValue);
@@ -124,26 +129,29 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
 
     private ANeighborArtifact getOrCreateNeighborByIdentifier(
             final List<ANeighborArtifact> neighborList
+            , final Class<? extends ANeighborArtifact> neighborArtifactClass
             , final String name
             , final String identifier
-            , final Class<? extends ANeighborArtifact> neighborArtifactClass
-            , final int line
+            , final int lineNumber
     )
     {
         ANeighborArtifact neighbor;
-        for (ANeighborArtifact neighborProfilingArtifact : neighborList)
+        for (ANeighborArtifact neighborArtifact : neighborList)
         {
-            if (neighborProfilingArtifact.getIdentifier().equals(identifier))
+            if (neighborArtifact.getIdentifier().equals(identifier))
             {
-                return neighborProfilingArtifact;
+                return neighborArtifact;
             }
         }
         try
         {
-            Constructor<? extends ANeighborArtifact> constructor = neighborArtifactClass.getConstructor(String.class, String.class,
-                    int.class);
+            Constructor<? extends ANeighborArtifact> constructor = neighborArtifactClass.getConstructor(
+                    String.class
+                    , String.class
+                    , int.class
+            );
 //            neighbor = new NeighborProfilingArtifact(name, identifier, line);
-            neighbor = constructor.newInstance(name, identifier, line);
+            neighbor = constructor.newInstance(name, identifier, lineNumber);
             neighborList.add(neighbor);
             return neighbor;
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e)
@@ -199,17 +207,5 @@ public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
                 clusterings.put(instance, threadArtifactClusters);
             }
         }
-    }
-
-//    public String getMetricValuesString()
-//    {
-//        return identifier + " => " + "TOTAL-METRIC-VALUE = " + CoreUtil.formatPercentage(metricValue) + "; METRIC-VALUE-SELF = " + CoreUtil
-//                .formatPercentage(metricValueSelf) + " (" + CoreUtil.formatPercentage(metricValueSelf / metricValue)
-//                + " OF TOTAL-METRIC-VALUE)";
-//    }
-
-    public String getTitleName()
-    {
-        return name;
     }
 }

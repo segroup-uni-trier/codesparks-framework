@@ -7,11 +7,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
- * Oliver Moseler, 2020
+ * Copyright (c), Oliver Moseler, 2020
  */
 class EditorCoverLayer extends JComponent
 {
@@ -29,7 +29,7 @@ class EditorCoverLayer extends JComponent
 
     EditorCoverLayer(Editor editor)
     {
-        this.layerItems = new HashMap<>();
+        this.layerItems = new ConcurrentHashMap<>();//new HashMap<>();
         this.editor = editor;
         this.setLayout(null); // Absolute Positioning
 

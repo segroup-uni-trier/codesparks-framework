@@ -15,33 +15,17 @@ public class NumericalMetricListModel extends DefaultListModel<JBTextArea>
     private final List<JBTextArea> textAreas;
     private static Font defaultFont;
 
-//    private List<ANeighborArtifact> prepareNeighborMetricValues(
-//            final AArtifact artifact
-//            , final IMetricIdentifier metricIdentifier
-//            , final List<ANeighborArtifact> list)
-//    {
-//        double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, metricIdentifier);
-//        for (ANeighborArtifact aNeighborProfilingArtifact : list)
-//        {
-////            aNeighborProfilingArtifact.setMetricValue(DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact));
-//            aNeighborProfilingArtifact.setMetricValue(metricIdentifier, DataUtil.getThreadFilteredMetricValue(aNeighborProfilingArtifact,
-//                    metricIdentifier));
-//            aNeighborProfilingArtifact.setRelativeMetricValue(metricIdentifier, threadFilteredMetricValue);
-//        }
-//        return list;
-//    }
-
     public NumericalMetricListModel(
             final AArtifact artifact
             , final IMetricIdentifier numericalMetricIdentifier
             , final List<ANeighborArtifact> neighborArtifacts)
     {
-        this.neighborArtifacts = neighborArtifacts;//prepareNeighborMetricValues(artifact, numericalMetricIdentifier, neighborArtifacts);
+        this.neighborArtifacts = neighborArtifacts;
         this.neighborArtifacts.sort(new NeighborArtifactComparator(numericalMetricIdentifier));
         textAreas = new ArrayList<>(this.neighborArtifacts.size());
         for (int i = 0; i < this.neighborArtifacts.size(); i++)
         {
-            textAreas.add(new JBTextArea(neighborArtifacts.get(i).getDisplayString(numericalMetricIdentifier, 60)));
+            textAreas.add(new JBTextArea(neighborArtifacts.get(i).getDisplayStringRelativeTo(artifact, numericalMetricIdentifier, 60)));
         }
         defaultFont = new JBTextArea().getFont();
     }
@@ -59,7 +43,7 @@ public class NumericalMetricListModel extends DefaultListModel<JBTextArea>
         {
             return new JBTextArea("");
         }
-        return textAreas.get(index);//neighborProfilingArtifacts.get(index).getDisplayString(68);
+        return textAreas.get(index);
     }
 
     @Override
