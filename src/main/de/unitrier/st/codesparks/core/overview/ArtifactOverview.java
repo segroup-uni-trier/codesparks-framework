@@ -21,6 +21,7 @@ import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
+import de.unitrier.st.codesparks.core.visualization.AVisualizationSequence;
 import de.unitrier.st.codesparks.core.visualization.BottomFlowLayout;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTable;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTableCellRenderer;
@@ -118,7 +119,16 @@ public class ArtifactOverview
             return;
         }
         JPanel wrapper = new JPanel(new BottomFlowLayout());
-        for (final AArtifactVisualizationLabelFactory programArtifactVisualizationLabelFactory : programArtifactVisualizationLabelFactories)
+
+        // TODO : sort by sequence
+
+//        programArtifactVisualizationLabelFactories.stream().sorted(Comparator.comparing(AVisualizationSequence::getSequence));
+
+        for (final AArtifactVisualizationLabelFactory programArtifactVisualizationLabelFactory :
+                programArtifactVisualizationLabelFactories
+                        .stream()
+                        .sorted(Comparator.comparing(AVisualizationSequence::getSequence))
+                        .collect(Collectors.toList()))
         {
             JLabel artifactLabel = programArtifactVisualizationLabelFactory.createArtifactLabel(programArtifact);
             wrapper.add(artifactLabel);
