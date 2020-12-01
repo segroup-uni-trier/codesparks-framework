@@ -5,6 +5,9 @@ package de.unitrier.st.codesparks.core.visualization;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class DefaultArtifactVisualizer implements IArtifactVisualizer
 {
     private volatile static IArtifactVisualizer instance;

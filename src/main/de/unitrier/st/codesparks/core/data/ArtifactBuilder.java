@@ -5,6 +5,9 @@ import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ArtifactBuilder
 {
     private static final class DefaultArtifact extends AArtifact

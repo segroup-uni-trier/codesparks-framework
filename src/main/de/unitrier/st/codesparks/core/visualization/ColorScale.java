@@ -4,6 +4,9 @@ import org.jetbrains.annotations.Contract;
 
 import java.awt.Color;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 @SuppressWarnings({"UseJBColor", "InspectionUsingGrayColors"})
 final class ColorScale
 {

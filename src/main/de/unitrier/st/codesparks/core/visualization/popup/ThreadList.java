@@ -15,6 +15,9 @@ import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ThreadList extends AThreadSelectable
 {
     private final JBList<JBCheckBox> list;

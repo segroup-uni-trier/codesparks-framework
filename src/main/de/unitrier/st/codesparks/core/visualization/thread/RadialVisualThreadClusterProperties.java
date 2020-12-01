@@ -7,6 +7,9 @@ import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 
 import java.util.Arrays;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class RadialVisualThreadClusterProperties extends VisualThreadClusterProperties
 {
     private int numberOfThreads;

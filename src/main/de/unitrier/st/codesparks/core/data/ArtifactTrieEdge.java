@@ -2,6 +2,9 @@ package de.unitrier.st.codesparks.core.data;
 
 import org.jgrapht.graph.DefaultEdge;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ArtifactTrieEdge extends DefaultEdge
 {
     private String label;

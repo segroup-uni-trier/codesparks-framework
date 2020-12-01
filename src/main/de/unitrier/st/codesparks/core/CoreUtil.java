@@ -17,6 +17,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public final class CoreUtil
 {
     private CoreUtil() {}

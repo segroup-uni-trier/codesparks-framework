@@ -8,6 +8,9 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class CheckBoxComponentWrapper extends AConfigurableComponentWrapper
 {
     private final String borderTitle;

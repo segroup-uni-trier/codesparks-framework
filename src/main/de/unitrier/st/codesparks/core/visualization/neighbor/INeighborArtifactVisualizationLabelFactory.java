@@ -6,6 +6,9 @@ import de.unitrier.st.codesparks.core.data.AArtifact;
 import javax.swing.*;
 import java.util.List;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public interface INeighborArtifactVisualizationLabelFactory
 {
     JLabel createArtifactCalleeLabel(

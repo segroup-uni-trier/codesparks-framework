@@ -7,6 +7,9 @@ import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 
 import java.util.List;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ThreadTreeInnerNode extends ColoredSelectableTreeNode
 {
     private final List<ACodeSparksThread> codeSparksThreads;

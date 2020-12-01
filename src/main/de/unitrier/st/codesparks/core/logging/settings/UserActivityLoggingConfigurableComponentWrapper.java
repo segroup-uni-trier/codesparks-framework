@@ -6,6 +6,9 @@ import de.unitrier.st.codesparks.core.properties.PropertiesUtil;
 import de.unitrier.st.codesparks.core.properties.PropertyKey;
 import de.unitrier.st.codesparks.core.settings.CheckBoxComponentWrapper;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class UserActivityLoggingConfigurableComponentWrapper extends CheckBoxComponentWrapper
 {
     private UserActivityLoggingConfigurableComponentWrapper()

@@ -5,6 +5,9 @@ import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class VisualThreadClusterPropertiesManager
 {
     private VisualThreadClusterPropertiesManager()

@@ -5,6 +5,9 @@ import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 
 import java.util.Set;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public interface IThreadRadarDisplayData
 {
     CodeSparksThreadDisplayData getSelectedThreadData(AArtifact artifact, Set<ACodeSparksThread> selectedCodeSparksThreads);

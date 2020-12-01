@@ -4,6 +4,9 @@ import de.unitrier.st.codesparks.core.visualization.popup.IThreadSelectable;
 
 import java.util.Set;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class DefaultThreadFilter implements ICodeSparksThreadFilter
 {
 

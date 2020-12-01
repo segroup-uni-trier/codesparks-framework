@@ -5,6 +5,9 @@ import com.intellij.ui.components.JBTextArea;
 import javax.swing.*;
 import java.awt.*;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class MetricListCellRenderer implements ListCellRenderer<JBTextArea>
 {
     @Override

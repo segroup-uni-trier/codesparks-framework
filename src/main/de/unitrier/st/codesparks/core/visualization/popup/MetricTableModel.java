@@ -10,6 +10,9 @@ import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class MetricTableModel extends DefaultTableModel
 {
     private final List<ANeighborArtifact> successors;

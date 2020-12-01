@@ -17,6 +17,9 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
     DefaultThreadVisualizationMouseListener(

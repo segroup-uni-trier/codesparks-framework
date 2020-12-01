@@ -6,6 +6,9 @@ import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 import javax.swing.*;
 import java.util.Set;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public interface IThreadSelectable
 {
     Set<ACodeSparksThread> getSelectedThreadArtifacts();

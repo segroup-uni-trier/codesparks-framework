@@ -15,6 +15,9 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox>
 {
     private final Color[] displayColors;

@@ -3,6 +3,9 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class VisualThreadClusterProperties
 {
     private final CodeSparksThreadCluster cluster;

@@ -1,7 +1,7 @@
 package de.unitrier.st.codesparks.core.data;
 
-/**
- * Attention! Not in use yet. In future, it will replace the metricIdentifier which is solely represented as String currently.
+/*
+ * Copyright (c), Oliver Moseler, 2020
  */
 public interface IMetricIdentifier
 {

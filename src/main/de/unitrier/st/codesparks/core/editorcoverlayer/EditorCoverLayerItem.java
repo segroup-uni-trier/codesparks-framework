@@ -9,7 +9,7 @@ import com.intellij.psi.SmartPsiElementPointer;
 import javax.swing.*;
 
 /*
- * Oliver Moseler, 2020
+ * Copyright (c), Oliver Moseler, 2020
  */
 public class EditorCoverLayerItem
 {

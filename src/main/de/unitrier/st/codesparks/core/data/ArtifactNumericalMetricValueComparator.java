@@ -2,6 +2,9 @@ package de.unitrier.st.codesparks.core.data;
 
 import java.util.Comparator;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ArtifactNumericalMetricValueComparator implements Comparator<AArtifact>
 {
     private final IMetricIdentifier metricIdentifier;

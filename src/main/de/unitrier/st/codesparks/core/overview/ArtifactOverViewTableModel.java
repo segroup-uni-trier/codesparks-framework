@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
 /**
  * Created by Oliver Moseler on 05.10.2014.
  */
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ArtifactOverViewTableModel implements TableModel
 {
     private final List<AArtifact> artifacts;

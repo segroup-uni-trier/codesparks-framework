@@ -12,6 +12,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 class NeighborNeighborArtifactVisualizationWrapper extends ANeighborArtifactVisualization
 {
     NeighborNeighborArtifactVisualizationWrapper(

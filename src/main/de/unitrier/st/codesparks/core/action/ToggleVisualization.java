@@ -16,6 +16,9 @@ import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerManager;
 import javax.swing.*;
 import java.util.Arrays;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ToggleVisualization extends AnAction
 {
     private boolean visible;

@@ -1,5 +1,8 @@
 package de.unitrier.st.codesparks.core.logging;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public enum UserActivityEnum
 {
     ProfilingStarted,
@@ -29,5 +32,15 @@ public enum UserActivityEnum
     MethodPopupCalleesTabSelected,
     MethodPopupCallersTabSelected,
     ThreadTreeNodeToggled,
-    ThreadRadarDetailsViewSelectAllButtonClicked, ThreadRadarDetailsViewDeselectAllButtonClicked, ThreadRadarDetailsViewInvertSelectionButtonClicked, ThreadRadarDetailsViewResetThreadFilterButtonClicked, ThreadRadarDetailsViewApplyThreadFilterButtonClicked, PopupPinned, PopupOpened, PopupNavigated, OverviewNavigated, FileSelected, ApplicationClosed
+    ThreadRadarDetailsViewSelectAllButtonClicked,
+    ThreadRadarDetailsViewDeselectAllButtonClicked,
+    ThreadRadarDetailsViewInvertSelectionButtonClicked,
+    ThreadRadarDetailsViewResetThreadFilterButtonClicked,
+    ThreadRadarDetailsViewApplyThreadFilterButtonClicked,
+    PopupPinned,
+    PopupOpened,
+    PopupNavigated,
+    OverviewNavigated,
+    FileSelected,
+    ApplicationClosed
 }

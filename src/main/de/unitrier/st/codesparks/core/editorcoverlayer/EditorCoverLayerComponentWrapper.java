@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /*
- * Oliver Moseler, 2020
+ * Copyright (c), Oliver Moseler, 2020
  */
 public class EditorCoverLayerComponentWrapper extends JPanel
 {

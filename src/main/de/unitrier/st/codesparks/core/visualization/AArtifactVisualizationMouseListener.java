@@ -27,6 +27,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
 {
     protected JComponent component;

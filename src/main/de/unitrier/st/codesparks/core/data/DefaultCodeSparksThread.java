@@ -2,6 +2,9 @@ package de.unitrier.st.codesparks.core.data;
 
 import de.unitrier.st.codesparks.core.CoreUtil;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class DefaultCodeSparksThread extends ACodeSparksThread
 {
     public DefaultCodeSparksThread(String identifier)

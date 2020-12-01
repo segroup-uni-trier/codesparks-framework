@@ -2,6 +2,9 @@ package de.unitrier.st.codesparks.core.data;
 
 import org.jetbrains.annotations.NotNull;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ArtifactTrieNode
 {
     private final String identifier;

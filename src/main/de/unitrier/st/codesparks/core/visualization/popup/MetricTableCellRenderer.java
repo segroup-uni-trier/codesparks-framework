@@ -12,6 +12,9 @@ import java.util.HashSet;
 /**
  * Created by Oliver Moseler on 16.10.2014.
  */
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class MetricTableCellRenderer extends JTextArea implements TableCellRenderer
 {
     private static Font defaultFont = null;

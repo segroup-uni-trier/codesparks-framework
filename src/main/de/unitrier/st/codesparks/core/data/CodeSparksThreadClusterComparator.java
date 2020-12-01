@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.ToDoubleFunction;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class CodeSparksThreadClusterComparator implements Comparator<CodeSparksThreadCluster>
 {
     private final static Map<IMetricIdentifier, Comparator<CodeSparksThreadCluster>> comparators = new HashMap<>();

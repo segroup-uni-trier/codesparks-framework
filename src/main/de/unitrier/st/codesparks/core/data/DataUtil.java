@@ -2,6 +2,9 @@ package de.unitrier.st.codesparks.core.data;
 
 import java.util.function.ToDoubleFunction;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public final class DataUtil
 {
     private DataUtil() {}

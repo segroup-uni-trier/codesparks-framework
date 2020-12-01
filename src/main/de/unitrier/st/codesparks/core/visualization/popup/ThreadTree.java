@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ThreadTree extends AThreadSelectable
 {
     protected final List<ThreadTreeLeafNode> leafNodes;

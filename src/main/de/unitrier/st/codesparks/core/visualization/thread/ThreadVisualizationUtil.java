@@ -11,6 +11,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public final class ThreadVisualizationUtil
 {
     private ThreadVisualizationUtil() { }

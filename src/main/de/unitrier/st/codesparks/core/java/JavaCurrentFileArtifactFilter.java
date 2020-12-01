@@ -11,6 +11,9 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class JavaCurrentFileArtifactFilter implements ICurrentFileArtifactFilter
 {
     private static final Map<Function<AArtifact, String>, ICurrentFileArtifactFilter> instances = new HashMap<>();

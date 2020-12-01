@@ -10,6 +10,9 @@ import java.awt.font.TextAttribute;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class MetricListMouseMotionAdapter extends MouseMotionAdapter
 {
     private final MetricList list;

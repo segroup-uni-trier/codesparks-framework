@@ -5,6 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class AArtifact extends ABaseArtifact implements IPsiNavigable
 {
     private final Map<Integer, List<ANeighborArtifact>> predecessors;

@@ -13,6 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class AArtifactPoolExportStrategy implements IArtifactPoolExportStrategy
 {
     private final Project project;
@@ -56,19 +59,6 @@ public abstract class AArtifactPoolExportStrategy implements IArtifactPoolExport
     public final void export(IArtifactPool artifactPool)
     {
         export(fileName(), format(artifactPool));
-    }
-
-    public final void export(IArtifactPool artifactPool, boolean includeTrie)
-    {
-        if (!includeTrie)
-        {
-            export(artifactPool);
-        } else
-        {
-            // TODO: check fileName and test! In Order to do so, the respective threadAnalysisStrategy has to be registered first
-            final ArtifactTrieDotExportStrategy profilingArtifactTrieDotExportStrategy = new ArtifactTrieDotExportStrategy(fileName());
-            profilingArtifactTrieDotExportStrategy.export(artifactPool.getArtifactTrie());
-        }
     }
 
     public abstract String format(IArtifactPool artifactPool);

@@ -49,6 +49,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpdater
 {
     protected IDataProvider dataProvider;

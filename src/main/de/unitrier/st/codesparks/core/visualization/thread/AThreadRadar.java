@@ -16,6 +16,9 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Set;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class AThreadRadar extends JPanel
 {
     protected Graphics2D g2d;

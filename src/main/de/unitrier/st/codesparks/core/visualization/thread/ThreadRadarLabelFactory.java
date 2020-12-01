@@ -19,6 +19,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 {
     private final IThreadRadarDisplayData radialThreadVisualizationPopupData;

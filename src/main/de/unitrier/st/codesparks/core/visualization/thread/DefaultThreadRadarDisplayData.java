@@ -6,6 +6,9 @@ import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 
 import java.util.Set;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class DefaultThreadRadarDisplayData implements IThreadRadarDisplayData
 {
     private final IMetricIdentifier metricIdentifier;

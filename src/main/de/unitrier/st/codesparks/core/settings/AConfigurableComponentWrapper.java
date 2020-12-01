@@ -5,6 +5,9 @@ import com.intellij.util.ui.components.BorderLayoutPanel;
 
 import javax.swing.*;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class AConfigurableComponentWrapper
 {
     protected AConfigurableComponentWrapper()

@@ -1,5 +1,8 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class CodeSparksThreadDisplayData
 {
     private double metricValueSum;

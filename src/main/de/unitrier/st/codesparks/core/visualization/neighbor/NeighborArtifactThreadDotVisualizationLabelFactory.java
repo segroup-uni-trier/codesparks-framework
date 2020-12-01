@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 @SuppressWarnings("unused")
 public class NeighborArtifactThreadDotVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {

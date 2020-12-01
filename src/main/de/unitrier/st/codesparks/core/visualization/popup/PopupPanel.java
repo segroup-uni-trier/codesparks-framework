@@ -6,6 +6,9 @@ import com.intellij.util.ui.components.BorderLayoutPanel;
 
 import java.awt.*;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public final class PopupPanel extends JBPanel<BorderLayoutPanel>
 {
     private String type;

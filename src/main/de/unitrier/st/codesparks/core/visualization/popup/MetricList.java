@@ -9,6 +9,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class MetricList extends JBList<JBTextArea>
 {
     public MetricList(ListModel<JBTextArea> model)

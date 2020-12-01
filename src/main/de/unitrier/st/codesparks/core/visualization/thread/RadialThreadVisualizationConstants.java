@@ -1,7 +1,10 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-abstract class RadialThreadVisualizationConstants {
-
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
+abstract class RadialThreadVisualizationConstants
+{
     static final int CIRCLESIZE = 32;
     static final int CIRCLE_FRAMESIZE = 34;
     static final int MIDDLEPOINT = CIRCLE_FRAMESIZE / 2;

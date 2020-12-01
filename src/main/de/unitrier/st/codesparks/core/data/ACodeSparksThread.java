@@ -1,5 +1,8 @@
 package de.unitrier.st.codesparks.core.data;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class ACodeSparksThread extends AMetricArtifact implements IDisplayable
 {
     private String callSite;

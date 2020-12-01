@@ -4,6 +4,9 @@ import de.unitrier.st.codesparks.core.data.*;
 
 import java.util.*;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class AArtifactPool implements IArtifactPool
 {
     private IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider;
@@ -16,7 +19,7 @@ public abstract class AArtifactPool implements IArtifactPool
     protected AArtifactPool()
     {
         artifacts = new HashMap<>();
-        artifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
+//        artifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
     }
 
     protected AArtifactPool(IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
@@ -119,13 +122,13 @@ public abstract class AArtifactPool implements IArtifactPool
         }
     }
 
-    private final ArtifactTrie artifactTrie;
+//    private final ArtifactTrie artifactTrie;
 
-    @Override
-    public ArtifactTrie getArtifactTrie()
-    {
-        return artifactTrie;
-    }
+//    @Override
+//    public ArtifactTrie getArtifactTrie()
+//    {
+//        return artifactTrie;
+//    }
 
 //    protected final void applyFilter(AProfilingArtifact artifact, IThreadArtifactFilter threadArtifactFilter)
 //    {

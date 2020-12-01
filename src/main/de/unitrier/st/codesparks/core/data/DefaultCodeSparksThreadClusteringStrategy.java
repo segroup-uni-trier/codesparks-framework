@@ -5,6 +5,9 @@ import java.util.*;
 /**
  * Implements a k-means clustering for k = 3 and utilizing the two factors: metricValue and callSite
  */
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThreadClusteringStrategy
 {
 //    private static volatile ICodeSparksThreadClusteringStrategy instance;

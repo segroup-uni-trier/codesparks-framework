@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable
 {
     private ZoomedThreadRadar zoomedThreadRadar;

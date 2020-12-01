@@ -4,6 +4,9 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class ADataProcessor extends Task.WithResult<Boolean, Exception> implements IDataProcessor
 {
     protected AArtifactPool artifactPool;

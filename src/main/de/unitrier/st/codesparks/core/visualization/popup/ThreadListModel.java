@@ -7,6 +7,9 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public final class ThreadListModel extends DefaultListModel<JBCheckBox>
 {
     private final int totalSize;

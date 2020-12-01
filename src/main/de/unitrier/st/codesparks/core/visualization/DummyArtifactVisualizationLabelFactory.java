@@ -13,6 +13,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 @SuppressWarnings("unused")
 public class DummyArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {

@@ -11,6 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class ABaseArtifact extends AMetricArtifact implements IDisplayable, ICodeSparksThreadFilterable
 {
     private final Map<String, ACodeSparksThread> threadMap;

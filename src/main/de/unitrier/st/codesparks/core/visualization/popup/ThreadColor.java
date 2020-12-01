@@ -5,6 +5,9 @@ import org.jetbrains.annotations.Contract;
 
 import java.awt.*;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public final class ThreadColor
 {
     private ThreadColor() {}

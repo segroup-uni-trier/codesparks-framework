@@ -13,6 +13,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ThreadVisualizationConfigurable implements Configurable
 {
     public ThreadVisualizationConfigurable()

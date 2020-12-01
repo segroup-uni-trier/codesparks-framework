@@ -10,6 +10,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 @SuppressWarnings("unused")
 public class DummyNeighborArtifactVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {

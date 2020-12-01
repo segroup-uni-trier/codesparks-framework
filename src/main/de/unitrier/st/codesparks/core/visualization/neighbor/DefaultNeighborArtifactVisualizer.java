@@ -9,6 +9,9 @@ import de.unitrier.st.codesparks.core.data.AArtifact;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class DefaultNeighborArtifactVisualizer implements INeighborArtifactVisualizer
 {
     private static volatile INeighborArtifactVisualizer instance;

@@ -1,5 +1,8 @@
 package de.unitrier.st.codesparks.core;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class ADataProvider implements IDataProvider
 {
     private final IDataCollector profilingDataCollector;

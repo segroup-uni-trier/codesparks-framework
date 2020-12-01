@@ -8,6 +8,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import static com.intellij.util.ui.ThreeStateCheckBox.State.NOT_SELECTED;
 import static com.intellij.util.ui.ThreeStateCheckBox.State.SELECTED;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ColoredSelectableTreeNode extends DefaultMutableTreeNode
 {
     private JBColor color;

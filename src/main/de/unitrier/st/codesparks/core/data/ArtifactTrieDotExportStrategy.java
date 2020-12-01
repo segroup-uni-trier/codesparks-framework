@@ -7,6 +7,9 @@ import org.jgrapht.io.GraphExporter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ArtifactTrieDotExportStrategy implements IArtifactTrieExportStrategy
 {
     private final String destinationFilePath;

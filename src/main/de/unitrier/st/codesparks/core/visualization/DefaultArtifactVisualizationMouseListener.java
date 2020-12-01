@@ -15,6 +15,9 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
     private final IMetricIdentifier secondaryMetricIdentifier;

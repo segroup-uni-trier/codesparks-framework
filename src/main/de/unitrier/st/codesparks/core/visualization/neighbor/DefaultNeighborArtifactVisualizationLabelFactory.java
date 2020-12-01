@@ -25,6 +25,9 @@ import java.util.stream.Collectors;
 
 import static com.intellij.ui.JBColor.WHITE;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
     public DefaultNeighborArtifactVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier)

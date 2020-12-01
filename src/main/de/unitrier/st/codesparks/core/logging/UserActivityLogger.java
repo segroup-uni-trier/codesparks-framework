@@ -16,6 +16,9 @@ import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public final class UserActivityLogger implements IUserActivityLogger, IEditorCoverLayerLogger
 {
     private BufferedWriter bw;

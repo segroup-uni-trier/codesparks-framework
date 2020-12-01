@@ -2,6 +2,9 @@ package de.unitrier.st.codesparks.core.data;
 
 import java.util.*;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class AMetricArtifact
 {
     protected final String name;

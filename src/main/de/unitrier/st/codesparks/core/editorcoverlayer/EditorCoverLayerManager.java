@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /*
- * Oliver Moseler, 2020
+ * Copyright (c), Oliver Moseler, 2020
  */
 public final class EditorCoverLayerManager implements Disposable// implements ProjectComponent
 {

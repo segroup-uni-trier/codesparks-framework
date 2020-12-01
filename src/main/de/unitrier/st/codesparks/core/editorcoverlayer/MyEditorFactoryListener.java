@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 /*
- * Oliver Moseler, 2020
+ * Copyright (c), Oliver Moseler, 2020
  */
 public class MyEditorFactoryListener implements EditorFactoryListener
 {

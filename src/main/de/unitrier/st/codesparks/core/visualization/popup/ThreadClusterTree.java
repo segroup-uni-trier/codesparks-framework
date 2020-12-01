@@ -10,6 +10,9 @@ import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPr
 import java.util.List;
 import java.util.Map;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ThreadClusterTree extends ThreadTree
 {
     public ThreadClusterTree(Map<String, List<ACodeSparksThread>> threadTreeContent, final IMetricIdentifier metricIdentifier)

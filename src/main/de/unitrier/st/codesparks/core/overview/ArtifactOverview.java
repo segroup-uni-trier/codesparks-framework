@@ -39,7 +39,9 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ArtifactOverview
 {
     private static volatile ArtifactOverview instance;

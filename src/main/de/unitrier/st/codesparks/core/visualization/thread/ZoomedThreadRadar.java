@@ -11,6 +11,9 @@ import java.awt.*;
 import java.util.List;
 import java.util.Set;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ZoomedThreadRadar extends AThreadRadar
 {
     private final List<IThreadSelectable> threadSelectables;

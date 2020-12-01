@@ -4,6 +4,9 @@ import com.intellij.ui.DarculaColors;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class VisConstants
 {
     private VisConstants() {}

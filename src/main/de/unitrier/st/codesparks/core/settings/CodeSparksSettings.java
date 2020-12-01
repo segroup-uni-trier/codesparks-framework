@@ -14,6 +14,9 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 @Service
 public final class CodeSparksSettings implements SearchableConfigurable.Parent
 {

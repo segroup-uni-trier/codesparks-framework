@@ -6,6 +6,9 @@ import de.unitrier.st.codesparks.core.IArtifactPool;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class GlobalResetThreadFilter implements ICodeSparksThreadFilter
 {
 

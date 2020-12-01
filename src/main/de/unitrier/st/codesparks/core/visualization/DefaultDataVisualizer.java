@@ -16,7 +16,10 @@ import de.unitrier.st.codesparks.core.visualization.neighbor.INeighborArtifactVi
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class DefaultDataVisualizer extends ADataVisualizer//implements IProfilingDataVisualizer
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
+public class DefaultDataVisualizer extends ADataVisualizer
 {
     private final INeighborArtifactVisualizer artifactCalleeVisualizer;
     private final ANeighborArtifactVisualizationLabelFactory[] calleeFactories;

@@ -13,6 +13,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 final class UserActivityLoggingConfigurable implements Configurable
 {
     public UserActivityLoggingConfigurable()

@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ThreadTypeTree extends ThreadTree
 {
     public ThreadTypeTree(

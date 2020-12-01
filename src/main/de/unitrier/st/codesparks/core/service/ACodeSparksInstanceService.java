@@ -1,13 +1,12 @@
-/*
- * Copyright (C) 2020, Oliver Moseler
- */
-
 package de.unitrier.st.codesparks.core.service;
 
 import com.intellij.openapi.components.ServiceManager;
 
 import javax.swing.*;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class ACodeSparksInstanceService
 {
     @SuppressWarnings("unused")

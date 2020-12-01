@@ -5,6 +5,9 @@ import de.unitrier.st.codesparks.core.data.AArtifact;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class AThreadStateArtifactFilter
 {
     private final Map<Integer, String> states;

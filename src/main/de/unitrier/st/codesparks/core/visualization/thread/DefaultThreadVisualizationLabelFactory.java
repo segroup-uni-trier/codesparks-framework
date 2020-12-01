@@ -20,6 +20,9 @@ import java.util.List;
 
 import static com.intellij.ui.JBColor.WHITE;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
     @SuppressWarnings("unused")

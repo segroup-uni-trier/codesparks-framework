@@ -9,6 +9,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Optional;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class ADataVisualizer implements IDataVisualizer
 {
     protected final IArtifactVisualizer artifactVisualizer;

@@ -19,6 +19,9 @@ import java.util.Collection;
 import static com.intellij.ui.JBColor.BLACK;
 import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
     private final IMetricIdentifier secondaryMetricIdentifier;

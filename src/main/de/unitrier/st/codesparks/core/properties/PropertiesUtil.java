@@ -12,6 +12,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public final class PropertiesUtil
 {
     private PropertiesUtil() {}

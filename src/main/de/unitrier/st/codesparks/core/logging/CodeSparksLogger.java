@@ -13,6 +13,9 @@ import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 
 import javax.swing.*;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public final class CodeSparksLogger
 {
     private CodeSparksLogger() {}

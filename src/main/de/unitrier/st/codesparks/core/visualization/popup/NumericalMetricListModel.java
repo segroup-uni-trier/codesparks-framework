@@ -9,6 +9,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class NumericalMetricListModel extends DefaultListModel<JBTextArea>
 {
     private final List<ANeighborArtifact> neighborArtifacts;

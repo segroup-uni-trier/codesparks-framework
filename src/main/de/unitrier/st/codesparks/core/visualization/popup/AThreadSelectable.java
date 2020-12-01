@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public abstract class AThreadSelectable implements IThreadSelectable
 {
     AThreadSelectable()

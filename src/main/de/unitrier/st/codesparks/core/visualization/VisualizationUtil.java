@@ -10,6 +10,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public final class VisualizationUtil
 {
     private VisualizationUtil() {}

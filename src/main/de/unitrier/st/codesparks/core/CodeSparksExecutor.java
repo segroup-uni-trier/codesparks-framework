@@ -9,6 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 /*
+ * Copyright (c), Oliver Moseler, 2020
+ */
+
+/*
 This is a template executor. It does nothing but demonstrating the methods which have to be overridden. It can be used to create an own executor for a
 plugin project. An executor needs to be registered in the plugin.xml as a child node to the 'extensions' node:
 <extensions defaultExtensionNs="com.intellij">

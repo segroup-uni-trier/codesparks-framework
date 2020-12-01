@@ -4,6 +4,9 @@ import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 
+/*
+ * Copyright (c), Oliver Moseler, 2020
+ */
 public class ThreadTreeLeafNode extends ColoredSelectableTreeNode
 {
     private final ACodeSparksThread codeSparksThread;
