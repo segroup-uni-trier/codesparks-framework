@@ -19,7 +19,7 @@ import java.util.Collection;
 public class DefaultDataVisualizer extends ADataVisualizer//implements IProfilingDataVisualizer
 {
     private final INeighborArtifactVisualizer artifactCalleeVisualizer;
-    private ANeighborArtifactVisualizationLabelFactory[] calleeFactories;
+    private final ANeighborArtifactVisualizationLabelFactory[] calleeFactories;
 
     public DefaultDataVisualizer()
     {
@@ -44,24 +44,24 @@ public class DefaultDataVisualizer extends ADataVisualizer//implements IProfilin
                                  AArtifactVisualizationLabelFactory[] artifactFactories,
                                  ANeighborArtifactVisualizationLabelFactory[] calleeFactories)
     {
-        //this.artifactVisualizer = artifactVisualizer;
         super(artifactVisualizer, artifactFactories);
         this.artifactCalleeVisualizer = artifactCalleeVisualizer;
-        init(calleeFactories);
+        this.calleeFactories = calleeFactories;
+//        init(calleeFactories);
     }
 
-    private void init(ANeighborArtifactVisualizationLabelFactory[] calleeFactories)
-    {
-        if (calleeFactories == null || calleeFactories.length == 0)
-        {
+//    private void init(ANeighborArtifactVisualizationLabelFactory[] calleeFactories)
+//    {
+//        if (calleeFactories == null || calleeFactories.length == 0)
+//        {
 //            this.calleeFactories = new AArtifactCalleeVisualizationLabelFactory[]{
 //                    new DefaultArtifactCalleeVisualizationLabelFactory()
 //            };
-        } else
-        {
-            this.calleeFactories = calleeFactories;
-        }
-    }
+//        } else
+//        {
+//            this.calleeFactories = calleeFactories;
+//        }
+//    }
 
     @Override
     public Collection<EditorCoverLayerItem> createVisualizations(
