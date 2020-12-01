@@ -382,9 +382,10 @@ public class ArtifactOverview
         ApplicationManager.getApplication().invokeLater(() -> {
             Set<String> includeFilters = retrieveCustomFilters(includeFilter);
             Set<String> excludeFilters = retrieveCustomFilters(excludeFilter);
-            Map<String, List<AArtifact>> lists = artifactPool.getNamedArtifactTypeLists();
 
-            if (lists == null)
+//            Map<String, List<AArtifact>> lists = artifactPool.getNamedArtifactTypeLists();
+            final Map<Class<? extends AArtifact>, List<AArtifact>> map = artifactPool.getArtifacts();
+            if (map == null)//lists == null)
             {
                 return;
             }
@@ -393,13 +394,21 @@ public class ArtifactOverview
 
             clear();
 
-            for (Map.Entry<String, List<AArtifact>> entry : lists.entrySet())
+            for (final Map.Entry<Class<? extends AArtifact>, List<AArtifact>> entry : map.entrySet())
             {
                 List<AArtifact> artifacts = entry.getValue();
                 artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
-                String tabName = entry.getKey();
+                String tabName = artifactPool.getArtifactClassDisplayName(entry.getKey());
                 addTab(tabName, artifacts, primaryMetricIdentifier);
             }
+
+//            for (Map.Entry<String, List<AArtifact>> entry : lists.entrySet())
+//            {
+//                List<AArtifact> artifacts = entry.getValue();
+//                artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
+//                String tabName = entry.getKey();
+//                addTab(tabName, artifacts, primaryMetricIdentifier);
+//            }
 
             if (lastSelectedIndex > 0 && lastSelectedIndex < tabbedPane.getTabCount())
             {

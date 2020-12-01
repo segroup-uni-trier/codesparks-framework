@@ -10,18 +10,22 @@ import java.util.Map;
  */
 public interface IArtifactPool extends ICodeSparksThreadFilterable, IArtifactPoolExportable
 {
+    void addArtifact(final AArtifact artifact);
+
     AArtifact getArtifact(final String identifier);
 
     AArtifact getArtifact(final Class<? extends AArtifact> artifactClass, final String identifier);
 
     List<AArtifact> getArtifacts(final Class<? extends AArtifact> artifactClass);
 
-    void addArtifact(final AArtifact artifact);
+    Map<Class<? extends AArtifact>, List<AArtifact>> getArtifacts();
 
-    /**
-     * @return A map, where the keys represent title strings of the values which are lists of artifacts.
-     */
-    Map<String, List<AArtifact>> getNamedArtifactTypeLists();
+    String getArtifactClassDisplayName(final Class<? extends AArtifact> artifactClass);
+
+//    /**
+//     * @return A map, where the keys represent title strings of the values which are lists of artifacts.
+//     */
+//    Map<String, List<AArtifact>> getNamedArtifactTypeLists();
 
     /**
      * @return An artifact which encapsulates the metric value aggregated for the entire program run. Its assigned thread show
@@ -30,17 +34,11 @@ public interface IArtifactPool extends ICodeSparksThreadFilterable, IArtifactPoo
     AArtifact getProgramArtifact();
 
     /**
-     * @param artifact The artifact which encapsulates the global (total) metric value. Its assigned thread artifacts must represent the
-     *                 global metric value's distribution over all threads.
+     * Will create an artifact representing the program artifact. For that, it uses the constructor of the class given as parameter.
+     * Is thread safe!
+     *
+     * @param artifactClass The class of the artifact to create.
+     * @return The created program artifact
      */
-    @Deprecated
-    void setProgramArtifact(AArtifact artifact);
-
-    AArtifact setAndGetProgramArtifact(final String name, final String identifier, final Class<? extends AArtifact> artifactClass);
-
-//    /**
-//     * @return A full trie of the collected profiling artifacts, if the data processor is configured to compute one. An empty trie, otherwise.
-//     */
-//    @Deprecated // The idea is to make the trie an own metric of an artifact
-//    ArtifactTrie getArtifactTrie();
+    AArtifact getOrCreateProgramArtifact(final Class<? extends AArtifact> artifactClass);
 }

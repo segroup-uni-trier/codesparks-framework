@@ -1,7 +1,10 @@
 package de.unitrier.st.codesparks.core;
 
 import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /*
@@ -9,17 +12,9 @@ import java.util.*;
  */
 public abstract class AArtifactPool implements IArtifactPool
 {
-    private IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider;
-
-    public void registerArtifactClassDisplayNameProvider(IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
-    {
-        this.artifactClassDisplayNameProvider = artifactClassDisplayNameProvider;
-    }
-
     protected AArtifactPool()
     {
         artifacts = new HashMap<>();
-//        artifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
     }
 
     protected AArtifactPool(IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
@@ -28,25 +23,23 @@ public abstract class AArtifactPool implements IArtifactPool
         this.artifactClassDisplayNameProvider = artifactClassDisplayNameProvider;
     }
 
+    private IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider;
+
+    public void registerArtifactClassDisplayNameProvider(IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
+    {
+        this.artifactClassDisplayNameProvider = artifactClassDisplayNameProvider;
+    }
+
     /*
 
      */
 
-    protected final Object programArtifactLock = new Object();
+    private final Object programArtifactLock = new Object();
 
     private AArtifact programArtifact;
 
     @Override
-    public void setProgramArtifact(AArtifact programArtifact)
-    {
-        synchronized (programArtifactLock)
-        {
-            this.programArtifact = programArtifact;
-        }
-    }
-
-    @Override
-    public AArtifact getProgramArtifact()
+    public final AArtifact getProgramArtifact()
     {
         synchronized (programArtifactLock)
         {
@@ -54,17 +47,74 @@ public abstract class AArtifactPool implements IArtifactPool
         }
     }
 
+    @Override
+    public final AArtifact getOrCreateProgramArtifact(final Class<? extends AArtifact> artifactClass)
+    {
+        if (programArtifact == null)
+        {
+            try
+            {
+                final Constructor<? extends AArtifact> declaredConstructor = artifactClass.getDeclaredConstructor(String.class, String.class);
+                final String name = "Program";
+                synchronized (programArtifactLock)
+                { // Double checked locking! This method might be called by multiple threads simultaneously. For instance, that's the case in the
+                    // stack sampling thread analysis strategies of the CodeSparks-JPT instance because that data is processed simultaneously using a thread
+                    // pool!
+                    if (programArtifact == null)
+                    {
+                        programArtifact = declaredConstructor.newInstance(name, name);
+                    } else
+                    {
+                        CodeSparksLogger.addText("Thread '%s' tried to assign a new program artifact although it is not null!", Thread.currentThread());
+                    }
+                }
+            } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return programArtifact;
+    }
+
     /*
 
      */
 
-    protected final Object artifactsLock = new Object();
+    private final Object artifactsLock = new Object();
 
     private final Map<Class<? extends AArtifact>, Map<String, AArtifact>> artifacts;
 
     @Override
-    public List<AArtifact> getArtifacts(Class<? extends AArtifact> artifactClass)
+    public String getArtifactClassDisplayName(final Class<? extends AArtifact> artifactClass)
     {
+        if (artifactClassDisplayNameProvider == null)
+        {
+            return "n/a";
+        }
+        return artifactClassDisplayNameProvider.getDisplayName(artifactClass);
+    }
+
+    @Override
+    public Map<Class<? extends AArtifact>, List<AArtifact>> getArtifacts()
+    {
+        Map<Class<? extends AArtifact>, List<AArtifact>> map = new HashMap<>();
+        synchronized (artifactsLock)
+        {
+            for (final Map.Entry<Class<? extends AArtifact>, Map<String, AArtifact>> entry : artifacts.entrySet())
+            {
+                map.put(entry.getKey(), new ArrayList<>(entry.getValue().values()));
+            }
+        }
+        return map;
+    }
+
+    @Override
+    public final List<AArtifact> getArtifacts(Class<? extends AArtifact> artifactClass)
+    {
+        if (artifactClass == null)
+        {
+            return new ArrayList<>(0);
+        }
         synchronized (artifactsLock)
         {
             Map<String, AArtifact> artifactsOfClassMap = artifacts.computeIfAbsent(artifactClass, k -> new HashMap<>());
@@ -76,7 +126,7 @@ public abstract class AArtifactPool implements IArtifactPool
     }
 
     @Override
-    public AArtifact getArtifact(final String identifier)
+    public final AArtifact getArtifact(final String identifier)
     {
         if (identifier == null || "".equals(identifier))
         {
@@ -98,8 +148,12 @@ public abstract class AArtifactPool implements IArtifactPool
     }
 
     @Override
-    public AArtifact getArtifact(Class<? extends AArtifact> artifactClass, String identifier)
+    public final AArtifact getArtifact(final Class<? extends AArtifact> artifactClass, final String identifier)
     {
+        if (artifactClass == null || identifier == null)
+        {
+            return null;
+        }
         synchronized (artifactsLock)
         {
             Map<String, AArtifact> artifactsOfClassMap = artifacts.computeIfAbsent(artifactClass, k -> new HashMap<>());
@@ -112,7 +166,7 @@ public abstract class AArtifactPool implements IArtifactPool
     }
 
     @Override
-    public void addArtifact(AArtifact artifact)
+    public final void addArtifact(AArtifact artifact)
     {
         synchronized (artifactsLock)
         {
@@ -122,45 +176,32 @@ public abstract class AArtifactPool implements IArtifactPool
         }
     }
 
-//    private final ArtifactTrie artifactTrie;
-
 //    @Override
-//    public ArtifactTrie getArtifactTrie()
+//    @Deprecated
+//    public final Map<String, List<AArtifact>> getNamedArtifactTypeLists()
 //    {
-//        return artifactTrie;
+//        Map<String, List<AArtifact>> map = new HashMap<>();
+//        synchronized (artifactsLock)
+//        {
+//            for (Map.Entry<Class<? extends AArtifact>, Map<String, AArtifact>> classMapEntry : artifacts.entrySet())
+//            {
+//                Class<? extends AArtifact> artifactClass = classMapEntry.getKey();
+//                String classDisplayName;
+//                if (artifactClassDisplayNameProvider == null)
+//                {
+//                    classDisplayName = artifactClass.getTypeName();
+//                } else
+//                {
+//                    classDisplayName = artifactClassDisplayNameProvider.getDisplayName(artifactClass);
+//                }
+//                map.put(classDisplayName, new ArrayList<>(classMapEntry.getValue().values()));
+//            }
+//        }
+//        return map;
 //    }
 
-//    protected final void applyFilter(AProfilingArtifact artifact, IThreadArtifactFilter threadArtifactFilter)
-//    {
-//        threadArtifacts.forEach(threadArtifact -> threadArtifact.setFiltered(threadArtifactFilter.filterThreadArtifact(threadArtifact)));
-//    }
-
-
     @Override
-    public Map<String, List<AArtifact>> getNamedArtifactTypeLists()
-    {
-        Map<String, List<AArtifact>> map = new HashMap<>();
-        synchronized (artifactsLock)
-        {
-            for (Map.Entry<Class<? extends AArtifact>, Map<String, AArtifact>> classMapEntry : artifacts.entrySet())
-            {
-                Class<? extends AArtifact> artifactClass = classMapEntry.getKey();
-                String classDisplayName;
-                if (artifactClassDisplayNameProvider == null)
-                {
-                    classDisplayName = artifactClass.getTypeName();
-                } else
-                {
-                    classDisplayName = artifactClassDisplayNameProvider.getDisplayName(artifactClass);
-                }
-                map.put(classDisplayName, new ArrayList<>(classMapEntry.getValue().values()));
-            }
-        }
-        return map;
-    }
-
-    @Override
-    public void applyThreadFilter(final ICodeSparksThreadFilter threadFilter)
+    public final void applyThreadFilter(final ICodeSparksThreadFilter threadFilter)
     {
         if (threadFilter == null)
         {
@@ -168,10 +209,8 @@ public abstract class AArtifactPool implements IArtifactPool
         }
         synchronized (programArtifactLock)
         {
-            AArtifact programArtifact = getProgramArtifact();
             if (programArtifact != null)
             {
-//                applyFilter(programArtifact.getThreadArtifacts(), threadArtifactFilter);
                 programArtifact.applyThreadFilter(threadFilter);
             }
         }

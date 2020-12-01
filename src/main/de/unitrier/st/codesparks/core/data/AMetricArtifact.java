@@ -1,5 +1,7 @@
 package de.unitrier.st.codesparks.core.data;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /*
@@ -81,6 +83,41 @@ public abstract class AMetricArtifact
             value = metrics.get(metricIdentifier);
         }
         return value;
+    }
+
+    /**
+     * A thread safe method to get or create a metric value in case it might not have been initialised yet. If the value is non null, no new value will be
+     * instantiated.
+     *
+     * @param metricIdentifier The metric identifier.
+     * @return The value (as object) associated with the metric identifier.
+     */
+    public final Object getOrCreateMetricValue(final IMetricIdentifier metricIdentifier, final Constructor<?> constructor, final Object... initArgs)
+    {
+        if (metricIdentifier == null)
+        {
+            return null;
+        }
+        Object metricValue = metrics.get(metricIdentifier);
+        if (metricValue == null)
+        {
+            synchronized (metricsLock)
+            { // Double checked locking!
+                metricValue = metrics.get(metricIdentifier);
+                if (metricValue == null)
+                {
+                    try
+                    {
+                        metricValue = constructor.newInstance(initArgs);
+                        setMetricValue(metricIdentifier, metricValue);
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return metricValue;
     }
 
     public void setMetricValue(final IMetricIdentifier metricIdentifier, final Object value)

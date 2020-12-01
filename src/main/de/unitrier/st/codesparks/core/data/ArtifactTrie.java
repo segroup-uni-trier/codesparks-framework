@@ -51,24 +51,29 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         return root;
     }
 
-    public synchronized void add(List<Element> methods)
+    private final Object trieLock = new Object();
+
+    public void add(List<Element> methods)
     {
-        String rootStr = "root";
-        ArtifactTrieNode current = addVertex(rootStr, rootStr);
-        StringBuilder strb = new StringBuilder(rootStr);
-        for (int i = methods.size() - 1; i > -1; i--)
+        final String rootStr = "root";
+        final StringBuilder strb = new StringBuilder(rootStr);
+        synchronized (trieLock)
         {
-            Element method = methods.get(i);
-            String methodName = removeWhiteSpace(method.getText());
-            strb.append(methodName);
-            String identifier = removeWhiteSpace(strb.toString()
-                    .replaceAll("<", "")
-                    .replaceAll(">", "")
-                    .replaceAll("\\$", ""));
-            ArtifactTrieNode node = addVertex(identifier, methodName);
-            ArtifactTrieEdge edge = new ArtifactTrieEdge(current, node);
-            this.addEdge(current, node, edge);
-            current = node;
+            ArtifactTrieNode current = addVertex(rootStr, rootStr);
+            for (int i = methods.size() - 1; i > -1; i--)
+            {
+                Element method = methods.get(i);
+                String methodName = removeWhiteSpace(method.getText());
+                strb.append(methodName);
+                String identifier = removeWhiteSpace(strb.toString()
+                        .replaceAll("<", "")
+                        .replaceAll(">", "")
+                        .replaceAll("\\$", ""));
+                ArtifactTrieNode node = addVertex(identifier, methodName);
+                ArtifactTrieEdge edge = new ArtifactTrieEdge(current, node);
+                this.addEdge(current, node, edge);
+                current = node;
+            }
         }
     }
 
