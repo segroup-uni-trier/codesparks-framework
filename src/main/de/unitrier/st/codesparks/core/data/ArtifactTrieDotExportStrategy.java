@@ -7,9 +7,6 @@ import org.jgrapht.io.GraphExporter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
@@ -28,20 +25,16 @@ public class ArtifactTrieDotExportStrategy implements IArtifactTrieExportStrateg
     {
         GraphExporter<ArtifactTrieNode, ArtifactTrieEdge> exporter = new DOTExporter<>(ArtifactTrieNode::getIdentifier,
                 ArtifactTrieNode::getLabel, ArtifactTrieEdge::getLabel);
-        Path path = Paths.get(destinationFilePath);
         FileWriter fileWriter = null;
         try
         {
-            if (Files.notExists(path))
-            {
-                Files.createDirectories(path);
-            }
             File file = new File(destinationFilePath);
             if (!file.exists())
             {
+                //noinspection ResultOfMethodCallIgnored
                 file.createNewFile();
             }
-            fileWriter = new FileWriter(destinationFilePath);
+            fileWriter = new FileWriter(file);
             exporter.exportGraph(artifactTrie, fileWriter);
         } catch (IOException | ExportException e)
         {

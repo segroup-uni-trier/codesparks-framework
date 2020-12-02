@@ -17,9 +17,27 @@ public class ArtifactTrieNode
         this.label = label;
     }
 
-    synchronized void inc()
+    private final Object cntLock = new Object();
+
+    void inc()
     {
-        cnt++;
+        synchronized (cntLock)
+        {
+            cnt++;
+        }
+    }
+
+    /**
+     * This method is only used for testing purposes.
+     *
+     * @return The actual satellite data 'cnt' associated with the node. It represents the number of times that node occurs in the respective calling context.
+     */
+    public long getCnt()
+    {
+        synchronized (cntLock)
+        {
+            return cnt;
+        }
     }
 
     @NotNull
@@ -28,9 +46,12 @@ public class ArtifactTrieNode
         return identifier;
     }
 
-    public synchronized String getLabel()
+    public String getLabel()
     {
-        return String.format("%s (%d)", label, cnt);
+        synchronized (cntLock)
+        {
+            return String.format("%s (%d)", label, cnt);
+        }
     }
 
     @Override
