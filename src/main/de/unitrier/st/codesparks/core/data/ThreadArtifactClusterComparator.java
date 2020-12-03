@@ -8,18 +8,18 @@ import java.util.function.ToDoubleFunction;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class CodeSparksThreadClusterComparator implements Comparator<CodeSparksThreadCluster>
+public class ThreadArtifactClusterComparator implements Comparator<ThreadArtifactCluster>
 {
-    private final static Map<IMetricIdentifier, Comparator<CodeSparksThreadCluster>> comparators = new HashMap<>();
+    private final static Map<IMetricIdentifier, Comparator<ThreadArtifactCluster>> comparators = new HashMap<>();
 
-    public static Comparator<CodeSparksThreadCluster> getInstance(final IMetricIdentifier metricIdentifier)
+    public static Comparator<ThreadArtifactCluster> getInstance(final IMetricIdentifier metricIdentifier)
     {
-        synchronized (CodeSparksThreadClusterComparator.class)
+        synchronized (ThreadArtifactClusterComparator.class)
         {
-            Comparator<CodeSparksThreadCluster> codeSparksThreadClusterComparator = comparators.get(metricIdentifier);
+            Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = comparators.get(metricIdentifier);
             if (codeSparksThreadClusterComparator == null)
             {
-                codeSparksThreadClusterComparator = new CodeSparksThreadClusterComparator(metricIdentifier);
+                codeSparksThreadClusterComparator = new ThreadArtifactClusterComparator(metricIdentifier);
                 comparators.put(metricIdentifier, codeSparksThreadClusterComparator);
             }
             return codeSparksThreadClusterComparator;
@@ -28,13 +28,13 @@ public class CodeSparksThreadClusterComparator implements Comparator<CodeSparksT
 
     private final IMetricIdentifier metricIdentifier;
 
-    private CodeSparksThreadClusterComparator(final IMetricIdentifier metricIdentifier)
+    private ThreadArtifactClusterComparator(final IMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }
 
     @Override
-    public int compare(CodeSparksThreadCluster o1, CodeSparksThreadCluster o2)
+    public int compare(ThreadArtifactCluster o1, ThreadArtifactCluster o2)
     {
         final ToDoubleFunction<AThreadArtifact> f = thread -> thread.getNumericalMetricValue(metricIdentifier);
         double sum1 = o1.stream().mapToDouble(f).sum() / o1.size();

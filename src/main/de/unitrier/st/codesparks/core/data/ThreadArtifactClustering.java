@@ -5,6 +5,6 @@ import java.util.ArrayList;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class CodeSparksThreadClustering extends ArrayList<CodeSparksThreadCluster>
+public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
 {
 }

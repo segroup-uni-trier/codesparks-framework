@@ -8,7 +8,7 @@ import java.util.Map;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public interface IArtifactPool extends ICodeSparksThreadFilterable, IArtifactPoolExportable
+public interface IArtifactPool extends IThreadArtifactFilterable, IArtifactPoolExportable
 {
     void addArtifact(final AArtifact artifact);
 

@@ -16,7 +16,7 @@ public final class ThreadVisualizationUtil
     private ThreadVisualizationUtil() { }
 
     public static double calculateFilteredAvgNumericalMetricRatio(
-            final CodeSparksThreadCluster cluster
+            final ThreadArtifactCluster cluster
             , final IMetricIdentifier metricIdentifier
             , final boolean ignoreFilter
     )
@@ -35,7 +35,7 @@ public final class ThreadVisualizationUtil
     }
 
     public static double calculateFilteredAvgNumericalMetricRatioForZoomVisualization(
-            final CodeSparksThreadCluster cluster
+            final ThreadArtifactCluster cluster
             , final Set<AThreadArtifact> selectedCodeSparksThreads
             , final IMetricIdentifier metricIdentifier
             , final boolean ignoreFilter
@@ -62,7 +62,7 @@ public final class ThreadVisualizationUtil
     }
 
     public static double calculateFilteredSumNumericalMetricRatio(
-            final CodeSparksThreadCluster cluster
+            final ThreadArtifactCluster cluster
             , final IMetricIdentifier metricIdentifier
             , final boolean ignoreFilter
     )
@@ -88,7 +88,7 @@ public final class ThreadVisualizationUtil
         return sum;
     }
 
-    public static double calculateFilteredSumNumericalMetricRatioForZoomVisualisation(CodeSparksThreadCluster cluster,
+    public static double calculateFilteredSumNumericalMetricRatioForZoomVisualisation(ThreadArtifactCluster cluster,
                                                                                       final IMetricIdentifier metricIdentifier,
                                                                                       Set<AThreadArtifact> selectedCodeSparksThreads,
                                                                                       boolean ignoreFilter)

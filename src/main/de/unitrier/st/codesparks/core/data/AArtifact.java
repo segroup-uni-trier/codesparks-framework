@@ -23,7 +23,7 @@ public abstract class AArtifact implements IDisplayable
         return identifier;
     }
 
-    protected AArtifact(final String name, final String identifier)
+    AArtifact(final String name, final String identifier)
     {
         this.name = name == null ? "" : name;
         this.identifier = identifier == null ? "" : identifier;

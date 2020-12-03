@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class VisualThreadClusterPropertiesManager
         }
     }
 
-    public VisualThreadClusterProperties getProperties(CodeSparksThreadCluster cluster)
+    public VisualThreadClusterProperties getProperties(ThreadArtifactCluster cluster)
     {
         synchronized (propertiesMap)
         {

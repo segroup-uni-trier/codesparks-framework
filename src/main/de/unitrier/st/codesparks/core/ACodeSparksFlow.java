@@ -21,9 +21,7 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
-import de.unitrier.st.codesparks.core.data.ICodeSparksThreadFilter;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerItem;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerManager;
 import de.unitrier.st.codesparks.core.editorcoverlayer.IEditorCoverLayerUpdater;
@@ -222,7 +220,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
     private final Object uiLock = new Object();
 
-    public void applyThreadArtifactFilter(ICodeSparksThreadFilter threadFilter)
+    public void applyThreadArtifactFilter(IThreadArtifactFilter threadFilter)
     {
         synchronized (uiLock)
         {

@@ -70,10 +70,10 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         threadSelectables.clear();
         final JBTabbedPane tabbedPane = new JBTabbedPane();
 
-        CodeSparksThreadClustering sortedDefaultCodeSparksThreadClustering = scArtifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        ThreadArtifactClustering sortedDefaultThreadArtifactClustering = scArtifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
         Map<String, List<AThreadArtifact>> map = new HashMap<>();
         int clusterId = 1;
-        for (CodeSparksThreadCluster threadArtifacts : sortedDefaultCodeSparksThreadClustering)
+        for (ThreadArtifactCluster threadArtifacts : sortedDefaultThreadArtifactClustering)
         {
             map.put("Cluster:" + clusterId++, threadArtifacts);
         }
@@ -86,7 +86,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
         final Map<String, List<AThreadArtifact>> threadTypeLists = scArtifact.getThreadTypeLists();
         AThreadSelectable threadTypesTree = new ThreadTypeTree(threadTypeLists, primaryMetricIdentifier,
-                sortedDefaultCodeSparksThreadClustering);
+                sortedDefaultThreadArtifactClustering);
         threadSelectables.add(threadTypesTree);
         tabbedPane.addTab("Types", new JBScrollPane(threadTypesTree.getComponent()));
         tabbedPane.setMinimumSize(new Dimension(400, 150));
@@ -158,7 +158,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
             popupPanel.cancelPopup();
             threadSelectables.forEach(IThreadSelectable::selectAll);
             ACodeSparksFlow currentProfilingFlow = CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow();
-            currentProfilingFlow.applyThreadArtifactFilter(GlobalResetThreadFilter.getInstance());
+            currentProfilingFlow.applyThreadArtifactFilter(GlobalResetThreadArtifactFilter.getInstance());
         });
 
         JButton apply = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.button.apply.thread.filter"));
@@ -169,8 +169,8 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
             popupPanel.cancelPopup();
             int index = indexProvider.getThreadSelectableIndex();
             IThreadSelectable iThreadSelectable = threadSelectables.get(index);
-            final ICodeSparksThreadFilter iCodeSparksThreadFilter = new DefaultThreadFilter(iThreadSelectable);
-            CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(iCodeSparksThreadFilter);
+            final IThreadArtifactFilter iThreadArtifactFilter = new DefaultThreadArtifactFilter(iThreadSelectable);
+            CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(iThreadArtifactFilter);
         });
 
         controlButtonsBox.add(selectAll);
@@ -222,7 +222,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         zoomedThreadRadar.addMouseListener(mouseAdapter);
 
 
-        final int numberOfClusters = sortedDefaultCodeSparksThreadClustering.size();
+        final int numberOfClusters = sortedDefaultThreadArtifactClustering.size();
 
         // Cluster selection buttons
 
@@ -238,7 +238,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
             final int indexToUse = i;
             threadClusterSelectionButtons[i].addActionListener(e ->
                     {
-                        final CodeSparksThreadCluster cluster = sortedDefaultCodeSparksThreadClustering.get(indexToUse);
+                        final ThreadArtifactCluster cluster = sortedDefaultThreadArtifactClustering.get(indexToUse);
                         threadSelectables.forEach(iThreadSelectable -> iThreadSelectable.toggleCluster(cluster));
                         UserActivityLogger.getInstance().log(UserActivityEnum.ThreadClusterToggleButtonClicked,
                                 "buttonIndex=" + indexToUse, "clusterId=" + cluster.getId(),
@@ -248,7 +248,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
             if (i < numberOfClusters)
             {
-                CodeSparksThreadCluster cluster = sortedDefaultCodeSparksThreadClustering.get(i);
+                ThreadArtifactCluster cluster = sortedDefaultThreadArtifactClustering.get(i);
 
                 if (cluster.size() < 1)
                 {
@@ -424,7 +424,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
     }
 
     @Override
-    public void onHover(CodeSparksThreadCluster cluster)
+    public void onHover(ThreadArtifactCluster cluster)
     {
         zoomedThreadRadar.onHoverCluster(cluster.getId());
         updateHoverLabels(cluster);
@@ -441,7 +441,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         zoomedThreadRadar.unHoverCluster();
     }
 
-    private void updateHoverLabels(CodeSparksThreadCluster cluster)
+    private void updateHoverLabels(ThreadArtifactCluster cluster)
     {
         if (threadSelectables.size() < 1)
         {

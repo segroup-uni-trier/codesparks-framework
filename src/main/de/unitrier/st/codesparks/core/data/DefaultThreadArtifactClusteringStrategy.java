@@ -8,21 +8,21 @@ import java.util.*;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThreadClusteringStrategy
+public class DefaultThreadArtifactClusteringStrategy implements IThreadArtifactClusteringStrategy
 {
 //    private static volatile ICodeSparksThreadClusteringStrategy instance;
 
-    private static final Map<IMetricIdentifier, ICodeSparksThreadClusteringStrategy> strategies = new HashMap<>();
+    private static final Map<IMetricIdentifier, IThreadArtifactClusteringStrategy> strategies = new HashMap<>();
 
-    public static ICodeSparksThreadClusteringStrategy getInstance(final IMetricIdentifier metricIdentifier)
+    public static IThreadArtifactClusteringStrategy getInstance(final IMetricIdentifier metricIdentifier)
     {
         final String id = metricIdentifier.toString();
-        synchronized (DefaultCodeSparksThreadClusteringStrategy.class)
+        synchronized (DefaultThreadArtifactClusteringStrategy.class)
         {
-            ICodeSparksThreadClusteringStrategy instance = strategies.get(metricIdentifier);
+            IThreadArtifactClusteringStrategy instance = strategies.get(metricIdentifier);
             if (instance == null)
             {
-                instance = new DefaultCodeSparksThreadClusteringStrategy(metricIdentifier);
+                instance = new DefaultThreadArtifactClusteringStrategy(metricIdentifier);
                 strategies.put(metricIdentifier, instance);
             }
             return instance;
@@ -31,7 +31,7 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
 
     private final IMetricIdentifier metricIdentifier;
 
-    private DefaultCodeSparksThreadClusteringStrategy(final IMetricIdentifier metricIdentifier)
+    private DefaultThreadArtifactClusteringStrategy(final IMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }
@@ -65,12 +65,12 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
     }
 
     @Override
-    public CodeSparksThreadClustering clusterCodeSparksThreads(Collection<AThreadArtifact> codeSparksThreads)
+    public ThreadArtifactClustering clusterCodeSparksThreads(Collection<AThreadArtifact> codeSparksThreads)
     {
         final int k = 3;
         final int maxIterations = 100;
 
-        CodeSparksThreadClustering artifactClusters = new CodeSparksThreadClustering();
+        ThreadArtifactClustering artifactClusters = new ThreadArtifactClustering();
 
         int size = codeSparksThreads.size();
 
@@ -121,7 +121,7 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
 
         for (PointCluster pointCluster : pointClusters)
         {
-            CodeSparksThreadCluster artifactCluster = new CodeSparksThreadCluster();
+            ThreadArtifactCluster artifactCluster = new ThreadArtifactCluster();
             for (Point point : pointCluster.getPoints())
             {
                 artifactCluster.add(point.getThreadArtifact());

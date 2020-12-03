@@ -1,7 +1,7 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 
 import javax.swing.*;
 import java.util.Set;
@@ -15,7 +15,7 @@ public interface IThreadSelectable
 
     Set<AThreadArtifact> getFilteredThreadArtifacts();
 
-    Set<AThreadArtifact> getSelectedThreadArtifactsOfCluster(CodeSparksThreadCluster cluster);
+    Set<AThreadArtifact> getSelectedThreadArtifactsOfCluster(ThreadArtifactCluster cluster);
 
     Set<String> getFilteredThreadArtifactIdentifiers();
 
@@ -29,7 +29,7 @@ public interface IThreadSelectable
 
     void invertAll();
 
-    void toggleCluster(CodeSparksThreadCluster cluster);
+    void toggleCluster(ThreadArtifactCluster cluster);
 
     //boolean hasFocus();
 }

@@ -6,8 +6,8 @@ import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadComparator;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactComparator;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -78,7 +78,7 @@ public class ThreadTree extends AThreadSelectable
         {
             if (entry.getValue().isEmpty()) continue;
             List<AThreadArtifact> codeSparksThreads = entry.getValue();
-            codeSparksThreads.sort(new CodeSparksThreadComparator(metricIdentifier));
+            codeSparksThreads.sort(new ThreadArtifactComparator(metricIdentifier));
             ThreadTreeInnerNode innerNode = new ThreadTreeInnerNode(entry.getKey(), codeSparksThreads, metricIdentifier);
             boolean isInnerNodeSelected = true;
             for (AThreadArtifact codeSparksThread : codeSparksThreads)
@@ -243,7 +243,7 @@ public class ThreadTree extends AThreadSelectable
     }
 
     @Override
-    public void toggleCluster(CodeSparksThreadCluster cluster)
+    public void toggleCluster(ThreadArtifactCluster cluster)
     {
         if (cluster == null) return;
         if (innerNodes == null) return;

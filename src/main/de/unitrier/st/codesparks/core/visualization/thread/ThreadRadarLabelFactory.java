@@ -93,7 +93,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             return emptyLabel();
         }
 
-        List<CodeSparksThreadCluster> codeSparksThreadClusters = scArtifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        List<ThreadArtifactCluster> threadArtifactClusters = scArtifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
         int startAngle = 90;
         boolean useDisabledColors = false;
         JBColor[] colors = {new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), new JBColor(Color.decode("#B25283"),
@@ -130,21 +130,21 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
         g2d.fillRect(0, 0, bi.getWidth(), bi.getHeight());
 
         double threadRationFromRunBefore = 0;
-        for (int i = 0; i < codeSparksThreadClusters.size(); i++)
+        for (int i = 0; i < threadArtifactClusters.size(); i++)
         {
             VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
             RadialVisualThreadClusterProperties properties =
-                    new RadialVisualThreadClusterProperties(codeSparksThreadClusters.get(i), colors[i],
+                    new RadialVisualThreadClusterProperties(threadArtifactClusters.get(i), colors[i],
                             scArtifact.getNumberOfThreads(), primaryMetricIdentifier);
             propertiesManager.registerProperties(properties);
 
             //double filteredRuntimeRatio = properties.calculateFilteredRuntimeRatio(threadArtifactClusters.get(i), useDisabledColors);
-            double filteredRuntimeRatio = properties.calculateAvgFilteredNumericalMetricRatio(codeSparksThreadClusters.get(i), primaryMetricIdentifier,
+            double filteredRuntimeRatio = properties.calculateAvgFilteredNumericalMetricRatio(threadArtifactClusters.get(i), primaryMetricIdentifier,
                     useDisabledColors);
 
-            double filteredThreadRatio = properties.calculateFilteredThreadRatio(codeSparksThreadClusters.get(i),
+            double filteredThreadRatio = properties.calculateFilteredThreadRatio(threadArtifactClusters.get(i),
                     (int) numberOfSelectedArtifactThreads, useDisabledColors);
-            double filteredRuntimeRatioSum = properties.calculateFilteredSumNumericalMetricRatio(codeSparksThreadClusters.get(i), primaryMetricIdentifier,
+            double filteredRuntimeRatioSum = properties.calculateFilteredSumNumericalMetricRatio(threadArtifactClusters.get(i), primaryMetricIdentifier,
                     useDisabledColors);
 
             if (i != 0)

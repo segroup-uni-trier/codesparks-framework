@@ -7,12 +7,12 @@ import java.util.Set;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class DefaultThreadFilter implements ICodeSparksThreadFilter
+public class DefaultThreadArtifactFilter implements IThreadArtifactFilter
 {
 
     private final IThreadSelectable iThreadSelectable;
 
-    public DefaultThreadFilter(IThreadSelectable iThreadSelectable)
+    public DefaultThreadArtifactFilter(IThreadSelectable iThreadSelectable)
     {
         this.iThreadSelectable = iThreadSelectable;
     }

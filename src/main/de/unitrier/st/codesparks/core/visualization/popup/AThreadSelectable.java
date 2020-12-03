@@ -1,7 +1,7 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -93,7 +93,7 @@ public abstract class AThreadSelectable implements IThreadSelectable
     }
 
     @Override
-    public Set<AThreadArtifact> getSelectedThreadArtifactsOfCluster(CodeSparksThreadCluster cluster)
+    public Set<AThreadArtifact> getSelectedThreadArtifactsOfCluster(ThreadArtifactCluster cluster)
     {
         final Set<AThreadArtifact> selectedCodeSparksThreads = getSelectedThreadArtifacts();
         return cluster.stream().filter(selectedCodeSparksThreads::contains).collect(Collectors.toSet());

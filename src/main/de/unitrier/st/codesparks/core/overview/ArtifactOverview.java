@@ -251,7 +251,7 @@ public class ArtifactOverview
 
             UserActivityLogger.getInstance().log(UserActivityEnum.OverviewThreadFilterReset);
 
-            CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(GlobalResetThreadFilter
+            CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(GlobalResetThreadArtifactFilter
                     .getInstance());
         });
         JBPanel<BorderLayoutPanel> resetThreadFilterButtonWrapper = new BorderLayoutPanel();// new JBPanel(new BorderLayout());

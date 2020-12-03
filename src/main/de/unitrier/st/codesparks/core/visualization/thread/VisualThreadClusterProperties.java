@@ -1,17 +1,17 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
 public class VisualThreadClusterProperties
 {
-    private final CodeSparksThreadCluster cluster;
+    private final ThreadArtifactCluster cluster;
     private final JBColor color;
 
-    public VisualThreadClusterProperties(CodeSparksThreadCluster cluster, JBColor color)
+    public VisualThreadClusterProperties(ThreadArtifactCluster cluster, JBColor color)
     {
         this.cluster = cluster;
         this.color = color;
@@ -22,7 +22,7 @@ public class VisualThreadClusterProperties
         return color;
     }
 
-    public CodeSparksThreadCluster getCluster()
+    public ThreadArtifactCluster getCluster()
     {
         return cluster;
     }

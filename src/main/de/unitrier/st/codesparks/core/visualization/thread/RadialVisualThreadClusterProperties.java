@@ -2,7 +2,7 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 
 import java.util.Arrays;
@@ -22,7 +22,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
     private double completeFilteredNumericalMetricValue;
 
     public RadialVisualThreadClusterProperties(
-            final CodeSparksThreadCluster cluster
+            final ThreadArtifactCluster cluster
             , final JBColor color
             , final int numberOfArtifactThreads
             , final IMetricIdentifier metricIdentifier)
@@ -33,17 +33,17 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
         calculateMaxNumericalMetricRatio(cluster, metricIdentifier);
     }
 
-    private void calculateNumberOfThreads(CodeSparksThreadCluster cluster)
+    private void calculateNumberOfThreads(ThreadArtifactCluster cluster)
     {
         numberOfThreads = cluster.size();
     }
 
-    private void calculateThreadRatio(CodeSparksThreadCluster cluster, int numberOfArtifactThreads)
+    private void calculateThreadRatio(ThreadArtifactCluster cluster, int numberOfArtifactThreads)
     {
         threadRatio = (double) cluster.size() / numberOfArtifactThreads;
     }
 
-    private void calculateMaxNumericalMetricRatio(CodeSparksThreadCluster threadCluster, final IMetricIdentifier metricIdentifier)
+    private void calculateMaxNumericalMetricRatio(ThreadArtifactCluster threadCluster, final IMetricIdentifier metricIdentifier)
     {
         double max = 0;
         for (AThreadArtifact thread : threadCluster)
@@ -57,7 +57,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
         numericalMetricRatio = max;
     }
 
-    private int calculateNumberOfFilteredThreads(CodeSparksThreadCluster cluster, boolean ignoreFilter)
+    private int calculateNumberOfFilteredThreads(ThreadArtifactCluster cluster, boolean ignoreFilter)
     {
 
         int numberOfFilteredThreads = 0;
@@ -72,7 +72,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
         return numberOfFilteredThreads;
     }
 
-    double calculateFilteredThreadRatio(CodeSparksThreadCluster cluster, int numberOfArtifactThreads, boolean ignoreFilter)
+    double calculateFilteredThreadRatio(ThreadArtifactCluster cluster, int numberOfArtifactThreads, boolean ignoreFilter)
     {
         return (double) calculateNumberOfFilteredThreads(cluster, ignoreFilter) / numberOfArtifactThreads;
     }
@@ -94,7 +94,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
 //        return max;
 //    }
 
-    double calculateAvgFilteredNumericalMetricRatio(CodeSparksThreadCluster cluster, final IMetricIdentifier metricIdentifier, boolean ignoreFilter)
+    double calculateAvgFilteredNumericalMetricRatio(ThreadArtifactCluster cluster, final IMetricIdentifier metricIdentifier, boolean ignoreFilter)
     {
         double sum = 0;
         int threads = 0;
@@ -110,7 +110,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
         return sum / threads;
     }
 
-    double calculateFilteredSumNumericalMetricRatio(CodeSparksThreadCluster threadCluster, final IMetricIdentifier metricIdentifier, boolean ignoreFilter)
+    double calculateFilteredSumNumericalMetricRatio(ThreadArtifactCluster threadCluster, final IMetricIdentifier metricIdentifier, boolean ignoreFilter)
     {
         double sum = 0;
         for (AThreadArtifact codeSparksThread : threadCluster)
@@ -126,7 +126,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
 
 
     @SuppressWarnings("unused")
-    private double calculateFilteredMedianNumericalMetricRatio(CodeSparksThreadCluster threadCluster, final IMetricIdentifier metricIdentifier,
+    private double calculateFilteredMedianNumericalMetricRatio(ThreadArtifactCluster threadCluster, final IMetricIdentifier metricIdentifier,
                                                                boolean ignoreFilter)
     {
         int unfilteredThreads = 0;

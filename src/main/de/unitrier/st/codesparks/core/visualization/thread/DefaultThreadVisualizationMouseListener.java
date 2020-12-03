@@ -77,7 +77,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
                 LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
         resetThreadFilterGlobal.addActionListener(e -> {
             popupPanel.cancelPopup();
-            CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(GlobalResetThreadFilter.getInstance());
+            CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(GlobalResetThreadArtifactFilter.getInstance());
         });
         JBPanel<BorderLayoutPanel> resetThreadFilterGlobalButtonWrapper = new JBPanel<>(new BorderLayout());
         resetThreadFilterGlobalButtonWrapper.add(resetThreadFilterGlobal, BorderLayout.CENTER);
@@ -98,8 +98,8 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         buttonsPanel.add(selectAllButtonWrapper);
 
         // Toggle cluster buttons.
-        CodeSparksThreadClustering sortedDefaultCodeSparksThreadClustering = scArtifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
-        for (CodeSparksThreadCluster cluster : sortedDefaultCodeSparksThreadClustering)
+        ThreadArtifactClustering sortedDefaultThreadArtifactClustering = scArtifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        for (ThreadArtifactCluster cluster : sortedDefaultThreadArtifactClustering)
         {
             if (cluster.isEmpty())
             {
@@ -130,7 +130,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
                 new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.button.apply.thread.filter"));
         applyThreadFilter.addActionListener(e -> {
             popupPanel.cancelPopup();
-            final ICodeSparksThreadFilter threadArtifactFilter = new DefaultThreadFilter(threadSelectable);
+            final IThreadArtifactFilter threadArtifactFilter = new DefaultThreadArtifactFilter(threadSelectable);
             CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(threadArtifactFilter);
         });
         JBPanel<BorderLayoutPanel> applyThreadFilterButtonWrapper = new JBPanel<>(new BorderLayout());

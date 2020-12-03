@@ -1,8 +1,8 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import de.unitrier.st.codesparks.core.data.ASourceCodeArtifact;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 
@@ -43,7 +43,7 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
     {
         super.mouseMoved(e);
         int hoverCount = 0;
-        for (CodeSparksThreadCluster cluster : artifact.getSortedDefaultThreadArtifactClustering(metricIdentifier))
+        for (ThreadArtifactCluster cluster : artifact.getSortedDefaultThreadArtifactClustering(metricIdentifier))
         {
             if (isPointInArc(e.getX(), e.getY(), cluster))
             {
@@ -66,7 +66,7 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
         clusterHover.onExit();
     }
 
-    private boolean isPointInArc(int x, int y, CodeSparksThreadCluster cluster)
+    private boolean isPointInArc(int x, int y, ThreadArtifactCluster cluster)
     {
         x -= (visualizationWrapper.getWidth() / 2 - RadialThreadVisualizationConstants.FRAME_ZOOMED / 2);
         x = frameSize - x;

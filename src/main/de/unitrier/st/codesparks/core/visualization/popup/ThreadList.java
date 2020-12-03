@@ -99,7 +99,7 @@ public class ThreadList extends AThreadSelectable
     }
 
     @Override
-    public void toggleCluster(CodeSparksThreadCluster cluster)
+    public void toggleCluster(ThreadArtifactCluster cluster)
     {
         if (cluster == null) return;
         getThreadListCellRenderer().toggleCluster(cluster);

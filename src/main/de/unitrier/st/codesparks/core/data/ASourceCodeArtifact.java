@@ -2,7 +2,7 @@ package de.unitrier.st.codesparks.core.data;
 
 import com.intellij.psi.PsiElement;
 import de.unitrier.st.codesparks.core.CoreUtil;
-import de.unitrier.st.codesparks.core.ICodeSparksThreadFilterable;
+import de.unitrier.st.codesparks.core.IThreadArtifactFilterable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public abstract class ASourceCodeArtifact extends AArtifact implements IPsiNavigable, ICodeSparksThreadFilterable
+public abstract class ASourceCodeArtifact extends AArtifact implements IPsiNavigable, IThreadArtifactFilterable
 {
     private final Map<String, AThreadArtifact> threadMap;
     private final Class<? extends AThreadArtifact> threadClass;
@@ -31,11 +31,11 @@ public abstract class ASourceCodeArtifact extends AArtifact implements IPsiNavig
         threadMap = new HashMap<>();
     }
 
-    protected int lineNumber;
+    int lineNumber;
 
     public int getLineNumber() { return lineNumber; }
 
-    protected String fileName;
+    String fileName;
 
     public String getFileName() { return fileName; }
 
@@ -177,7 +177,7 @@ public abstract class ASourceCodeArtifact extends AArtifact implements IPsiNavig
     }
 
     @Override
-    public void applyThreadFilter(ICodeSparksThreadFilter threadFilter)
+    public void applyThreadFilter(IThreadArtifactFilter threadFilter)
     {
         final Set<String> threadArtifactIdentifiers = getCodeSparksThreadIdentifiers();
         final Set<String> filteredThreadArtifactIdentifiers = threadFilter.getFilteredThreadIdentifiers();
@@ -204,13 +204,13 @@ public abstract class ASourceCodeArtifact extends AArtifact implements IPsiNavig
      Thread Clustering
      */
 
-    private final Map<ICodeSparksThreadClusteringStrategy, CodeSparksThreadClustering> clusterings = new HashMap<>();
+    private final Map<IThreadArtifactClusteringStrategy, ThreadArtifactClustering> clusterings = new HashMap<>();
 
-    private CodeSparksThreadClustering lookupClustering(ICodeSparksThreadClusteringStrategy clusteringStrategy)
+    private ThreadArtifactClustering lookupClustering(IThreadArtifactClusteringStrategy clusteringStrategy)
     {
         synchronized (clusterings)
         {
-            CodeSparksThreadClustering threadArtifactClusters = clusterings.get(clusteringStrategy);
+            ThreadArtifactClustering threadArtifactClusters = clusterings.get(clusteringStrategy);
             if (threadArtifactClusters == null)
             {
                 threadArtifactClusters = clusteringStrategy.clusterCodeSparksThreads(getThreadArtifacts());
@@ -220,30 +220,30 @@ public abstract class ASourceCodeArtifact extends AArtifact implements IPsiNavig
         }
     }
 
-    public CodeSparksThreadClustering getThreadArtifactClustering(ICodeSparksThreadClusteringStrategy clusteringStrategy)
+    public ThreadArtifactClustering getThreadArtifactClustering(IThreadArtifactClusteringStrategy clusteringStrategy)
     {
         return lookupClustering(clusteringStrategy);
     }
 
-    public CodeSparksThreadClustering getDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
+    public ThreadArtifactClustering getDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
     {
-        return lookupClustering(DefaultCodeSparksThreadClusteringStrategy.getInstance(metricIdentifier));
+        return lookupClustering(DefaultThreadArtifactClusteringStrategy.getInstance(metricIdentifier));
     }
 
-    public CodeSparksThreadClustering getSortedDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
+    public ThreadArtifactClustering getSortedDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
     {
-        CodeSparksThreadClustering defaultThreadArtifactClusters = lookupClustering(DefaultCodeSparksThreadClusteringStrategy.getInstance(metricIdentifier));
-        Comparator<CodeSparksThreadCluster> codeSparksThreadClusterComparator = CodeSparksThreadClusterComparator.getInstance(metricIdentifier);
+        ThreadArtifactClustering defaultThreadArtifactClusters = lookupClustering(DefaultThreadArtifactClusteringStrategy.getInstance(metricIdentifier));
+        Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterComparator.getInstance(metricIdentifier);
         defaultThreadArtifactClusters.sort(codeSparksThreadClusterComparator);
         return defaultThreadArtifactClusters;
     }
 
     public void initDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
     {
-        ICodeSparksThreadClusteringStrategy instance = DefaultCodeSparksThreadClusteringStrategy.getInstance(metricIdentifier);
+        IThreadArtifactClusteringStrategy instance = DefaultThreadArtifactClusteringStrategy.getInstance(metricIdentifier);
         synchronized (clusterings)
         {
-            CodeSparksThreadClustering threadArtifactClusters = clusterings.get(instance);
+            ThreadArtifactClustering threadArtifactClusters = clusterings.get(instance);
             if (threadArtifactClusters == null)
             {
                 threadArtifactClusters = instance.clusterCodeSparksThreads(getThreadArtifacts());
@@ -255,7 +255,7 @@ public abstract class ASourceCodeArtifact extends AArtifact implements IPsiNavig
     /*
      * Helpers
      */
-     // TODO: enable assertion again!
+    // TODO: enable assertion again!
 
 //    @Deprecated
 //    void assertSecondaryMetricValue(double secondaryMetricValue, String name)

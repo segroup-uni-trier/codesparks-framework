@@ -201,7 +201,7 @@ public abstract class AArtifactPool implements IArtifactPool
 //    }
 
     @Override
-    public final void applyThreadFilter(final ICodeSparksThreadFilter threadFilter)
+    public final void applyThreadFilter(final IThreadArtifactFilter threadFilter)
     {
         if (threadFilter == null)
         {
@@ -209,9 +209,9 @@ public abstract class AArtifactPool implements IArtifactPool
         }
         synchronized (programArtifactLock)
         {
-            if (programArtifact != null && programArtifact instanceof ICodeSparksThreadFilterable)
+            if (programArtifact != null && programArtifact instanceof IThreadArtifactFilterable)
             {
-                ((ICodeSparksThreadFilterable) programArtifact).applyThreadFilter(threadFilter);
+                ((IThreadArtifactFilterable) programArtifact).applyThreadFilter(threadFilter);
             }
         }
 

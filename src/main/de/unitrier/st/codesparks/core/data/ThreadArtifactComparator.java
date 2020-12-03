@@ -5,11 +5,11 @@ import java.util.Comparator;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class CodeSparksThreadComparator implements Comparator<AThreadArtifact>
+public class ThreadArtifactComparator implements Comparator<AThreadArtifact>
 {
     private final IMetricIdentifier metricIdentifier;
 
-    public CodeSparksThreadComparator(final IMetricIdentifier metricIdentifier)
+    public ThreadArtifactComparator(final IMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }

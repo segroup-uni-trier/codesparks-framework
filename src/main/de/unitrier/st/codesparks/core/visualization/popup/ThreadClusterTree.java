@@ -2,7 +2,7 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
@@ -21,7 +21,7 @@ public class ThreadClusterTree extends ThreadTree
         VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
         for (Map.Entry<List<AThreadArtifact>, ThreadTreeInnerNode> entry : innerNodes.entrySet())
         {
-            VisualThreadClusterProperties properties = propertiesManager.getProperties((CodeSparksThreadCluster) entry.getKey());
+            VisualThreadClusterProperties properties = propertiesManager.getProperties((ThreadArtifactCluster) entry.getKey());
             if (properties != null)
             {
                 JBColor color = properties.getColor();

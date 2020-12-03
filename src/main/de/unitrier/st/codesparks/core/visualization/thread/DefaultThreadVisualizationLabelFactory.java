@@ -71,12 +71,12 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
         int totalThreadCnt = 0;
 
-        List<CodeSparksThreadCluster> codeSparksThreadClustering = scArtifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        List<ThreadArtifactCluster> threadArtifactClustering = scArtifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
 
-        for (int i = 0; i < codeSparksThreadClustering.size(); i++)
+        for (int i = 0; i < threadArtifactClustering.size(); i++)
         {
             JBColor color = ThreadColor.getNextColor(i);
-            CodeSparksThreadCluster cluster = codeSparksThreadClustering.get(i);
+            ThreadArtifactCluster cluster = threadArtifactClustering.get(i);
 
             VisualThreadClusterProperties clusterProperties = new VisualThreadClusterProperties(cluster, color);
             VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();

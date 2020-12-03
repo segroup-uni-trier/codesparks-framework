@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class CodeSparksThreadCluster extends ArrayList<AThreadArtifact>
+public class ThreadArtifactCluster extends ArrayList<AThreadArtifact>
 {
     private static int clusterId = 0;
 
@@ -16,7 +16,7 @@ public class CodeSparksThreadCluster extends ArrayList<AThreadArtifact>
 
     private final int id;
 
-    CodeSparksThreadCluster()
+    ThreadArtifactCluster()
     {
         id = getNextId();
     }

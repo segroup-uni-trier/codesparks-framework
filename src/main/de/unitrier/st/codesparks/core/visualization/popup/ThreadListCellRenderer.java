@@ -30,15 +30,15 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
         this.selected = new boolean[numberOfThreads];
         this.threadIdIndex = new HashMap<>();
 
-        List<CodeSparksThreadCluster> codeSparksThreadClusters = artifact.getSortedDefaultThreadArtifactClustering(metricIdentifier);
+        List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedDefaultThreadArtifactClustering(metricIdentifier);
 
         VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
 
         int colArrayIndex = 0;
 
-        for (CodeSparksThreadCluster codeSparksThreadCluster : codeSparksThreadClusters)
+        for (ThreadArtifactCluster threadArtifactCluster : threadArtifactClusters)
         {
-            VisualThreadClusterProperties properties = propertiesManager.getProperties(codeSparksThreadCluster);
+            VisualThreadClusterProperties properties = propertiesManager.getProperties(threadArtifactCluster);
             JBColor color;
             if (properties == null)
             {
@@ -47,7 +47,7 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
             {
                 color = properties.getColor();
             }
-            for (AThreadArtifact codeSparksThread : codeSparksThreadCluster)
+            for (AThreadArtifact codeSparksThread : threadArtifactCluster)
             {
                 boolean filtered = codeSparksThread.isFiltered();
                 this.displayColors[colArrayIndex] = filtered ? JBColor.GRAY : color;
@@ -110,7 +110,7 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
         }
     }
 
-    public void toggleCluster(CodeSparksThreadCluster cluster)
+    public void toggleCluster(ThreadArtifactCluster cluster)
     {
         synchronized (selected)
         {
@@ -124,7 +124,7 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
     }
 
     @SuppressWarnings("unused")
-    public void selectCluster(CodeSparksThreadCluster cluster)
+    public void selectCluster(ThreadArtifactCluster cluster)
     {
         synchronized (selected)
         {

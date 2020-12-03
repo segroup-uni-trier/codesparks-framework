@@ -9,25 +9,25 @@ import java.util.Set;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class GlobalResetThreadFilter implements ICodeSparksThreadFilter
+public class GlobalResetThreadArtifactFilter implements IThreadArtifactFilter
 {
 
-    private static volatile ICodeSparksThreadFilter instance;
+    private static volatile IThreadArtifactFilter instance;
 
-    private GlobalResetThreadFilter()
+    private GlobalResetThreadArtifactFilter()
     {
 
     }
 
-    public static ICodeSparksThreadFilter getInstance()
+    public static IThreadArtifactFilter getInstance()
     {
         if (instance == null)
         {
-            synchronized (GlobalResetThreadFilter.class)
+            synchronized (GlobalResetThreadArtifactFilter.class)
             {
                 if (instance == null)
                 {
-                    instance = new GlobalResetThreadFilter();
+                    instance = new GlobalResetThreadArtifactFilter();
                 }
             }
         }
