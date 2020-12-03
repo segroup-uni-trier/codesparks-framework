@@ -20,16 +20,16 @@ public class DefaultCodeSparksThread extends ACodeSparksThread
     @Override
     public String getDisplayString(final IMetricIdentifier metricIdentifier, int maxLen)
     {
-        String identifier = getIdentifier();
-        double percentage = getNumericalMetricValue(metricIdentifier);
-        String formatPercentage = CoreUtil.formatPercentageWithLeadingWhitespace(percentage);
+//        final String identifier = getIdentifier();
+        final double percentage = getNumericalMetricValue(metricIdentifier);
+        final String formatPercentage = CoreUtil.formatPercentageWithLeadingWhitespace(percentage);
         //        for (int i = 0; i < 6 - formatPercentage.length(); i++)
 //        {
 //            stringBuilder.append(" ");
 //        }
 //        stringBuilder.append(formatPercentage);
-        String str = formatPercentage + " " + CoreUtil.reduceToLength(identifier, maxLen);
-        return str;
+        final String reduce = CoreUtil.reduceToLength(identifier, maxLen);
+        return formatPercentage + " " + reduce;
     }
 
     @Override
