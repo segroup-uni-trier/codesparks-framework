@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class CodeSparksThreadCluster extends ArrayList<ACodeSparksThread>
+public class CodeSparksThreadCluster extends ArrayList<AThreadArtifact>
 {
     private static int clusterId = 0;
 
@@ -30,7 +30,7 @@ public class CodeSparksThreadCluster extends ArrayList<ACodeSparksThread>
     public String toString()
     {
         StringBuilder strb = new StringBuilder();
-        for (ACodeSparksThread codeSparksThread : this)
+        for (AThreadArtifact codeSparksThread : this)
         {
             strb.append(codeSparksThread.getIdentifier()).append(",");
         }

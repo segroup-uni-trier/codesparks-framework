@@ -3,7 +3,7 @@
  */
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
-import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 import de.unitrier.st.codesparks.core.visualization.BottomFlowLayout;
 
@@ -18,7 +18,7 @@ import java.util.List;
 class NeighborNeighborArtifactVisualizationWrapper extends ANeighborArtifactVisualization
 {
     NeighborNeighborArtifactVisualizationWrapper(
-            AArtifact artifact
+            ACodeSparksArtifact artifact
             , List<ANeighborArtifact> neighborArtifactsOfLine
             , ANeighborArtifactVisualizationLabelFactory... factories
     )

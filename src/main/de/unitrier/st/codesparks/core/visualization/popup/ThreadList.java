@@ -3,10 +3,7 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 import com.intellij.ui.ExpandedItemListCellRendererWrapper;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBList;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +19,7 @@ public class ThreadList extends AThreadSelectable
 {
     private final JBList<JBCheckBox> list;
 
-    public ThreadList(final AArtifact artifact, final IMetricIdentifier metricIdentifier)
+    public ThreadList(final ASourceCodeArtifact artifact, final IMetricIdentifier metricIdentifier)
     {
         list = new JBList<JBCheckBox>(new ThreadListModel(artifact, metricIdentifier))
         {
@@ -31,7 +28,7 @@ public class ThreadList extends AThreadSelectable
             {
                 Point point = event.getPoint();
                 int index = locationToIndex(point);
-                ACodeSparksThread codeSparksThreadAt = ((ThreadListModel) getModel()).getThreadArtifactAt(index);
+                AThreadArtifact codeSparksThreadAt = ((ThreadListModel) getModel()).getThreadArtifactAt(index);
                 if (codeSparksThreadAt == null)
                 {
                     return "";
@@ -116,16 +113,16 @@ public class ThreadList extends AThreadSelectable
     }
 
     @Override
-    protected Set<ACodeSparksThread> getThreadArtifacts(final boolean isSelected)
+    protected Set<AThreadArtifact> getThreadArtifacts(final boolean isSelected)
     {
         boolean[] selected = getThreadListCellRenderer().getSelected();
-        final Set<ACodeSparksThread> codeSparksThreads = new HashSet<>();
+        final Set<AThreadArtifact> codeSparksThreads = new HashSet<>();
         ThreadListModel model = (ThreadListModel) list.getModel();
         for (int i = 0; i < selected.length; i++)
         {
             if (selected[i] == isSelected)
             {
-                ACodeSparksThread codeSparksThreadAt = model.getThreadArtifactAt(i);
+                AThreadArtifact codeSparksThreadAt = model.getThreadArtifactAt(i);
                 if (codeSparksThreadAt != null)
                 {
                     codeSparksThreads.add(codeSparksThreadAt);

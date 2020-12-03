@@ -1,7 +1,7 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 
@@ -46,7 +46,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
     private void calculateMaxNumericalMetricRatio(CodeSparksThreadCluster threadCluster, final IMetricIdentifier metricIdentifier)
     {
         double max = 0;
-        for (ACodeSparksThread thread : threadCluster)
+        for (AThreadArtifact thread : threadCluster)
         {
             double metricValue = thread.getNumericalMetricValue(metricIdentifier);
             if (metricValue > max)
@@ -61,7 +61,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
     {
 
         int numberOfFilteredThreads = 0;
-        for (ACodeSparksThread codeSparksThread : cluster)
+        for (AThreadArtifact codeSparksThread : cluster)
         {
             if (!codeSparksThread.isFiltered() || ignoreFilter)
             {
@@ -98,7 +98,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
     {
         double sum = 0;
         int threads = 0;
-        for (ACodeSparksThread codeSparksThread : cluster)
+        for (AThreadArtifact codeSparksThread : cluster)
         {
             if (codeSparksThread.isFiltered() && !ignoreFilter)
                 continue;
@@ -113,7 +113,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
     double calculateFilteredSumNumericalMetricRatio(CodeSparksThreadCluster threadCluster, final IMetricIdentifier metricIdentifier, boolean ignoreFilter)
     {
         double sum = 0;
-        for (ACodeSparksThread codeSparksThread : threadCluster)
+        for (AThreadArtifact codeSparksThread : threadCluster)
         {
             if (codeSparksThread.isFiltered() && !ignoreFilter)
                 continue;
@@ -130,7 +130,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
                                                                boolean ignoreFilter)
     {
         int unfilteredThreads = 0;
-        for (ACodeSparksThread codeSparksThread : threadCluster)
+        for (AThreadArtifact codeSparksThread : threadCluster)
         {
             if (codeSparksThread.isFiltered() && !ignoreFilter)
                 continue;
@@ -141,7 +141,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
         Double[] metricArray = new Double[threadCluster.size()];
         for (int i = 0; i < unfilteredThreads; i++)
         {
-            ACodeSparksThread codeSparksThread = threadCluster.get(i);
+            AThreadArtifact codeSparksThread = threadCluster.get(i);
             if (codeSparksThread.isFiltered() && ignoreFilter)
                 continue;
 

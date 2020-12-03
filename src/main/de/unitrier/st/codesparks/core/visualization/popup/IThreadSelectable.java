@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
 import javax.swing.*;
@@ -11,11 +11,11 @@ import java.util.Set;
  */
 public interface IThreadSelectable
 {
-    Set<ACodeSparksThread> getSelectedThreadArtifacts();
+    Set<AThreadArtifact> getSelectedThreadArtifacts();
 
-    Set<ACodeSparksThread> getFilteredThreadArtifacts();
+    Set<AThreadArtifact> getFilteredThreadArtifacts();
 
-    Set<ACodeSparksThread> getSelectedThreadArtifactsOfCluster(CodeSparksThreadCluster cluster);
+    Set<AThreadArtifact> getSelectedThreadArtifactsOfCluster(CodeSparksThreadCluster cluster);
 
     Set<String> getFilteredThreadArtifactIdentifiers();
 

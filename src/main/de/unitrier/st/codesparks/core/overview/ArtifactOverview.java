@@ -12,9 +12,7 @@ import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.IArtifactPool;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.GlobalResetThreadFilter;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
@@ -115,7 +113,7 @@ public class ArtifactOverview
         {
             return;
         }
-        AArtifact programArtifact = artifactPool.getProgramArtifact();
+        ACodeSparksArtifact programArtifact = (ACodeSparksArtifact) artifactPool.getProgramArtifact();
         if (programArtifact == null)
         {
             return;
@@ -615,7 +613,7 @@ public class ArtifactOverview
         }
 
         /*
-         * State filter
+         * Thread state filter
          */
         if (threadStateArtifactFilter != null)
         {

@@ -86,8 +86,8 @@ public class ArtifactVisualizationLabelFactoryCache
             {
                 if (createIfAbsent)
                 {
-                    IArtifactPool profilingResult = ArtifactPoolManager.getInstance().getArtifactPool();
-                    AArtifact artifact = profilingResult.getArtifact(artifactIdentifier);
+                    IArtifactPool artifactPool = ArtifactPoolManager.getInstance().getArtifactPool();
+                    AArtifact artifact = artifactPool.getArtifact(artifactIdentifier);
                     if (artifact == null)
                     {
                         return null;

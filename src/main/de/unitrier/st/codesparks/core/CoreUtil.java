@@ -7,7 +7,8 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
+import de.unitrier.st.codesparks.core.data.IPsiNavigable;
 import de.unitrier.st.codesparks.core.service.ACodeSparksInstanceService;
 import org.jetbrains.annotations.NotNull;
 
@@ -150,7 +151,7 @@ public final class CoreUtil
         IArtifactPool artifactPool = ArtifactPoolManager.getInstance().getArtifactPool();
         if (artifactPool != null)
         {
-            AArtifact artifact = artifactPool.getArtifact(identifier);
+            IPsiNavigable artifact = (IPsiNavigable) artifactPool.getArtifact(identifier);
             if (artifact != null)
             {
                 artifact.navigate();

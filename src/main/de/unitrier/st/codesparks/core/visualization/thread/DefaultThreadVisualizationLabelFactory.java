@@ -3,14 +3,12 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -41,6 +39,18 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
             @NotNull final AArtifact artifact
     )
     {
+        if (!(artifact instanceof ASourceCodeArtifact))
+        {
+            CodeSparksLogger.addText("%s: The artifact has to be of type '%s' but is of type '%s'.",
+                    getClass()
+                    , ASourceCodeArtifact.class.getSimpleName()
+                    , artifact.getClass().getSimpleName()
+            );
+            return new JLabel();
+        }
+        final ASourceCodeArtifact scArtifact = (ASourceCodeArtifact) artifact;
+
+
         final int threadsPerColumn = 3;
         int lineHeight = VisualizationUtil.getLineHeightCeil(VisConstants.getLineHeight(), threadsPerColumn);
         int width = 5000;
@@ -61,7 +71,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
         int totalThreadCnt = 0;
 
-        List<CodeSparksThreadCluster> codeSparksThreadClustering = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        List<CodeSparksThreadCluster> codeSparksThreadClustering = scArtifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
 
         for (int i = 0; i < codeSparksThreadClustering.size(); i++)
         {
@@ -74,7 +84,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
             graphics.setColor(color);
             //int size = cluster.size();
-            for (ACodeSparksThread codeSparksThread : cluster)
+            for (AThreadArtifact codeSparksThread : cluster)
             {
                 //boolean filtered = threadArtifact.isFiltered();
                 if (codeSparksThread.isFiltered())
@@ -123,7 +133,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
         jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
         //jLabel.addMouseListener(new DefaultArtifactVisualizationMouseListener(jLabel, artifact));
-        jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
+        jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, scArtifact, primaryMetricIdentifier));
 
         return jLabel;
     }

@@ -1,7 +1,7 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.ASourceCodeArtifact;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 
 import java.util.Set;
 
@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public interface IThreadRadarDisplayData
 {
-    CodeSparksThreadDisplayData getSelectedThreadData(AArtifact artifact, Set<ACodeSparksThread> selectedCodeSparksThreads);
+    CodeSparksThreadDisplayData getSelectedThreadData(ASourceCodeArtifact artifact, Set<AThreadArtifact> selectedCodeSparksThreads);
 
-    CodeSparksThreadDisplayData getHoveredThreadData(AArtifact artifact, Set<ACodeSparksThread> hoveredCodeSparksThreads);
+    CodeSparksThreadDisplayData getHoveredThreadData(ASourceCodeArtifact artifact, Set<AThreadArtifact> hoveredCodeSparksThreads);
 }

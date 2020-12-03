@@ -6,7 +6,7 @@ package de.unitrier.st.codesparks.core.visualization;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerItem;
 import de.unitrier.st.codesparks.core.visualization.neighbor.ANeighborArtifactVisualization;
 import de.unitrier.st.codesparks.core.visualization.neighbor.ANeighborArtifactVisualizationLabelFactory;
@@ -69,13 +69,13 @@ public class DefaultDataVisualizer extends ADataVisualizer
     @Override
     public Collection<EditorCoverLayerItem> createVisualizations(
             final Project project
-            , final Collection<AArtifact> matchedArtifacts
+            , final Collection<ACodeSparksArtifact> matchedArtifacts
     )
     {
         // TODO: possible parallelization applicable?
         final Collection<EditorCoverLayerItem> overlayElements = new ArrayList<>();
 
-        for (AArtifact artifact : matchedArtifacts)
+        for (ACodeSparksArtifact artifact : matchedArtifacts)
         {
             ApplicationManager.getApplication().runReadAction(() -> {
 

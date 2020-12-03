@@ -7,6 +7,7 @@ import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
+import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationMouseListener;
 import de.unitrier.st.codesparks.core.visualization.popup.AThreadSelectable;
 import de.unitrier.st.codesparks.core.visualization.popup.PopupPanel;
@@ -24,7 +25,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
 {
     DefaultThreadVisualizationMouseListener(
             final JComponent component
-            , final AArtifact artifact
+            , final ASourceCodeArtifact artifact
             , final IMetricIdentifier primaryMetricIdentifier
     )
     {
@@ -35,6 +36,19 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
     protected PopupPanel createPopupContent(AArtifact artifact)
     {
         final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "DefaultThreadVisualizationPopup");
+
+        if (!(artifact instanceof ASourceCodeArtifact))
+        {
+            CodeSparksLogger.addText("%s: The artifact has to be of type '%s' but is of type '%s'.",
+                    getClass()
+                    , ASourceCodeArtifact.class.getSimpleName()
+                    , artifact.getClass().getSimpleName()
+            );
+            return popupPanel;
+        }
+
+        final ASourceCodeArtifact scArtifact = (ASourceCodeArtifact) artifact;
+
         JBPanel<BorderLayoutPanel> centerPanel = new JBPanel<>();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.X_AXIS));
 
@@ -45,7 +59,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
          * Switch between thread tree and thread list
          */
 
-        threadSelectable = new ThreadList(artifact, primaryMetricIdentifier);
+        threadSelectable = new ThreadList(scArtifact, primaryMetricIdentifier);
 //        threadSelectable = new ThreadTree(artifact);
 
         final JBScrollPane threadScrollPane = new JBScrollPane(threadSelectable.getComponent());
@@ -84,7 +98,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         buttonsPanel.add(selectAllButtonWrapper);
 
         // Toggle cluster buttons.
-        CodeSparksThreadClustering sortedDefaultCodeSparksThreadClustering = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        CodeSparksThreadClustering sortedDefaultCodeSparksThreadClustering = scArtifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
         for (CodeSparksThreadCluster cluster : sortedDefaultCodeSparksThreadClustering)
         {
             if (cluster.isEmpty())
@@ -131,11 +145,19 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         return popupPanel;
     }
 
+    private String createPopupTitle(ASourceCodeArtifact sourceCodeArtifact)
+    {
+        Map<String, List<AThreadArtifact>> threadTypeLists = sourceCodeArtifact.getThreadTypeLists();
+        return "Total number of threads: " + sourceCodeArtifact.getNumberOfThreads() +
+                " | Different thread types: " + (threadTypeLists == null ? 0 : threadTypeLists.size());
+    }
+
     @Override
     protected String createPopupTitle(AArtifact artifact)
     {
-        Map<String, List<ACodeSparksThread>> threadTypeLists = artifact.getThreadTypeLists();
-        return "Total number of threads: " + artifact.getNumberOfThreads() +
-                " | Different thread types: " + (threadTypeLists == null ? 0 : threadTypeLists.size());
+        return createPopupTitle((ASourceCodeArtifact) artifact);
+//        Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
+//        return "Total number of threads: " + artifact.getNumberOfThreads() +
+//                " | Different thread types: " + (threadTypeLists == null ? 0 : threadTypeLists.size());
     }
 }

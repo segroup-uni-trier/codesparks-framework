@@ -3,7 +3,7 @@
  */
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
-import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 
 import java.util.Collection;
 
@@ -12,6 +12,6 @@ import java.util.Collection;
  */
 public interface INeighborArtifactVisualizer
 {
-    Collection<ANeighborArtifactVisualization> createArtifactCalleeVisualizations(AArtifact artifact,
+    Collection<ANeighborArtifactVisualization> createArtifactCalleeVisualizations(ACodeSparksArtifact artifact,
                                                                                   ANeighborArtifactVisualizationLabelFactory... calleeFactories);
 }

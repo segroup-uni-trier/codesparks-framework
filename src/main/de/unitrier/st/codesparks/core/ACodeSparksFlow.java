@@ -21,7 +21,7 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 import de.unitrier.st.codesparks.core.data.ICodeSparksThreadFilter;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerItem;
@@ -96,7 +96,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
     {
         synchronized (uiLock)
         {
-            Collection<AArtifact> matchedResults = matchArtifactsToCodeFiles(virtualFile);
+            Collection<ACodeSparksArtifact> matchedResults = matchArtifactsToCodeFiles(virtualFile);
 
             Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedResults);
 
@@ -130,7 +130,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         }
     }
 
-    private Collection<EditorCoverLayerItem> createVisualization(Collection<AArtifact> matchedArtifacts)
+    private Collection<EditorCoverLayerItem> createVisualization(Collection<ACodeSparksArtifact> matchedArtifacts)
     {
         if (dataVisualizer != null)
         {
@@ -142,7 +142,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         }
     }
 
-    private Collection<AArtifact> matchArtifactsToCodeFiles(VirtualFile... virtualFiles)
+    private Collection<ACodeSparksArtifact> matchArtifactsToCodeFiles(VirtualFile... virtualFiles)
     {
         if (matcher != null)
         {
@@ -198,7 +198,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                         VirtualFile[] virtualFiles = Arrays.stream(editors).map(FileEditor::getFile).toArray(VirtualFile[]::new);
                         clearVisualizationCache();
 
-                        Collection<AArtifact> matchedArtifacts = matchArtifactsToCodeFiles(virtualFiles);
+                        Collection<ACodeSparksArtifact> matchedArtifacts = matchArtifactsToCodeFiles(virtualFiles);
 
                         Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedArtifacts);
 
@@ -251,7 +251,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                 }
                 VirtualFile[] virtualFiles = Arrays.stream(editors).map(FileEditor::getFile).toArray(VirtualFile[]::new);
 
-                Collection<AArtifact> matchedResults = matchArtifactsToCodeFiles(virtualFiles);
+                Collection<ACodeSparksArtifact> matchedResults = matchArtifactsToCodeFiles(virtualFiles);
 
                 Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedResults);
 

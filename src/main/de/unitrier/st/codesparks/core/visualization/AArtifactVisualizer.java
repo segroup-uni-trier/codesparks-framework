@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization;
 
-import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 
 import java.util.Collection;
 
@@ -21,5 +21,5 @@ public abstract class AArtifactVisualizer
         return this.metricIdentifiers;
     }
 
-    public abstract AArtifactVisualization createArtifactVisualization(AArtifact artifact, AArtifactVisualizationLabelFactory... factories);
+    public abstract AArtifactVisualization createArtifactVisualization(ACodeSparksArtifact artifact, AArtifactVisualizationLabelFactory... factories);
 }

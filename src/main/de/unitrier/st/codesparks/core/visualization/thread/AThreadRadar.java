@@ -3,11 +3,8 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +19,7 @@ import java.util.Set;
 public abstract class AThreadRadar extends JPanel
 {
     protected Graphics2D g2d;
-    protected AArtifact artifact;
+    protected ASourceCodeArtifact artifact;
     protected String metricIdentifier;
     private int circleDiameter = 0;
     private int circleFrameSize = 0;
@@ -220,7 +217,7 @@ public abstract class AThreadRadar extends JPanel
     static double calculateFilteredMedianRuntimeRatio(final CodeSparksThreadCluster cluster, final IMetricIdentifier metricIdentifier)
     {
         int unfilteredThreads = 0;
-        for (ACodeSparksThread codeSparksThread : cluster)
+        for (AThreadArtifact codeSparksThread : cluster)
         {
             if (codeSparksThread.isFiltered())
                 continue;
@@ -250,11 +247,11 @@ public abstract class AThreadRadar extends JPanel
     static double getFilteredMetricSumOfCluster(
             final CodeSparksThreadCluster cluster
             , final IMetricIdentifier metricIdentifier
-            , final Set<ACodeSparksThread> filteredThreads
+            , final Set<AThreadArtifact> filteredThreads
     )
     {
         double metric = 0;
-        for (ACodeSparksThread codeSparksThread : cluster)
+        for (AThreadArtifact codeSparksThread : cluster)
         {
             if (filteredThreads.contains(codeSparksThread))
                 continue;

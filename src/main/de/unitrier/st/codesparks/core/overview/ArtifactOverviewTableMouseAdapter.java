@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.overview;
 
-import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ASourceCodeArtifact;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTable;
@@ -35,7 +35,7 @@ public class ArtifactOverviewTableMouseAdapter extends MouseAdapter
         {
             return;
         }
-        final AArtifact artifactAt = ((ArtifactOverViewTableModel) table.getModel()).getArtifactAt(row);
+        final ASourceCodeArtifact artifactAt = (ASourceCodeArtifact) ((ArtifactOverViewTableModel) table.getModel()).getArtifactAt(row);
         if (artifactAt == null)
         {
             return;

@@ -4,7 +4,6 @@ import com.intellij.psi.PsiFile;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 
 import java.util.Collection;
-import java.util.function.Function;
 
 /*
  * Copyright (c), Oliver Moseler, 2020

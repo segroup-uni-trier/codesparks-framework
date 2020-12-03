@@ -10,9 +10,9 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class ArtifactBuilder
 {
-    private static final class DefaultArtifact extends AArtifact
+    private static final class DefaultCodeSparksArtifact extends ACodeSparksArtifact
     {
-        public DefaultArtifact(final String name, final String identifier)
+        public DefaultCodeSparksArtifact(final String name, final String identifier)
         {
             super(name, identifier);
         }
@@ -21,13 +21,13 @@ public class ArtifactBuilder
         public void navigate() { CodeSparksLogger.addText("Navigation is unavailable for default artifacts."); }
     }
 
-    private AArtifact artifact;
+    private ACodeSparksArtifact artifact;
 
-    public ArtifactBuilder(final String name, final String identifier, final Class<? extends AArtifact> artifactClass)
+    public ArtifactBuilder(final String name, final String identifier, final Class<? extends ACodeSparksArtifact> artifactClass)
     {
         try
         {
-            final Constructor<? extends AArtifact> constructor = artifactClass.getDeclaredConstructor(String.class, String.class);
+            final Constructor<? extends ACodeSparksArtifact> constructor = artifactClass.getDeclaredConstructor(String.class, String.class);
             artifact = constructor.newInstance(name, identifier);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e)
         {
@@ -38,7 +38,7 @@ public class ArtifactBuilder
 
     public ArtifactBuilder(final String name, final String identifier)
     {
-        artifact = new DefaultArtifact(name, identifier);
+        artifact = new DefaultCodeSparksArtifact(name, identifier);
     }
 
     public ArtifactBuilder setFileName(String fileName)
@@ -59,7 +59,7 @@ public class ArtifactBuilder
         return this;
     }
 
-    public AArtifact get()
+    public ACodeSparksArtifact get()
     {
         return artifact;
     }

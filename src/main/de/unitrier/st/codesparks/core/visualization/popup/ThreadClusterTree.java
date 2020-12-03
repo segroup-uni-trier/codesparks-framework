@@ -1,7 +1,7 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
@@ -15,11 +15,11 @@ import java.util.Map;
  */
 public class ThreadClusterTree extends ThreadTree
 {
-    public ThreadClusterTree(Map<String, List<ACodeSparksThread>> threadTreeContent, final IMetricIdentifier metricIdentifier)
+    public ThreadClusterTree(Map<String, List<AThreadArtifact>> threadTreeContent, final IMetricIdentifier metricIdentifier)
     {
         super(threadTreeContent, metricIdentifier);
         VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-        for (Map.Entry<List<ACodeSparksThread>, ThreadTreeInnerNode> entry : innerNodes.entrySet())
+        for (Map.Entry<List<AThreadArtifact>, ThreadTreeInnerNode> entry : innerNodes.entrySet())
         {
             VisualThreadClusterProperties properties = propertiesManager.getProperties((CodeSparksThreadCluster) entry.getKey());
             if (properties != null)

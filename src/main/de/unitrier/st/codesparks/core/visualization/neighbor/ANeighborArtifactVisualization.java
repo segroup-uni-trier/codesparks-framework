@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
-import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualization;
 
 /*
@@ -8,7 +8,7 @@ import de.unitrier.st.codesparks.core.visualization.AArtifactVisualization;
  */
 public class ANeighborArtifactVisualization extends AArtifactVisualization
 {
-    public ANeighborArtifactVisualization(AArtifact artifact)
+    public ANeighborArtifactVisualization(ACodeSparksArtifact artifact)
     {
         super(artifact);
         this.psiElement = null;

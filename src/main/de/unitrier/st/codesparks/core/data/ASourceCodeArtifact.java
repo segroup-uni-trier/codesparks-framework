@@ -14,17 +14,17 @@ import java.util.stream.Collectors;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public abstract class ABaseArtifact extends AMetricArtifact implements IDisplayable, ICodeSparksThreadFilterable
+public abstract class ASourceCodeArtifact extends AArtifact implements IPsiNavigable, ICodeSparksThreadFilterable
 {
-    private final Map<String, ACodeSparksThread> threadMap;
-    private final Class<? extends ACodeSparksThread> threadClass;
+    private final Map<String, AThreadArtifact> threadMap;
+    private final Class<? extends AThreadArtifact> threadClass;
 
-    ABaseArtifact(final String name, final String identifier)
+    ASourceCodeArtifact(final String name, final String identifier)
     {
-        this(name, identifier, DefaultCodeSparksThread.class);
+        this(name, identifier, DefaultThreadArtifact.class);
     }
 
-    ABaseArtifact(final String name, final String identifier, final Class<? extends ACodeSparksThread> threadClass)
+    ASourceCodeArtifact(final String name, final String identifier, final Class<? extends AThreadArtifact> threadClass)
     {
         super(name, identifier);
         this.threadClass = threadClass;
@@ -90,7 +90,7 @@ public abstract class ABaseArtifact extends AMetricArtifact implements IDisplaya
 
     private final Object threadMapLock = new Object();
 
-    public Collection<ACodeSparksThread> getThreadArtifacts()
+    public Collection<AThreadArtifact> getThreadArtifacts()
     {
         synchronized (threadMapLock)
         {
@@ -98,7 +98,7 @@ public abstract class ABaseArtifact extends AMetricArtifact implements IDisplaya
         }
     }
 
-    public Map<String, List<ACodeSparksThread>> getThreadTypeLists()
+    public Map<String, List<AThreadArtifact>> getThreadTypeLists()
     {
         return getThreadTypeLists(s -> {
             int index = s.indexOf(":");
@@ -108,22 +108,22 @@ public abstract class ABaseArtifact extends AMetricArtifact implements IDisplaya
         });
     }
 
-    public Map<String, List<ACodeSparksThread>> getThreadTypeLists(final Function<String, String> threadIdentifierProcessor)
+    public Map<String, List<AThreadArtifact>> getThreadTypeLists(final Function<String, String> threadIdentifierProcessor)
     {
-        Collection<ACodeSparksThread> threadArtifacts = getThreadArtifacts();
-        Map<String, List<ACodeSparksThread>> threadTypeLists = new ConcurrentHashMap<>();
-        for (ACodeSparksThread codeSparksThread : threadArtifacts)
+        Collection<AThreadArtifact> threadArtifacts = getThreadArtifacts();
+        Map<String, List<AThreadArtifact>> threadTypeLists = new ConcurrentHashMap<>();
+        for (AThreadArtifact codeSparksThread : threadArtifacts)
         {
             String identifier = codeSparksThread.getIdentifier();
             String processed = threadIdentifierProcessor.apply(identifier);
-            List<ACodeSparksThread> threadArtifactList = threadTypeLists.getOrDefault(processed, new ArrayList<>());
+            List<AThreadArtifact> threadArtifactList = threadTypeLists.getOrDefault(processed, new ArrayList<>());
             threadArtifactList.add(codeSparksThread);
             threadTypeLists.put(processed, threadArtifactList);
         }
         return threadTypeLists;
     }
 
-    public ACodeSparksThread getThreadArtifact(String identifier)
+    public AThreadArtifact getThreadArtifact(String identifier)
     {
         synchronized (threadMapLock)
         {
@@ -132,7 +132,7 @@ public abstract class ABaseArtifact extends AMetricArtifact implements IDisplaya
     }
 
     @Deprecated
-    public void addThreadArtifact(ACodeSparksThread codeSparksThread)
+    public void addThreadArtifact(AThreadArtifact codeSparksThread)
     {
         synchronized (threadMapLock)
         {
@@ -144,12 +144,12 @@ public abstract class ABaseArtifact extends AMetricArtifact implements IDisplaya
     {
         synchronized (threadMapLock)
         {
-            ACodeSparksThread codeSparksThread = threadMap.get(threadIdentifier);
+            AThreadArtifact codeSparksThread = threadMap.get(threadIdentifier);
             if (codeSparksThread == null)
             {
                 try
                 {
-                    final Constructor<? extends ACodeSparksThread> constructor = threadClass.getConstructor(String.class);
+                    final Constructor<? extends AThreadArtifact> constructor = threadClass.getConstructor(String.class);
                     codeSparksThread = constructor.newInstance(threadIdentifier);
                     threadMap.put(threadIdentifier, codeSparksThread);
                 } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e)
@@ -197,7 +197,59 @@ public abstract class ABaseArtifact extends AMetricArtifact implements IDisplaya
 
     public Set<String> getCodeSparksThreadIdentifiers()
     {
-        return getThreadArtifacts().stream().map(ACodeSparksThread::getIdentifier).collect(Collectors.toSet());
+        return getThreadArtifacts().stream().map(AThreadArtifact::getIdentifier).collect(Collectors.toSet());
+    }
+
+    /*
+     Thread Clustering
+     */
+
+    private final Map<ICodeSparksThreadClusteringStrategy, CodeSparksThreadClustering> clusterings = new HashMap<>();
+
+    private CodeSparksThreadClustering lookupClustering(ICodeSparksThreadClusteringStrategy clusteringStrategy)
+    {
+        synchronized (clusterings)
+        {
+            CodeSparksThreadClustering threadArtifactClusters = clusterings.get(clusteringStrategy);
+            if (threadArtifactClusters == null)
+            {
+                threadArtifactClusters = clusteringStrategy.clusterCodeSparksThreads(getThreadArtifacts());
+                clusterings.put(clusteringStrategy, threadArtifactClusters);
+            }
+            return threadArtifactClusters;
+        }
+    }
+
+    public CodeSparksThreadClustering getThreadArtifactClustering(ICodeSparksThreadClusteringStrategy clusteringStrategy)
+    {
+        return lookupClustering(clusteringStrategy);
+    }
+
+    public CodeSparksThreadClustering getDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
+    {
+        return lookupClustering(DefaultCodeSparksThreadClusteringStrategy.getInstance(metricIdentifier));
+    }
+
+    public CodeSparksThreadClustering getSortedDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
+    {
+        CodeSparksThreadClustering defaultThreadArtifactClusters = lookupClustering(DefaultCodeSparksThreadClusteringStrategy.getInstance(metricIdentifier));
+        Comparator<CodeSparksThreadCluster> codeSparksThreadClusterComparator = CodeSparksThreadClusterComparator.getInstance(metricIdentifier);
+        defaultThreadArtifactClusters.sort(codeSparksThreadClusterComparator);
+        return defaultThreadArtifactClusters;
+    }
+
+    public void initDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
+    {
+        ICodeSparksThreadClusteringStrategy instance = DefaultCodeSparksThreadClusteringStrategy.getInstance(metricIdentifier);
+        synchronized (clusterings)
+        {
+            CodeSparksThreadClustering threadArtifactClusters = clusterings.get(instance);
+            if (threadArtifactClusters == null)
+            {
+                threadArtifactClusters = instance.clusterCodeSparksThreads(getThreadArtifacts());
+                clusterings.put(instance, threadArtifactClusters);
+            }
+        }
     }
 
     /*

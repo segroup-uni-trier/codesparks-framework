@@ -5,9 +5,9 @@ import de.unitrier.st.codesparks.core.CoreUtil;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class DefaultCodeSparksThread extends ACodeSparksThread
+public class DefaultThreadArtifact extends AThreadArtifact
 {
-    public DefaultCodeSparksThread(String identifier)
+    public DefaultThreadArtifact(String identifier)
     {
         super(identifier);
     }

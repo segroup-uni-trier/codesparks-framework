@@ -1,12 +1,12 @@
 package de.unitrier.st.codesparks.core.visualization;
 
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 
 /*
  * Copyright (C) 2020, Oliver Moseler
  */
-public abstract class AArtifactVisualizationLabelFactory extends AVisualizationSequence
-        implements IArtifactVisualizationLabelFactory
+public abstract class AArtifactVisualizationLabelFactory extends AVisualizationSequence implements IArtifactVisualizationLabelFactory
 {
     protected final IMetricIdentifier primaryMetricIdentifier;
 

@@ -3,7 +3,7 @@ package de.unitrier.st.codesparks.core.visualization.neighbor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
-import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +28,7 @@ public class DummyNeighborArtifactVisualizationLabelFactory extends ANeighborArt
 
     @Override
     public JLabel createArtifactCalleeLabel(
-            AArtifact artifact
+            ACodeSparksArtifact artifact
             , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
     )
     {

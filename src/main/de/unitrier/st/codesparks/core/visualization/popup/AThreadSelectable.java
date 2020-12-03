@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
 import javax.swing.*;
@@ -69,33 +69,33 @@ public abstract class AThreadSelectable implements IThreadSelectable
     @Override
     public Set<String> getFilteredThreadArtifactIdentifiers()
     {
-        return getFilteredThreadArtifacts().stream().map(ACodeSparksThread::getIdentifier).collect(Collectors.toSet());
+        return getFilteredThreadArtifacts().stream().map(AThreadArtifact::getIdentifier).collect(Collectors.toSet());
     }
 
     @Override
     public Set<String> getSelectedThreadArtifactIdentifiers()
     {
-        return getSelectedThreadArtifacts().stream().map(ACodeSparksThread::getIdentifier).collect(Collectors.toSet());
+        return getSelectedThreadArtifacts().stream().map(AThreadArtifact::getIdentifier).collect(Collectors.toSet());
     }
 
-    protected abstract Set<ACodeSparksThread> getThreadArtifacts(final boolean isSelected);
+    protected abstract Set<AThreadArtifact> getThreadArtifacts(final boolean isSelected);
 
     @Override
-    public Set<ACodeSparksThread> getFilteredThreadArtifacts()
+    public Set<AThreadArtifact> getFilteredThreadArtifacts()
     {
         return getThreadArtifacts(false);
     }
 
     @Override
-    public Set<ACodeSparksThread> getSelectedThreadArtifacts()
+    public Set<AThreadArtifact> getSelectedThreadArtifacts()
     {
         return getThreadArtifacts(true);
     }
 
     @Override
-    public Set<ACodeSparksThread> getSelectedThreadArtifactsOfCluster(CodeSparksThreadCluster cluster)
+    public Set<AThreadArtifact> getSelectedThreadArtifactsOfCluster(CodeSparksThreadCluster cluster)
     {
-        final Set<ACodeSparksThread> selectedCodeSparksThreads = getSelectedThreadArtifacts();
+        final Set<AThreadArtifact> selectedCodeSparksThreads = getSelectedThreadArtifacts();
         return cluster.stream().filter(selectedCodeSparksThreads::contains).collect(Collectors.toSet());
     }
 

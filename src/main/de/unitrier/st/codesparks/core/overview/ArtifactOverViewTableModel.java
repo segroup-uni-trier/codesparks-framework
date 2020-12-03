@@ -5,10 +5,7 @@ package de.unitrier.st.codesparks.core.overview;
 
 import de.unitrier.st.codesparks.core.ACodeSparksFlow;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ABaseArtifact;
-import de.unitrier.st.codesparks.core.data.DataUtil;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.ArtifactVisualizationLabelFactoryCache;
@@ -46,9 +43,10 @@ public class ArtifactOverViewTableModel implements TableModel
                 artifacts.stream()
                         .filter(artifact ->
                         {
-                            if (artifact.hasThreads())
+                            ASourceCodeArtifact scArtifact = (ASourceCodeArtifact) artifact;
+                            if (scArtifact != null && scArtifact.hasThreads())
                             {
-                                return DataUtil.getThreadMetricValueRatio(artifact,
+                                return DataUtil.getThreadMetricValueRatio(scArtifact,
                                         (codeSparksThread) -> codeSparksThread.getNumericalMetricValue(metricIdentifier)) > 0;
                             } else
                             {
@@ -57,7 +55,15 @@ public class ArtifactOverViewTableModel implements TableModel
                         })
                         .collect(Collectors.toList());
 //        this.artifacts.sort(Comparator.comparingDouble(DataUtil::getThreadFilteredMetricValue).reversed());
-        final ToDoubleFunction<ABaseArtifact> f = value -> DataUtil.getThreadFilteredMetricValue(value, metricIdentifier);
+        final ToDoubleFunction<? super AArtifact> f = value -> {
+            if (value instanceof ASourceCodeArtifact)
+            {
+                return DataUtil.getThreadFilteredMetricValue((ASourceCodeArtifact) value, metricIdentifier);
+            } else
+            {
+                return 0d;
+            }
+        };
         this.artifacts.sort(Comparator.comparingDouble(f).reversed());
 
     }

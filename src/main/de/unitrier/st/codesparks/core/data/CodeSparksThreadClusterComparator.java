@@ -36,7 +36,7 @@ public class CodeSparksThreadClusterComparator implements Comparator<CodeSparksT
     @Override
     public int compare(CodeSparksThreadCluster o1, CodeSparksThreadCluster o2)
     {
-        final ToDoubleFunction<ACodeSparksThread> f = thread -> thread.getNumericalMetricValue(metricIdentifier);
+        final ToDoubleFunction<AThreadArtifact> f = thread -> thread.getNumericalMetricValue(metricIdentifier);
         double sum1 = o1.stream().mapToDouble(f).sum() / o1.size();
         double sum2 = o2.stream().mapToDouble(f).sum() / o2.size();
         return Double.compare(sum1, sum2) * -1;

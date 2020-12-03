@@ -7,5 +7,5 @@ import java.util.Collection;
  */
 interface ICodeSparksThreadClusteringStrategy
 {
-    CodeSparksThreadClustering clusterCodeSparksThreads(Collection<ACodeSparksThread> codeSparksThreads);
+    CodeSparksThreadClustering clusterCodeSparksThreads(Collection<AThreadArtifact> codeSparksThreads);
 }

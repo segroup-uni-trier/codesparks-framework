@@ -1,9 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.*;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +23,7 @@ public final class ThreadVisualizationUtil
     {
         double sum = 0;
         int threads = 0;
-        for (ACodeSparksThread codeSparksThread : cluster)
+        for (AThreadArtifact codeSparksThread : cluster)
         {
             if (codeSparksThread.isFiltered() && !ignoreFilter)
                 continue;
@@ -39,7 +36,7 @@ public final class ThreadVisualizationUtil
 
     public static double calculateFilteredAvgNumericalMetricRatioForZoomVisualization(
             final CodeSparksThreadCluster cluster
-            , final Set<ACodeSparksThread> selectedCodeSparksThreads
+            , final Set<AThreadArtifact> selectedCodeSparksThreads
             , final IMetricIdentifier metricIdentifier
             , final boolean ignoreFilter
     )
@@ -57,7 +54,7 @@ public final class ThreadVisualizationUtil
             return 0;
         }
         double sum = 0;
-        for (ACodeSparksThread codeSparksThread : selectedCodeSparksThreads)
+        for (AThreadArtifact codeSparksThread : selectedCodeSparksThreads)
         {
             sum += codeSparksThread.getNumericalMetricValue(metricIdentifier);
         }
@@ -80,7 +77,7 @@ public final class ThreadVisualizationUtil
             return 0;
         }
         double sum = 0;
-        for (ACodeSparksThread codeSparksThread : cluster)
+        for (AThreadArtifact codeSparksThread : cluster)
         {
             if (codeSparksThread.isFiltered())
             {
@@ -93,11 +90,11 @@ public final class ThreadVisualizationUtil
 
     public static double calculateFilteredSumNumericalMetricRatioForZoomVisualisation(CodeSparksThreadCluster cluster,
                                                                                       final IMetricIdentifier metricIdentifier,
-                                                                                      Set<ACodeSparksThread> selectedCodeSparksThreads,
+                                                                                      Set<AThreadArtifact> selectedCodeSparksThreads,
                                                                                       boolean ignoreFilter)
     {
         double sum = 0;
-        for (ACodeSparksThread codeSparksThread : selectedCodeSparksThreads)
+        for (AThreadArtifact codeSparksThread : selectedCodeSparksThreads)
         {
             if (!cluster.contains(codeSparksThread) && !ignoreFilter)
                 continue;
@@ -136,13 +133,13 @@ public final class ThreadVisualizationUtil
         return discreteMetric;
     }
 
-    public static int getNumberOfThreadTypesInSet(AArtifact artifact, Set<ACodeSparksThread> codeSparksThreadArtifactsSet)
+    public static int getNumberOfThreadTypesInSet(ASourceCodeArtifact artifact, Set<AThreadArtifact> codeSparksThreadArtifactsSet)
     {
         if (codeSparksThreadArtifactsSet == null)
         {
             return 0;
         }
-        Map<String, List<ACodeSparksThread>> threadTypeLists = artifact.getThreadTypeLists();
+        Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
         if (threadTypeLists == null)
         {
             return 0;
@@ -155,20 +152,20 @@ public final class ThreadVisualizationUtil
         return collect.size();
     }
 
-    public static int getNumberOfFilteredThreadTypes(AArtifact artifact, Set<ACodeSparksThread> filteredCodeSparksThreads)
+    public static int getNumberOfFilteredThreadTypes(ACodeSparksArtifact artifact, Set<AThreadArtifact> filteredCodeSparksThreads)
     {
         if (filteredCodeSparksThreads == null)
         {
             filteredCodeSparksThreads =
                     artifact.getThreadArtifacts()
                             .stream()
-                            .filter(ACodeSparksThread::isFiltered)
+                            .filter(AThreadArtifact::isFiltered)
                             .collect(Collectors.toSet());
         }
         return getNumberOfThreadTypesInSet(artifact, filteredCodeSparksThreads);
     }
 
-    public static int getNumberOfSelectedThreadTypes(AArtifact artifact, Set<ACodeSparksThread> selectedCodeSparksThreads)
+    public static int getNumberOfSelectedThreadTypes(ASourceCodeArtifact artifact, Set<AThreadArtifact> selectedCodeSparksThreads)
     {
         if (selectedCodeSparksThreads == null)
         {

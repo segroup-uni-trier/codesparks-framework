@@ -42,7 +42,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
 
     @Override
     public JLabel createArtifactCalleeLabel(
-            AArtifact artifact
+            ACodeSparksArtifact artifact
             , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
     )
     {
@@ -101,8 +101,8 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
         {
 
             double calleeRuntime = 0D;
-            Collection<ACodeSparksThread> codeSparksThreads = neighborArtifact.getThreadArtifacts();
-            for (ACodeSparksThread codeSparksThread : codeSparksThreads)
+            Collection<AThreadArtifact> codeSparksThreads = neighborArtifact.getThreadArtifacts();
+            for (AThreadArtifact codeSparksThread : codeSparksThreads)
             {
                 if (!codeSparksThread.isFiltered())
                 {

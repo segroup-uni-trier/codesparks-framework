@@ -3,10 +3,8 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import org.jetbrains.annotations.NotNull;
@@ -75,14 +73,27 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             @NotNull final AArtifact artifact
     )
     {
-        Collection<ACodeSparksThread> codeSparksThreads = artifact.getThreadArtifacts();
+        if (!(artifact instanceof ASourceCodeArtifact))
+        {
+            CodeSparksLogger.addText("%s: The artifact has to be of type '%s' but is of type '%s'.",
+                    getClass()
+                    , ASourceCodeArtifact.class.getSimpleName()
+                    , artifact.getClass().getSimpleName()
+            );
+            return new JLabel();
+        }
+
+        final ASourceCodeArtifact scArtifact = (ASourceCodeArtifact) artifact;
+
+
+        Collection<AThreadArtifact> codeSparksThreads = scArtifact.getThreadArtifacts();
 
         if (codeSparksThreads.isEmpty())
         {
             return emptyLabel();
         }
 
-        List<CodeSparksThreadCluster> codeSparksThreadClusters = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        List<CodeSparksThreadCluster> codeSparksThreadClusters = scArtifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
         int startAngle = 90;
         boolean useDisabledColors = false;
         JBColor[] colors = {new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), new JBColor(Color.decode("#B25283"),
@@ -90,13 +101,13 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
         JBColor[] disabledColors = {new JBColor(Color.decode("#999999"), Color.decode("#999999")), new JBColor(Color.decode("#777777"),
                 Color.decode("#777777")), new JBColor(Color.decode("#555555"), Color.decode("#555555"))};
 
-        long numberOfSelectedArtifactThreads = artifact.getThreadArtifacts().stream().filter(t -> !t.isFiltered()).count();
-        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfSelectedThreadTypes(artifact, null);
+        long numberOfSelectedArtifactThreads = scArtifact.getThreadArtifacts().stream().filter(t -> !t.isFiltered()).count();
+        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfSelectedThreadTypes(scArtifact, null);
 
         if (numberOfSelectedArtifactThreads == 0)
         {
-            numberOfSelectedArtifactThreads = artifact.getNumberOfThreads();
-            Map<String, List<ACodeSparksThread>> threadTypeLists = artifact.getThreadTypeLists();
+            numberOfSelectedArtifactThreads = scArtifact.getNumberOfThreads();
+            Map<String, List<AThreadArtifact>> threadTypeLists = scArtifact.getThreadTypeLists();
             numberOfSelectedThreadTypes = threadTypeLists == null ? 0 : threadTypeLists.size();
             useDisabledColors = true;
         }
@@ -124,7 +135,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
             RadialVisualThreadClusterProperties properties =
                     new RadialVisualThreadClusterProperties(codeSparksThreadClusters.get(i), colors[i],
-                            artifact.getNumberOfThreads(), primaryMetricIdentifier);
+                            scArtifact.getNumberOfThreads(), primaryMetricIdentifier);
             propertiesManager.registerProperties(properties);
 
             //double filteredRuntimeRatio = properties.calculateFilteredRuntimeRatio(threadArtifactClusters.get(i), useDisabledColors);
@@ -241,7 +252,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             // trigger each time a click occurs. For each click a new listener will be attached!
             jLabel.removeMouseListener(mouseListener);
         }
-        jLabel.addMouseListener(new ThreadRadarMouseListener(jLabel, artifact, radialThreadVisualizationPopupData, primaryMetricIdentifier,
+        jLabel.addMouseListener(new ThreadRadarMouseListener(jLabel, scArtifact, radialThreadVisualizationPopupData, primaryMetricIdentifier,
                 secondaryMetricIdentifier));
 
         return jLabel;

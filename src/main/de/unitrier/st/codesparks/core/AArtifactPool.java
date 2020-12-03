@@ -209,25 +209,36 @@ public abstract class AArtifactPool implements IArtifactPool
         }
         synchronized (programArtifactLock)
         {
-            if (programArtifact != null)
+            if (programArtifact != null && programArtifact instanceof ICodeSparksThreadFilterable)
             {
-                programArtifact.applyThreadFilter(threadFilter);
+                ((ICodeSparksThreadFilterable) programArtifact).applyThreadFilter(threadFilter);
             }
         }
 
         synchronized (artifactsLock)
         {
             Collection<Map<String, AArtifact>> values = artifacts.values();
-
             for (Map<String, AArtifact> value : values)
             {
-                value.values().forEach(profilingMethod -> {
-                    profilingMethod.applyThreadFilter(threadFilter);
-                    profilingMethod.getSuccessorsList().forEach(aNeighborProfilingArtifact
-                            -> aNeighborProfilingArtifact.applyThreadFilter(threadFilter));
-                    profilingMethod.getPredecessorsList().forEach(aNeighborProfilingArtifact
-                            -> aNeighborProfilingArtifact.applyThreadFilter(threadFilter));
-                });
+                value
+                        .values()
+                        .stream()
+                        .filter(artifact -> artifact instanceof ACodeSparksArtifact)
+                        .map(artifact -> (ACodeSparksArtifact) artifact)
+                        .forEach(artifact -> {
+                            artifact.applyThreadFilter(threadFilter);
+                            artifact.getSuccessorsList().forEach(aNeighborProfilingArtifact
+                                    -> aNeighborProfilingArtifact.applyThreadFilter(threadFilter));
+                            artifact.getPredecessorsList().forEach(aNeighborProfilingArtifact
+                                    -> aNeighborProfilingArtifact.applyThreadFilter(threadFilter));
+                        });
+//                value.values().forEach(profilingMethod -> {
+//                    profilingMethod.applyThreadFilter(threadFilter);
+//                    profilingMethod.getSuccessorsList().forEach(aNeighborProfilingArtifact
+//                            -> aNeighborProfilingArtifact.applyThreadFilter(threadFilter));
+//                    profilingMethod.getPredecessorsList().forEach(aNeighborProfilingArtifact
+//                            -> aNeighborProfilingArtifact.applyThreadFilter(threadFilter));
+//                });
             }
         }
     }

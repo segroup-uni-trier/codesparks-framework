@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization;
 
-import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -11,7 +11,7 @@ import java.util.Comparator;
  */
 class ArtifactVisualizationWrapper extends AArtifactVisualization
 {
-    ArtifactVisualizationWrapper(AArtifact artifact, AArtifactVisualizationLabelFactory... factories)
+    ArtifactVisualizationWrapper(ACodeSparksArtifact artifact, AArtifactVisualizationLabelFactory... factories)
     {
         super(artifact);
         //this.psiElement = artifact.getVisPsiElement();

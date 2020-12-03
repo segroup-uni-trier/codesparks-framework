@@ -8,7 +8,7 @@ import de.unitrier.st.codesparks.core.data.AArtifact;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public interface IArtifactVisualizer
+public interface IArtifactVisualizer<T extends AArtifact>
 {
-    AArtifactVisualization createArtifactVisualization(AArtifact artifact, AArtifactVisualizationLabelFactory... factories);
+    AArtifactVisualization createArtifactVisualization(T artifact, AArtifactVisualizationLabelFactory... factories);
 }

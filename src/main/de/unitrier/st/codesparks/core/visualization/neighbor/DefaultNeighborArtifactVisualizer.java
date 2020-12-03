@@ -4,7 +4,7 @@
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
-import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,7 +34,7 @@ public class DefaultNeighborArtifactVisualizer implements INeighborArtifactVisua
     private DefaultNeighborArtifactVisualizer() { }
 
     @Override
-    public Collection<ANeighborArtifactVisualization> createArtifactCalleeVisualizations(AArtifact artifact,
+    public Collection<ANeighborArtifactVisualization> createArtifactCalleeVisualizations(ACodeSparksArtifact artifact,
                                                                                          ANeighborArtifactVisualizationLabelFactory... calleeFactories)
     {
         assert artifact != null;

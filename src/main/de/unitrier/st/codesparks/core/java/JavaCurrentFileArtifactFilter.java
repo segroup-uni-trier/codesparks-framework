@@ -4,7 +4,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ABaseArtifact;
 import de.unitrier.st.codesparks.core.overview.ICurrentFileArtifactFilter;
 
 import java.util.*;
@@ -34,7 +33,7 @@ public class JavaCurrentFileArtifactFilter implements ICurrentFileArtifactFilter
 
     public static ICurrentFileArtifactFilter getInstance()
     {
-        return getInstance(ABaseArtifact::getIdentifier);
+        return getInstance(AArtifact::getIdentifier);
     }
 
     private final Function<AArtifact, String> artifactStringFunc;

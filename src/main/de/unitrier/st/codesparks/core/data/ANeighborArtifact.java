@@ -9,7 +9,7 @@ import de.unitrier.st.codesparks.core.CoreUtil;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public abstract class ANeighborArtifact extends ABaseArtifact
+public abstract class ANeighborArtifact extends ASourceCodeArtifact
 {
     protected ANeighborArtifact(
             final String name
@@ -21,10 +21,10 @@ public abstract class ANeighborArtifact extends ABaseArtifact
         this.lineNumber = lineNumber;
     }
 
-    public double getNumericalMetricValueRelativeTo(final AArtifact aArtifact, final IMetricIdentifier metricIdentifier)
+    public double getNumericalMetricValueRelativeTo(final ACodeSparksArtifact aCodeSparksArtifact, final IMetricIdentifier metricIdentifier)
     {
         final double metricValue = getNumericalMetricValue(metricIdentifier);
-        final double artifactNumericalMetricValue = aArtifact.getNumericalMetricValue(metricIdentifier);
+        final double artifactNumericalMetricValue = aCodeSparksArtifact.getNumericalMetricValue(metricIdentifier);
         return metricValue / artifactNumericalMetricValue;
     }
 
@@ -38,12 +38,12 @@ public abstract class ANeighborArtifact extends ABaseArtifact
         setVisPsiElement(invocationLineElement);
     }
 
-    public String getDisplayStringRelativeTo(final AArtifact artifact, final IMetricIdentifier metricIdentifier, final int maxLen)
+    public String getDisplayStringRelativeTo(final ACodeSparksArtifact artifact, final IMetricIdentifier metricIdentifier, final int maxLen)
     {
         return CoreUtil.reduceToLength(getDisplayStringRelativeTo(artifact, metricIdentifier), maxLen);
     }
 
-    public String getDisplayStringRelativeTo(final AArtifact artifact, final IMetricIdentifier metricIdentifier)
+    public String getDisplayStringRelativeTo(final ACodeSparksArtifact artifact, final IMetricIdentifier metricIdentifier)
     {
         final double numericalMetricValueRelativeTo = getNumericalMetricValueRelativeTo(artifact, metricIdentifier);
         return name + " - " + metricIdentifier.getDisplayString() + ": " + CoreUtil.formatPercentage(numericalMetricValueRelativeTo);

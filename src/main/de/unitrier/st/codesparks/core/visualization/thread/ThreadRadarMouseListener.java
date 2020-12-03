@@ -8,6 +8,7 @@ import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
+import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationMouseListener;
@@ -33,7 +34,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
     public ThreadRadarMouseListener(
             final JComponent component
-            , final AArtifact artifact
+            , final ASourceCodeArtifact artifact
             , final IThreadRadarDisplayData radialThreadVisualizationPopupData
             , final IMetricIdentifier primaryMetricIdentifier
             , final IMetricIdentifier secondaryMetricIdentifier
@@ -53,11 +54,24 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
     {
         PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "ThreadRadarPopup");
 
+        if (!(artifact instanceof ASourceCodeArtifact))
+        {
+            CodeSparksLogger.addText("%s: The artifact has to be of type '%s' but is of type '%s'.",
+                    getClass()
+                    , ASourceCodeArtifact.class.getSimpleName()
+                    , artifact.getClass().getSimpleName()
+            );
+            return popupPanel;
+        }
+
+        final ASourceCodeArtifact scArtifact = (ASourceCodeArtifact) artifact;
+
+
         threadSelectables.clear();
         final JBTabbedPane tabbedPane = new JBTabbedPane();
 
-        CodeSparksThreadClustering sortedDefaultCodeSparksThreadClustering = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
-        Map<String, List<ACodeSparksThread>> map = new HashMap<>();
+        CodeSparksThreadClustering sortedDefaultCodeSparksThreadClustering = scArtifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        Map<String, List<AThreadArtifact>> map = new HashMap<>();
         int clusterId = 1;
         for (CodeSparksThreadCluster threadArtifacts : sortedDefaultCodeSparksThreadClustering)
         {
@@ -70,7 +84,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
         // -------------
 
-        final Map<String, List<ACodeSparksThread>> threadTypeLists = artifact.getThreadTypeLists();
+        final Map<String, List<AThreadArtifact>> threadTypeLists = scArtifact.getThreadTypeLists();
         AThreadSelectable threadTypesTree = new ThreadTypeTree(threadTypeLists, primaryMetricIdentifier,
                 sortedDefaultCodeSparksThreadClustering);
         threadSelectables.add(threadTypesTree);
@@ -198,12 +212,12 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
         //Radial Visualization
 
-        zoomedThreadRadar = new ZoomedThreadRadar(artifact,
+        zoomedThreadRadar = new ZoomedThreadRadar(scArtifact,
                 indexProvider,
                 threadSelectables, primaryMetricIdentifier);
         zoomedThreadRadar.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
         ZoomedThreadRadarMouseAdapter mouseAdapter =
-                new ZoomedThreadRadarMouseAdapter(zoomedThreadRadar, artifact, primaryMetricIdentifier, this, northLeftWrapper);
+                new ZoomedThreadRadarMouseAdapter(zoomedThreadRadar, scArtifact, primaryMetricIdentifier, this, northLeftWrapper);
         zoomedThreadRadar.addMouseMotionListener(mouseAdapter);
         zoomedThreadRadar.addMouseListener(mouseAdapter);
 
@@ -263,7 +277,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
         // ---------------------------------------------
         CodeSparksThreadDisplayData selectedData =
-                radialThreadVisualizationPopupData.getSelectedThreadData(artifact, threadClustersTree.getSelectedThreadArtifacts());
+                radialThreadVisualizationPopupData.getSelectedThreadData(scArtifact, threadClustersTree.getSelectedThreadArtifacts());
         if (selectedData == null)
         {
             selectedData = new CodeSparksThreadDisplayData();
@@ -279,7 +293,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
                 int index = indexProvider.getThreadSelectableIndex();
                 IThreadSelectable iThreadSelectable = threadSelectables.get(index);
                 CodeSparksThreadDisplayData selectedThreadData =
-                        radialThreadVisualizationPopupData.getSelectedThreadData(artifact, iThreadSelectable.getSelectedThreadArtifacts());
+                        radialThreadVisualizationPopupData.getSelectedThreadData(scArtifact, iThreadSelectable.getSelectedThreadArtifacts());
                 setText(metricString + " : " + CoreUtil.formatPercentage(selectedThreadData.getMetricValueSum()));
                 super.repaint();
             }
@@ -298,7 +312,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
                 int index = indexProvider.getThreadSelectableIndex();
                 IThreadSelectable iThreadSelectable = threadSelectables.get(index);
                 CodeSparksThreadDisplayData selectedThreadData =
-                        radialThreadVisualizationPopupData.getSelectedThreadData(artifact, iThreadSelectable.getSelectedThreadArtifacts());
+                        radialThreadVisualizationPopupData.getSelectedThreadData(scArtifact, iThreadSelectable.getSelectedThreadArtifacts());
                 setText(numberOfThreadTypesString + " : " + selectedThreadData.getNumberOfThreadTypes());
                 super.repaint();
             }
@@ -317,7 +331,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
                 int index = indexProvider.getThreadSelectableIndex();
                 IThreadSelectable iThreadSelectable = threadSelectables.get(index);
                 CodeSparksThreadDisplayData selectedThreadData =
-                        radialThreadVisualizationPopupData.getSelectedThreadData(artifact, iThreadSelectable.getSelectedThreadArtifacts());
+                        radialThreadVisualizationPopupData.getSelectedThreadData(scArtifact, iThreadSelectable.getSelectedThreadArtifacts());
                 setText(numberOfThreadsString + " : " + selectedThreadData.getNumberOfThreads());
                 super.repaint();
             }
@@ -434,7 +448,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
             return;
         }
         CodeSparksThreadDisplayData hoveredThreadData =
-                radialThreadVisualizationPopupData.getHoveredThreadData(artifact,
+                radialThreadVisualizationPopupData.getHoveredThreadData((ASourceCodeArtifact) artifact,
                         threadSelectables.get(0).getSelectedThreadArtifactsOfCluster(cluster));
         if (hoveredThreadData == null)
         {

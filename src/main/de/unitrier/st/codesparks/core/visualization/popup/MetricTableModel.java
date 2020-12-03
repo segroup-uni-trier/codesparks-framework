@@ -1,7 +1,7 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
-import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.NeighborArtifactComparator;
 import org.jetbrains.annotations.NotNull;
@@ -22,9 +22,9 @@ public class MetricTableModel extends DefaultTableModel
     private final int sucSize;
 
     private final IMetricIdentifier metricIdentifier;
-    private final AArtifact artifact;
+    private final ACodeSparksArtifact artifact;
 
-    public MetricTableModel(@NotNull final AArtifact artifact, final IMetricIdentifier metricIdentifier)
+    public MetricTableModel(@NotNull final ACodeSparksArtifact artifact, final IMetricIdentifier metricIdentifier)
     {
         this.artifact = artifact;
         this.metricIdentifier = metricIdentifier;

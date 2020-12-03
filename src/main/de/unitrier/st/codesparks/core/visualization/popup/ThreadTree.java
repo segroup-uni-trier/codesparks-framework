@@ -2,7 +2,7 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.util.ui.ThreeStateCheckBox;
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 public class ThreadTree extends AThreadSelectable
 {
     protected final List<ThreadTreeLeafNode> leafNodes;
-    protected final Map<List<ACodeSparksThread>, ThreadTreeInnerNode> innerNodes;
+    protected final Map<List<AThreadArtifact>, ThreadTreeInnerNode> innerNodes;
 
     public ThreadTree(
-            final Map<String, List<ACodeSparksThread>> threadTreeContent
+            final Map<String, List<AThreadArtifact>> threadTreeContent
             , final IMetricIdentifier metricIdentifier
     )
     {
@@ -63,7 +63,7 @@ public class ThreadTree extends AThreadSelectable
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
 
-        List<Map.Entry<String, List<ACodeSparksThread>>> entries = new ArrayList<>(threadTreeContent.entrySet());
+        List<Map.Entry<String, List<AThreadArtifact>>> entries = new ArrayList<>(threadTreeContent.entrySet());
         entries.sort(Map.Entry.comparingByValue((o1, o2) -> {
                     double sum1 = o1.stream().mapToDouble((codeSparksThread) -> codeSparksThread.getNumericalMetricValue(metricIdentifier)).sum();
                     double sum2 = o2.stream().mapToDouble((codeSparksThread) -> codeSparksThread.getNumericalMetricValue(metricIdentifier)).sum();
@@ -74,14 +74,14 @@ public class ThreadTree extends AThreadSelectable
                 }
         ));
 
-        for (Map.Entry<String, List<ACodeSparksThread>> entry : entries)
+        for (Map.Entry<String, List<AThreadArtifact>> entry : entries)
         {
             if (entry.getValue().isEmpty()) continue;
-            List<ACodeSparksThread> codeSparksThreads = entry.getValue();
+            List<AThreadArtifact> codeSparksThreads = entry.getValue();
             codeSparksThreads.sort(new CodeSparksThreadComparator(metricIdentifier));
             ThreadTreeInnerNode innerNode = new ThreadTreeInnerNode(entry.getKey(), codeSparksThreads, metricIdentifier);
             boolean isInnerNodeSelected = true;
-            for (ACodeSparksThread codeSparksThread : codeSparksThreads)
+            for (AThreadArtifact codeSparksThread : codeSparksThreads)
             {
                 ThreadTreeLeafNode threadTreeLeafNode = new ThreadTreeLeafNode(codeSparksThread, metricIdentifier);
                 boolean filtered = codeSparksThread.isFiltered();
@@ -208,7 +208,7 @@ public class ThreadTree extends AThreadSelectable
     }
 
     @Override
-    protected Set<ACodeSparksThread> getThreadArtifacts(final boolean isSelected)
+    protected Set<AThreadArtifact> getThreadArtifacts(final boolean isSelected)
     {
         return leafNodes.
                 stream()

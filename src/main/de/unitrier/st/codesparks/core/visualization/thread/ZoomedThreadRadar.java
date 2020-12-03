@@ -1,11 +1,8 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksThread;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.popup.IThreadSelectable;
-import de.unitrier.st.codesparks.core.data.CodeSparksThreadCluster;
 
 import java.awt.*;
 import java.util.List;
@@ -22,7 +19,7 @@ public class ZoomedThreadRadar extends AThreadRadar
     private final IMetricIdentifier metricIdentifier;
 
     ZoomedThreadRadar(
-            final AArtifact artifact
+            final ASourceCodeArtifact artifact
             , final IThreadSelectableIndexProvider indexProvider
             , final List<IThreadSelectable> threadSelectables
             , final IMetricIdentifier metricIdentifier
@@ -61,8 +58,8 @@ public class ZoomedThreadRadar extends AThreadRadar
 
         int index = indexProvider.getThreadSelectableIndex();
 
-        final Set<ACodeSparksThread> filteredCodeSparksThreads = threadSelectables.get(index).getFilteredThreadArtifacts();
-        final Set<ACodeSparksThread> selectedCodeSparksThreads = threadSelectables.get(index).getSelectedThreadArtifacts();
+        final Set<AThreadArtifact> filteredCodeSparksThreads = threadSelectables.get(index).getFilteredThreadArtifacts();
+        final Set<AThreadArtifact> selectedCodeSparksThreads = threadSelectables.get(index).getSelectedThreadArtifacts();
         final int numberOfSelectedArtifactThreads = selectedCodeSparksThreads.size();
 
         String completeNumberOfThreadsString = numberOfSelectedArtifactThreads + "";

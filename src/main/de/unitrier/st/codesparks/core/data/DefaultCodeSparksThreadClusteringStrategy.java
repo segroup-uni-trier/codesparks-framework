@@ -65,7 +65,7 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
     }
 
     @Override
-    public CodeSparksThreadClustering clusterCodeSparksThreads(Collection<ACodeSparksThread> codeSparksThreads)
+    public CodeSparksThreadClustering clusterCodeSparksThreads(Collection<AThreadArtifact> codeSparksThreads)
     {
         final int k = 3;
         final int maxIterations = 100;
@@ -258,10 +258,10 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
         }
     }
 
-    private List<Point> createPoints(final Collection<ACodeSparksThread> codeSparksThreads, final IMetricIdentifier metricIdentifier)
+    private List<Point> createPoints(final Collection<AThreadArtifact> codeSparksThreads, final IMetricIdentifier metricIdentifier)
     {
         ArrayList<Point> points = new ArrayList<>();
-        for (ACodeSparksThread codeSparksThread : codeSparksThreads)
+        for (AThreadArtifact codeSparksThread : codeSparksThreads)
         {
             Point point = new Point(codeSparksThread, metricIdentifier);
             points.add(point);
@@ -318,9 +318,9 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
         private final double x;
         private final double y;
         private int clusterIndex;
-        private final ACodeSparksThread codeSparksThread;
+        private final AThreadArtifact codeSparksThread;
 
-        Point(final ACodeSparksThread codeSparksThread, final IMetricIdentifier metricIdentifier)
+        Point(final AThreadArtifact codeSparksThread, final IMetricIdentifier metricIdentifier)
         {
             this.x = 0;//getCharSum(threadArtifact.getCallSite());
             this.y = ((int) (100 * codeSparksThread.getNumericalMetricValue(metricIdentifier))) / 100D;
@@ -370,7 +370,7 @@ public class DefaultCodeSparksThreadClusteringStrategy implements ICodeSparksThr
             return Objects.hash(codeSparksThread);
         }
 
-        ACodeSparksThread getThreadArtifact()
+        AThreadArtifact getThreadArtifact()
         {
             return codeSparksThread;
         }

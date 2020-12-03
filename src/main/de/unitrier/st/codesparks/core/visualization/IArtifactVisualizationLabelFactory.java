@@ -3,12 +3,12 @@ package de.unitrier.st.codesparks.core.visualization;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JLabel;
+import javax.swing.*;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public interface IArtifactVisualizationLabelFactory
+public interface IArtifactVisualizationLabelFactory<T extends AArtifact>
 {
-    JLabel createArtifactLabel(@NotNull final AArtifact artifact);
+    JLabel createArtifactLabel(@NotNull final T artifact);
 }
