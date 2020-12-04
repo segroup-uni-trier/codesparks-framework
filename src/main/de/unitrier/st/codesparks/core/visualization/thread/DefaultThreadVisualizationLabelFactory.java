@@ -3,8 +3,10 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.*;
-import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
+import de.unitrier.st.codesparks.core.data.ASourceCodeArtifact;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
@@ -21,7 +23,8 @@ import static com.intellij.ui.JBColor.WHITE;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
+@SuppressWarnings("unused")
+public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory<ASourceCodeArtifact>
 {
     @SuppressWarnings("unused")
     public DefaultThreadVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
@@ -29,6 +32,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
         super(primaryMetricIdentifier);
     }
 
+    @SuppressWarnings("unused")
     public DefaultThreadVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(primaryMetricIdentifier, sequence);
@@ -36,21 +40,9 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
     @Override
     public JLabel createArtifactLabel(
-            @NotNull final AArtifact artifact
+            @NotNull final ASourceCodeArtifact artifact
     )
     {
-        if (!(artifact instanceof ASourceCodeArtifact))
-        {
-            CodeSparksLogger.addText("%s: The artifact has to be of type '%s' but is of type '%s'.",
-                    getClass()
-                    , ASourceCodeArtifact.class.getSimpleName()
-                    , artifact.getClass().getSimpleName()
-            );
-            return new JLabel();
-        }
-        final ASourceCodeArtifact scArtifact = (ASourceCodeArtifact) artifact;
-
-
         final int threadsPerColumn = 3;
         int lineHeight = VisualizationUtil.getLineHeightCeil(VisConstants.getLineHeight(), threadsPerColumn);
         int width = 5000;
@@ -71,7 +63,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
         int totalThreadCnt = 0;
 
-        List<ThreadArtifactCluster> threadArtifactClustering = scArtifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        List<ThreadArtifactCluster> threadArtifactClustering = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
 
         for (int i = 0; i < threadArtifactClustering.size(); i++)
         {
@@ -133,7 +125,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
         jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
         //jLabel.addMouseListener(new DefaultArtifactVisualizationMouseListener(jLabel, artifact));
-        jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, scArtifact, primaryMetricIdentifier));
+        jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
 
         return jLabel;
     }

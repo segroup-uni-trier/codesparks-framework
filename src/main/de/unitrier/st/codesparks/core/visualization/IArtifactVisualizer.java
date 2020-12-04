@@ -3,12 +3,12 @@
  */
 package de.unitrier.st.codesparks.core.visualization;
 
-import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public interface IArtifactVisualizer<T extends AArtifact>
+public interface IArtifactVisualizer
 {
-    AArtifactVisualization createArtifactVisualization(T artifact, AArtifactVisualizationLabelFactory... factories);
+    AArtifactVisualization createArtifactVisualization(ACodeSparksArtifact artifact, AArtifactVisualizationLabelFactory<ACodeSparksArtifact>... factories);
 }

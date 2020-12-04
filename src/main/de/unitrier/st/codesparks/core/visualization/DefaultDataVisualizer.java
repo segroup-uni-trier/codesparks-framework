@@ -30,12 +30,12 @@ public class DefaultDataVisualizer extends ADataVisualizer
     }
 
     @SuppressWarnings("unused")
-    public DefaultDataVisualizer(AArtifactVisualizationLabelFactory[] artifactFactories)
+    public DefaultDataVisualizer(AArtifactVisualizationLabelFactory<ACodeSparksArtifact>[] artifactFactories)
     {
         this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), artifactFactories, null);
     }
 
-    public DefaultDataVisualizer(AArtifactVisualizationLabelFactory[] artifactFactories,
+    public DefaultDataVisualizer(AArtifactVisualizationLabelFactory<ACodeSparksArtifact>[] artifactFactories,
                                  ANeighborArtifactVisualizationLabelFactory[] calleeFactories)
     {
         this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), artifactFactories, calleeFactories);
@@ -44,7 +44,7 @@ public class DefaultDataVisualizer extends ADataVisualizer
     @SuppressWarnings("WeakerAccess")
     public DefaultDataVisualizer(IArtifactVisualizer artifactVisualizer,
                                  INeighborArtifactVisualizer artifactCalleeVisualizer,
-                                 AArtifactVisualizationLabelFactory[] artifactFactories,
+                                 AArtifactVisualizationLabelFactory<ACodeSparksArtifact>[] artifactFactories,
                                  ANeighborArtifactVisualizationLabelFactory[] calleeFactories)
     {
         super(artifactVisualizer, artifactFactories);

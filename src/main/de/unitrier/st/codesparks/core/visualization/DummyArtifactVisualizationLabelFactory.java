@@ -17,7 +17,7 @@ import java.awt.image.BufferedImage;
  * Copyright (c), Oliver Moseler, 2020
  */
 @SuppressWarnings("unused")
-public class DummyArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
+public class DummyArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory<AArtifact>
 {
     public DummyArtifactVisualizationLabelFactory() { super(null);}
 

@@ -8,13 +8,13 @@ import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class DefaultArtifactVisualizer implements IArtifactVisualizer<ACodeSparksArtifact>
+public class DefaultArtifactVisualizer implements IArtifactVisualizer
 {
-    private volatile static IArtifactVisualizer<ACodeSparksArtifact> instance;
+    private volatile static IArtifactVisualizer instance;
 
     private DefaultArtifactVisualizer() {}
 
-    public static IArtifactVisualizer<ACodeSparksArtifact> getInstance()
+    public static IArtifactVisualizer getInstance()
     {
         if (instance == null)
         {
@@ -30,7 +30,8 @@ public class DefaultArtifactVisualizer implements IArtifactVisualizer<ACodeSpark
     }
 
     @Override
-    public AArtifactVisualization createArtifactVisualization(ACodeSparksArtifact artifact, AArtifactVisualizationLabelFactory... factories)
+    public AArtifactVisualization createArtifactVisualization(ACodeSparksArtifact artifact,
+                                                              AArtifactVisualizationLabelFactory<ACodeSparksArtifact>... factories)
     {
         return new ArtifactVisualizationWrapper(artifact, factories);
     }

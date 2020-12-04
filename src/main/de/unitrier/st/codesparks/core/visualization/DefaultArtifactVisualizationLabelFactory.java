@@ -6,11 +6,9 @@ package de.unitrier.st.codesparks.core.visualization;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.CoreUtil;
-import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 import de.unitrier.st.codesparks.core.data.DataUtil;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
-import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -24,10 +22,11 @@ import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
+public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory<ACodeSparksArtifact>
 {
     private final IMetricIdentifier secondaryMetricIdentifier;
 
+    @SuppressWarnings("unused")
     public DefaultArtifactVisualizationLabelFactory(
             final IMetricIdentifier primaryMetricIdentifier
             , final IMetricIdentifier secondaryMetricIdentifier
@@ -36,6 +35,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         this(primaryMetricIdentifier, secondaryMetricIdentifier, 0, false);
     }
 
+    @SuppressWarnings("unused")
     public DefaultArtifactVisualizationLabelFactory(
             final IMetricIdentifier primaryMetricIdentifier
             , final IMetricIdentifier secondaryMetricIdentifier
@@ -77,20 +77,8 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 //    }
 
     @Override
-    public JLabel createArtifactLabel(@NotNull final AArtifact artifact)
+    public JLabel createArtifactLabel(@NotNull final ACodeSparksArtifact artifact)
     {
-        if (!(artifact instanceof ACodeSparksArtifact))
-        {
-            CodeSparksLogger.addText("%s: The artifact has to be of type '%s' but is of type '%s'.",
-                    getClass()
-                    , ACodeSparksArtifact.class.getSimpleName()
-                    , artifact.getClass().getSimpleName()
-            );
-            return new JLabel();
-        }
-
-        final ACodeSparksArtifact codeSparksArtifact = (ACodeSparksArtifact) artifact;
-
         int lineHeight = VisConstants.getLineHeight();
 
         GraphicsConfiguration defaultConfiguration =
@@ -115,7 +103,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 //        final double threadMetricValueRatio = DataUtil.getThreadMetricValueRatio(artifact, ThreadArtifact::getMetricValue);
 //        final double threadFilteredMetricValue = metricValue * threadMetricValueRatio;
 
-        final double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(codeSparksArtifact, primaryMetricIdentifier);
+        final double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, primaryMetricIdentifier);
 
         String percentageText = CoreUtil.formatPercentage(threadFilteredMetricValue);
         /*
@@ -135,7 +123,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 //        final double threadMetricValueSelfRatio = DataUtil.getThreadMetricValueRatio(artifact, ThreadArtifact::getMetricValueSelf);
 //        final double threadFilteredMetricValueSelf = metricValueSelf * threadMetricValueSelfRatio;
 
-        final double threadFilteredMetricValueSelf = DataUtil.getThreadFilteredMetricValue(codeSparksArtifact, secondaryMetricIdentifier);
+        final double threadFilteredMetricValueSelf = DataUtil.getThreadFilteredMetricValue(artifact, secondaryMetricIdentifier);
 
         double selfPercentage = threadFilteredMetricValueSelf / threadFilteredMetricValue;
         if (selfPercentage > 0D)
@@ -174,8 +162,8 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         /*
          * Draw caller and callee triangles
          */
-        drawCallers(codeSparksArtifact, artifactVisualizationArea, graphics, lineHeight, metricColor);
-        drawCallees(codeSparksArtifact, artifactVisualizationArea, graphics, lineHeight, metricColor);
+        drawCallers(artifact, artifactVisualizationArea, graphics, lineHeight, metricColor);
+        drawCallees(artifact, artifactVisualizationArea, graphics, lineHeight, metricColor);
         /*
          * Set the actual image icon size
          */
@@ -189,7 +177,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         jLabel.setIcon(imageIcon);
 
         jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
-        jLabel.addMouseListener(new DefaultArtifactVisualizationMouseListener(jLabel, codeSparksArtifact, primaryMetricIdentifier, secondaryMetricIdentifier));
+        jLabel.addMouseListener(new DefaultArtifactVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier, secondaryMetricIdentifier));
 
         return jLabel;
     }
@@ -321,7 +309,6 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
     {
         graphics.drawPolygon(triangle.xPoints, triangle.yPoints, triangle.nPoints);
     }
-
 
 
     private static class Triangle

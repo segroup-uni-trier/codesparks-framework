@@ -6,7 +6,7 @@ import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 /*
  * Copyright (C) 2020, Oliver Moseler
  */
-public abstract class AArtifactVisualizationLabelFactory extends AVisualizationSequence implements IArtifactVisualizationLabelFactory
+public abstract class AArtifactVisualizationLabelFactory<T extends AArtifact> extends AVisualizationSequence implements IArtifactVisualizationLabelFactory<T>
 {
     protected final IMetricIdentifier primaryMetricIdentifier;
 

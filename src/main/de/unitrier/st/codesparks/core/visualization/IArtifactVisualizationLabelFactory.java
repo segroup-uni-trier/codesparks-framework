@@ -8,7 +8,7 @@ import javax.swing.*;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public interface IArtifactVisualizationLabelFactory
+public interface IArtifactVisualizationLabelFactory<T extends AArtifact>
 {
-    JLabel createArtifactLabel(@NotNull final AArtifact artifact);
+    JLabel createArtifactLabel(@NotNull final T artifact);
 }

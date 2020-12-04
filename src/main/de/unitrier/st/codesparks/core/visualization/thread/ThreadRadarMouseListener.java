@@ -34,7 +34,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
     public ThreadRadarMouseListener(
             final JComponent component
-            , final ASourceCodeArtifact artifact
+            , final AArtifact artifact
             , final IThreadRadarDisplayData radialThreadVisualizationPopupData
             , final IMetricIdentifier primaryMetricIdentifier
             , final IMetricIdentifier secondaryMetricIdentifier
