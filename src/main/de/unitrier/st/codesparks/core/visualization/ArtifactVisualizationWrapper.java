@@ -17,7 +17,8 @@ class ArtifactVisualizationWrapper extends AArtifactVisualization
         super(artifact);
         //this.psiElement = artifact.getVisPsiElement();
 
-        this.setLayout(new BottomFlowLayout());
+        setLayout(new BottomFlowLayout());
+        setOpaque(false);
 
         if (factories == null || factories.length == 0)
         {
@@ -41,10 +42,20 @@ class ArtifactVisualizationWrapper extends AArtifactVisualization
             JLabel artifactComponent = factory.createArtifactLabel(artifact);
             ArtifactVisualizationLabelFactoryCache.getInstance().addToCache(artifact.getIdentifier(), factory.getClass(),
                     artifactComponent);
-            int iconWidth = artifactComponent.getIcon().getIconWidth();
-            width += iconWidth;
-            int iconHeight = artifactComponent.getIcon().getIconHeight();
-            height = Math.max(height, iconHeight);
+            final Icon icon = artifactComponent.getIcon();
+            if (icon == null)
+            {
+                final int componentWidth = artifactComponent.getWidth();
+                width += componentWidth;
+                final int componentHeight = artifactComponent.getHeight();
+                height += componentHeight;
+            } else
+            {
+                final int iconWidth = icon.getIconWidth();
+                width += iconWidth;
+                final int iconHeight = icon.getIconHeight();
+                height = Math.max(height, iconHeight);
+            }
             this.add(artifactComponent);
         }
 

@@ -18,8 +18,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import static com.intellij.ui.JBColor.WHITE;
-
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
@@ -49,10 +47,9 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
         GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage bi = UIUtil.createImage(defaultConfiguration, width, lineHeight,
-                BufferedImage.TYPE_INT_RGB, PaintUtil.RoundingMode.CEIL);
-        Graphics graphics = bi.getGraphics();
-        graphics.setColor(WHITE);
-        graphics.fillRect(0, 0, width, lineHeight);
+                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
+        Graphics2D graphics = (Graphics2D) bi.getGraphics();
+        VisualizationUtil.drawTransparentBackground(graphics, bi);
         /*
          * Draw the threads
          */

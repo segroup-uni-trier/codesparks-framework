@@ -3,7 +3,7 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-abstract class RadialThreadVisualizationConstants
+abstract class ThreadRadarConstants
 {
     static final int CIRCLESIZE = 32;
     static final int CIRCLE_FRAMESIZE = 34;

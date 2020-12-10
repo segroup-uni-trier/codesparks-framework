@@ -64,17 +64,13 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
         GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage bi = UIUtil.createImage(defaultConfiguration, VisConstants.CALLEE_X_OFFSET + VisConstants.INVOCATION_WIDTH + 7, lineHeight,
-                BufferedImage.TYPE_INT_RGB, PaintUtil.RoundingMode.CEIL);
+                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
 
-//        BufferedImage bi = UIUtil.createImage(CALLEE_X_OFFSET + INVOCATION_WIDTH + 7, lineHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics graphics = bi.getGraphics();
+        Graphics2D graphics = (Graphics2D) bi.getGraphics();
 
-        Color backgroundColor = VisualizationUtil.getSelectedFileEditorBackgroundColor();
+        VisualizationUtil.drawTransparentBackground(graphics, bi);
 
-        graphics.setColor(backgroundColor);
-        graphics.fillRect(0, 0, bi.getWidth(), bi.getHeight());
-
-        final Color calleeBackgroundColor = VisualizationUtil.getBackgroundMetricColor(metricColor, .25f);
+        final Color neighborBackgroundColor = VisualizationUtil.getBackgroundMetricColor(metricColor, .25f);
         int numberOfShadowCalleesToDraw = Math.min(numberOfCalleesInSameLine, 3);
 
         // Draw the hints of multiple callees in a single line of code
@@ -85,7 +81,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
             Rectangle rect = new Rectangle(VisConstants.CALLEE_X_OFFSET + xOffset, yOffset, VisConstants.INVOCATION_WIDTH, lineHeight - 6);
             graphics.setColor(WHITE);
             VisualizationUtil.fillRectangle(graphics, rect);
-            graphics.setColor(calleeBackgroundColor);
+            graphics.setColor(neighborBackgroundColor);
             VisualizationUtil.fillRectangle(graphics, rect);
             graphics.setColor(VisConstants.BORDER_COLOR);
             VisualizationUtil.drawRectangle(graphics, rect);
@@ -123,7 +119,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
                 lineHeight - 6);
         graphics.setColor(WHITE);
         VisualizationUtil.fillRectangle(graphics, calleeVisualizationArea);
-        graphics.setColor(calleeBackgroundColor);
+        graphics.setColor(neighborBackgroundColor);
         VisualizationUtil.fillRectangle(graphics, calleeVisualizationArea);
 
         // Draw the bar

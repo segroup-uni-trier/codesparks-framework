@@ -271,7 +271,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         radialVisualizationButtonsBox.add(radialButtonsToggleLabel);
         for (int i = 0; i < 3; i++)
         {
-            threadClusterSelectionButtons[i].setPreferredSize(new Dimension((RadialThreadVisualizationConstants.FRAME_ZOOMED) / 3, 20));
+            threadClusterSelectionButtons[i].setPreferredSize(new Dimension((ThreadRadarConstants.FRAME_ZOOMED) / 3, 20));
             radialVisualizationButtonsBox.add(threadClusterSelectionButtons[i]);
         }
 

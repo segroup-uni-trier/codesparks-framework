@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
@@ -76,6 +77,14 @@ public final class VisualizationUtil
     public static void fillRectangle(@NotNull Graphics graphics, @NotNull Rectangle rectangle)
     {
         graphics.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+    }
+
+    public static void drawTransparentBackground(@NotNull final Graphics2D graphics, final BufferedImage bi)
+    {
+        final Composite composite = graphics.getComposite();
+        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+        graphics.fillRect(0, 0, bi.getWidth(), bi.getHeight());
+        graphics.setComposite(composite);
     }
 
     public static void drawRectangle(@NotNull Graphics graphics, @NotNull Rectangle rectangle)

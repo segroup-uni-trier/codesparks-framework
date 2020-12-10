@@ -84,34 +84,23 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage bi = UIUtil.createImage(defaultConfiguration, 5000, lineHeight,
-                BufferedImage.TYPE_INT_RGB, PaintUtil.RoundingMode.CEIL);
+                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
 
-        Graphics graphics = bi.getGraphics();
+        Graphics2D graphics = (Graphics2D) bi.getGraphics();
+        VisualizationUtil.drawTransparentBackground(graphics, bi);
 
-        Color backgroundColor = VisualizationUtil.getSelectedFileEditorBackgroundColor();
-
-        graphics.setColor(backgroundColor);
-        graphics.fillRect(0, 0, bi.getWidth(), bi.getHeight());
-
-        int selfBarHeight = 2;
+        final int selfBarHeight = 2;
         final int X_OFFSET = VisConstants.X_OFFSET;
         final int Y_OFFSET = selfBarHeight + 1;
 
-        Rectangle artifactVisualizationArea = new Rectangle(X_OFFSET, Y_OFFSET, RECTANGLE_WIDTH, lineHeight - 1 - selfBarHeight);
-
-//        final double metricValue = artifact.getMetricValue();
-//        final double threadMetricValueRatio = DataUtil.getThreadMetricValueRatio(artifact, ThreadArtifact::getMetricValue);
-//        final double threadFilteredMetricValue = metricValue * threadMetricValueRatio;
-
-        final double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, primaryMetricIdentifier);
-
-        String percentageText = CoreUtil.formatPercentage(threadFilteredMetricValue);
         /*
          * Draw the intensity rectangle
          */
-        Color metricColor = VisualizationUtil.getMetricColor(threadFilteredMetricValue);
+        final Rectangle intensityRectangle = new Rectangle(X_OFFSET, Y_OFFSET, RECTANGLE_WIDTH, lineHeight - 1 - selfBarHeight);
+        final double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, primaryMetricIdentifier);
+        final Color metricColor = VisualizationUtil.getMetricColor(threadFilteredMetricValue);
         graphics.setColor(metricColor);
-        VisualizationUtil.fillRectangle(graphics, artifactVisualizationArea);
+        VisualizationUtil.fillRectangle(graphics, intensityRectangle);
         /*
          * Draw the self metric
          */
@@ -150,6 +139,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         /*
          * Draw the text
          */
+        String percentageText = CoreUtil.formatPercentage(threadFilteredMetricValue);
         double textWidth = graphics.getFontMetrics().stringWidth(percentageText);
         graphics.setColor(BLACK);
         Font font = new Font("Arial", Font.BOLD, 11);  // TODO: support different font sizes
@@ -162,8 +152,8 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         /*
          * Draw caller and callee triangles
          */
-        drawCallers(artifact, artifactVisualizationArea, graphics, lineHeight, metricColor);
-        drawCallees(artifact, artifactVisualizationArea, graphics, lineHeight, metricColor);
+        drawCallers(artifact, intensityRectangle, graphics, lineHeight, metricColor);
+        drawCallees(artifact, intensityRectangle, graphics, lineHeight, metricColor);
         /*
          * Set the actual image icon size
          */

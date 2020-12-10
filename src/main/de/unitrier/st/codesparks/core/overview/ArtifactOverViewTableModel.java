@@ -5,6 +5,7 @@ package de.unitrier.st.codesparks.core.overview;
 
 import de.unitrier.st.codesparks.core.ACodeSparksFlow;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
+import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
@@ -29,12 +30,10 @@ import java.util.stream.Collectors;
 public class ArtifactOverViewTableModel implements TableModel
 {
     private final List<AArtifact> artifacts;
-    private final IMetricIdentifier metricIdentifier;
 
     ArtifactOverViewTableModel(@NotNull final List<AArtifact> artifacts, final IMetricIdentifier metricIdentifier)
     {
-        this.metricIdentifier = metricIdentifier;
-        if (this.metricIdentifier == null)
+        if (metricIdentifier == null)
         {
             CodeSparksLogger.addText("%s: Metric identifier not setup! Please register a metric identifier to the overview through the CodeSparksFlow.",
                     getClass());
@@ -129,7 +128,7 @@ public class ArtifactOverViewTableModel implements TableModel
             case 0:
                 ACodeSparksFlow profilingFlow = CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow();
 
-                AArtifactVisualizationLabelFactory defaultVisualizationLabelFactory =
+                AArtifactVisualizationLabelFactory<?> defaultVisualizationLabelFactory =
                         profilingFlow.getDefaultVisualizationLabelFactory();
 
                 if (defaultVisualizationLabelFactory == null)
@@ -152,7 +151,7 @@ public class ArtifactOverViewTableModel implements TableModel
 //                }
                 return cachedArtifactVisualizationLabel;
             case 1:
-                return artifact.getDisplayString(metricIdentifier, 55);
+                return CoreUtil.reduceToLength(artifact.getIdentifier(), 55, "...");
             default:
                 break;
         }

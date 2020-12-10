@@ -33,7 +33,7 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
         this.threadArtifactVisualization = threadArtifactVisualization;
         this.artifact = artifact;
         this.metricIdentifier = metricIdentifier;
-        this.frameSize = RadialThreadVisualizationConstants.CIRCLE_FRAMESIZE_ZOOMED;
+        this.frameSize = ThreadRadarConstants.CIRCLE_FRAMESIZE_ZOOMED;
         this.clusterHover = clusterHover;
         this.visualizationWrapper = visualizationWrapper;
     }
@@ -68,7 +68,7 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
 
     private boolean isPointInArc(int x, int y, ThreadArtifactCluster cluster)
     {
-        x -= (visualizationWrapper.getWidth() / 2 - RadialThreadVisualizationConstants.FRAME_ZOOMED / 2);
+        x -= (visualizationWrapper.getWidth() / 2 - ThreadRadarConstants.FRAME_ZOOMED / 2);
         x = frameSize - x;
         y = frameSize - y;
         double mousePointerAngle = Math.abs(Math.toDegrees(Math.atan2(y - frameSize / 2D, x - frameSize / 2D)) - 180);

@@ -4,10 +4,10 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.font.TextAttribute;
-import java.util.Set;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Oliver Moseler on 16.10.2014.
@@ -50,6 +50,7 @@ public class MetricTableCellRenderer extends JTextArea implements TableCellRende
             excludeColumns.add(i);
         }
         init();
+
     }
 
     private void init()
@@ -61,13 +62,15 @@ public class MetricTableCellRenderer extends JTextArea implements TableCellRende
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
     {
-//        System.out.println("TextTableCellRenderer: column=" + column + " row=" + row);
         MetricTable metricTable = (MetricTable) table;
+        setBackground(null); // Reset the hover background color. See JBTable hover background
         if (row != metricTable.getEnteredRow() || column != metricTable.getEnteredCol())
         {
             if (value instanceof JLabel)
             {
-                return (JLabel) value;
+                final JLabel jLabel = (JLabel) value;
+                jLabel.setBackground(null); // Reset the hover background color. See JBTable hover background
+                return jLabel;
             }
             setFont(defaultFont);
             if (value == null)
@@ -92,7 +95,9 @@ public class MetricTableCellRenderer extends JTextArea implements TableCellRende
             }
             if (value instanceof JLabel)
             {
-                return (JLabel) value;
+                final JLabel jLabel = (JLabel) value;
+                jLabel.setBackground(null); // Reset the hover background color. See JBTable hover background
+                return jLabel;
             }
             setFont(defaultFont);
             setText("");

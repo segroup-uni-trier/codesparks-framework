@@ -96,12 +96,9 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage bi = UIUtil.createImage(defaultConfiguration, totalWidth, lineHeight, BufferedImage.TYPE_INT_RGB,
                 PaintUtil.RoundingMode.CEIL);
-        Graphics graphics = bi.getGraphics();
+        Graphics2D graphics = (Graphics2D) bi.getGraphics();
 
-        Color backgroundColor = VisualizationUtil.getSelectedFileEditorBackgroundColor();
-
-        graphics.setColor(backgroundColor);
-        graphics.fillRect(0, 0, totalWidth, lineHeight);
+        VisualizationUtil.drawTransparentBackground(graphics, bi);
 
         int yPos = lineHeight;
 

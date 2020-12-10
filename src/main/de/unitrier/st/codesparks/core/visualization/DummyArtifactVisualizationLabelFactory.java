@@ -33,7 +33,7 @@ public class DummyArtifactVisualizationLabelFactory extends AArtifactVisualizati
         GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage image = UIUtil.createImage(defaultConfiguration, imageIcon.getIconWidth(), imageIcon.getIconHeight(),
-                BufferedImage.TYPE_INT_RGB, PaintUtil.RoundingMode.CEIL);
+                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
         Graphics graphics = image.getGraphics();
         graphics.fillRect(0, 0, imageIcon.getIconWidth(), imageIcon.getIconHeight());
         graphics.drawImage(imageIcon.getImage(), 0, 0, null);
