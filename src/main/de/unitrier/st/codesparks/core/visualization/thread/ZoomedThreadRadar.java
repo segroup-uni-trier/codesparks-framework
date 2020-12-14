@@ -19,7 +19,7 @@ public class ZoomedThreadRadar extends AThreadRadar
     private final IMetricIdentifier metricIdentifier;
 
     ZoomedThreadRadar(
-            final ASourceCodeArtifact artifact
+            final AArtifact artifact
             , final IThreadSelectableIndexProvider indexProvider
             , final List<IThreadSelectable> threadSelectables
             , final IMetricIdentifier metricIdentifier

@@ -1,5 +1,7 @@
 package de.unitrier.st.codesparks.core.data;
 
+import de.unitrier.st.codesparks.core.IThreadArtifactFilterable;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -8,16 +10,14 @@ import java.util.stream.Collectors;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public abstract class ACodeSparksArtifact extends ASourceCodeArtifact
+public abstract class ACodeSparksArtifact extends AArtifact implements IThreadArtifactFilterable
 {
     private final Map<Integer, List<ANeighborArtifact>> predecessors;
     private final Map<Integer, List<ANeighborArtifact>> successors;
 
     public ACodeSparksArtifact(final String name, final String identifier)
     {
-        super(name, identifier);
-        predecessors = new HashMap<>();
-        successors = new HashMap<>();
+        this(name, identifier, DefaultThreadArtifact.class);
     }
 
     public ACodeSparksArtifact(final String name, final String identifier, final Class<? extends AThreadArtifact> threadArtifactClass)
@@ -26,6 +26,7 @@ public abstract class ACodeSparksArtifact extends ASourceCodeArtifact
         predecessors = new HashMap<>();
         successors = new HashMap<>();
     }
+
 
     /*
      * Predecessors
@@ -163,4 +164,18 @@ public abstract class ACodeSparksArtifact extends ASourceCodeArtifact
         }
         return null;
     }
+
+    /*
+     * Helpers
+     */
+    // TODO: enable assertion again!
+
+//    @Deprecated
+//    void assertSecondaryMetricValue(double secondaryMetricValue, String name)
+//    {
+//        double epsilon = .0000000000000001;
+//        assert secondaryMetricValue - epsilon <= metricValue : "secondary metric value (" + name + ") larger than total metric value (" +
+//                secondaryMetricValue + " > " + metricValue + ")";
+//    }
+
 }

@@ -42,10 +42,9 @@ public class ArtifactOverViewTableModel implements TableModel
                 artifacts.stream()
                         .filter(artifact ->
                         {
-                            ASourceCodeArtifact scArtifact = (ASourceCodeArtifact) artifact;
-                            if (scArtifact != null && scArtifact.hasThreads())
+                            if (artifact.hasThreads())
                             {
-                                return DataUtil.getThreadMetricValueRatio(scArtifact,
+                                return DataUtil.getThreadMetricValueRatio(artifact,
                                         (codeSparksThread) -> codeSparksThread.getNumericalMetricValue(metricIdentifier)) > 0;
                             } else
                             {
@@ -55,9 +54,9 @@ public class ArtifactOverViewTableModel implements TableModel
                         .collect(Collectors.toList());
 //        this.artifacts.sort(Comparator.comparingDouble(DataUtil::getThreadFilteredMetricValue).reversed());
         final ToDoubleFunction<? super AArtifact> f = value -> {
-            if (value instanceof ASourceCodeArtifact)
+            if (value != null)
             {
-                return DataUtil.getThreadFilteredMetricValue((ASourceCodeArtifact) value, metricIdentifier);
+                return DataUtil.getThreadFilteredMetricValue(value, metricIdentifier);
             } else
             {
                 return 0d;

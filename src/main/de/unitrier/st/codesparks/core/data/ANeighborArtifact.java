@@ -1,6 +1,5 @@
 package de.unitrier.st.codesparks.core.data;
 
-import com.intellij.psi.PsiElement;
 import de.unitrier.st.codesparks.core.CoreUtil;
 
 /**
@@ -9,7 +8,7 @@ import de.unitrier.st.codesparks.core.CoreUtil;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public abstract class ANeighborArtifact extends ASourceCodeArtifact
+public abstract class ANeighborArtifact extends AArtifact
 {
     protected ANeighborArtifact(
             final String name
@@ -26,16 +25,6 @@ public abstract class ANeighborArtifact extends ASourceCodeArtifact
         final double metricValue = getNumericalMetricValue(metricIdentifier);
         final double artifactNumericalMetricValue = aCodeSparksArtifact.getNumericalMetricValue(metricIdentifier);
         return metricValue / artifactNumericalMetricValue;
-    }
-
-    public PsiElement getInvocationLineElement()
-    {
-        return getVisPsiElement();
-    }
-
-    public void setInvocationLineElement(final PsiElement invocationLineElement)
-    {
-        setVisPsiElement(invocationLineElement);
     }
 
     public String getDisplayStringRelativeTo(final ACodeSparksArtifact artifact, final IMetricIdentifier metricIdentifier, final int maxLen)

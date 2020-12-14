@@ -19,7 +19,7 @@ public class ThreadList extends AThreadSelectable
 {
     private final JBList<JBCheckBox> list;
 
-    public ThreadList(final ASourceCodeArtifact artifact, final IMetricIdentifier metricIdentifier)
+    public ThreadList(final AArtifact artifact, final IMetricIdentifier metricIdentifier)
     {
         list = new JBList<JBCheckBox>(new ThreadListModel(artifact, metricIdentifier))
         {

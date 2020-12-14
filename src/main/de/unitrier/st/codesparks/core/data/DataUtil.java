@@ -10,7 +10,7 @@ public final class DataUtil
     private DataUtil() {}
 
     public static double getThreadMetricValueRatio(
-            final ASourceCodeArtifact artifact
+            final AArtifact artifact
             , final ToDoubleFunction<AThreadArtifact> threadArtifactToDoubleFunc
     )
     {
@@ -22,7 +22,7 @@ public final class DataUtil
     }
 
     public static double getThreadFilteredMetricValue(
-            final ASourceCodeArtifact artifact
+            final AArtifact artifact
             , final IMetricIdentifier metricIdentifier
     )
     {

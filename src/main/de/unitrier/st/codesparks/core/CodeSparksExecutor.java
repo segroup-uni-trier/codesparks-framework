@@ -45,15 +45,15 @@ public class CodeSparksExecutor extends Executor
     {
         if (UIUtil.isUnderDarcula())
         {
-            return IconLoader.getIcon("/icons/codesparks.png");
+            return IconLoader.getIcon("/icons/codesparks.png", getClass());
         }
-        return IconLoader.getIcon("/icons/codesparks.png");
+        return IconLoader.getIcon("/icons/codesparks.png", getClass());
     }
 
     @Override
     public Icon getDisabledIcon()
     {
-        return IconLoader.getIcon("/icons/codesparks.png");
+        return IconLoader.getIcon("/icons/codesparks.png", getClass());
     }
 
     @Override

@@ -19,7 +19,7 @@ import java.util.Set;
 public abstract class AThreadRadar extends JPanel
 {
     protected Graphics2D g2d;
-    protected ASourceCodeArtifact artifact;
+    protected AArtifact artifact;
     protected String metricIdentifier;
     private int circleDiameter = 0;
     private int circleFrameSize = 0;

@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-import de.unitrier.st.codesparks.core.data.ASourceCodeArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 
@@ -19,7 +19,7 @@ public class DefaultThreadRadarDisplayData implements IThreadRadarDisplayData
     }
 
     @Override
-    public CodeSparksThreadDisplayData getSelectedThreadData(ASourceCodeArtifact artifact, Set<AThreadArtifact> selectedCodeSparksThreads)
+    public CodeSparksThreadDisplayData getSelectedThreadData(AArtifact artifact, Set<AThreadArtifact> selectedCodeSparksThreads)
     {
         final CodeSparksThreadDisplayData codeSparksThreadDisplayData = new CodeSparksThreadDisplayData();
 
@@ -39,7 +39,7 @@ public class DefaultThreadRadarDisplayData implements IThreadRadarDisplayData
     }
 
     @Override
-    public CodeSparksThreadDisplayData getHoveredThreadData(ASourceCodeArtifact artifact, Set<AThreadArtifact> hoveredCodeSparksThreads)
+    public CodeSparksThreadDisplayData getHoveredThreadData(AArtifact artifact, Set<AThreadArtifact> hoveredCodeSparksThreads)
     {
         final CodeSparksThreadDisplayData codeSparksThreadDisplayData = new CodeSparksThreadDisplayData();
 

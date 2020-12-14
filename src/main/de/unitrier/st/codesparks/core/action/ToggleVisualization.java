@@ -28,8 +28,8 @@ public class ToggleVisualization extends AnAction
     public ToggleVisualization()
     {
         visible = true;
-        visualizationVisibleIcon = IconLoader.getIcon("/icons/codesparks_visible_20x13.png");
-        visualizationNotVisibleIcon = IconLoader.getIcon("/icons/codesparks_not_visible_20x14.png");
+        visualizationVisibleIcon = IconLoader.getIcon("/icons/codesparks_visible_20x13.png", getClass());
+        visualizationNotVisibleIcon = IconLoader.getIcon("/icons/codesparks_not_visible_20x14.png", getClass());
     }
 
     @Override
@@ -41,19 +41,18 @@ public class ToggleVisualization extends AnAction
             return;
         }
         EditorCoverLayerManager editorCoverLayerManager = EditorCoverLayerManager.getInstance(project);
+        final String description = LocalizationUtil.getLocalizedString("codesparks.ui.show.visualization.action.description");
         Presentation presentation = e.getPresentation();
         if (visible)
         {
             presentation.setIcon(visualizationNotVisibleIcon);
-            String showDescription = LocalizationUtil.getLocalizedString("codesparks.ui.show.visualization.action.description");
-            presentation.setText(showDescription);
-            presentation.setDescription(showDescription);
+            presentation.setText(description);
+            presentation.setDescription(description);
         } else
         {
             presentation.setIcon(visualizationVisibleIcon);
-            String hideDescription = LocalizationUtil.getLocalizedString("codesparks.ui.hide.visualization.action.description");
-            presentation.setText(hideDescription);
-            presentation.setDescription(hideDescription);
+            presentation.setText(description);
+            presentation.setDescription(description);
             FileEditor[] editors = ApplicationManager.getApplication().runReadAction((Computable<FileEditor[]>) () ->
                     FileEditorManager.getInstance(project).getAllEditors());
             VirtualFile[] virtualFiles = Arrays.stream(editors).map(FileEditor::getFile).toArray(VirtualFile[]::new);

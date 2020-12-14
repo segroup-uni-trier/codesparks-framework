@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-import de.unitrier.st.codesparks.core.data.ASourceCodeArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
@@ -15,7 +15,7 @@ import java.awt.event.MouseEvent;
  */
 public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
 {
-    private final ASourceCodeArtifact artifact;
+    private final AArtifact artifact;
     private final IMetricIdentifier metricIdentifier;
     private final int frameSize;
     private final IClusterHoverable clusterHover;
@@ -24,7 +24,7 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
 
     ZoomedThreadRadarMouseAdapter(
             final ZoomedThreadRadar threadArtifactVisualization
-            , final ASourceCodeArtifact artifact
+            , final AArtifact artifact
             , final IMetricIdentifier metricIdentifier
             , final IClusterHoverable clusterHover
             , final JPanel visualizationWrapper

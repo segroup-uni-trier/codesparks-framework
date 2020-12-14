@@ -122,7 +122,7 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
                             , true
                             , true
                             , null
-                            , IconLoader.getIcon("/icons/profiling_13x12.png")
+                            , IconLoader.getIcon("/icons/profiling_13x12.png", getClass())
                             , () -> name
                     ));
 

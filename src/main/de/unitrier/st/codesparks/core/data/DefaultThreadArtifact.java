@@ -1,5 +1,7 @@
 package de.unitrier.st.codesparks.core.data;
 
+import com.intellij.pom.Navigatable;
+import com.intellij.psi.PsiElement;
 import de.unitrier.st.codesparks.core.CoreUtil;
 
 /*
@@ -36,5 +38,20 @@ public class DefaultThreadArtifact extends AThreadArtifact
     public String getDisplayString(final IMetricIdentifier metricIdentifier)
     {
         return getDisplayString(metricIdentifier, 39);
+    }
+
+    @Override
+    public void navigate()
+    {
+        final PsiElement visPsiElement = getVisPsiElement();
+        if (visPsiElement == null)
+        {
+            return;
+        }
+        final PsiElement navigationElement = visPsiElement.getNavigationElement();
+        if (navigationElement instanceof Navigatable)
+        {
+            ((Navigatable) navigationElement).navigate(true);
+        }
     }
 }

@@ -50,7 +50,7 @@ public class GlobalResetThreadArtifactFilter implements IThreadArtifactFilter
         {
             return new HashSet<>();
         }
-        final ASourceCodeArtifact programArtifact = (ASourceCodeArtifact) artifactPool.getProgramArtifact();
+        final AArtifact programArtifact = artifactPool.getProgramArtifact();
         if (programArtifact == null)
         {
             return new HashSet<>();

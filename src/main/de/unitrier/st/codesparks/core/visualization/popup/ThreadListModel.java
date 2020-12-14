@@ -16,7 +16,7 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
     private final String[] threadStrings;
     private final List<AThreadArtifact> codeSparksThreads;
 
-    public ThreadListModel(final ASourceCodeArtifact artifact, final IMetricIdentifier metricIdentifier)
+    public ThreadListModel(final AArtifact artifact, final IMetricIdentifier metricIdentifier)
     {
         totalSize = artifact.getNumberOfThreads();
         threadStrings = new String[totalSize];

@@ -3,7 +3,7 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.ASourceCodeArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
@@ -22,7 +22,7 @@ import java.util.List;
  * Copyright (c), Oliver Moseler, 2020
  */
 @SuppressWarnings("unused")
-public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory<ASourceCodeArtifact>
+public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory<AArtifact>
 {
     @SuppressWarnings("unused")
     public DefaultThreadVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
@@ -38,7 +38,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
     @Override
     public JLabel createArtifactLabel(
-            @NotNull final ASourceCodeArtifact artifact
+            @NotNull final AArtifact artifact
     )
     {
         final int threadsPerColumn = 3;

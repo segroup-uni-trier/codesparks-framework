@@ -133,7 +133,7 @@ public final class ThreadVisualizationUtil
         return discreteMetric;
     }
 
-    public static int getNumberOfThreadTypesInSet(ASourceCodeArtifact artifact, Set<AThreadArtifact> codeSparksThreadArtifactsSet)
+    public static int getNumberOfThreadTypesInSet(AArtifact artifact, Set<AThreadArtifact> codeSparksThreadArtifactsSet)
     {
         if (codeSparksThreadArtifactsSet == null)
         {
@@ -165,7 +165,7 @@ public final class ThreadVisualizationUtil
         return getNumberOfThreadTypesInSet(artifact, filteredCodeSparksThreads);
     }
 
-    public static int getNumberOfSelectedThreadTypes(ASourceCodeArtifact artifact, Set<AThreadArtifact> selectedCodeSparksThreads)
+    public static int getNumberOfSelectedThreadTypes(AArtifact artifact, Set<AThreadArtifact> selectedCodeSparksThreads)
     {
         if (selectedCodeSparksThreads == null)
         {

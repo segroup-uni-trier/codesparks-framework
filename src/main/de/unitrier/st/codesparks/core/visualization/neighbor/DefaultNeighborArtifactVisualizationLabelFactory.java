@@ -96,22 +96,24 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
         for (ANeighborArtifact neighborArtifact : threadFilteredNeighborArtifactsOfLine)
         {
 
-            double calleeRuntime = 0D;
+            double neighborRuntime = 0D;
             Collection<AThreadArtifact> codeSparksThreads = neighborArtifact.getThreadArtifacts();
             for (AThreadArtifact codeSparksThread : codeSparksThreads)
             {
                 if (!codeSparksThread.isFiltered())
                 {
-                    calleeRuntime += codeSparksThread.getNumericalMetricValue(primaryMetricIdentifier) * neighborArtifact.getNumericalMetricValue(primaryMetricIdentifier);
+                    neighborRuntime += codeSparksThread.getNumericalMetricValue(primaryMetricIdentifier) * neighborArtifact.getNumericalMetricValue(primaryMetricIdentifier);
                 }
             }
 
-            calleeRuntimeSum += calleeRuntime;
+            calleeRuntimeSum += neighborRuntime;
 
             // Draw the text.
-            methodRuntimes.put(neighborArtifact.getName(), calleeRuntime);
+            methodRuntimes.put(neighborArtifact.getName(), neighborRuntime);
             if (psiElement == null)
-                psiElement = neighborArtifact.getInvocationLineElement();
+            {
+                psiElement = neighborArtifact.getVisPsiElement();//neighborArtifact.getInvocationLineElement();
+            }
         }
 
         // Draw background
