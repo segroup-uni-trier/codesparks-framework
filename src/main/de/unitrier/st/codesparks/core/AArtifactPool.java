@@ -166,6 +166,35 @@ public abstract class AArtifactPool implements IArtifactPool
     }
 
     @Override
+    public AArtifact getOrCreateThreadArtifact(final Class<? extends AThreadArtifact> threadArtifactClass, final String threadIdentifier)
+    {
+        if (threadArtifactClass == null || threadIdentifier == null || "".equals(threadIdentifier))
+        {
+            return null;
+        }
+        AArtifact artifact;
+        synchronized (artifactsLock)
+        {
+            final Map<String, AArtifact> artifactsOfClassMap = artifacts.computeIfAbsent(threadArtifactClass, k -> new HashMap<>());
+            artifact = artifactsOfClassMap.get(threadIdentifier);
+            if (artifact == null)
+            {
+                try
+                {
+                    final Constructor<? extends AArtifact> declaredConstructor = threadArtifactClass.getDeclaredConstructor(String.class);
+                    artifact = declaredConstructor.newInstance(threadIdentifier);
+                    artifactsOfClassMap.put(threadIdentifier, artifact);
+                    artifacts.put(threadArtifactClass, artifactsOfClassMap);
+                } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return artifact;
+    }
+
+    @Override
     public final void addArtifact(AArtifact artifact)
     {
         synchronized (artifactsLock)

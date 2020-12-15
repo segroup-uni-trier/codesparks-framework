@@ -360,11 +360,15 @@ public class ArtifactOverview
     private JBTextField excludeFilter;
     private JBTextField includeFilter;
 
-    private IMetricIdentifier primaryMetricIdentifier;
+    private final Object metricIdentifierLock = new Object();
+    private final Map<Class<? extends AArtifact>, IMetricIdentifier> artifactClassMetricIdentifier = new HashMap<>(8);
 
-    public void registerPrimaryMetricIdentifier(final IMetricIdentifier primaryMetricIdentifier)
+    public void registerMetricIdentifier(Class<? extends AArtifact> artifactClass, IMetricIdentifier metricIdentifier)
     {
-        this.primaryMetricIdentifier = primaryMetricIdentifier;
+        synchronized (metricIdentifierLock)
+        {
+            artifactClassMetricIdentifier.put(artifactClass, metricIdentifier);
+        }
     }
 
     public void filterOverView()
@@ -393,10 +397,15 @@ public class ArtifactOverview
 
             for (final Map.Entry<Class<? extends AArtifact>, List<AArtifact>> entry : map.entrySet())
             {
+                final Class<? extends AArtifact> artifactClass = entry.getKey();
                 List<AArtifact> artifacts = entry.getValue();
                 artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
-                String tabName = artifactPool.getArtifactClassDisplayName(entry.getKey());
-                addTab(tabName, artifacts, primaryMetricIdentifier);
+                String tabName = artifactPool.getArtifactClassDisplayName(artifactClass);
+                final IMetricIdentifier metricIdentifier = artifactClassMetricIdentifier.get(artifactClass);
+                if (metricIdentifier != null)
+                {
+                    addTab(tabName, artifacts, metricIdentifier);
+                }
             }
 
             if (lastSelectedIndex > 0 && lastSelectedIndex < tabbedPane.getTabCount())

@@ -1,6 +1,7 @@
 package de.unitrier.st.codesparks.core;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 
 import java.util.List;
 import java.util.Map;
@@ -16,16 +17,13 @@ public interface IArtifactPool extends IThreadArtifactFilterable, IArtifactPoolE
 
     AArtifact getArtifact(final Class<? extends AArtifact> artifactClass, final String identifier);
 
+    AArtifact getOrCreateThreadArtifact(final Class<? extends AThreadArtifact> threadArtifactClass, final String threadIdentifier);
+
     List<AArtifact> getArtifacts(final Class<? extends AArtifact> artifactClass);
 
     Map<Class<? extends AArtifact>, List<AArtifact>> getArtifacts();
 
     String getArtifactClassDisplayName(final Class<? extends AArtifact> artifactClass);
-
-//    /**
-//     * @return A map, where the keys represent title strings of the values which are lists of artifacts.
-//     */
-//    Map<String, List<AArtifact>> getNamedArtifactTypeLists();
 
     /**
      * @return An artifact which encapsulates the metric value aggregated for the entire program run. Its assigned thread show

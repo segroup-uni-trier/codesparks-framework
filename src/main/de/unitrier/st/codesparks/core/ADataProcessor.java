@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project;
  */
 public abstract class ADataProcessor extends Task.WithResult<Boolean, Exception> implements IDataProcessor
 {
-    protected AArtifactPool artifactPool;
+    protected final AArtifactPool artifactPool;
 
     public ADataProcessor(final Project project, final String title, final boolean canBeCancelled)
     {
