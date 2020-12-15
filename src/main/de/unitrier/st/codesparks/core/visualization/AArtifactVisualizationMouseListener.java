@@ -56,31 +56,15 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
 
     protected void visualizationMouseClicked(MouseEvent e)
     {
-//        if (artifact.getThreadArtifacts().isEmpty())
-//        {
-//            return;
-//        }
-
         final IUserActivityLogger logger = UserActivityLogger.getInstance();
         final String identifier = artifact.getIdentifier();
         final Object source = e.getSource();
-        final JBPanel<BorderLayoutPanel> popupPanelWrapper = new BorderLayoutPanel();//new JBPanel<>(new BorderLayout());
-//        popupPanelWrapper.setLayout(new BoxLayout(popupPanelWrapper, BoxLayout.Y_AXIS));
+        final JBPanel<BorderLayoutPanel> popupPanelWrapper = new BorderLayoutPanel();
         final PopupPanel popupPanel = createPopupContent(artifact);
 
         logger.log(UserActivityEnum.PopupOpened, popupPanel.getType(), identifier);
 
         popupPanelWrapper.add(popupPanel, BorderLayout.CENTER);
-
-        // Navigate to artifact button
-//        final JBPanel navigateToArtifactButtonWrapper = new JBPanel(new BorderLayout());
-//        navigateToArtifactButtonWrapper.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-//        final JButton navigateToArtifactButton = new JButton(
-//                LocalizationUtil.getLocalizedString("profiling.ui.artifact.popup.button.navigate.to")
-//                        + ": " + artifact.getDisplayString(70));
-//        navigateToArtifactButtonWrapper.add(navigateToArtifactButton, BorderLayout.CENTER);
-//
-//        popupPanelWrapper.add(navigateToArtifactButtonWrapper, BorderLayout.SOUTH);
 
         final String popupTitle = createPopupTitle(artifact);
 
@@ -99,19 +83,14 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
                     final ToolWindow toolWindow = toolWindowManager.getToolWindow(name);
                     if (toolWindow != null)
                     {
-//                        toolWindowManager.unregisterToolWindow(name);
                         toolWindow.remove();
                     }
-                    JBPanel<BorderLayoutPanel> pinPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
-                    JBPanel<BorderLayoutPanel> titlePanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
+                    JBPanel<BorderLayoutPanel> pinPanel = new BorderLayoutPanel();
+                    JBPanel<BorderLayoutPanel> titlePanel = new BorderLayoutPanel();
                     titlePanel.add(new JLabel(popupTitle, JLabel.CENTER), BorderLayout.CENTER);
 
                     pinPanel.add(titlePanel, BorderLayout.NORTH);
                     pinPanel.add(popupPanel, BorderLayout.CENTER);
-//                    pinPanel.add(navigateToArtifactButton, BorderLayout.SOUTH);
-
-//                    ToolWindow methodPopupToolWindow =
-//                            toolWindowManager.registerToolWindow(name, true, ToolWindowAnchor.RIGHT);
 
                     ToolWindow methodPopupToolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
                             name
@@ -126,7 +105,6 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
                             , () -> name
                     ));
 
-                    //methodPopupToolWindow.setIcon(IconLoader.getIcon("/icons/profiling_16x15.png"));
                     ContentManager contentManager = methodPopupToolWindow.getContentManager();
                     contentManager.addContent(ContentFactory.SERVICE.getInstance()
                             .createContent(pinPanel, "", true));
@@ -141,10 +119,6 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
         popup.pack(false, true);
         popup.canClose();
         popup.showUnderneathOf((Component) source);
-//        navigateToArtifactButton.addActionListener(event -> {
-//            CoreUtil.navigate(identifier);
-//            popup.cancel();
-//        });
         popupPanel.registerPopup(popup); // In order to be able to close the popup in case the user
         // clicked on a caller/callee to navigate to it.
     }

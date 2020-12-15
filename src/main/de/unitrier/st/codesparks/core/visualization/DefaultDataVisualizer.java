@@ -21,8 +21,8 @@ import java.util.Collection;
  */
 public class DefaultDataVisualizer extends ADataVisualizer
 {
-    private final INeighborArtifactVisualizer artifactCalleeVisualizer;
-    private final ANeighborArtifactVisualizationLabelFactory[] calleeFactories;
+    private final INeighborArtifactVisualizer neighborArtifactVisualizer;
+    private final ANeighborArtifactVisualizationLabelFactory[] neighborFactories;
 
     public DefaultDataVisualizer()
     {
@@ -30,41 +30,33 @@ public class DefaultDataVisualizer extends ADataVisualizer
     }
 
     @SuppressWarnings("unused")
-    public DefaultDataVisualizer(AArtifactVisualizationLabelFactory<AArtifact>[] artifactFactories)
+    public DefaultDataVisualizer(
+            final AArtifactVisualizationLabelFactory[] artifactFactories
+    )
     {
         this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), artifactFactories, null);
     }
 
-    public DefaultDataVisualizer(AArtifactVisualizationLabelFactory<AArtifact>[] artifactFactories,
-                                 ANeighborArtifactVisualizationLabelFactory[] calleeFactories)
+    public DefaultDataVisualizer(
+            final AArtifactVisualizationLabelFactory[] artifactFactories
+            , final ANeighborArtifactVisualizationLabelFactory[] neighborFactories
+    )
     {
-        this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), artifactFactories, calleeFactories);
+        this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), artifactFactories, neighborFactories);
     }
 
     @SuppressWarnings("WeakerAccess")
-    public DefaultDataVisualizer(IArtifactVisualizer artifactVisualizer,
-                                 INeighborArtifactVisualizer artifactCalleeVisualizer,
-                                 AArtifactVisualizationLabelFactory<AArtifact>[] artifactFactories,
-                                 ANeighborArtifactVisualizationLabelFactory[] calleeFactories)
+    public DefaultDataVisualizer(
+            final IArtifactVisualizer artifactVisualizer
+            , final INeighborArtifactVisualizer neighborArtifactVisualizer
+            , final AArtifactVisualizationLabelFactory[] artifactFactories
+            , final ANeighborArtifactVisualizationLabelFactory[] neighborFactories
+    )
     {
         super(artifactVisualizer, artifactFactories);
-        this.artifactCalleeVisualizer = artifactCalleeVisualizer;
-        this.calleeFactories = calleeFactories;
-//        init(calleeFactories);
+        this.neighborArtifactVisualizer = neighborArtifactVisualizer;
+        this.neighborFactories = neighborFactories;
     }
-
-//    private void init(ANeighborArtifactVisualizationLabelFactory[] calleeFactories)
-//    {
-//        if (calleeFactories == null || calleeFactories.length == 0)
-//        {
-//            this.calleeFactories = new AArtifactCalleeVisualizationLabelFactory[]{
-//                    new DefaultArtifactCalleeVisualizationLabelFactory()
-//            };
-//        } else
-//        {
-//            this.calleeFactories = calleeFactories;
-//        }
-//    }
 
     @Override
     public Collection<EditorCoverLayerItem> createVisualizations(
@@ -80,7 +72,7 @@ public class DefaultDataVisualizer extends ADataVisualizer
             ApplicationManager.getApplication().runReadAction(() -> {
 
                 AArtifactVisualization artifactVisualization = artifactVisualizer.createArtifactVisualization(artifact,
-                        artifactFactories);
+                        artifactLabelFactories);
 
                 PsiElement psiElement = artifact.getVisPsiElement();
                 EditorCoverLayerItem layerItem = new EditorCoverLayerItem(psiElement, artifactVisualization);
@@ -88,7 +80,7 @@ public class DefaultDataVisualizer extends ADataVisualizer
                 overlayElements.add(layerItem);
 
                 Collection<ANeighborArtifactVisualization> calleeVisualizations =
-                        artifactCalleeVisualizer.createArtifactCalleeVisualizations(artifact, calleeFactories);
+                        neighborArtifactVisualizer.createArtifactCalleeVisualizations(artifact, neighborFactories);
 
                 for (ANeighborArtifactVisualization calleeVisualization : calleeVisualizations)
                 {

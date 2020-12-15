@@ -1,6 +1,3 @@
-/*
- * Copyright (C) 2020, Oliver Moseler
- */
 package de.unitrier.st.codesparks.core.visualization;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
@@ -29,10 +26,11 @@ public class DefaultArtifactVisualizer implements IArtifactVisualizer
         return instance;
     }
 
-    @SafeVarargs
     @Override
-    public final AArtifactVisualization createArtifactVisualization(final AArtifact artifact,
-                                                                    final AArtifactVisualizationLabelFactory<AArtifact>... factories)
+    public final AArtifactVisualization createArtifactVisualization(
+            final AArtifact artifact
+            , final AArtifactVisualizationLabelFactory... factories
+    )
     {
         return new ArtifactVisualizationWrapper(artifact, factories);
     }

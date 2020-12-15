@@ -11,7 +11,6 @@ import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelF
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,16 +20,13 @@ import java.util.List;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-@SuppressWarnings("unused")
-public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory<AArtifact>
+public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    @SuppressWarnings("unused")
     public DefaultThreadVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
     }
 
-    @SuppressWarnings("unused")
     public DefaultThreadVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(primaryMetricIdentifier, sequence);
@@ -38,7 +34,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
     @Override
     public JLabel createArtifactLabel(
-            @NotNull final AArtifact artifact
+            final AArtifact artifact
     )
     {
         final int threadsPerColumn = 3;
@@ -91,20 +87,6 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
             }
         }
 
-//        for (Map<String, Double> map : artifact.getCategoryThreadMetricValueMap().values())
-//        {
-//            graphics.setColor(ThreadColor.getNextColor(color++));
-//            int len = map.size();
-//            for (int i = 0; i < len; i++)
-//            {
-//                graphics.fillRect(threadDotXPos + (totalThreadCnt / 3)
-//                                * threadSquareOffset, threadSquareYPos
-//                                - (totalThreadCnt % 3) * threadSquareOffset,
-//                        threadSquareEdgeLength, threadSquareEdgeLength);
-//                totalThreadCnt++;
-//            }
-//        }
-
         Rectangle threadVisualisationArea = new Rectangle(
                 threadDotXPos - 2, 0, ((threadSquareOffset)
                 * ((totalThreadCnt - 1) / 3) + 1)
@@ -121,7 +103,6 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
         jLabel.setIcon(imageIcon);
 
         jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
-        //jLabel.addMouseListener(new DefaultArtifactVisualizationMouseListener(jLabel, artifact));
         jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
 
         return jLabel;

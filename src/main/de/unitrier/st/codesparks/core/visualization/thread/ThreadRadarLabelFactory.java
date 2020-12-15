@@ -9,7 +9,6 @@ import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +21,7 @@ import java.util.Map;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory<AArtifact>
+public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 {
     private final IThreadRadarDisplayData radialThreadVisualizationPopupData;
     private final IMetricIdentifier secondaryMetricIdentifier;
@@ -57,22 +56,9 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory<
         this.radialThreadVisualizationPopupData = radialThreadVisualizationPopupData;
     }
 
-//    public ThreadRadarLabelFactory(
-//            final int sequence
-//            , final boolean isDefault
-//            , final String primaryMetricIdentifier
-//            , final String secondaryMetricIdentifier
-//    )
-//    {
-//        super(sequence, isDefault, primaryMetricIdentifier);
-//        this.radialThreadVisualizationPopupData = new DefaultThreadRadarDisplayData(primaryMetricIdentifier);
-//        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
-//    }
-
-
     @Override
     public JLabel createArtifactLabel(
-            @NotNull final AArtifact artifact
+            final AArtifact artifact
     )
     {
         Collection<AThreadArtifact> codeSparksThreads = artifact.getThreadArtifacts();
@@ -115,12 +101,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory<
         Graphics2D imgG2 = (Graphics2D) bi.getGraphics();
         imgG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // Draw the fully transparent background
-//        final Composite composite = imgG2.getComposite();
-//        imgG2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
-//        imgG2.fillRect(0, 0, bi.getWidth(), bi.getHeight());
-//        imgG2.setComposite(composite);
         VisualizationUtil.drawTransparentBackground(imgG2, bi);
-
         //
         double threadRationFromRunBefore = 0;
         for (int i = 0; i < threadArtifactClusters.size(); i++)

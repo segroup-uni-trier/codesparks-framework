@@ -11,11 +11,9 @@ import java.util.Comparator;
  */
 class ArtifactVisualizationWrapper extends AArtifactVisualization
 {
-    @SafeVarargs
-    ArtifactVisualizationWrapper(AArtifact artifact, AArtifactVisualizationLabelFactory<AArtifact>... factories)
+    ArtifactVisualizationWrapper(final AArtifact artifact, final AArtifactVisualizationLabelFactory... factories)
     {
         super(artifact);
-        //this.psiElement = artifact.getVisPsiElement();
 
         setLayout(new BottomFlowLayout());
         setOpaque(false);
@@ -25,19 +23,12 @@ class ArtifactVisualizationWrapper extends AArtifactVisualization
             return;
         }
 
-//        JBPanel jbPanel = new JBPanel();
-//        final int offsetWidth = 10;
-//        jbPanel.setMinimumSize(new Dimension(offsetWidth, VisConstants.getLineHeight()));
-//        Color backgroundColor = CoreUtil.getSelectedFileEditorBackgroundColor();
-//        jbPanel.setBackground(backgroundColor);
-//        add(jbPanel);
-
         int width = 0;
         int height = 0;
 
         Arrays.sort(factories, Comparator.comparingInt(AArtifactVisualizationLabelFactory::getSequence));
 
-        for (AArtifactVisualizationLabelFactory<AArtifact> factory : factories)
+        for (AArtifactVisualizationLabelFactory factory : factories)
         {
             JLabel artifactComponent = factory.createArtifactLabel(artifact);
             ArtifactVisualizationLabelFactoryCache.getInstance().addToCache(artifact.getIdentifier(), factory.getClass(),
@@ -59,7 +50,6 @@ class ArtifactVisualizationWrapper extends AArtifactVisualization
             this.add(artifactComponent);
         }
 
-//        setSize(width + offsetWidth, height);
         setSize(width, height);
     }
 }

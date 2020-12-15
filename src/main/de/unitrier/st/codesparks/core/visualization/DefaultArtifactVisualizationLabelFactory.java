@@ -1,6 +1,3 @@
-/*
- * Copyright (C) 2020, Oliver Moseler
- */
 package de.unitrier.st.codesparks.core.visualization;
 
 import com.intellij.ui.paint.PaintUtil;
@@ -22,7 +19,7 @@ import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory<AArtifact>
+public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
     private final IMetricIdentifier secondaryMetricIdentifier;
 
@@ -56,31 +53,10 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         this.secondaryMetricIdentifier = secondaryMetricIdentifier;
     }
 
-//    private static Map<AProfilingArtifact, ImageIcon> artifactImageIconCache = new HashMap<>();
-//
-//    public static void clearCache()
-//    {
-//        artifactImageIconCache.clear();
-//    }
-//
-//    public ImageIcon createArtifactImageIcon(@NotNull AProfilingArtifact artifact, boolean fromCache)
-//    {
-//        if (fromCache)
-//        {
-//            ImageIcon imageIcon = artifactImageIconCache.get(artifact);
-//            if (imageIcon != null)
-//            {
-//                return imageIcon;
-//            }
-//        }
-//        return createArtifactImageIcon(artifact);
-//    }
-
     @Override
     public JLabel createArtifactLabel(@NotNull final AArtifact artifact)
     {
         int lineHeight = VisConstants.getLineHeight();
-
         GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage bi = UIUtil.createImage(defaultConfiguration, 5000, lineHeight,
@@ -104,17 +80,9 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         /*
          * Draw the self metric
          */
-        // double log = Math.log(1 + ((Math.E - 1) * metricValueSelf / metricValue));
-        // int selfWidth = RECTANGLE_WIDTH * log;
-        int selfWidth = 0;
-
-//        final double metricValueSelf = artifact.getMetricValueSelf();
-//        final double threadMetricValueSelfRatio = DataUtil.getThreadMetricValueRatio(artifact, ThreadArtifact::getMetricValueSelf);
-//        final double threadFilteredMetricValueSelf = metricValueSelf * threadMetricValueSelfRatio;
-
         final double threadFilteredMetricValueSelf = DataUtil.getThreadFilteredMetricValue(artifact, secondaryMetricIdentifier);
-
-        double selfPercentage = threadFilteredMetricValueSelf / threadFilteredMetricValue;
+        final double selfPercentage = threadFilteredMetricValueSelf / threadFilteredMetricValue;
+        int selfWidth = 0;
         if (selfPercentage > 0D)
         {
             if (selfPercentage < 1D)
@@ -152,16 +120,14 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         /*
          * Draw caller and callee triangles
          */
-        drawCallers(artifact, intensityRectangle, graphics, lineHeight, metricColor);
-        drawCallees(artifact, intensityRectangle, graphics, lineHeight, metricColor);
+        drawPredecessors(artifact, intensityRectangle, graphics, lineHeight, metricColor);
+        drawSuccessors(artifact, intensityRectangle, graphics, lineHeight, metricColor);
         /*
          * Set the actual image icon size
          */
         int actualIconWidth = X_OFFSET + RECTANGLE_WIDTH + 4 * CALLEE_TRIANGLES_WIDTH + 1;
         BufferedImage subImage = bi.getSubimage(0, 0, actualIconWidth, bi.getHeight());
         ImageIcon imageIcon = new ImageIcon(subImage);
-
-//        artifactImageIconCache.put(artifact, imageIcon);
 
         JLabel jLabel = new JLabel();
         jLabel.setIcon(imageIcon);
@@ -172,39 +138,13 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         return jLabel;
     }
 
-//    private static void fillStripedRectangle(@NotNull Graphics graphics, Rectangle rect,
-//                                             double stripesBrightness, Color performanceColor)
-//    {
-//        graphics.setColor(performanceColor);
-//        fillRectangle(graphics, rect);
-//        for (int y = rect.y; y <= rect.y + rect.height; y++)
-//        {
-//            double r = Math.sqrt(1 - Math.abs((y - rect.y)
-//                    / ((double) rect.height) * 2 - 1));
-//            graphics.setColor(changeColorBrightness(graphics.getColor(),
-//                    stripesBrightness + (1 - stripesBrightness) * 0.7 * r));
-//            for (int x = rect.x; x <= rect.x + rect.width; x++)
-//            {
-//                if ((x + y) / 3 % 3 == 0)
-//                {
-//                    // Same as drawing a point!
-//                    graphics.fillRect(x, y, 1, 1);
-//                }
-//            }
-//        }
-//    }
-
-//    @NotNull
-//    private static Color changeColorBrightness(@NotNull Color c, double factor)
-//    {
-//        return new JBColor(new Color(
-//                Math.min((int) (c.getRed() * factor), 255),
-//                Math.min((int) (c.getGreen() * factor), 255),
-//                Math.min((int) (c.getBlue() * factor), 255)), Gray._128);
-//    }
-
-    private static void drawCallers(@NotNull AArtifact artifact, Rectangle visualizationArea, Graphics graphics,
-                                    int lineHeight, Color performanceColor)
+    private static void drawPredecessors(
+            final AArtifact artifact
+            , final Rectangle visualizationArea
+            , final Graphics graphics
+            , final int lineHeight
+            , final Color performanceColor
+    )
     {
         long predecessorSize = artifact.getPredecessors()
                 .values()
@@ -242,8 +182,13 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         }
     }
 
-    private static void drawCallees(@NotNull AArtifact artifact, Rectangle visualizationArea, Graphics graphics,
-                                    int lineHeight, Color performanceColor)
+    private static void drawSuccessors(
+            final AArtifact artifact
+            , final Rectangle visualizationArea
+            , final Graphics graphics
+            , final int lineHeight
+            , final Color performanceColor
+    )
     {
         long successorSize =
                 artifact.getSuccessors()
@@ -284,22 +229,20 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         }
     }
 
-    @NotNull
-    private static Triangle getTriangle(int x, int y, int size)
+    private static Triangle getTriangle(final int x, final int y, final int size)
     {
         return new Triangle(new int[]{x, x + size, x}, new int[]{y, y + size, y + 2 * size}, 3);
     }
 
-    private static void fillTriangle(@NotNull Triangle triangle, @NotNull Graphics graphics)
+    private static void fillTriangle(final Triangle triangle, final Graphics graphics)
     {
         graphics.fillPolygon(triangle.xPoints, triangle.yPoints, triangle.nPoints);
     }
 
-    private static void drawTriangle(@NotNull Triangle triangle, @NotNull Graphics graphics)
+    private static void drawTriangle(final Triangle triangle, final Graphics graphics)
     {
         graphics.drawPolygon(triangle.xPoints, triangle.yPoints, triangle.nPoints);
     }
-
 
     private static class Triangle
     {

@@ -1,6 +1,3 @@
-/*
- * Copyright (C) 2020, Oliver Moseler
- */
 package de.unitrier.st.codesparks.core;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -100,8 +97,6 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
             displayVisualizations(overlayElements);
         }
-//        createAndDisplayVisualizations(matchResults);
-//        matchCreateAndDisplayVisualizations(virtualFile);
     }
 
     private boolean collectData()
@@ -176,15 +171,6 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                         {
                             continue;
                         }
-                        // assert editorEx != null;
-
-//                        int lineHeight = editorEx.getLineHeight();
-//                        System.out.println("editor line height=" + lineHeight);
-//
-//                        System.out.println("editor min font size = " + EditorFontsConstants.getMinEditorFontSize());
-//                        System.out.println("editor max font size = " + EditorFontsConstants.getMaxEditorFontSize());
-//                        System.out.println("editor default font size = " + EditorFontsConstants.getDefaultEditorFontSize());
-//                        System.out.println("editor default font size = " + EditorFontsConstants.checkAndFixEditorFontSize(20));
 
                         ApplicationManager.getApplication().runReadAction(() ->
                                 EditorCoverLayerManager.getInstance(project).registerEditorCoverLayer(editorEx)
@@ -202,9 +188,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
                         displayVisualizations(overlayElements);
                     }
-//                    createAndDisplayVisualizations(matchResults);
 
-//                    matchCreateAndDisplayVisualizations(virtualFiles);
                     displayArtifactOverview();
                 } else
                 {
@@ -255,10 +239,6 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
                 displayVisualizations(overlayElements);
 
-                // createAndDisplayVisualizations(matchResults);
-
-                // matchCreateAndDisplayVisualizations(virtualFiles);
-
                 displayArtifactOverview();
 
             } catch (Exception e)
@@ -267,27 +247,6 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
             }
         }
     }
-
-//    private void createAndDisplayVisualizations(Collection<AProfilingArtifact> matchedResults)
-//    {
-//        Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedResults);
-//        displayVisualizations(overlayElements);
-//    }
-
-//    private void matchCreateAndDisplayVisualizations(VirtualFile... virtualFiles)
-//    {
-//        synchronized (uiLock)
-//        {
-//            if (matcher == null)
-//            {
-//                ProfilingLogger.addText(String.format("%s: results to code matcher not setup!", getClass()));
-//                return;
-//            }
-//            Collection<AProfilingArtifact> matchedResults = matcher.matchResultsToCodeFiles(result, project, virtualFiles);
-//            Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedResults);
-//            displayVisualizations(overlayElements);
-//        }
-//    }
 
     private void displayArtifactOverview()
     {
@@ -358,9 +317,8 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
     private void displayVisualizations(Collection<EditorCoverLayerItem> overlayElements)
     {
-        EditorCoverLayerManager editorCoverLayerManager = EditorCoverLayerManager.getInstance(project);
-//        overlayElements.forEach(editorCoverLayerManager::add);
-        for (EditorCoverLayerItem overlayElement : overlayElements)
+        final EditorCoverLayerManager editorCoverLayerManager = EditorCoverLayerManager.getInstance(project);
+        for (final EditorCoverLayerItem overlayElement : overlayElements)
         {
             editorCoverLayerManager.add(overlayElement);
         }

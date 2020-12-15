@@ -86,8 +86,8 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
         predecessorList.addMouseMotionListener(new MetricListMouseMotionAdapter(predecessorList));
         predecessorList.setCellRenderer(new MetricListCellRenderer());
 
-        tabbedPane.add("Callers", new JBScrollPane(predecessorList)); // TODO: this is JPT code because of the term callers
-        tabbedPane.add("Callees", new JBScrollPane(successorsList)); // TODO: this is JPT code because of the term callees
+        tabbedPane.add("Predecessors", new JBScrollPane(predecessorList)); // TODO: this is JPT code because of the term callers
+        tabbedPane.add("Successors", new JBScrollPane(successorsList)); // TODO: this is JPT code because of the term callees
 
         final int selectedIndex = 1;
 

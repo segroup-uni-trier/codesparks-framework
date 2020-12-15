@@ -7,6 +7,8 @@ import de.unitrier.st.codesparks.core.data.AArtifact;
  */
 public interface IArtifactVisualizer
 {
-    @SuppressWarnings("unchecked")
-    AArtifactVisualization createArtifactVisualization(AArtifact artifact, AArtifactVisualizationLabelFactory<AArtifact>... factories);
+    AArtifactVisualization createArtifactVisualization(
+            final AArtifact artifact
+            , final AArtifactVisualizationLabelFactory... factories
+    );
 }

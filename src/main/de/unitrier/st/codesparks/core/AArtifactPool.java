@@ -31,7 +31,7 @@ public abstract class AArtifactPool implements IArtifactPool
     }
 
     /*
-
+     * Program artifact
      */
 
     private final Object programArtifactLock = new Object();
@@ -77,7 +77,7 @@ public abstract class AArtifactPool implements IArtifactPool
     }
 
     /*
-
+     * Artifacts map
      */
 
     private final Object artifactsLock = new Object();
@@ -176,30 +176,6 @@ public abstract class AArtifactPool implements IArtifactPool
         }
     }
 
-//    @Override
-//    @Deprecated
-//    public final Map<String, List<AArtifact>> getNamedArtifactTypeLists()
-//    {
-//        Map<String, List<AArtifact>> map = new HashMap<>();
-//        synchronized (artifactsLock)
-//        {
-//            for (Map.Entry<Class<? extends AArtifact>, Map<String, AArtifact>> classMapEntry : artifacts.entrySet())
-//            {
-//                Class<? extends AArtifact> artifactClass = classMapEntry.getKey();
-//                String classDisplayName;
-//                if (artifactClassDisplayNameProvider == null)
-//                {
-//                    classDisplayName = artifactClass.getTypeName();
-//                } else
-//                {
-//                    classDisplayName = artifactClassDisplayNameProvider.getDisplayName(artifactClass);
-//                }
-//                map.put(classDisplayName, new ArrayList<>(classMapEntry.getValue().values()));
-//            }
-//        }
-//        return map;
-//    }
-
     @Override
     public final void applyThreadFilter(final IThreadArtifactFilter threadFilter)
     {
@@ -217,8 +193,7 @@ public abstract class AArtifactPool implements IArtifactPool
             Collection<Map<String, AArtifact>> values = artifacts.values();
             for (Map<String, AArtifact> value : values)
             {
-                value
-                        .values()
+                value.values()
                         .forEach(artifact -> {
                             artifact.applyThreadFilter(threadFilter);
                             artifact.getSuccessorsList().forEach(aNeighborProfilingArtifact
@@ -226,13 +201,6 @@ public abstract class AArtifactPool implements IArtifactPool
                             artifact.getPredecessorsList().forEach(aNeighborProfilingArtifact
                                     -> aNeighborProfilingArtifact.applyThreadFilter(threadFilter));
                         });
-//                value.values().forEach(profilingMethod -> {
-//                    profilingMethod.applyThreadFilter(threadFilter);
-//                    profilingMethod.getSuccessorsList().forEach(aNeighborProfilingArtifact
-//                            -> aNeighborProfilingArtifact.applyThreadFilter(threadFilter));
-//                    profilingMethod.getPredecessorsList().forEach(aNeighborProfilingArtifact
-//                            -> aNeighborProfilingArtifact.applyThreadFilter(threadFilter));
-//                });
             }
         }
     }

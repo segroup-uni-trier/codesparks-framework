@@ -125,10 +125,10 @@ public class ArtifactOverViewTableModel implements TableModel
         switch (columnIndex)
         {
             case 0:
-                ACodeSparksFlow profilingFlow = CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow();
+                ACodeSparksFlow codeSparksFlow = CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow();
 
-                AArtifactVisualizationLabelFactory<?> defaultVisualizationLabelFactory =
-                        profilingFlow.getDefaultVisualizationLabelFactory();
+                AArtifactVisualizationLabelFactory defaultVisualizationLabelFactory =
+                        codeSparksFlow.getDefaultVisualizationLabelFactory();
 
                 if (defaultVisualizationLabelFactory == null)
                 {

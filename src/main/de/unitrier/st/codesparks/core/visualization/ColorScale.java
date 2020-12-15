@@ -288,8 +288,6 @@ final class ColorScale
                 value = 1d;
             }
         }
-        //assert value >= -0.000000001 : "value=" + value + " is to below zero!";
-        //assert value <= 1.000000001 : "value=" + value + " is to above one!";
         value = 0.9 - value * 0.5;
         int index = (int) (colors.length * value);
         if (index >= colors.length)
