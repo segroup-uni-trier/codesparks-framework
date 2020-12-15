@@ -1,7 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -12,7 +11,8 @@ import java.util.Comparator;
  */
 class ArtifactVisualizationWrapper extends AArtifactVisualization
 {
-    ArtifactVisualizationWrapper(ACodeSparksArtifact artifact, AArtifactVisualizationLabelFactory<ACodeSparksArtifact>... factories)
+    @SafeVarargs
+    ArtifactVisualizationWrapper(AArtifact artifact, AArtifactVisualizationLabelFactory<AArtifact>... factories)
     {
         super(artifact);
         //this.psiElement = artifact.getVisPsiElement();
@@ -37,7 +37,7 @@ class ArtifactVisualizationWrapper extends AArtifactVisualization
 
         Arrays.sort(factories, Comparator.comparingInt(AArtifactVisualizationLabelFactory::getSequence));
 
-        for (AArtifactVisualizationLabelFactory<ACodeSparksArtifact> factory : factories)
+        for (AArtifactVisualizationLabelFactory<AArtifact> factory : factories)
         {
             JLabel artifactComponent = factory.createArtifactLabel(artifact);
             ArtifactVisualizationLabelFactoryCache.getInstance().addToCache(artifact.getIdentifier(), factory.getClass(),

@@ -6,7 +6,7 @@ package de.unitrier.st.codesparks.core.visualization;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.CoreUtil;
-import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.DataUtil;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory<ACodeSparksArtifact>
+public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory<AArtifact>
 {
     private final IMetricIdentifier secondaryMetricIdentifier;
 
@@ -77,7 +77,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 //    }
 
     @Override
-    public JLabel createArtifactLabel(@NotNull final ACodeSparksArtifact artifact)
+    public JLabel createArtifactLabel(@NotNull final AArtifact artifact)
     {
         int lineHeight = VisConstants.getLineHeight();
 
@@ -203,7 +203,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 //                Math.min((int) (c.getBlue() * factor), 255)), Gray._128);
 //    }
 
-    private static void drawCallers(@NotNull ACodeSparksArtifact artifact, Rectangle visualizationArea, Graphics graphics,
+    private static void drawCallers(@NotNull AArtifact artifact, Rectangle visualizationArea, Graphics graphics,
                                     int lineHeight, Color performanceColor)
     {
         long predecessorSize = artifact.getPredecessors()
@@ -242,7 +242,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         }
     }
 
-    private static void drawCallees(@NotNull ACodeSparksArtifact artifact, Rectangle visualizationArea, Graphics graphics,
+    private static void drawCallees(@NotNull AArtifact artifact, Rectangle visualizationArea, Graphics graphics,
                                     int lineHeight, Color performanceColor)
     {
         long successorSize =

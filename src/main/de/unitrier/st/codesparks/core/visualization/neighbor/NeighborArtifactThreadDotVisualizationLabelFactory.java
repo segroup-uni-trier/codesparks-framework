@@ -34,9 +34,9 @@ public class NeighborArtifactThreadDotVisualizationLabelFactory extends ANeighbo
     }
 
     @Override
-    public JLabel createArtifactCalleeLabel(
-            ACodeSparksArtifact artifact
-            , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
+    public JLabel createArtifactNeighborLabel(
+            final AArtifact artifact
+            , final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
     )
     {
         Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterComparator.getInstance(primaryMetricIdentifier);

@@ -10,24 +10,29 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class ArtifactBuilder
 {
-    private static final class DefaultCodeSparksArtifact extends ACodeSparksArtifact
+    private static final class DefaultThreadArtifact extends AThreadArtifact
+    {
+        public DefaultThreadArtifact(final String identifier)
+        {
+            super(identifier);
+        }
+    }
+
+    private static final class DefaultCodeSparksArtifact extends AArtifact
     {
         public DefaultCodeSparksArtifact(final String name, final String identifier)
         {
-            super(name, identifier);
+            super(name, identifier, DefaultThreadArtifact.class);
         }
-
-        @Override
-        public void navigate() { CodeSparksLogger.addText("Navigation is unavailable for default artifacts."); }
     }
 
-    private ACodeSparksArtifact artifact;
+    private AArtifact artifact;
 
-    public ArtifactBuilder(final String name, final String identifier, final Class<? extends ACodeSparksArtifact> artifactClass)
+    public ArtifactBuilder(final String name, final String identifier, final Class<? extends AArtifact> artifactClass)
     {
         try
         {
-            final Constructor<? extends ACodeSparksArtifact> constructor = artifactClass.getDeclaredConstructor(String.class, String.class);
+            final Constructor<? extends AArtifact> constructor = artifactClass.getDeclaredConstructor(String.class, String.class);
             artifact = constructor.newInstance(name, identifier);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e)
         {
@@ -59,7 +64,7 @@ public class ArtifactBuilder
         return this;
     }
 
-    public ACodeSparksArtifact get()
+    public AArtifact get()
     {
         return artifact;
     }

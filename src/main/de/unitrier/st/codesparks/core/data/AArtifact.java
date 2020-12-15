@@ -1,8 +1,10 @@
 package de.unitrier.st.codesparks.core.data;
 
+import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.IThreadArtifactFilterable;
+import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -36,7 +38,11 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
 
     private final Map<String, AThreadArtifact> threadMap;
 
-    private final Class<? extends AThreadArtifact> threadClass;
+    private final Class<? extends AThreadArtifact> threadArtifactClass;
+
+    private final Map<Integer, List<ANeighborArtifact>> predecessors;
+
+    private final Map<Integer, List<ANeighborArtifact>> successors;
 
     /*
      * Non final fields
@@ -54,18 +60,20 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
      * Constructors
      */
 
-    AArtifact(final String name, final String identifier)
+    public AArtifact(final String name, final String identifier)
     {
-        this(name, identifier, DefaultThreadArtifact.class);
+        this(name, identifier, null);
     }
 
-    AArtifact(final String name, final String identifier, final Class<? extends AThreadArtifact> threadArtifactClass)
+    public AArtifact(final String name, final String identifier, final Class<? extends AThreadArtifact> threadArtifactClass)
     {
         this.name = name == null ? "" : name;
         this.identifier = identifier == null ? "" : identifier;
         this.metrics = new HashMap<>();
-        this.threadClass = threadArtifactClass;
+        this.threadArtifactClass = threadArtifactClass;
         this.threadMap = new HashMap<>();
+        this.predecessors = new HashMap<>();
+        this.successors = new HashMap<>();
     }
 
     /*
@@ -92,6 +100,21 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         }
     }
 
+    @Override
+    public void navigate()
+    {
+        final PsiElement visPsiElement = getVisPsiElement();
+        if (visPsiElement == null)
+        {
+            return;
+        }
+        final PsiElement navigationElement = visPsiElement.getNavigationElement();
+        if (navigationElement instanceof Navigatable)
+        {
+            ((Navigatable) navigationElement).navigate(true);
+        }
+    }
+
     /*
      * Display strings
      */
@@ -99,13 +122,28 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     @Override
     public String getDisplayString(final IMetricIdentifier metricIdentifier, final int maxLen)
     {
-        return CoreUtil.reduceToLength(name, maxLen);
+        return CoreUtil.reduceToLength(getDisplayString(metricIdentifier), maxLen);
     }
 
     @Override
     public String getDisplayString(final IMetricIdentifier metricIdentifier)
     {
-        return name;
+        String metricValueString;
+        if (metricIdentifier.isNumerical())
+        {
+            final double value = getNumericalMetricValue(metricIdentifier);
+            if (metricIdentifier.isRelative())
+            {
+                metricValueString = CoreUtil.formatPercentage(value);
+            } else
+            {
+                metricValueString = Double.toString(value);
+            }
+        } else
+        {
+            metricValueString = getMetricValue(metricIdentifier).toString();
+        }
+        return name + " - " + metricIdentifier.getDisplayString() + ": " + metricValueString;
     }
 
     /*
@@ -328,8 +366,17 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         }
     }
 
-    public synchronized void increaseNumericalMetricValueThread(final IMetricIdentifier metricIdentifier, final String threadIdentifier, double toIncrease)
+    public synchronized void increaseNumericalMetricValueThread(
+            final IMetricIdentifier metricIdentifier
+            , final String threadIdentifier
+            , final double toIncrease
+    )
     {
+        if (threadArtifactClass == null)
+        {
+            CodeSparksLogger.addText("%s: Thread artifact class is not setup! Setting the metric value for a thread not available.", getClass());
+            return;
+        }
         synchronized (threadMapLock)
         {
             AThreadArtifact codeSparksThread = threadMap.get(threadIdentifier);
@@ -337,7 +384,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
             {
                 try
                 {
-                    final Constructor<? extends AThreadArtifact> constructor = threadClass.getConstructor(String.class);
+                    final Constructor<? extends AThreadArtifact> constructor = threadArtifactClass.getConstructor(String.class);
                     codeSparksThread = constructor.newInstance(threadIdentifier);
                     threadMap.put(threadIdentifier, codeSparksThread);
                 } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e)
@@ -350,8 +397,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
 
             codeSparksThread.increaseNumericalMetricValue(metricIdentifier, toIncrease);
 
-            double threadMetricValue = codeSparksThread.getNumericalMetricValue(metricIdentifier);
-
+//            double threadMetricValue = codeSparksThread.getNumericalMetricValue(metricIdentifier);
 //            assertSecondaryMetricValue(threadMetricValue, "thread");
         }
     }
@@ -439,4 +485,154 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
             }
         }
     }
+    /*
+     * Predecessors
+     */
+
+    private final Object predecessorsLock = new Object();
+
+    public Map<Integer, List<ANeighborArtifact>> getPredecessors()
+    {
+        synchronized (predecessorsLock)
+        {
+            return predecessors;
+        }
+    }
+
+    public List<ANeighborArtifact> getPredecessorsList()
+    {
+        synchronized (predecessorsLock)
+        {
+            return predecessors.values()
+                    .stream()
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    public void increaseMetricValuePredecessor(
+            final String name,
+            final String identifier,
+            final Class<? extends ANeighborArtifact> neighborArtifactClass,
+            final int lineNumber,
+            final IMetricIdentifier metricIdentifier,
+            final double neighborMetricValue,
+            final String threadIdentifier
+    )
+    {
+        synchronized (predecessorsLock)
+        {
+            List<ANeighborArtifact> neighborArtifacts = predecessors.computeIfAbsent(lineNumber,
+                    integer -> new ArrayList<>());
+            ANeighborArtifact neighbor = getOrCreateNeighborByIdentifier(
+                    neighborArtifacts
+                    , neighborArtifactClass
+                    , name
+                    , identifier
+                    , lineNumber
+            );
+            assert neighbor != null;
+            neighbor.increaseNumericalMetricValue(metricIdentifier, neighborMetricValue);
+            neighbor.increaseNumericalMetricValueThread(metricIdentifier, threadIdentifier, neighborMetricValue);
+//            assertSecondaryMetricValue(neighbor.getMetricValue(), "predecessor");
+        }
+    }
+
+    /*
+     * Successors
+     */
+
+    private final Object successorsLock = new Object();
+
+    public Map<Integer, List<ANeighborArtifact>> getSuccessors()
+    {
+        synchronized (successorsLock)
+        {
+            return successors;
+        }
+    }
+
+    public void increaseMetricValueSuccessor(
+            final String name
+            , final String identifier
+            , final Class<? extends ANeighborArtifact> neighborArtifactClass
+            , final int lineNumber
+            , final IMetricIdentifier metricIdentifier
+            , final double neighborMetricValue
+            , final String threadIdentifier
+    )
+    {
+        synchronized (successorsLock)
+        {
+            final List<ANeighborArtifact> neighborArtifacts = successors.computeIfAbsent(lineNumber, integer -> new ArrayList<>());
+            final ANeighborArtifact neighbor = getOrCreateNeighborByIdentifier(
+                    neighborArtifacts
+                    , neighborArtifactClass
+                    , name
+                    , identifier
+                    , lineNumber
+            );
+            assert neighbor != null;
+            neighbor.increaseNumericalMetricValue(metricIdentifier, neighborMetricValue);
+            neighbor.increaseNumericalMetricValueThread(metricIdentifier, threadIdentifier, neighborMetricValue);
+//            assertSecondaryMetricValue(neighbor.getMetricValue(), "successor");
+        }
+    }
+
+    public List<ANeighborArtifact> getSuccessorsList()
+    {
+        synchronized (successorsLock)
+        {
+            return successors.values()
+                    .stream()
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    private ANeighborArtifact getOrCreateNeighborByIdentifier(
+            final List<ANeighborArtifact> neighborList
+            , final Class<? extends ANeighborArtifact> neighborArtifactClass
+            , final String name
+            , final String identifier
+            , final int lineNumber
+    )
+    {
+        ANeighborArtifact neighbor;
+        for (ANeighborArtifact neighborArtifact : neighborList)
+        {
+            if (neighborArtifact.getIdentifier().equals(identifier))
+            {
+                return neighborArtifact;
+            }
+        }
+        try
+        {
+            Constructor<? extends ANeighborArtifact> constructor = neighborArtifactClass.getConstructor(
+                    String.class
+                    , String.class
+                    , int.class
+            );
+            neighbor = constructor.newInstance(name, identifier, lineNumber);
+            neighborList.add(neighbor);
+            return neighbor;
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /*
+     * Helpers
+     */
+    // TODO: enable assertion again!
+
+//    @Deprecated
+//    void assertSecondaryMetricValue(double secondaryMetricValue, String name)
+//    {
+//        double epsilon = .0000000000000001;
+//        assert secondaryMetricValue - epsilon <= metricValue : "secondary metric value (" + name + ") larger than total metric value (" +
+//                secondaryMetricValue + " > " + metricValue + ")";
+//    }
 }

@@ -2,6 +2,7 @@ package de.unitrier.st.codesparks.core.visualization;
 
 import de.unitrier.st.codesparks.core.ArtifactPoolManager;
 import de.unitrier.st.codesparks.core.IArtifactPool;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 
 import javax.swing.*;
@@ -87,7 +88,7 @@ public class ArtifactVisualizationLabelFactoryCache
                 if (createIfAbsent)
                 {
                     IArtifactPool artifactPool = ArtifactPoolManager.getInstance().getArtifactPool();
-                    ACodeSparksArtifact artifact = (ACodeSparksArtifact) artifactPool.getArtifact(artifactIdentifier);
+                    AArtifact artifact = artifactPool.getArtifact(artifactIdentifier);
 
                     if (artifact == null)
                     {

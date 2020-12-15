@@ -1,14 +1,12 @@
-/*
- * Copyright (C) 2020, Oliver Moseler
- */
 package de.unitrier.st.codesparks.core.visualization;
 
-import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
 public interface IArtifactVisualizer
 {
-    AArtifactVisualization createArtifactVisualization(ACodeSparksArtifact artifact, AArtifactVisualizationLabelFactory<ACodeSparksArtifact>... factories);
+    @SuppressWarnings("unchecked")
+    AArtifactVisualization createArtifactVisualization(AArtifact artifact, AArtifactVisualizationLabelFactory<AArtifact>... factories);
 }

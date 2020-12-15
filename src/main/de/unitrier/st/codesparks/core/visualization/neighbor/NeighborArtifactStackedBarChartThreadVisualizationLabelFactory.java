@@ -34,9 +34,9 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
     }
 
     @Override
-    public JLabel createArtifactCalleeLabel(
-            ACodeSparksArtifact artifact
-            , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
+    public JLabel createArtifactNeighborLabel(
+            final AArtifact artifact
+            , final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
     )
     {
         final double totalThreadFilteredCalleeTime = summedThreadMetricValuesOfNeighbors(threadFilteredNeighborArtifactsOfLine);

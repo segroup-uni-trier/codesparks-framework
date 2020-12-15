@@ -4,10 +4,8 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTabbedPane;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
-import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
@@ -40,18 +38,6 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
     {
         final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "MethodPopup");
 
-        if (!(artifact instanceof ACodeSparksArtifact))
-        {
-            CodeSparksLogger.addText("%s: The artifact has to be of type '%s' but is of type '%s'.",
-                    getClass()
-                    , ACodeSparksArtifact.class.getSimpleName()
-                    , artifact.getClass().getSimpleName()
-            );
-            return popupPanel;
-        }
-
-        ACodeSparksArtifact codeSparksArtifact = (ACodeSparksArtifact) artifact;
-
         /*
          * Do not remove the following disabled code!
          */
@@ -76,7 +62,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
 
         JBTabbedPane tabbedPane = new JBTabbedPane();
 
-        List<ANeighborArtifact> artifactSuccessorsList = codeSparksArtifact.getSuccessorsList()
+        List<ANeighborArtifact> artifactSuccessorsList = artifact.getSuccessorsList()
                 .stream()
                 .filter(npa -> !npa.getName().toLowerCase().startsWith("self"))
                 .filter(npa -> npa.getThreadArtifacts()
@@ -84,19 +70,19 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
                         .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
                 .collect(Collectors.toList());
 
-        MetricList successorsList = new MetricList(new NumericalMetricListModel(codeSparksArtifact, primaryMetricIdentifier, artifactSuccessorsList));
+        MetricList successorsList = new MetricList(new NumericalMetricListModel(artifact, primaryMetricIdentifier, artifactSuccessorsList));
         successorsList.addMouseMotionListener(new MetricListMouseMotionAdapter(successorsList));
         successorsList.setCellRenderer(new MetricListCellRenderer());
 
         List<ANeighborArtifact> artifactPredecessorsList =
-                codeSparksArtifact.getPredecessorsList()
+                artifact.getPredecessorsList()
                         .stream()
                         .filter(npa -> npa.getThreadArtifacts()
                                 .stream()
                                 .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
                         .collect(Collectors.toList());
 
-        MetricList predecessorList = new MetricList(new NumericalMetricListModel(codeSparksArtifact, primaryMetricIdentifier, artifactPredecessorsList));
+        MetricList predecessorList = new MetricList(new NumericalMetricListModel(artifact, primaryMetricIdentifier, artifactPredecessorsList));
         predecessorList.addMouseMotionListener(new MetricListMouseMotionAdapter(predecessorList));
         predecessorList.setCellRenderer(new MetricListCellRenderer());
 

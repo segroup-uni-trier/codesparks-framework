@@ -6,7 +6,7 @@ package de.unitrier.st.codesparks.core.visualization;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerItem;
 import de.unitrier.st.codesparks.core.visualization.neighbor.ANeighborArtifactVisualization;
 import de.unitrier.st.codesparks.core.visualization.neighbor.ANeighborArtifactVisualizationLabelFactory;
@@ -30,12 +30,12 @@ public class DefaultDataVisualizer extends ADataVisualizer
     }
 
     @SuppressWarnings("unused")
-    public DefaultDataVisualizer(AArtifactVisualizationLabelFactory<ACodeSparksArtifact>[] artifactFactories)
+    public DefaultDataVisualizer(AArtifactVisualizationLabelFactory<AArtifact>[] artifactFactories)
     {
         this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), artifactFactories, null);
     }
 
-    public DefaultDataVisualizer(AArtifactVisualizationLabelFactory<ACodeSparksArtifact>[] artifactFactories,
+    public DefaultDataVisualizer(AArtifactVisualizationLabelFactory<AArtifact>[] artifactFactories,
                                  ANeighborArtifactVisualizationLabelFactory[] calleeFactories)
     {
         this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), artifactFactories, calleeFactories);
@@ -44,7 +44,7 @@ public class DefaultDataVisualizer extends ADataVisualizer
     @SuppressWarnings("WeakerAccess")
     public DefaultDataVisualizer(IArtifactVisualizer artifactVisualizer,
                                  INeighborArtifactVisualizer artifactCalleeVisualizer,
-                                 AArtifactVisualizationLabelFactory<ACodeSparksArtifact>[] artifactFactories,
+                                 AArtifactVisualizationLabelFactory<AArtifact>[] artifactFactories,
                                  ANeighborArtifactVisualizationLabelFactory[] calleeFactories)
     {
         super(artifactVisualizer, artifactFactories);
@@ -69,13 +69,13 @@ public class DefaultDataVisualizer extends ADataVisualizer
     @Override
     public Collection<EditorCoverLayerItem> createVisualizations(
             final Project project
-            , final Collection<ACodeSparksArtifact> matchedArtifacts
+            , final Collection<AArtifact> matchedArtifacts
     )
     {
         // TODO: possible parallelization applicable?
         final Collection<EditorCoverLayerItem> overlayElements = new ArrayList<>();
 
-        for (ACodeSparksArtifact artifact : matchedArtifacts)
+        for (AArtifact artifact : matchedArtifacts)
         {
             ApplicationManager.getApplication().runReadAction(() -> {
 

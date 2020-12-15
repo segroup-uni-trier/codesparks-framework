@@ -209,10 +209,7 @@ public abstract class AArtifactPool implements IArtifactPool
         }
         synchronized (programArtifactLock)
         {
-            if (programArtifact != null && programArtifact instanceof IThreadArtifactFilterable)
-            {
-                ((IThreadArtifactFilterable) programArtifact).applyThreadFilter(threadFilter);
-            }
+            programArtifact.applyThreadFilter(threadFilter);
         }
 
         synchronized (artifactsLock)
@@ -222,9 +219,6 @@ public abstract class AArtifactPool implements IArtifactPool
             {
                 value
                         .values()
-                        .stream()
-                        .filter(artifact -> artifact instanceof ACodeSparksArtifact)
-                        .map(artifact -> (ACodeSparksArtifact) artifact)
                         .forEach(artifact -> {
                             artifact.applyThreadFilter(threadFilter);
                             artifact.getSuccessorsList().forEach(aNeighborProfilingArtifact

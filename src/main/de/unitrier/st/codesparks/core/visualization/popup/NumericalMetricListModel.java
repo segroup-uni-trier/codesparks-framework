@@ -19,7 +19,7 @@ public class NumericalMetricListModel extends DefaultListModel<JBTextArea>
     private static Font defaultFont;
 
     public NumericalMetricListModel(
-            final ACodeSparksArtifact artifact
+            final AArtifact artifact
             , final IMetricIdentifier numericalMetricIdentifier
             , final List<ANeighborArtifact> neighborArtifacts)
     {

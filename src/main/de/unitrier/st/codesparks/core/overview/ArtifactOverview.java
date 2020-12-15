@@ -113,7 +113,7 @@ public class ArtifactOverview
         {
             return;
         }
-        ACodeSparksArtifact programArtifact = (ACodeSparksArtifact) artifactPool.getProgramArtifact();
+        AArtifact programArtifact = artifactPool.getProgramArtifact();
         if (programArtifact == null)
         {
             return;
@@ -381,9 +381,8 @@ public class ArtifactOverview
             Set<String> includeFilters = retrieveCustomFilters(includeFilter);
             Set<String> excludeFilters = retrieveCustomFilters(excludeFilter);
 
-//            Map<String, List<AArtifact>> lists = artifactPool.getNamedArtifactTypeLists();
             final Map<Class<? extends AArtifact>, List<AArtifact>> map = artifactPool.getArtifacts();
-            if (map == null)//lists == null)
+            if (map == null)
             {
                 return;
             }
@@ -400,21 +399,9 @@ public class ArtifactOverview
                 addTab(tabName, artifacts, primaryMetricIdentifier);
             }
 
-//            for (Map.Entry<String, List<AArtifact>> entry : lists.entrySet())
-//            {
-//                List<AArtifact> artifacts = entry.getValue();
-//                artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
-//                String tabName = entry.getKey();
-//                addTab(tabName, artifacts, primaryMetricIdentifier);
-//            }
-
             if (lastSelectedIndex > 0 && lastSelectedIndex < tabbedPane.getTabCount())
             {
                 tabbedPane.setSelectedIndex(lastSelectedIndex);
-//                if (lastSelectedIndex == 0)
-//                    UserActivityLogger.getInstance().log(UserActivityEnum.OverviewMethodTabEntered);
-//                else
-//                    UserActivityLogger.getInstance().log(UserActivityEnum.OverviewClassesTabEntered);
             }
 
             tabbedPane.addChangeListener(tabbedPaneChangeListener);

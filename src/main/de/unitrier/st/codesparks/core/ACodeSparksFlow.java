@@ -94,7 +94,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
     {
         synchronized (uiLock)
         {
-            Collection<ACodeSparksArtifact> matchedResults = matchArtifactsToCodeFiles(virtualFile);
+            Collection<AArtifact> matchedResults = matchArtifactsToCodeFiles(virtualFile);
 
             Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedResults);
 
@@ -128,7 +128,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         }
     }
 
-    private Collection<EditorCoverLayerItem> createVisualization(Collection<ACodeSparksArtifact> matchedArtifacts)
+    private Collection<EditorCoverLayerItem> createVisualization(Collection<AArtifact> matchedArtifacts)
     {
         if (dataVisualizer != null)
         {
@@ -140,7 +140,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         }
     }
 
-    private Collection<ACodeSparksArtifact> matchArtifactsToCodeFiles(VirtualFile... virtualFiles)
+    private Collection<AArtifact> matchArtifactsToCodeFiles(VirtualFile... virtualFiles)
     {
         if (matcher != null)
         {
@@ -196,7 +196,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                         VirtualFile[] virtualFiles = Arrays.stream(editors).map(FileEditor::getFile).toArray(VirtualFile[]::new);
                         clearVisualizationCache();
 
-                        Collection<ACodeSparksArtifact> matchedArtifacts = matchArtifactsToCodeFiles(virtualFiles);
+                        Collection<AArtifact> matchedArtifacts = matchArtifactsToCodeFiles(virtualFiles);
 
                         Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedArtifacts);
 
@@ -249,7 +249,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                 }
                 VirtualFile[] virtualFiles = Arrays.stream(editors).map(FileEditor::getFile).toArray(VirtualFile[]::new);
 
-                Collection<ACodeSparksArtifact> matchedResults = matchArtifactsToCodeFiles(virtualFiles);
+                Collection<AArtifact> matchedResults = matchArtifactsToCodeFiles(virtualFiles);
 
                 Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedResults);
 

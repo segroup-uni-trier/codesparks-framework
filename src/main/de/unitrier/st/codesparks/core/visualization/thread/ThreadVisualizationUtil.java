@@ -152,7 +152,7 @@ public final class ThreadVisualizationUtil
         return collect.size();
     }
 
-    public static int getNumberOfFilteredThreadTypes(ACodeSparksArtifact artifact, Set<AThreadArtifact> filteredCodeSparksThreads)
+    public static int getNumberOfFilteredThreadTypes(AArtifact artifact, Set<AThreadArtifact> filteredCodeSparksThreads)
     {
         if (filteredCodeSparksThreads == null)
         {

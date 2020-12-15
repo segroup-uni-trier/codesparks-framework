@@ -13,40 +13,41 @@ public abstract class ANeighborArtifact extends AArtifact
     protected ANeighborArtifact(
             final String name
             , final String identifier
+            , final Class<? extends AThreadArtifact> threadArtifactClass
             , final int lineNumber
     )
     {
-        super(name, identifier);
+        super(name, identifier, threadArtifactClass);
         this.lineNumber = lineNumber;
     }
 
-    public double getNumericalMetricValueRelativeTo(final ACodeSparksArtifact aCodeSparksArtifact, final IMetricIdentifier metricIdentifier)
+    public double getNumericalMetricValueRelativeTo(final AArtifact artifact, final IMetricIdentifier metricIdentifier)
     {
+        if (!metricIdentifier.isNumerical())
+        {
+            return Double.NaN;
+        }
         final double metricValue = getNumericalMetricValue(metricIdentifier);
-        final double artifactNumericalMetricValue = aCodeSparksArtifact.getNumericalMetricValue(metricIdentifier);
+        final double artifactNumericalMetricValue = artifact.getNumericalMetricValue(metricIdentifier);
         return metricValue / artifactNumericalMetricValue;
     }
 
-    public String getDisplayStringRelativeTo(final ACodeSparksArtifact artifact, final IMetricIdentifier metricIdentifier, final int maxLen)
+    public String getDisplayStringRelativeTo(final AArtifact artifact, final IMetricIdentifier metricIdentifier, final int maxLen)
     {
         return CoreUtil.reduceToLength(getDisplayStringRelativeTo(artifact, metricIdentifier), maxLen);
     }
 
-    public String getDisplayStringRelativeTo(final ACodeSparksArtifact artifact, final IMetricIdentifier metricIdentifier)
+    public String getDisplayStringRelativeTo(final AArtifact artifact, final IMetricIdentifier metricIdentifier)
     {
-        final double numericalMetricValueRelativeTo = getNumericalMetricValueRelativeTo(artifact, metricIdentifier);
-        return name + " - " + metricIdentifier.getDisplayString() + ": " + CoreUtil.formatPercentage(numericalMetricValueRelativeTo);
-    }
-
-    @Override
-    public String getDisplayString(final IMetricIdentifier metricIdentifier, final int maxLen)
-    {
-        return CoreUtil.reduceToLength(getDisplayString(metricIdentifier), maxLen);
-    }
-
-    @Override
-    public String getDisplayString(final IMetricIdentifier metricIdentifier)
-    {
-        return name + " - " + metricIdentifier.getDisplayString() + ": " + CoreUtil.formatPercentage(getNumericalMetricValue(metricIdentifier));
+        String metricValueString;
+        if (metricIdentifier.isNumerical())
+        {
+            final double valueRelativeTo = getNumericalMetricValueRelativeTo(artifact, metricIdentifier);
+            metricValueString = CoreUtil.formatPercentage(valueRelativeTo);
+        } else
+        {
+            metricValueString = getMetricValue(metricIdentifier).toString();
+        }
+        return name + " - " + metricIdentifier.getDisplayString() + ": " + metricValueString;
     }
 }
