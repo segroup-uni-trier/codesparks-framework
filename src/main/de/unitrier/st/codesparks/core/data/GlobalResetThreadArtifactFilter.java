@@ -55,6 +55,6 @@ public class GlobalResetThreadArtifactFilter implements IThreadArtifactFilter
         {
             return new HashSet<>();
         }
-        return programArtifact.getCodeSparksThreadIdentifiers();
+        return programArtifact.getThreadArtifactIdentifiers();
     }
 }

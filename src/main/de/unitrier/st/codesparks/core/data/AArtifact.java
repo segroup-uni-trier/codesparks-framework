@@ -336,37 +336,58 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
 
     public Map<String, List<AThreadArtifact>> getThreadTypeLists(final Function<String, String> threadIdentifierProcessor)
     {
-        Collection<AThreadArtifact> threadArtifacts = getThreadArtifacts();
-        Map<String, List<AThreadArtifact>> threadTypeLists = new ConcurrentHashMap<>();
+        final Collection<AThreadArtifact> threadArtifacts = getThreadArtifacts();
+        final Map<String, List<AThreadArtifact>> threadTypeLists = new ConcurrentHashMap<>();
         for (AThreadArtifact codeSparksThread : threadArtifacts)
         {
-            String identifier = codeSparksThread.getIdentifier();
-            String processed = threadIdentifierProcessor.apply(identifier);
-            List<AThreadArtifact> threadArtifactList = threadTypeLists.getOrDefault(processed, new ArrayList<>());
+            final String identifier = codeSparksThread.getIdentifier();
+            final String processed = threadIdentifierProcessor.apply(identifier);
+            final List<AThreadArtifact> threadArtifactList = threadTypeLists.getOrDefault(processed, new ArrayList<>());
             threadArtifactList.add(codeSparksThread);
             threadTypeLists.put(processed, threadArtifactList);
         }
         return threadTypeLists;
     }
 
-    public AThreadArtifact getThreadArtifact(String identifier)
+    public AThreadArtifact getThreadArtifact(final String identifier)
     {
+        if (identifier == null || "".equals(identifier))
+        {
+            return null;
+        }
         synchronized (threadMapLock)
         {
             return threadMap.get(identifier);
         }
     }
 
-    @Deprecated
-    public void addThreadArtifact(AThreadArtifact codeSparksThread)
+    public AThreadArtifact getOrCreateThreadArtifact(final String threadIdentifier)
     {
+        if (threadIdentifier == null || "".equals(threadIdentifier))
+        {
+            return null;
+        }
+        AThreadArtifact threadArtifact;
         synchronized (threadMapLock)
         {
-            threadMap.put(codeSparksThread.getIdentifier(), codeSparksThread);
+            threadArtifact = threadMap.get(threadIdentifier);
+            if (threadArtifact == null)
+            {
+                try
+                {
+                    final Constructor<? extends AThreadArtifact> constructor = threadArtifactClass.getConstructor(String.class);
+                    threadArtifact = constructor.newInstance(threadIdentifier);
+                    threadMap.put(threadIdentifier, threadArtifact);
+                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e)
+                {
+                    e.printStackTrace();
+                }
+            }
         }
+        return threadArtifact;
     }
 
-    public synchronized void increaseNumericalMetricValueThread(
+    public void increaseNumericalMetricValueThread(
             final IMetricIdentifier metricIdentifier
             , final String threadIdentifier
             , final double toIncrease
@@ -377,29 +398,11 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
             CodeSparksLogger.addText("%s: Thread artifact class is not setup! Setting the metric value for a thread not available.", getClass());
             return;
         }
-        synchronized (threadMapLock)
-        {
-            AThreadArtifact codeSparksThread = threadMap.get(threadIdentifier);
-            if (codeSparksThread == null)
-            {
-                try
-                {
-                    final Constructor<? extends AThreadArtifact> constructor = threadArtifactClass.getConstructor(String.class);
-                    codeSparksThread = constructor.newInstance(threadIdentifier);
-                    threadMap.put(threadIdentifier, codeSparksThread);
-                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e)
-                {
-                    e.printStackTrace();
-                }
-            }
+        final AThreadArtifact threadArtifact = getOrCreateThreadArtifact(threadIdentifier);
+        threadArtifact.increaseNumericalMetricValue(metricIdentifier, toIncrease);
 
-            assert codeSparksThread != null;
-
-            codeSparksThread.increaseNumericalMetricValue(metricIdentifier, toIncrease);
-
-//            double threadMetricValue = codeSparksThread.getNumericalMetricValue(metricIdentifier);
+//            double threadMetricValue = threadArtifact.getNumericalMetricValue(metricIdentifier);
 //            assertSecondaryMetricValue(threadMetricValue, "thread");
-        }
     }
 
     public int getNumberOfThreads()
@@ -413,23 +416,30 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     @Override
     public void applyThreadFilter(IThreadArtifactFilter threadFilter)
     {
-        final Set<String> threadArtifactIdentifiers = getCodeSparksThreadIdentifiers();
+        final Set<String> threadArtifactIdentifiers = getThreadArtifactIdentifiers();
         final Set<String> filteredThreadArtifactIdentifiers = threadFilter.getFilteredThreadIdentifiers();
         filteredThreadArtifactIdentifiers.retainAll(threadArtifactIdentifiers);
         for (String filteredThreadArtifactIdentifier : filteredThreadArtifactIdentifiers)
         {
-            getThreadArtifact(filteredThreadArtifactIdentifier).setFiltered(true);
+            final AThreadArtifact threadArtifact = getThreadArtifact(filteredThreadArtifactIdentifier);
+            if (threadArtifact != null)
+            {
+                threadArtifact.setFiltered(true);
+            }
         }
-
         final Set<String> selectedThreadArtifactIdentifiers = threadFilter.getSelectedThreadIdentifiers();
         selectedThreadArtifactIdentifiers.retainAll(threadArtifactIdentifiers);
         for (String selectedThreadArtifactIdentifier : selectedThreadArtifactIdentifiers)
         {
-            getThreadArtifact(selectedThreadArtifactIdentifier).setFiltered(false);
+            final AThreadArtifact threadArtifact = getThreadArtifact(selectedThreadArtifactIdentifier);
+            if (threadArtifact != null)
+            {
+                threadArtifact.setFiltered(false);
+            }
         }
     }
 
-    public Set<String> getCodeSparksThreadIdentifiers()
+    public Set<String> getThreadArtifactIdentifiers()
     {
         return getThreadArtifacts().stream().map(AThreadArtifact::getIdentifier).collect(Collectors.toSet());
     }
