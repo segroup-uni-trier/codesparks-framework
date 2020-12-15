@@ -27,7 +27,7 @@ public class DummyNeighborArtifactVisualizationLabelFactory extends ANeighborArt
     }
 
     @Override
-    public JLabel createArtifactNeighborLabel(
+    public JLabel createNeighborArtifactLabel(
             final AArtifact artifact
             , final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
     )

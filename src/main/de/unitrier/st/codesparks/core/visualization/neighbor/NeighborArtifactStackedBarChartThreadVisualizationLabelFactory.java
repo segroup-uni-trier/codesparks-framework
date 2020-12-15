@@ -34,7 +34,7 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
     }
 
     @Override
-    public JLabel createArtifactNeighborLabel(
+    public JLabel createNeighborArtifactLabel(
             final AArtifact artifact
             , final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
     )

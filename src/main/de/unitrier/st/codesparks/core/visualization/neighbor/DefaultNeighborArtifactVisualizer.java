@@ -34,9 +34,10 @@ public class DefaultNeighborArtifactVisualizer implements INeighborArtifactVisua
     private DefaultNeighborArtifactVisualizer() { }
 
     @Override
-    public Collection<ANeighborArtifactVisualization> createArtifactCalleeVisualizations(
+    public Collection<ANeighborArtifactVisualization> createNeighborArtifactVisualizations(
             final AArtifact artifact
-            , final ANeighborArtifactVisualizationLabelFactory... neighborFactories)
+            , final ANeighborArtifactVisualizationLabelFactory... neighborFactories
+    )
     {
         assert artifact != null;
 
@@ -60,8 +61,8 @@ public class DefaultNeighborArtifactVisualizer implements INeighborArtifactVisua
                     .filter(aNeighborProfilingArtifact -> aNeighborProfilingArtifact.getThreadArtifacts()
                             .stream().anyMatch(threadArtifact -> !threadArtifact.isFiltered())).collect(Collectors.toList());
 
-            NeighborNeighborArtifactVisualizationWrapper neighborArtifactVisualizationWrapper =
-                    new NeighborNeighborArtifactVisualizationWrapper(artifact, threadFilteredCalleesOfCurrentLine, neighborFactories);
+            NeighborArtifactVisualizationWrapper neighborArtifactVisualizationWrapper =
+                    new NeighborArtifactVisualizationWrapper(artifact, threadFilteredCalleesOfCurrentLine, neighborFactories);
 
             calleeVisualizations.add(neighborArtifactVisualizationWrapper);
         }

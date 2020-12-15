@@ -1,6 +1,3 @@
-/*
- * Copyright (C) 2020, Oliver Moseler
- */
 package de.unitrier.st.codesparks.core.visualization;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -21,15 +18,11 @@ import java.util.Collection;
  */
 public class DefaultDataVisualizer extends ADataVisualizer
 {
-    private final INeighborArtifactVisualizer neighborArtifactVisualizer;
-    private final ANeighborArtifactVisualizationLabelFactory[] neighborFactories;
-
     public DefaultDataVisualizer()
     {
         this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), null, null);
     }
 
-    @SuppressWarnings("unused")
     public DefaultDataVisualizer(
             final AArtifactVisualizationLabelFactory[] artifactFactories
     )
@@ -45,7 +38,6 @@ public class DefaultDataVisualizer extends ADataVisualizer
         this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), artifactFactories, neighborFactories);
     }
 
-    @SuppressWarnings("WeakerAccess")
     public DefaultDataVisualizer(
             final IArtifactVisualizer artifactVisualizer
             , final INeighborArtifactVisualizer neighborArtifactVisualizer
@@ -53,9 +45,7 @@ public class DefaultDataVisualizer extends ADataVisualizer
             , final ANeighborArtifactVisualizationLabelFactory[] neighborFactories
     )
     {
-        super(artifactVisualizer, artifactFactories);
-        this.neighborArtifactVisualizer = neighborArtifactVisualizer;
-        this.neighborFactories = neighborFactories;
+        super(artifactVisualizer, neighborArtifactVisualizer, artifactFactories, neighborFactories);
     }
 
     @Override
@@ -80,7 +70,7 @@ public class DefaultDataVisualizer extends ADataVisualizer
                 overlayElements.add(layerItem);
 
                 Collection<ANeighborArtifactVisualization> calleeVisualizations =
-                        neighborArtifactVisualizer.createArtifactCalleeVisualizations(artifact, neighborFactories);
+                        neighborArtifactVisualizer.createNeighborArtifactVisualizations(artifact, neighborLabelFactories);
 
                 for (ANeighborArtifactVisualization calleeVisualization : calleeVisualizations)
                 {

@@ -8,7 +8,7 @@ import de.unitrier.st.codesparks.core.visualization.AArtifactVisualization;
  */
 public class ANeighborArtifactVisualization extends AArtifactVisualization
 {
-    public ANeighborArtifactVisualization(AArtifact artifact)
+    public ANeighborArtifactVisualization(final AArtifact artifact)
     {
         super(artifact);
         this.psiElement = null;

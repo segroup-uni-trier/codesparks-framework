@@ -1,6 +1,3 @@
-/*
- * Copyright (C) 2020, Oliver Moseler
- */
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
@@ -15,9 +12,9 @@ import java.util.List;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-class NeighborNeighborArtifactVisualizationWrapper extends ANeighborArtifactVisualization
+class NeighborArtifactVisualizationWrapper extends ANeighborArtifactVisualization
 {
-    NeighborNeighborArtifactVisualizationWrapper(
+    NeighborArtifactVisualizationWrapper(
             final AArtifact artifact
             , final List<ANeighborArtifact> neighborArtifactsOfLine
             , final ANeighborArtifactVisualizationLabelFactory... neighborFactories
@@ -42,16 +39,27 @@ class NeighborNeighborArtifactVisualizationWrapper extends ANeighborArtifactVisu
 
         for (ANeighborArtifactVisualizationLabelFactory factory : neighborFactories)
         {
-            JLabel artifactCalleeLabel = factory.createArtifactNeighborLabel(artifact, neighborArtifactsOfLine);
-            if (artifactCalleeLabel == null)
+            JLabel neighborLabel = factory.createNeighborArtifactLabel(artifact, neighborArtifactsOfLine);
+            if (neighborLabel == null)
             {
                 continue;
             }
-            int iconWidth = artifactCalleeLabel.getIcon().getIconWidth();
-            width += iconWidth;
-            int iconHeight = artifactCalleeLabel.getIcon().getIconHeight();
-            height = Math.max(height, iconHeight);
-            this.add(artifactCalleeLabel);
+            final Icon icon = neighborLabel.getIcon();
+            if (icon != null)
+            {
+                int iconWidth = icon.getIconWidth();
+                width += iconWidth;
+                int iconHeight = icon.getIconHeight();
+                height = Math.max(height, iconHeight);
+            } else
+            {
+                int labelWidth = neighborLabel.getWidth();
+                width += labelWidth;
+                int labelHeight = neighborLabel.getHeight();
+                height = Math.max(height, labelHeight);
+            }
+
+            this.add(neighborLabel);
         }
 
         setSize(width, height);
