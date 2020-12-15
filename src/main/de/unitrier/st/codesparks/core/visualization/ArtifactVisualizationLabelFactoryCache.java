@@ -3,7 +3,6 @@ package de.unitrier.st.codesparks.core.visualization;
 import de.unitrier.st.codesparks.core.ArtifactPoolManager;
 import de.unitrier.st.codesparks.core.IArtifactPool;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 
 import javax.swing.*;
 import java.util.HashMap;

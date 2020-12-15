@@ -69,11 +69,11 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         this.name = name == null ? "" : name;
         this.identifier = identifier == null ? "" : identifier;
-        this.metrics = new HashMap<>();
+        this.metrics = new HashMap<>(4);
         this.threadArtifactClass = threadArtifactClass;
-        this.threadMap = new HashMap<>();
-        this.predecessors = new HashMap<>();
-        this.successors = new HashMap<>();
+        this.threadMap = new HashMap<>(32);
+        this.predecessors = new HashMap<>(8);
+        this.successors = new HashMap<>(8);
     }
 
     /*

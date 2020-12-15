@@ -5,7 +5,6 @@ package de.unitrier.st.codesparks.core;
 
 import com.intellij.openapi.project.Project;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerItem;
 
 import java.util.Collection;

@@ -5,7 +5,6 @@ package de.unitrier.st.codesparks.core.visualization;
 
 import de.unitrier.st.codesparks.core.IDataVisualizer;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 
 import java.util.Arrays;
 import java.util.Comparator;

@@ -7,7 +7,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import de.unitrier.st.codesparks.core.data.ACodeSparksArtifact;
 import de.unitrier.st.codesparks.core.data.IPsiNavigable;
 import de.unitrier.st.codesparks.core.service.ACodeSparksInstanceService;
 import org.jetbrains.annotations.NotNull;
