@@ -125,13 +125,20 @@ public class ArtifactOverViewTableModel implements TableModel
 
                 final ArtifactOverview overview = ArtifactOverview.getInstance();
 
-                AArtifactVisualizationLabelFactory labelFactory = overview.getArtifactClassVisualizationLabelFactory(artifact.getClass());
+                final AArtifactVisualizationLabelFactory labelFactory = overview.getArtifactClassVisualizationLabelFactory(artifact.getClass());
 
                 if (labelFactory == null)
                 {
+//                    final CodeSparksFlowManager codeSparksFlowManager = CodeSparksFlowManager.getInstance();
+//                    final ACodeSparksFlow flow = codeSparksFlowManager.getCurrentCodeSparksFlow();
+//                    final ADataVisualizer dataVisualizer = flow.getDataVisualizer();
+//                    labelFactory = dataVisualizer.getFirstArtifactVisualizationLabelFactory();
+//                    if (labelFactory == null)
+//                    {
                     DummyArtifactVisualizationLabelFactory dummyArtifactVisualizationLabelFactory =
                             new DummyArtifactVisualizationLabelFactory();
                     return dummyArtifactVisualizationLabelFactory.createArtifactLabel(artifact);
+//                    }
                 }
 
                 //noinspection UnnecessaryLocalVariable : Not inlined because og debugging purposes

@@ -30,4 +30,19 @@ public abstract class ADataVisualizer implements IDataVisualizer
         this.artifactLabelFactories = artifactLabelFactories;
         this.neighborLabelFactories = neighborLabelFactories;
     }
+
+    public AArtifactVisualizationLabelFactory getFirstArtifactVisualizationLabelFactory()
+    {
+        if (artifactLabelFactories == null)
+        {
+            return null;
+        }
+        final Optional<AArtifactVisualizationLabelFactory> min =
+                Arrays.stream(artifactLabelFactories).min(Comparator.comparing(AVisualizationSequence::getSequence));
+        if (min.isEmpty())
+        {
+            return null;
+        }
+        return min.get();
+    }
 }

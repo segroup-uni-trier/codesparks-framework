@@ -86,6 +86,11 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         return project;
     }
 
+    public ADataVisualizer getDataVisualizer()
+    {
+        return dataVisualizer;
+    }
+
     @Override
     public void updateEditorCoverLayerFor(VirtualFile virtualFile)
     {
