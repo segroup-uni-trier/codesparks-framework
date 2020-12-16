@@ -1,5 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization;
 
+import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.CoreUtil;
@@ -109,7 +110,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
          */
         String percentageText = CoreUtil.formatPercentage(threadFilteredMetricValue);
         double textWidth = graphics.getFontMetrics().stringWidth(percentageText);
-        graphics.setColor(BLACK);
+        graphics.setColor(JBColor.DARK_GRAY);
         Font font = new Font("Arial", Font.BOLD, 11);  // TODO: support different font sizes
         graphics.setFont(font);
         Color textColor = VisualizationUtil.getTextColor(metricColor);
