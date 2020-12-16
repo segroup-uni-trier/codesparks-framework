@@ -363,11 +363,48 @@ public class ArtifactOverview
     private final Object metricIdentifierLock = new Object();
     private final Map<Class<? extends AArtifact>, IMetricIdentifier> artifactClassMetricIdentifier = new HashMap<>(8);
 
-    public void registerMetricIdentifier(Class<? extends AArtifact> artifactClass, IMetricIdentifier metricIdentifier)
+    public void registerMetricIdentifier(
+            final Class<? extends AArtifact> artifactClass
+            , final IMetricIdentifier metricIdentifier
+    )
     {
+        if (artifactClass == null || metricIdentifier == null)
+        {
+            return;
+        }
         synchronized (metricIdentifierLock)
         {
             artifactClassMetricIdentifier.put(artifactClass, metricIdentifier);
+        }
+    }
+
+    private final Object artifactClassVisualizationLabelFactoriesLock = new Object();
+    private final Map<Class<? extends AArtifact>, AArtifactVisualizationLabelFactory> artifactClassVisualizationLabelFactories = new HashMap<>(8);
+
+    public void registerArtifactClassVisualizationLabelFactory(
+            final Class<? extends AArtifact> artifactClass
+            , final AArtifactVisualizationLabelFactory factory
+    )
+    {
+        if (artifactClass == null || factory == null)
+        {
+            return;
+        }
+        synchronized (artifactClassVisualizationLabelFactoriesLock)
+        {
+            artifactClassVisualizationLabelFactories.put(artifactClass, factory);
+        }
+    }
+
+    public AArtifactVisualizationLabelFactory getArtifactClassVisualizationLabelFactory(final Class<? extends AArtifact> artifactClass)
+    {
+        if (artifactClass == null)
+        {
+            return null;
+        }
+        synchronized (artifactClassVisualizationLabelFactoriesLock)
+        {
+            return artifactClassVisualizationLabelFactories.get(artifactClass);
         }
     }
 

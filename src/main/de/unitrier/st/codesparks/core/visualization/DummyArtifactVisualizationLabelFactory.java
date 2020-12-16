@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-@SuppressWarnings("unused")
 public class DummyArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
     public DummyArtifactVisualizationLabelFactory() { super(null);}
@@ -29,12 +28,12 @@ public class DummyArtifactVisualizationLabelFactory extends AArtifactVisualizati
         final ImageIcon imageIcon = CoreUtil.getDefaultImageIcon();
         GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage image = UIUtil.createImage(defaultConfiguration, imageIcon.getIconWidth(), imageIcon.getIconHeight(),
+        BufferedImage bi = UIUtil.createImage(defaultConfiguration, imageIcon.getIconWidth(), imageIcon.getIconHeight(),
                 BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
-        Graphics graphics = image.getGraphics();
-        graphics.fillRect(0, 0, imageIcon.getIconWidth(), imageIcon.getIconHeight());
+        Graphics2D graphics = (Graphics2D) bi.getGraphics();
+        VisualizationUtil.drawTransparentBackground(graphics, bi);
         graphics.drawImage(imageIcon.getImage(), 0, 0, null);
-        ImageIcon imageIcon1 = new ImageIcon(image);
+        ImageIcon imageIcon1 = new ImageIcon(bi);
         return new JLabel(imageIcon1);
     }
 }

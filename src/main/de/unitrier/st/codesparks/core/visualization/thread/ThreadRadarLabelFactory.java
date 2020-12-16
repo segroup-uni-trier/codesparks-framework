@@ -31,7 +31,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             , final IMetricIdentifier secondaryMetricIdentifier
     )
     {
-        this(primaryMetricIdentifier, secondaryMetricIdentifier, 0, false, new DefaultThreadRadarDisplayData(primaryMetricIdentifier));
+        this(primaryMetricIdentifier, secondaryMetricIdentifier, 0, new DefaultThreadRadarDisplayData(primaryMetricIdentifier));
     }
 
     public ThreadRadarLabelFactory(
@@ -40,18 +40,17 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             , final int sequence
     )
     {
-        this(primaryMetricIdentifier, secondaryMetricIdentifier, sequence, false, new DefaultThreadRadarDisplayData(primaryMetricIdentifier));
+        this(primaryMetricIdentifier, secondaryMetricIdentifier, sequence, new DefaultThreadRadarDisplayData(primaryMetricIdentifier));
     }
 
     public ThreadRadarLabelFactory(
             final IMetricIdentifier primaryMetricIdentifier
             , final IMetricIdentifier secondaryMetricIdentifier
             , final int sequence
-            , boolean isDefault
             , final IThreadRadarDisplayData radialThreadVisualizationPopupData
     )
     {
-        super(primaryMetricIdentifier, sequence, isDefault);
+        super(primaryMetricIdentifier, sequence);
         this.secondaryMetricIdentifier = secondaryMetricIdentifier;
         this.radialThreadVisualizationPopupData = radialThreadVisualizationPopupData;
     }

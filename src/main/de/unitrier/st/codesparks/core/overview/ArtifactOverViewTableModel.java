@@ -1,12 +1,9 @@
-/*
- * Copyright (C) 2020, Oliver Moseler
- */
 package de.unitrier.st.codesparks.core.overview;
 
-import de.unitrier.st.codesparks.core.ACodeSparksFlow;
-import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.CoreUtil;
-import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.DataUtil;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.ArtifactVisualizationLabelFactoryCache;
@@ -121,16 +118,16 @@ public class ArtifactOverViewTableModel implements TableModel
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-        AArtifact artifact = getArtifactAt(rowIndex);//artifacts.get(rowIndex);
+        AArtifact artifact = getArtifactAt(rowIndex);
         switch (columnIndex)
         {
             case 0:
-                ACodeSparksFlow codeSparksFlow = CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow();
 
-                AArtifactVisualizationLabelFactory defaultVisualizationLabelFactory =
-                        codeSparksFlow.getDefaultVisualizationLabelFactory();
+                final ArtifactOverview overview = ArtifactOverview.getInstance();
 
-                if (defaultVisualizationLabelFactory == null)
+                AArtifactVisualizationLabelFactory labelFactory = overview.getArtifactClassVisualizationLabelFactory(artifact.getClass());
+
+                if (labelFactory == null)
                 {
                     DummyArtifactVisualizationLabelFactory dummyArtifactVisualizationLabelFactory =
                             new DummyArtifactVisualizationLabelFactory();
@@ -140,14 +137,8 @@ public class ArtifactOverViewTableModel implements TableModel
                 //noinspection UnnecessaryLocalVariable : Not inlined because og debugging purposes
                 JLabel cachedArtifactVisualizationLabel =
                         ArtifactVisualizationLabelFactoryCache.getInstance()
-                                .getCachedArtifactVisualizationLabel(artifact.getIdentifier(), defaultVisualizationLabelFactory, true);
+                                .getCachedArtifactVisualizationLabel(artifact.getIdentifier(), labelFactory, true);
 
-//                if (cachedArtifactVisualizationLabel == null)
-//                {
-//                    DummyArtifactVisualizationLabelFactory dummyArtifactVisualizationLabelFactory =
-//                            new DummyArtifactVisualizationLabelFactory();
-//                    return dummyArtifactVisualizationLabelFactory.createArtifactLabel(artifact);
-//                }
                 return cachedArtifactVisualizationLabel;
             case 1:
                 return CoreUtil.reduceToLength(artifact.getIdentifier(), 55, "...");

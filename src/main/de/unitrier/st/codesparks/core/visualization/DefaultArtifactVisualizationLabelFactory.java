@@ -14,7 +14,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 
-import static com.intellij.ui.JBColor.BLACK;
 import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
 
 /*
@@ -30,27 +29,16 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
             , final IMetricIdentifier secondaryMetricIdentifier
     )
     {
-        this(primaryMetricIdentifier, secondaryMetricIdentifier, 0, false);
-    }
-
-    @SuppressWarnings("unused")
-    public DefaultArtifactVisualizationLabelFactory(
-            final IMetricIdentifier primaryMetricIdentifier
-            , final IMetricIdentifier secondaryMetricIdentifier
-            , final int sequence
-    )
-    {
-        this(primaryMetricIdentifier, secondaryMetricIdentifier, sequence, false);
+        this(primaryMetricIdentifier, secondaryMetricIdentifier, 0);
     }
 
     public DefaultArtifactVisualizationLabelFactory(
             final IMetricIdentifier primaryMetricIdentifier
             , final IMetricIdentifier secondaryMetricIdentifier
             , final int sequence
-            , final boolean isDefault
     )
     {
-        super(primaryMetricIdentifier, sequence, isDefault);
+        super(primaryMetricIdentifier, sequence);
         this.secondaryMetricIdentifier = secondaryMetricIdentifier;
     }
 

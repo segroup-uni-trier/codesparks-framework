@@ -30,22 +30,4 @@ public abstract class ADataVisualizer implements IDataVisualizer
         this.artifactLabelFactories = artifactLabelFactories;
         this.neighborLabelFactories = neighborLabelFactories;
     }
-
-    public AArtifactVisualizationLabelFactory getDefaultArtifactVisualizationLabelFactory()
-    {
-        if (artifactLabelFactories == null || artifactLabelFactories.length < 1)
-        {
-            return null;
-        }
-        Optional<AArtifactVisualizationLabelFactory> first =
-                Arrays.stream(artifactLabelFactories).filter(AVisualizationSequence::isDefault).findFirst();
-        if (first.isPresent())
-        {
-            return first.get();
-        }
-        Optional<AArtifactVisualizationLabelFactory> min =
-                Arrays.stream(artifactLabelFactories).min(Comparator.comparingInt(AVisualizationSequence::getSequence));
-        assert artifactLabelFactories.length > 0; // See condition above!
-        return min.orElseGet(() -> artifactLabelFactories[0]);
-    }
 }

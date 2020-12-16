@@ -21,13 +21,7 @@ public abstract class AArtifactVisualizationLabelFactory extends AVisualizationS
 
     protected AArtifactVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
-        super(sequence, false);
-        this.primaryMetricIdentifier = primaryMetricIdentifier;
-    }
-
-    protected AArtifactVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence, final boolean isDefault)
-    {
-        super(sequence, isDefault);
+        super(sequence);
         this.primaryMetricIdentifier = primaryMetricIdentifier;
     }
 }

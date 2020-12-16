@@ -315,7 +315,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         ArtifactVisualizationLabelFactoryCache.getInstance().clearCache();
     }
 
-    private void displayVisualizations(Collection<EditorCoverLayerItem> overlayElements)
+    private void displayVisualizations(final Collection<EditorCoverLayerItem> overlayElements)
     {
         final EditorCoverLayerManager editorCoverLayerManager = EditorCoverLayerManager.getInstance(project);
         for (final EditorCoverLayerItem overlayElement : overlayElements)
@@ -324,22 +324,22 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         }
     }
 
-    public void registerStandardLibraryArtifactFilter(IArtifactFilter standardLibraryArtifactFilter)
+    public void registerStandardLibraryArtifactFilter(final IArtifactFilter standardLibraryArtifactFilter)
     {
         ArtifactOverview.getInstance().registerStandardLibraryArtifactFilter(standardLibraryArtifactFilter);
     }
 
-    public void registerCurrentFileArtifactFilter(ICurrentFileArtifactFilter currentFileArtifactFilter)
+    public void registerCurrentFileArtifactFilter(final ICurrentFileArtifactFilter currentFileArtifactFilter)
     {
         ArtifactOverview.getInstance().registerCurrentFileArtifactFilter(currentFileArtifactFilter);
     }
 
-    public void registerThreadStateArtifactFilter(AThreadStateArtifactFilter threadStateArtifactFilter)
+    public void registerThreadStateArtifactFilter(final AThreadStateArtifactFilter threadStateArtifactFilter)
     {
         ArtifactOverview.getInstance().registerThreadStateArtifactFilter(threadStateArtifactFilter);
     }
 
-    public void registerProgramArtifactVisualizationLabelFactory(AArtifactVisualizationLabelFactory factory)
+    public void registerProgramArtifactVisualizationLabelFactory(final AArtifactVisualizationLabelFactory factory)
     {
         ArtifactOverview.getInstance().registerProgramArtifactVisualizationLabelFactory(factory);
     }
@@ -349,21 +349,11 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         ArtifactOverview.getInstance().registerMetricIdentifier(artifactClass, metricIdentifier);
     }
 
-    public AArtifactVisualizationLabelFactory getDefaultVisualizationLabelFactory()
+    public void registerArtifactClassVisualizationLabelFactory(
+            final Class<? extends AArtifact> artifactClass
+            , final AArtifactVisualizationLabelFactory factory
+    )
     {
-        if (dataVisualizer != null)
-        {
-            final AArtifactVisualizationLabelFactory defaultArtifactVisualizationLabelFactory = dataVisualizer.getDefaultArtifactVisualizationLabelFactory();
-            if (defaultArtifactVisualizationLabelFactory == null)
-            {
-                CodeSparksLogger.addText(String.format("%s: artifact visualization label factory not setup!", getClass()));
-                return null;
-            }
-            return defaultArtifactVisualizationLabelFactory;
-        } else
-        {
-            CodeSparksLogger.addText(String.format("%s: data visualizer not setup!", getClass()));
-            return null;
-        }
+        ArtifactOverview.getInstance().registerArtifactClassVisualizationLabelFactory(artifactClass, factory);
     }
 }

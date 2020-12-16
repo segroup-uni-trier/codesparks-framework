@@ -18,7 +18,7 @@ public abstract class ANeighborArtifactVisualizationLabelFactory extends AVisual
 
     protected ANeighborArtifactVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
-        super(sequence, false);
+        super(sequence);
         this.primaryMetricIdentifier = primaryMetricIdentifier;
     }
 }
