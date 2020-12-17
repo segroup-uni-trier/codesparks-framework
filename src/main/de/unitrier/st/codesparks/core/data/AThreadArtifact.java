@@ -10,10 +10,10 @@ public abstract class AThreadArtifact extends AArtifact
     private String callSite;
     private boolean filtered;
 
-    public AThreadArtifact(final String identifier)
-    {
-        this(identifier, null);
-    }
+//    public AThreadArtifact(final String identifier)
+//    {
+//        this(identifier, null);
+//    }
 
     public AThreadArtifact(final String identifier, final Class<? extends AThreadArtifact> threadArtifactClass)
     {

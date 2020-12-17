@@ -414,7 +414,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     }
 
     @Override
-    public void applyThreadFilter(IThreadArtifactFilter threadFilter)
+    public void applyThreadFilter(final IThreadArtifactFilter threadFilter)
     {
         final Set<String> threadArtifactIdentifiers = getThreadArtifactIdentifiers();
         final Set<String> filteredThreadArtifactIdentifiers = threadFilter.getFilteredThreadIdentifiers();
@@ -631,6 +631,22 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void clear()
+    {
+        this.metrics.clear();
+        this.threadMap.clear();
+        for (final Map.Entry<Integer, List<ANeighborArtifact>> integerListEntry : this.predecessors.entrySet())
+        {
+            integerListEntry.getValue().clear();
+        }
+        this.predecessors.clear();
+        for (final Map.Entry<Integer, List<ANeighborArtifact>> integerListEntry : this.successors.entrySet())
+        {
+            integerListEntry.getValue().clear();
+        }
+        this.successors.clear();
     }
 
     /*

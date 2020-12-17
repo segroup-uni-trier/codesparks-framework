@@ -14,7 +14,7 @@ public class ArtifactBuilder
     {
         public DefaultThreadArtifact(final String identifier)
         {
-            super(identifier);
+            super(identifier, DefaultThreadArtifact.class);
         }
     }
 

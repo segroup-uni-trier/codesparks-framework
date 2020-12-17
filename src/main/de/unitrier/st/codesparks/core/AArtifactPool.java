@@ -235,6 +235,21 @@ public abstract class AArtifactPool implements IArtifactPool
     }
 
     @Override
+    public void clear()
+    {
+        for (final Map.Entry<Class<? extends AArtifact>, Map<String, AArtifact>> classMapEntry : artifacts.entrySet())
+        {
+            final Map<String, AArtifact> value = classMapEntry.getValue();
+            for (final Map.Entry<String, AArtifact> stringAArtifactEntry : value.entrySet())
+            {
+                stringAArtifactEntry.getValue().clear();
+            }
+            value.clear();
+        }
+        artifacts.clear();
+    }
+
+    @Override
     public void export(IArtifactPoolExportStrategy strategy)
     {
         strategy.export(this);

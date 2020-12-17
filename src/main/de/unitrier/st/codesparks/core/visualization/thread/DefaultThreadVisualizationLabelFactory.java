@@ -39,7 +39,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
     {
         final int threadsPerColumn = 3;
         int lineHeight = VisualizationUtil.getLineHeightCeil(VisConstants.getLineHeight(), threadsPerColumn);
-        int width = 5000;
+        int width = 5000; // We don't know the width yet because the viz does not visually scale.
         GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
         BufferedImage bi = UIUtil.createImage(defaultConfiguration, width, lineHeight,
@@ -95,8 +95,8 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
         VisualizationUtil.drawRectangle(graphics, threadVisualisationArea);
 
-        int actualIconWidth = threadDotXPos + threadVisualisationArea.width;
-        BufferedImage subimage = bi.getSubimage(0, 0, actualIconWidth, bi.getHeight());
+        final int iconWidth = threadDotXPos + threadVisualisationArea.width;
+        BufferedImage subimage = bi.getSubimage(0, 0, iconWidth, bi.getHeight());
         ImageIcon imageIcon = new ImageIcon(subimage);
 
         JLabel jLabel = new JLabel();

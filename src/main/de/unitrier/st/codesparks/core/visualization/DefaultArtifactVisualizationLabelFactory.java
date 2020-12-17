@@ -45,10 +45,11 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
     @Override
     public JLabel createArtifactLabel(@NotNull final AArtifact artifact)
     {
-        int lineHeight = VisConstants.getLineHeight();
+        final int lineHeight = VisConstants.getLineHeight();
+        final int iconWidth = X_OFFSET + RECTANGLE_WIDTH + 4 * CALLEE_TRIANGLES_WIDTH + 1;
         GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage bi = UIUtil.createImage(defaultConfiguration, 5000, lineHeight,
+        BufferedImage bi = UIUtil.createImage(defaultConfiguration, iconWidth, lineHeight,
                 BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
 
         Graphics2D graphics = (Graphics2D) bi.getGraphics();
@@ -62,14 +63,14 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
          * Draw the intensity rectangle
          */
         final Rectangle intensityRectangle = new Rectangle(X_OFFSET, Y_OFFSET, RECTANGLE_WIDTH, lineHeight - 1 - selfBarHeight);
-        final double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, primaryMetricIdentifier);
+        final double threadFilteredMetricValue = DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, primaryMetricIdentifier);
         final Color metricColor = VisualizationUtil.getMetricColor(threadFilteredMetricValue);
         graphics.setColor(metricColor);
         VisualizationUtil.fillRectangle(graphics, intensityRectangle);
         /*
          * Draw the self metric
          */
-        final double threadFilteredMetricValueSelf = DataUtil.getThreadFilteredMetricValue(artifact, secondaryMetricIdentifier);
+        final double threadFilteredMetricValueSelf = DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, secondaryMetricIdentifier);
         final double selfPercentage = threadFilteredMetricValueSelf / threadFilteredMetricValue;
         int selfWidth = 0;
         if (selfPercentage > 0D)
@@ -114,8 +115,8 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         /*
          * Set the actual image icon size
          */
-        int actualIconWidth = X_OFFSET + RECTANGLE_WIDTH + 4 * CALLEE_TRIANGLES_WIDTH + 1;
-        BufferedImage subImage = bi.getSubimage(0, 0, actualIconWidth, bi.getHeight());
+//        final int iconWidth = X_OFFSET + RECTANGLE_WIDTH + 4 * CALLEE_TRIANGLES_WIDTH + 1;
+        BufferedImage subImage = bi.getSubimage(0, 0, iconWidth, bi.getHeight());
         ImageIcon imageIcon = new ImageIcon(subImage);
 
         JLabel jLabel = new JLabel();

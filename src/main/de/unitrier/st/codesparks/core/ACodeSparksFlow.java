@@ -40,9 +40,7 @@ import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPr
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
@@ -157,6 +155,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
     {
         try
         {
+            clearArtifactPool();
             clearVisualizations();
             if (collectData())
             {
@@ -209,7 +208,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
     private final Object uiLock = new Object();
 
-    public void applyThreadArtifactFilter(IThreadArtifactFilter threadFilter)
+    public void applyThreadArtifactFilter(final IThreadArtifactFilter threadFilter)
     {
         synchronized (uiLock)
         {
@@ -221,9 +220,9 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
                 ArtifactPoolManager instance = ArtifactPoolManager.getInstance();
 
-                IArtifactPool profilingResult = instance.getArtifactPool();
+                IArtifactPool artifactPool = instance.getArtifactPool();
 
-                profilingResult.applyThreadFilter(threadFilter);
+                artifactPool.applyThreadFilter(threadFilter);
 
                 FileEditor[] editors = ApplicationManager.getApplication().runReadAction((Computable<FileEditor[]>) () ->
                         FileEditorManager.getInstance(project).getAllEditors());
@@ -295,6 +294,14 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
         contentManager.addContent(ContentFactory.SERVICE.getInstance().createContent
                 (artifactOverview.getRootPanel(), "", true));
+    }
+
+    private void clearArtifactPool()
+    {
+        if (artifactPool != null)
+        {
+            artifactPool.clear();
+        }
     }
 
     private void clearVisualizations()

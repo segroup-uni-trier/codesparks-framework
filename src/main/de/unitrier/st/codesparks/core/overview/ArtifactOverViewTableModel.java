@@ -35,25 +35,35 @@ public class ArtifactOverViewTableModel implements TableModel
             CodeSparksLogger.addText("%s: Metric identifier not setup! Please register a metric identifier to the overview through the CodeSparksFlow.",
                     getClass());
         }
-        this.artifacts =
-                artifacts.stream()
-                        .filter(artifact ->
-                        {
-                            if (artifact.hasThreads())
-                            {
-                                return DataUtil.getThreadMetricValueRatio(artifact,
-                                        (codeSparksThread) -> codeSparksThread.getNumericalMetricValue(metricIdentifier)) > 0;
-                            } else
-                            {
-                                return true;//artifact.getMetricValue() > 0;
-                            }
-                        })
-                        .collect(Collectors.toList());
+        this.artifacts = artifacts;
+//        this.artifacts =
+//                artifacts.stream()
+//                        .filter(artifact ->
+//                        {
+//                            if (metricIdentifier == null)
+//                            {
+//                                return true;
+//                            }
+//                            if (metricIdentifier.isNumerical())
+//                            {
+//                                if (artifact.hasThreads())
+//                                {
+//                                    return DataUtil.getThreadFilteredRelativeNumericMetricValueRatioOfArtifact(artifact, metricIdentifier) > 0;
+//                                } else
+//                                {
+//                                    return artifact.getNumericalMetricValue(metricIdentifier) > 0;
+//                                }
+//                            } else
+//                            {
+//                                return artifact.getMetricValue(metricIdentifier) != null;
+//                            }
+//                        })
+//                        .collect(Collectors.toList());
 //        this.artifacts.sort(Comparator.comparingDouble(DataUtil::getThreadFilteredMetricValue).reversed());
-        final ToDoubleFunction<? super AArtifact> f = value -> {
-            if (value != null)
+        final ToDoubleFunction<? super AArtifact> f = artifact -> {
+            if (artifact != null)
             {
-                return DataUtil.getThreadFilteredMetricValue(value, metricIdentifier);
+                return DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, metricIdentifier);
             } else
             {
                 return 0d;
@@ -141,12 +151,14 @@ public class ArtifactOverViewTableModel implements TableModel
 //                    }
                 }
 
+                // TODO: enable caching again. A memory dump revealed that the cache had become about 1.35GB. There must be an error in the caching strategy!
                 //noinspection UnnecessaryLocalVariable : Not inlined because og debugging purposes
-                JLabel cachedArtifactVisualizationLabel =
-                        ArtifactVisualizationLabelFactoryCache.getInstance()
-                                .getCachedArtifactVisualizationLabel(artifact.getIdentifier(), labelFactory, true);
-
-                return cachedArtifactVisualizationLabel;
+//                JLabel cachedArtifactVisualizationLabel =
+//                        ArtifactVisualizationLabelFactoryCache.getInstance()
+//                                .getCachedArtifactVisualizationLabel(artifact.getIdentifier(), labelFactory, true);
+//
+//                return cachedArtifactVisualizationLabel;
+                return labelFactory.createArtifactLabel(artifact);
             case 1:
                 return CoreUtil.reduceToLength(artifact.getIdentifier(), 55, "...");
             default:

@@ -46,7 +46,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
             , final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
     )
     {
-        final double threadFilteredMetricValue = DataUtil.getThreadFilteredMetricValue(artifact, primaryMetricIdentifier);
+        final double threadFilteredMetricValue = DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, primaryMetricIdentifier);
         final Color metricColor = VisualizationUtil.getMetricColor(threadFilteredMetricValue);
 
         int numberOfCalleesInSameLine = threadFilteredNeighborArtifactsOfLine.size();

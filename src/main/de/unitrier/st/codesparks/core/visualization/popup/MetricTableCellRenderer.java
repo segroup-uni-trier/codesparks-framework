@@ -70,6 +70,7 @@ public class MetricTableCellRenderer extends JTextArea implements TableCellRende
             {
                 final JLabel jLabel = (JLabel) value;
                 jLabel.setBackground(null); // Reset the hover background color. See JBTable hover background
+                jLabel.setHorizontalAlignment(JLabel.CENTER);
                 return jLabel;
             }
             setFont(defaultFont);
@@ -97,6 +98,7 @@ public class MetricTableCellRenderer extends JTextArea implements TableCellRende
             {
                 final JLabel jLabel = (JLabel) value;
                 jLabel.setBackground(null); // Reset the hover background color. See JBTable hover background
+                jLabel.setHorizontalAlignment(JLabel.CENTER);
                 return jLabel;
             }
             setFont(defaultFont);

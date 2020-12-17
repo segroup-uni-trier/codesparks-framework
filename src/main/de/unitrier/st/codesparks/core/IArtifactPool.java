@@ -39,4 +39,9 @@ public interface IArtifactPool extends IThreadArtifactFilterable, IArtifactPoolE
      * @return The created program artifact
      */
     AArtifact getOrCreateProgramArtifact(final Class<? extends AArtifact> artifactClass);
+
+    /**
+     * Clears the complete artifact pool.
+     */
+    void clear();
 }

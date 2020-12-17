@@ -26,7 +26,7 @@ public class ArtifactTrieMetricVisualizationLabelFactory extends AArtifactVisual
         int lineHeight = VisConstants.getLineHeight();
         GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage bi = UIUtil.createImage(defaultConfiguration, 5000, lineHeight,
+        BufferedImage bi = UIUtil.createImage(defaultConfiguration, 500, lineHeight,
                 BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
 
         Graphics2D graphics = (Graphics2D) bi.getGraphics();

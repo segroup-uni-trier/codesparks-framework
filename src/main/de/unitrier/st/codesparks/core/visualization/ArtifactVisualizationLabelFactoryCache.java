@@ -47,6 +47,8 @@ public class ArtifactVisualizationLabelFactoryCache
         }
     }
 
+    private final Object cacheLock = new Object();
+
     public void addToCache(
             String identifier
             , Class<? extends AArtifactVisualizationLabelFactory> factory
@@ -54,7 +56,7 @@ public class ArtifactVisualizationLabelFactoryCache
     )
     {
         JLabel jLabel = new JLabel(artifactVisualizationLabel.getIcon());
-        synchronized (this)
+        synchronized (cacheLock)
         {
             Map<Class<? extends AArtifactVisualizationLabelFactory>, JLabel> labelMap = cache.getOrDefault(identifier, new HashMap<>());
             labelMap.put(factory, jLabel);
@@ -68,7 +70,7 @@ public class ArtifactVisualizationLabelFactoryCache
             , final boolean createIfAbsent
     )
     {
-        synchronized (this)
+        synchronized (cacheLock)
         {
             Map<Class<? extends AArtifactVisualizationLabelFactory>, JLabel> classJLabelMap = cache.get(artifactIdentifier);
             if (classJLabelMap == null)

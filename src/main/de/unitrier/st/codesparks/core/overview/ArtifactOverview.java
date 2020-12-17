@@ -436,7 +436,9 @@ public class ArtifactOverview
             {
                 final Class<? extends AArtifact> artifactClass = entry.getKey();
                 List<AArtifact> artifacts = entry.getValue();
+
                 artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
+
                 String tabName = artifactPool.getArtifactClassDisplayName(artifactClass);
                 final IMetricIdentifier metricIdentifier = artifactClassMetricIdentifier.get(artifactClass);
                 if (metricIdentifier != null)
@@ -475,7 +477,8 @@ public class ArtifactOverview
                 return identifier;
             }
         };
-        jbTable.setDefaultRenderer(Object.class, new MetricTableCellRenderer(0));
+        final MetricTableCellRenderer metricTableCellRenderer = new MetricTableCellRenderer(0);
+        jbTable.setDefaultRenderer(Object.class, metricTableCellRenderer);
         jbTable.addMouseMotionListener(new MetricTableMouseMotionAdapter(jbTable));
         jbTable.addMouseListener(new ArtifactOverviewTableMouseAdapter(jbTable));
         jbTable.setExpandableItemsEnabled(false);
@@ -573,11 +576,11 @@ public class ArtifactOverview
             , final Set<String> excludeElements
     )
     {
-        final List<AArtifact> filtered = new ArrayList<>();
-        if (artifacts == null)
+        if (artifacts == null || artifacts.isEmpty())
         {
-            return filtered;
+            return new ArrayList<>();
         }
+        final Set<AArtifact> filtered = new HashSet<>();
 
         /*
          * Include filters.
@@ -617,23 +620,27 @@ public class ArtifactOverview
             filtered.addAll(artifacts.stream()
                     .filter(artifact -> includeElements.stream()
                             .anyMatch(s -> artifact.getIdentifier().toLowerCase().contains(s.toLowerCase())))
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toSet()));
         }
 
         /*
          * Exclude filters.
          */
-
-        if (standardLibraryFilter.isSelected())
-        {
-            if (standardLibraryArtifactFilter == null)
+        final boolean notPureThreadArtifacts = artifacts.stream().anyMatch(artifact -> !AThreadArtifact.class.isAssignableFrom(artifact.getClass()));
+        if (notPureThreadArtifacts)
+        { // Thread artifacts should not be affected by this filter because often many threads are not modeled as dedicated subclasses of java.lang.Thread
+            // but rather java.lang.Threads which were passed a lambda or Runnable object as parameter.
+            if (standardLibraryFilter.isSelected())
             {
-                CodeSparksLogger.addText(String.format("%s: standard library artifact filter not setup!", getClass()));
-            } else
-            {
-                filtered.removeAll(filtered.stream()
-                        .filter(standardLibraryArtifactFilter::filterArtifact)
-                        .collect(Collectors.toList()));
+                if (standardLibraryArtifactFilter == null)
+                {
+                    CodeSparksLogger.addText(String.format("%s: standard library artifact filter not setup!", getClass()));
+                } else
+                {
+                    filtered.removeAll(filtered.stream()
+                            .filter(standardLibraryArtifactFilter::filterArtifact)
+                            .collect(Collectors.toSet()));
+                }
             }
         }
         if (excludeElements != null && !excludeElements.isEmpty())
@@ -642,7 +649,7 @@ public class ArtifactOverview
             filtered.removeAll(filtered.stream()
                     .filter(artifact -> excludeElements.stream()
                             .anyMatch(s -> artifact.getIdentifier().toLowerCase().contains(s.toLowerCase())))
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toSet()));
         }
 
         /*
@@ -653,7 +660,32 @@ public class ArtifactOverview
             filtered.retainAll(threadStateArtifactFilter.filterArtifact(filtered));
         }
 
-        return filtered;
+        /*
+         * Remove all artifacts which have threads and all of their threads are filtered (not selected to be considered).
+         */
+//        final List<AArtifact> threadFilterArtifacts = filtered.stream()
+//                .filter(artifact -> artifact.hasThreads() &&
+//                        artifact.getThreadArtifacts().stream().allMatch(AThreadArtifact::isFiltered))
+//                .collect(Collectors.toList());
+//        filtered.removeAll(threadFilterArtifacts);
+
+        /*
+         * Alternatively, keep all artifacts which have at least one thread which is not filtered.
+         */
+//        long elapsed = -System.nanoTime();
+//        try
+//        {
+        final Set<AArtifact> nonThreadFilterArtifacts = filtered.stream()
+                .filter(artifact -> artifact.hasThreads() &&
+                        artifact.getThreadArtifacts().stream().anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
+                .collect(Collectors.toSet());
+        filtered.retainAll(nonThreadFilterArtifacts);
+//        } finally
+//        {
+//            elapsed += System.nanoTime();
+//            System.out.println("retain all non thread filtered artifacts took=" + elapsed / 1E9);
+//        }
+        return new ArrayList<>(filtered);
     }
 
     private int lastSelectedIndex = -1;
