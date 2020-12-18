@@ -36,17 +36,19 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return identifier;
     }
 
-    private final Map<String, AThreadArtifact> threadMap;
-
     private final Class<? extends AThreadArtifact> threadArtifactClass;
-
-    private final Map<Integer, List<ANeighborArtifact>> predecessors;
-
-    private final Map<Integer, List<ANeighborArtifact>> successors;
 
     /*
      * Non final fields
      */
+
+    private final Lazy<Map<String, AThreadArtifact>> threadMap;
+
+    private final Lazy<Map<Integer, List<ANeighborArtifact>>> predecessors;
+
+    private final Lazy<Map<Integer, List<ANeighborArtifact>>> successors;
+
+    private final Lazy<Map<IMetricIdentifier, Object>> metrics;
 
     protected int lineNumber;
 
@@ -69,11 +71,11 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         this.name = name == null ? "" : name;
         this.identifier = identifier == null ? "" : identifier;
-        this.metrics = new HashMap<>(4);
         this.threadArtifactClass = threadArtifactClass;
-        this.threadMap = new HashMap<>(32);
-        this.predecessors = new HashMap<>(8);
-        this.successors = new HashMap<>(8);
+        this.metrics = new Lazy<>(() -> new HashMap<>(4));
+        this.threadMap = new Lazy<>(() -> new HashMap<>(8));
+        this.predecessors = new Lazy<>(() -> new HashMap<>(8));
+        this.successors = new Lazy<>(() -> new HashMap<>(8));
     }
 
     /*
@@ -150,7 +152,6 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
      * Metrics
      */
 
-    private final Map<IMetricIdentifier, Object> metrics;
 
     private final Object metricsLock = new Object();
 
@@ -159,7 +160,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         Set<Map.Entry<IMetricIdentifier, Object>> entries;
         synchronized (metricsLock)
         {
-            entries = metrics.entrySet();
+            entries = metrics.getOrCompute().entrySet();
         }
         Collection<Metric> ret = new ArrayList<>(entries.size());
 
@@ -185,7 +186,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         Object value;
         synchronized (metricsLock)
         {
-            value = metrics.get(metricIdentifier);
+            value = metrics.getOrCompute().get(metricIdentifier);
         }
         m.setValue(value);
         return m;
@@ -200,7 +201,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         Object value;
         synchronized (metricsLock)
         {
-            value = metrics.get(metricIdentifier);
+            value = metrics.getOrCompute().get(metricIdentifier);
         }
         return value;
     }
@@ -218,12 +219,12 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         {
             return null;
         }
-        Object metricValue = metrics.get(metricIdentifier);
+        Object metricValue = metrics.getOrCompute().get(metricIdentifier);
         if (metricValue == null)
         {
             synchronized (metricsLock)
             { // Double checked locking!
-                metricValue = metrics.get(metricIdentifier);
+                metricValue = metrics.getOrCompute().get(metricIdentifier);
                 if (metricValue == null)
                 {
                     try
@@ -248,7 +249,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         }
         synchronized (metricsLock)
         {
-            metrics.put(metricIdentifier, value);
+            metrics.getOrCompute().put(metricIdentifier, value);
         }
     }
 
@@ -260,13 +261,13 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         }
         synchronized (metricsLock)
         {
-            Double val = (Double) metrics.get(metricIdentifier);
+            Double val = (Double) metrics.getOrCompute().get(metricIdentifier);
             if (val == null)
             {
                 val = 0d;
             }
             val += toIncrease;
-            metrics.put(metricIdentifier, val);
+            metrics.getOrCompute().put(metricIdentifier, val);
         }
     }
 
@@ -284,7 +285,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         Double val;
         synchronized (metricsLock)
         {
-            val = (Double) metrics.get(metricIdentifier);
+            val = (Double) metrics.getOrCompute().get(metricIdentifier);
         }
         if (val == null)
         {
@@ -301,7 +302,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         }
         synchronized (metricsLock)
         {
-            metrics.put(metricIdentifier, value);
+            metrics.getOrCompute().put(metricIdentifier, value);
         }
     }
 
@@ -320,7 +321,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         synchronized (threadMapLock)
         {
-            return threadMap.values();
+            return threadMap.getOrCompute().values();
         }
     }
 
@@ -357,7 +358,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         }
         synchronized (threadMapLock)
         {
-            return threadMap.get(identifier);
+            return threadMap.getOrCompute().get(identifier);
         }
     }
 
@@ -370,14 +371,14 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         AThreadArtifact threadArtifact;
         synchronized (threadMapLock)
         {
-            threadArtifact = threadMap.get(threadIdentifier);
+            threadArtifact = threadMap.getOrCompute().get(threadIdentifier);
             if (threadArtifact == null)
             {
                 try
                 {
                     final Constructor<? extends AThreadArtifact> constructor = threadArtifactClass.getConstructor(String.class);
                     threadArtifact = constructor.newInstance(threadIdentifier);
-                    threadMap.put(threadIdentifier, threadArtifact);
+                    threadMap.getOrCompute().put(threadIdentifier, threadArtifact);
                 } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e)
                 {
                     e.printStackTrace();
@@ -409,7 +410,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         synchronized (threadMapLock)
         {
-            return threadMap.size();
+            return threadMap.getOrCompute().size();
         }
     }
 
@@ -505,7 +506,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         synchronized (predecessorsLock)
         {
-            return predecessors;
+            return predecessors.getOrCompute();
         }
     }
 
@@ -513,7 +514,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         synchronized (predecessorsLock)
         {
-            return predecessors.values()
+            return predecessors.getOrCompute().values()
                     .stream()
                     .flatMap(Collection::stream)
                     .collect(Collectors.toList());
@@ -532,7 +533,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         synchronized (predecessorsLock)
         {
-            List<ANeighborArtifact> neighborArtifacts = predecessors.computeIfAbsent(lineNumber,
+            List<ANeighborArtifact> neighborArtifacts = predecessors.getOrCompute().computeIfAbsent(lineNumber,
                     integer -> new ArrayList<>());
             ANeighborArtifact neighbor = getOrCreateNeighborByIdentifier(
                     neighborArtifacts
@@ -558,7 +559,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         synchronized (successorsLock)
         {
-            return successors;
+            return successors.getOrCompute();
         }
     }
 
@@ -574,7 +575,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         synchronized (successorsLock)
         {
-            final List<ANeighborArtifact> neighborArtifacts = successors.computeIfAbsent(lineNumber, integer -> new ArrayList<>());
+            final List<ANeighborArtifact> neighborArtifacts = successors.getOrCompute().computeIfAbsent(lineNumber, integer -> new ArrayList<>());
             final ANeighborArtifact neighbor = getOrCreateNeighborByIdentifier(
                     neighborArtifacts
                     , neighborArtifactClass
@@ -593,7 +594,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         synchronized (successorsLock)
         {
-            return successors.values()
+            return successors.getOrCompute().values()
                     .stream()
                     .flatMap(Collection::stream)
                     .collect(Collectors.toList());
@@ -635,18 +636,38 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
 
     public void clear()
     {
-        this.metrics.clear();
-        this.threadMap.clear();
-        for (final Map.Entry<Integer, List<ANeighborArtifact>> integerListEntry : this.predecessors.entrySet())
+//        this.metrics.getOrCompute().clear();
+        final Map<IMetricIdentifier, Object> metricsMap = this.metrics.get();
+        if (metricsMap != null)
         {
-            integerListEntry.getValue().clear();
+            metricsMap.clear();
         }
-        this.predecessors.clear();
-        for (final Map.Entry<Integer, List<ANeighborArtifact>> integerListEntry : this.successors.entrySet())
+//        this.threadMap.getOrCompute().clear();
+        final Map<String, AThreadArtifact> threadArtifactMap = this.threadMap.get();
+        if (threadArtifactMap != null)
         {
-            integerListEntry.getValue().clear();
+            threadArtifactMap.clear();
         }
-        this.successors.clear();
+
+        final Map<Integer, List<ANeighborArtifact>> pred = this.predecessors.get();
+        if (pred != null)
+        {
+            for (final Map.Entry<Integer, List<ANeighborArtifact>> integerListEntry : pred.entrySet())
+            {
+                integerListEntry.getValue().clear();
+            }
+            pred.clear();
+        }
+
+        final Map<Integer, List<ANeighborArtifact>> succ = successors.get();
+        if (succ != null)
+        {
+            for (final Map.Entry<Integer, List<ANeighborArtifact>> integerListEntry : succ.entrySet())
+            {
+                integerListEntry.getValue().clear();
+            }
+            succ.clear();
+        }
     }
 
     /*
