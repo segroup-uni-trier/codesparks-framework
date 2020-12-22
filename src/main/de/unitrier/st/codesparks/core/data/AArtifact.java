@@ -38,10 +38,6 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
 
     private final Class<? extends AThreadArtifact> threadArtifactClass;
 
-    /*
-     * Non final fields
-     */
-
     private final Lazy<Map<String, AThreadArtifact>> threadMap;
 
     private final Lazy<Map<Integer, List<ANeighborArtifact>>> predecessors;
@@ -49,6 +45,10 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     private final Lazy<Map<Integer, List<ANeighborArtifact>>> successors;
 
     private final Lazy<Map<IMetricIdentifier, Object>> metrics;
+
+    /*
+     * Non final fields
+     */
 
     protected int lineNumber;
 

@@ -7,25 +7,20 @@ import org.jgrapht.graph.DefaultEdge;
  */
 public class ArtifactTrieEdge extends DefaultEdge
 {
-    private String label;
-    private ArtifactTrieNode source;
-    private ArtifactTrieNode target;
+    private final String label;
+    private final ArtifactTrieNode source;
+    private final ArtifactTrieNode target;
 
-    private void init(String label, ArtifactTrieNode source, ArtifactTrieNode target)
+    ArtifactTrieEdge(final String label, final ArtifactTrieNode source, final ArtifactTrieNode target)
     {
         this.label = label;
         this.source = source;
         this.target = target;
     }
 
-    ArtifactTrieEdge(String label, ArtifactTrieNode source, ArtifactTrieNode target)
+    public ArtifactTrieEdge(final ArtifactTrieNode source, final ArtifactTrieNode target)
     {
-        init(label, source, target);
-    }
-
-    public ArtifactTrieEdge(ArtifactTrieNode source, ArtifactTrieNode target)
-    {
-        init("", source, target);
+        this("", source, target);
     }
 
     String getLabel()

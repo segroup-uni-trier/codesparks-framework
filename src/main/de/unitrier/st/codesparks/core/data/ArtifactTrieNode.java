@@ -1,7 +1,5 @@
 package de.unitrier.st.codesparks.core.data;
 
-import org.jetbrains.annotations.NotNull;
-
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
@@ -11,7 +9,7 @@ public class ArtifactTrieNode
     private final String label;
     private long cnt;
 
-    ArtifactTrieNode(@NotNull String identifier, @NotNull String label)
+    ArtifactTrieNode(final String identifier, final String label)
     {
         this.identifier = identifier;
         this.label = label;
@@ -40,7 +38,6 @@ public class ArtifactTrieNode
         }
     }
 
-    @NotNull
     public String getIdentifier()
     {
         return identifier;
@@ -61,7 +58,7 @@ public class ArtifactTrieNode
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (obj == null) return false;
         if (!(obj instanceof ArtifactTrieNode)) return false;

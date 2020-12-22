@@ -17,7 +17,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
     private final ArtifactTrieNode root;
     private final Map<String, ArtifactTrieNode> nodes;
 
-    public ArtifactTrie(Class<? extends ArtifactTrieEdge> edgeClass)
+    public ArtifactTrie(final Class<? extends ArtifactTrieEdge> edgeClass)
     {
         super(edgeClass);
         nodes = new HashMap<>();
@@ -26,7 +26,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         addVertex(root);
     }
 
-    private ArtifactTrieNode getNode(String identifier, String label)
+    private ArtifactTrieNode getNode(final String identifier, final String label)
     {
         ArtifactTrieNode node = nodes.get(identifier);
         if (node == null)
@@ -38,7 +38,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         return node;
     }
 
-    public ArtifactTrieNode addVertex(String identifier, String label)
+    public ArtifactTrieNode addVertex(final String identifier, final String label)
     {
         ArtifactTrieNode node = getNode(identifier, label);
         addVertex(node);
@@ -53,7 +53,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
 
     private final Object trieLock = new Object();
 
-    public void add(List<Element> methods)
+    public void add(final List<Element> methods)
     {
         final String rootStr = "root";
         final StringBuilder strb = new StringBuilder(rootStr);
@@ -77,26 +77,26 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         }
     }
 
-    private String removeWhiteSpace(String str)
+    private String removeWhiteSpace(final String str)
     {
         return str.replaceAll("\\n", "")
                 .replaceAll(" ", "")
                 .trim();
     }
 
-    public void export(IArtifactTrieExportStrategy strategy)
+    public void export(final IArtifactTrieExportStrategy strategy)
     {
         strategy.export(this);
     }
 
     @Override
-    public boolean containsEdge(ArtifactTrieEdge artifactTrieEdge)
+    public boolean containsEdge(final ArtifactTrieEdge artifactTrieEdge)
     {
         return super.containsEdge(artifactTrieEdge.getSource(), artifactTrieEdge.getTarget());
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {   // Mostly copied from class org.jgrapht.graph.AbstractGraph<V, E>
         if (this == obj)
         {
