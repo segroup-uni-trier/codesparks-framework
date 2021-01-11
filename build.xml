@@ -50,7 +50,7 @@
     <path id="libs">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
         <fileset dir="${jdk.home.intellij_idea}/lib" includes="**/*.jar"/>
-        <fileset dir="${jdk.home.intellij_idea}/plugins/java" includes="**/*.jar"/>
+        <fileset dir="${jdk.home.intellij_idea}/plugins/java" includes="**/*.jar"/> <!-- Although it compiles without these dependencies, it is required for, e.g. the class 'PsiClass' which is contained in the IntelliJ Plugin Development's internal 'Java Plugin'. So don't remove it!!! -->
     </path>
     
     <!-- Compilation -->
