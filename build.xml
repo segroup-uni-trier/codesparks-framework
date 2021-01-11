@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="codesparks-core" basedir="." default="retrieve" xmlns:ivy="antlib:org.apache.ivy.ant">
 
+    <!-- General Properties -->
+
+    <property name="src.dir" value="src/main"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="build.dir" value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="resources.dir" value="resources"/>
+
     <!-- Ivy -->
 
     <property name="ivy.install.version" value="2.4.0"/>
     <property name="ivy.jar.dir" value="${user.home}/.ivy2"/>
     <property name="ivy.jar.file" value="ivy-${ivy.install.version}.jar"/>
     <property name="ivy.jar.path" value="${ivy.jar.dir}/${ivy.jar.file}"/>
-
+    
     <target name="ivy-installed">
         <available file="${ivy.jar.path}" property="ivy.installed"/>
     </target>
@@ -32,5 +40,39 @@
     <target name="retrieve" depends="ivy-init" description="retrieve dependencies with ivy">
         <ivy:retrieve/> <!-- Includes resolve -->
     </target>
+    
+    <!-- Libs --> 
+    
+    <property name="idea.version" value="2020.3"/>
+    <property name="jdk.home.intellij_idea"
+              value="C:/Program Files/JetBrains/IntelliJ IDEA Community Edition ${idea.version}"/>
+    
+    <path id="libs">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+        <fileset dir="${jdk.home.intellij_idea}/lib" includes="**/*.jar"/>
+    </path>
+    
+    <!-- Compilation -->
+        
+    <target name="compile" depends="retrieve">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true" includeantruntime="false">
+            <classpath>
+                <path refid="libs"/>
+            </classpath>
+            <compilerarg line="-Xlint:unchecked"/>
+        </javac>
+    </target>
 
+    <property name="codesparks-core.jar" value="codesparks-core.jar"/>
+    
+    <target name="jar" depends="compile">
+        <delete file="${codesparks-core.jar}"/>
+        <jar basedir="${classes.dir}" 
+             destfile="${codesparks-core.jar}"
+        >
+            <fileset dir="${resources.dir}"/>
+        </jar>        
+    </target>    
+   
 </project>
