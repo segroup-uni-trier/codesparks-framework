@@ -50,6 +50,7 @@
     <path id="libs">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
         <fileset dir="${jdk.home.intellij_idea}/lib" includes="**/*.jar"/>
+        <fileset dir="${jdk.home.intellij_idea}/plugins/java" includes="**/*.jar"/>
     </path>
     
     <!-- Compilation -->
