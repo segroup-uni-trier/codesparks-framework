@@ -53,9 +53,20 @@
         <fileset dir="${jdk.home.intellij_idea}/plugins/java" includes="**/*.jar"/> <!-- Although it compiles without these dependencies, it is required for, e.g. the class 'PsiClass' which is contained in the IntelliJ Plugin Development's internal 'Java Plugin'. So don't remove it!!! -->
     </path>
     
+    <!-- Cleanup -->
+    
+    <available file="${classes.dir}" type="dir" property="classes.dir.exists"/>
+
+    <target name="clean-classes" if="classes.dir.exists">
+        <delete includeemptydirs="true">
+            <fileset dir="${classes.dir}" includes="**/*" excludes="*.*"/>
+        </delete>
+        <echo message="Cleaned class files"/>
+    </target>
+    
     <!-- Compilation -->
         
-    <target name="compile" depends="retrieve">
+    <target name="compile" depends="clean-classes, retrieve">
         <mkdir dir="${classes.dir}"/>
         <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true" includeantruntime="false">
             <classpath>
