@@ -21,9 +21,10 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
     {
         super(edgeClass);
         nodes = new HashMap<>();
-        root = new ArtifactTrieNode("root", "root");
-        nodes.put("root", root);
-        addVertex(root);
+        final String rootIdentifier = "root";
+        this.root = new ArtifactTrieNode(rootIdentifier, rootIdentifier);
+        nodes.put(rootIdentifier, this.root);
+        addVertex(this.root);
     }
 
     private ArtifactTrieNode getNode(final String identifier, final String label)

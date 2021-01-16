@@ -219,25 +219,26 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         {
             return null;
         }
-        Object metricValue = metrics.getOrCompute().get(metricIdentifier);
-        if (metricValue == null)
+//        Object metricValue = metrics.getOrCompute().get(metricIdentifier);
+//        if (metricValue == null)
+//        {
+        Object metricValue;
+        synchronized (metricsLock)
         {
-            synchronized (metricsLock)
-            { // Double checked locking!
-                metricValue = metrics.getOrCompute().get(metricIdentifier);
-                if (metricValue == null)
+            metricValue = metrics.getOrCompute().get(metricIdentifier);
+            if (metricValue == null)
+            {
+                try
                 {
-                    try
-                    {
-                        metricValue = constructor.newInstance(initArgs);
-                        setMetricValue(metricIdentifier, metricValue);
-                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
-                    {
-                        e.printStackTrace();
-                    }
+                    metricValue = constructor.newInstance(initArgs);
+                    setMetricValue(metricIdentifier, metricValue);
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
+                {
+                    e.printStackTrace();
                 }
             }
         }
+//        }
         return metricValue;
     }
 
@@ -401,7 +402,6 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         }
         final AThreadArtifact threadArtifact = getOrCreateThreadArtifact(threadIdentifier);
         threadArtifact.increaseNumericalMetricValue(metricIdentifier, toIncrease);
-
 //            double threadMetricValue = threadArtifact.getNumericalMetricValue(metricIdentifier);
 //            assertSecondaryMetricValue(threadMetricValue, "thread");
     }
