@@ -21,7 +21,7 @@ public class ThreadList extends AThreadSelectable
 
     public ThreadList(final AArtifact artifact, final IMetricIdentifier metricIdentifier)
     {
-        list = new JBList<JBCheckBox>(new ThreadListModel(artifact, metricIdentifier))
+        list = new JBList<>(new ThreadListModel(artifact, metricIdentifier))
         {
             @Override
             public String getToolTipText(MouseEvent event)

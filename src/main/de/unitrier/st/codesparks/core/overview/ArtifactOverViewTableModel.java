@@ -6,7 +6,6 @@ import de.unitrier.st.codesparks.core.data.DataUtil;
 import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
-import de.unitrier.st.codesparks.core.visualization.ArtifactVisualizationLabelFactoryCache;
 import de.unitrier.st.codesparks.core.visualization.DummyArtifactVisualizationLabelFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +15,6 @@ import javax.swing.table.TableModel;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.ToDoubleFunction;
-import java.util.stream.Collectors;
 
 /**
  * Created by Oliver Moseler on 05.10.2014.

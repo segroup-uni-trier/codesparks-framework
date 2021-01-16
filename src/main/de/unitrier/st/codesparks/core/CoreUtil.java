@@ -150,7 +150,7 @@ public final class CoreUtil
         IArtifactPool artifactPool = ArtifactPoolManager.getInstance().getArtifactPool();
         if (artifactPool != null)
         {
-            IPsiNavigable artifact = (IPsiNavigable) artifactPool.getArtifact(identifier);
+            IPsiNavigable artifact = artifactPool.getArtifact(identifier);
             if (artifact != null)
             {
                 artifact.navigate();
