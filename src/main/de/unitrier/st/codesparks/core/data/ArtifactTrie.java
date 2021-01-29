@@ -3,6 +3,7 @@ package de.unitrier.st.codesparks.core.data;
 import org.jdom2.Element;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.traverse.AbstractGraphIterator;
 import org.jgrapht.util.TypeUtil;
 
 import java.util.HashMap;
@@ -12,7 +13,7 @@ import java.util.Map;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, ArtifactTrieEdge>
+public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, ArtifactTrieEdge> implements ITrieVisitable
 {
     private final ArtifactTrieNode root;
     private final Map<String, ArtifactTrieNode> nodes;
@@ -147,5 +148,16 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         }
 
         return true;
+    }
+
+    @Override
+    public void accept(final ATrieVisitorAdapter trieVisitor)
+    {
+        final AbstractGraphIterator<ArtifactTrieNode, ArtifactTrieEdge> iterator = trieVisitor.getIterator(this);
+        iterator.addTraversalListener(trieVisitor);
+        while (iterator.hasNext())
+        {
+            iterator.next();
+        }
     }
 }
