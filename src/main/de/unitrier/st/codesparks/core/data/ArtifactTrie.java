@@ -1,5 +1,8 @@
 package de.unitrier.st.codesparks.core.data;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
 import org.jdom2.Element;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -9,6 +12,7 @@ import org.jgrapht.util.TypeUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
@@ -148,6 +152,23 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         }
 
         return true;
+    }
+
+    @Override
+    public Set<ArtifactTrieNode> vertexSet()
+    {
+        return super.vertexSet();
+    }
+
+    public Multiset<String> vertexMultiSet()
+    {
+        final Multiset<String> multiset = HashMultiset.create();
+        final Set<ArtifactTrieNode> artifactTrieNodes = vertexSet();
+        for (final ArtifactTrieNode artifactTrieNode : artifactTrieNodes)
+        {
+            multiset.add(artifactTrieNode.getLabel());
+        }
+        return multiset;
     }
 
     @Override

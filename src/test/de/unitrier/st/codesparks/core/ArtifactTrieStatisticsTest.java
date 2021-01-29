@@ -4,6 +4,7 @@
  */
 package de.unitrier.st.codesparks.core;
 
+import com.google.common.collect.Multiset;
 import de.unitrier.st.codesparks.core.data.ArtifactTrie;
 import de.unitrier.st.codesparks.core.data.ArtifactTrieNode;
 import de.unitrier.st.codesparks.core.data.StatisticDFSArtifactTrieVisitor;
@@ -231,6 +232,19 @@ public class ArtifactTrieStatisticsTest
                         + nodesOfLevelSeven.size()
                         + nodesOfLevelEight.size()
         );
+    }
+
+    @Test
+    public void testVertexMultiSet()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
+
+        final Multiset<String> strings = artifactTrie.vertexMultiSet();
+
+        Assert.fail();
+
+        Assert.assertEquals(21, strings.size());
+
     }
 
 
