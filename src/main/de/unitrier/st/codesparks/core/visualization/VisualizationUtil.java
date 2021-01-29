@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
@@ -43,11 +44,12 @@ public final class VisualizationUtil
                 backgroundColor = selectedFileEditor.getBackgroundColor();
             }
         }
-        if (backgroundColor == null)
-        {
-            return UIUtil.isUnderDarcula() ? Color.decode("#2b2b2b") : Color.decode("#ffffff");
-        }
-        return backgroundColor;
+        return Objects.requireNonNullElseGet(backgroundColor, () -> UIUtil.isUnderDarcula() ? Color.decode("#2b2b2b") : Color.decode("#ffffff"));
+        //        if (backgroundColor == null)
+//        {
+//            return UIUtil.isUnderDarcula() ? Color.decode("#2b2b2b") : Color.decode("#ffffff");
+//        }
+//        return backgroundColor;
     }
 
     public static Color getMetricColor(double metricValue)

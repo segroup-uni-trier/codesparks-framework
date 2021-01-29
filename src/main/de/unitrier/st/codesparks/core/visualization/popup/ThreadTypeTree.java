@@ -39,7 +39,11 @@ public class ThreadTypeTree extends ThreadTree
             Optional<ThreadArtifactCluster> first =
                     clustering.parallelStream().filter(threadArtifacts -> threadArtifacts.contains(codeSparksThread)).findFirst();
 
-            if (!first.isPresent()) continue;
+//                if (!first.isPresent())
+            if (first.isEmpty())
+            {
+                continue;
+            }
 
             VisualThreadClusterProperties properties = propertiesManager.getProperties(first.get());
 

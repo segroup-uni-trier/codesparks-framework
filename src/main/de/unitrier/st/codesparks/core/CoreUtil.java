@@ -60,10 +60,11 @@ public final class CoreUtil
         }
         StringBuilder strb = new StringBuilder();
         int length = percentageText.length();
-        for (int i = 0; i < 6 - length; i++)
-        {
-            strb.append(" ");
-        }
+        strb.append(" ".repeat(Math.max(0, 6 - length)));
+//        for (int i = 0; i < 6 - length; i++)
+//        {
+//            strb.append(" ");
+//        }
         strb.append(percentageText);
         percentageText = strb.toString();
         String errorMessage = "did not format " + value + " properly: " + percentageText;

@@ -11,7 +11,7 @@ import javax.swing.*;
 public abstract class AArtifactVisualization extends JLabel
 {
     protected PsiElement psiElement;
-    protected AArtifact artifact;
+    protected final AArtifact artifact;
 
     public PsiElement getPsiElement()
     {

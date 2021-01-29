@@ -14,9 +14,9 @@ import java.util.Optional;
 public abstract class ADataVisualizer implements IDataVisualizer
 {
     protected final IArtifactVisualizer artifactVisualizer;
-    protected AArtifactVisualizationLabelFactory[] artifactLabelFactories;
+    protected final AArtifactVisualizationLabelFactory[] artifactLabelFactories;
     protected final INeighborArtifactVisualizer neighborArtifactVisualizer;
-    protected ANeighborArtifactVisualizationLabelFactory[] neighborLabelFactories;
+    protected final ANeighborArtifactVisualizationLabelFactory[] neighborLabelFactories;
 
     ADataVisualizer(
             final IArtifactVisualizer artifactVisualizer

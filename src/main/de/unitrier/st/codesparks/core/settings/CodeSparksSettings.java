@@ -2,7 +2,6 @@ package de.unitrier.st.codesparks.core.settings;
 
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.options.UnnamedConfigurable;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
@@ -64,13 +63,14 @@ public final class CodeSparksSettings implements SearchableConfigurable.Parent
     }
 
     @Override
-    public void apply() throws ConfigurationException
+    public void apply() //throws ConfigurationException
     {
 
     }
 
     /**
      * This is the service method.
+     *
      * @param configurable The configurable to register.
      */
     public void registerConfigurable(Configurable configurable)

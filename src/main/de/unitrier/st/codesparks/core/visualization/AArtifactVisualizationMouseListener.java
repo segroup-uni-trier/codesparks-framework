@@ -33,9 +33,9 @@ import java.awt.event.MouseEvent;
 public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
 {
     protected JComponent component;
-    protected Dimension dimension;
-    protected AArtifact artifact;
-    protected IMetricIdentifier primaryMetricIdentifier;
+    protected final Dimension dimension;
+    protected final AArtifact artifact;
+    protected final IMetricIdentifier primaryMetricIdentifier;
 
     protected AArtifactVisualizationMouseListener(
             final JComponent component

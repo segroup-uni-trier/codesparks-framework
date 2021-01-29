@@ -150,7 +150,7 @@ public class ArtifactOverViewTableModel implements TableModel
                 }
 
                 // TODO: enable caching again. A memory dump revealed that the cache had become about 1.35GB. There must be an error in the caching strategy!
-                //noinspection UnnecessaryLocalVariable : Not inlined because og debugging purposes
+                // Not inlined because og debugging purposes
 //                JLabel cachedArtifactVisualizationLabel =
 //                        ArtifactVisualizationLabelFactoryCache.getInstance()
 //                                .getCachedArtifactVisualizationLabel(artifact.getIdentifier(), labelFactory, true);

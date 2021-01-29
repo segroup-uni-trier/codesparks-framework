@@ -236,9 +236,9 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
 
     private static class Triangle
     {
-        int[] xPoints;
-        int[] yPoints;
-        int nPoints;
+        final int[] xPoints;
+        final int[] yPoints;
+        final int nPoints;
 
         Triangle(int[] xPoints, int[] yPoints, int nPoints)
         {
