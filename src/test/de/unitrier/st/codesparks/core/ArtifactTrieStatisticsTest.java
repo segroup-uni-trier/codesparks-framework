@@ -4,14 +4,17 @@
  */
 package de.unitrier.st.codesparks.core;
 
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import de.unitrier.st.codesparks.core.data.ArtifactTrie;
 import de.unitrier.st.codesparks.core.data.ArtifactTrieNode;
-import de.unitrier.st.codesparks.core.data.StatisticDFSArtifactTrieVisitor;
+import de.unitrier.st.codesparks.core.data.DataUtil;
+import de.unitrier.st.codesparks.core.data.StatisticDFSArtifactTrieTraversalListener;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /*
@@ -30,9 +33,9 @@ public class ArtifactTrieStatisticsTest
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
 
-        final StatisticDFSArtifactTrieVisitor statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieVisitor();
+        final StatisticDFSArtifactTrieTraversalListener statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieTraversalListener();
 
-        artifactTrie.accept(statisticDFSArtifactTrieVisitor);
+        artifactTrie.traverse(statisticDFSArtifactTrieVisitor);
 
         final int nrOfInnerNodes = statisticDFSArtifactTrieVisitor.getNrOfInnerNodes();
         final int nrOfLeafNodes = statisticDFSArtifactTrieVisitor.getNrOfLeafNodes();
@@ -47,9 +50,9 @@ public class ArtifactTrieStatisticsTest
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
 
-        final StatisticDFSArtifactTrieVisitor statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieVisitor();
+        final StatisticDFSArtifactTrieTraversalListener statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieTraversalListener();
 
-        artifactTrie.accept(statisticDFSArtifactTrieVisitor);
+        artifactTrie.traverse(statisticDFSArtifactTrieVisitor);
 
         final int nrOfInnerNodes = statisticDFSArtifactTrieVisitor.getNrOfInnerNodes();
         final int nrOfLeafNodes = statisticDFSArtifactTrieVisitor.getNrOfLeafNodes();
@@ -64,9 +67,9 @@ public class ArtifactTrieStatisticsTest
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
 
-        final StatisticDFSArtifactTrieVisitor statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieVisitor();
+        final StatisticDFSArtifactTrieTraversalListener statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieTraversalListener();
 
-        artifactTrie.accept(statisticDFSArtifactTrieVisitor);
+        artifactTrie.traverse(statisticDFSArtifactTrieVisitor);
 
         final int nrOfLeafNodes = statisticDFSArtifactTrieVisitor.getNrOfLeafNodes();
 
@@ -78,9 +81,9 @@ public class ArtifactTrieStatisticsTest
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
 
-        final StatisticDFSArtifactTrieVisitor statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieVisitor();
+        final StatisticDFSArtifactTrieTraversalListener statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieTraversalListener();
 
-        artifactTrie.accept(statisticDFSArtifactTrieVisitor);
+        artifactTrie.traverse(statisticDFSArtifactTrieVisitor);
 
         final int nrOfLeafNodes = statisticDFSArtifactTrieVisitor.getNrOfLeafNodes();
 
@@ -92,9 +95,9 @@ public class ArtifactTrieStatisticsTest
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
 
-        final StatisticDFSArtifactTrieVisitor statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieVisitor();
+        final StatisticDFSArtifactTrieTraversalListener statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieTraversalListener();
 
-        artifactTrie.accept(statisticDFSArtifactTrieVisitor);
+        artifactTrie.traverse(statisticDFSArtifactTrieVisitor);
 
         final int nrOfInnerNodes = statisticDFSArtifactTrieVisitor.getNrOfInnerNodes();
 
@@ -106,9 +109,9 @@ public class ArtifactTrieStatisticsTest
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
 
-        final StatisticDFSArtifactTrieVisitor statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieVisitor();
+        final StatisticDFSArtifactTrieTraversalListener statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieTraversalListener();
 
-        artifactTrie.accept(statisticDFSArtifactTrieVisitor);
+        artifactTrie.traverse(statisticDFSArtifactTrieVisitor);
 
         final int nrOfInnerNodes = statisticDFSArtifactTrieVisitor.getNrOfInnerNodes();
 
@@ -120,9 +123,9 @@ public class ArtifactTrieStatisticsTest
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
 
-        final StatisticDFSArtifactTrieVisitor statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieVisitor();
+        final StatisticDFSArtifactTrieTraversalListener statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieTraversalListener();
 
-        artifactTrie.accept(statisticDFSArtifactTrieVisitor);
+        artifactTrie.traverse(statisticDFSArtifactTrieVisitor);
 
         final int maxDepth = statisticDFSArtifactTrieVisitor.getMaxDepth();
 
@@ -134,9 +137,9 @@ public class ArtifactTrieStatisticsTest
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
 
-        final StatisticDFSArtifactTrieVisitor statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieVisitor();
+        final StatisticDFSArtifactTrieTraversalListener statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieTraversalListener();
 
-        artifactTrie.accept(statisticDFSArtifactTrieVisitor);
+        artifactTrie.traverse(statisticDFSArtifactTrieVisitor);
 
         final int maxDepth = statisticDFSArtifactTrieVisitor.getMaxDepth();
 
@@ -148,9 +151,9 @@ public class ArtifactTrieStatisticsTest
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
 
-        final StatisticDFSArtifactTrieVisitor statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieVisitor();
+        final StatisticDFSArtifactTrieTraversalListener statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieTraversalListener();
 
-        artifactTrie.accept(statisticDFSArtifactTrieVisitor);
+        artifactTrie.traverse(statisticDFSArtifactTrieVisitor);
 
         final Set<ArtifactTrieNode> nodesOfLevelZero = statisticDFSArtifactTrieVisitor.getNodesOfLevel(0);
 
@@ -178,9 +181,9 @@ public class ArtifactTrieStatisticsTest
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
 
-        final StatisticDFSArtifactTrieVisitor statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieVisitor();
+        final StatisticDFSArtifactTrieTraversalListener statisticDFSArtifactTrieVisitor = new StatisticDFSArtifactTrieTraversalListener();
 
-        artifactTrie.accept(statisticDFSArtifactTrieVisitor);
+        artifactTrie.traverse(statisticDFSArtifactTrieVisitor);
 
         final Set<ArtifactTrieNode> nodesOfLevelZero = statisticDFSArtifactTrieVisitor.getNodesOfLevel(0);
 
@@ -235,17 +238,133 @@ public class ArtifactTrieStatisticsTest
     }
 
     @Test
-    public void testVertexMultiSet()
+    public void testVertexLabelsSet()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
+
+        final Set<String> vertexLabelsSet = artifactTrie.getVertexLabelsSet();
+
+        Assert.assertEquals(4, vertexLabelsSet.size());
+
+        final Set<String> strings = new HashSet<>(4);
+
+        strings.add("a");
+        strings.add("b");
+        strings.add("c");
+        strings.add("root");
+
+        Assert.assertEquals(vertexLabelsSet, strings);
+    }
+
+    @Test
+    public void testVertexLabelsSet2()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
 
-        final Multiset<String> strings = artifactTrie.vertexMultiSet();
+        final Set<String> vertexLabelsSet = artifactTrie.getVertexLabelsSet();
 
-        Assert.fail();
+        Assert.assertEquals(5, vertexLabelsSet.size());
 
-        Assert.assertEquals(21, strings.size());
+        final Set<String> strings = new HashSet<>(5);
 
+        strings.add("a");
+        strings.add("b");
+        strings.add("c");
+        strings.add("d");
+        strings.add("root");
+
+        Assert.assertEquals(vertexLabelsSet, strings);
     }
 
+    @Test
+    public void testVertexLabelsMultiSet()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
+
+        final Multiset<String> labelsMultiSet = artifactTrie.getVertexLabelsMultiSet();
+
+        Assert.assertEquals(11, labelsMultiSet.size());
+
+        final HashMultiset<String> strings = HashMultiset.create();
+
+        strings.add("a");
+        strings.add("a");
+        strings.add("a");
+        strings.add("a");
+        strings.add("a");
+
+        strings.add("b");
+        strings.add("b");
+        strings.add("b");
+
+        strings.add("c");
+        strings.add("c");
+
+        strings.add("root");
+
+        Assert.assertEquals(labelsMultiSet, strings);
+    }
+
+    @Test
+    public void testVertexLabelsMultiSet2()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
+
+        final Multiset<String> labelsMultiSet = artifactTrie.getVertexLabelsMultiSet();
+
+        Assert.assertEquals(21, labelsMultiSet.size());
+
+        final HashMultiset<String> strings = HashMultiset.create();
+
+        strings.add("a");
+        strings.add("a");
+        strings.add("a");
+        strings.add("a");
+        strings.add("a");
+        strings.add("a");
+        strings.add("a");
+        strings.add("a");
+        strings.add("a");
+        strings.add("a");
+
+        strings.add("b");
+        strings.add("b");
+        strings.add("b");
+        strings.add("b");
+        strings.add("b");
+
+        strings.add("c");
+        strings.add("c");
+        strings.add("c");
+        strings.add("c");
+
+        strings.add("d");
+
+        strings.add("root");
+
+        Assert.assertEquals(labelsMultiSet, strings);
+    }
+
+    @Test
+    public void testMultisetJaccard()
+    {
+        final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
+        final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
+
+        final double jaccard = DataUtil.multisetJaccard(t1, t2);
+
+        Assert.assertEquals((double) 2 / 3, jaccard, 1e6);
+    }
+
+    @Test
+    public void testJaccard()
+    {
+        final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
+        final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
+
+        final double jaccard = DataUtil.jaccard(t1, t2);
+
+        Assert.assertEquals((double) 3 / 4, jaccard, 1e6);
+    }
 
 }

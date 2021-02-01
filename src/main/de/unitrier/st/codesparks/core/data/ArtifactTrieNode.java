@@ -43,12 +43,17 @@ public class ArtifactTrieNode
         return identifier;
     }
 
-    public String getLabel()
+    public String getMetricLabel()
     {
         synchronized (cntLock)
         {
             return String.format("%s (%d)", label, cnt);
         }
+    }
+
+    public String getLabel()
+    {
+        return label;
     }
 
     @Override

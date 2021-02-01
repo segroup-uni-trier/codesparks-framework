@@ -2,7 +2,6 @@ package de.unitrier.st.codesparks.core.data;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
 import org.jdom2.Element;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -13,11 +12,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, ArtifactTrieEdge> implements ITrieVisitable
+public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, ArtifactTrieEdge>
 {
     private final ArtifactTrieNode root;
     private final Map<String, ArtifactTrieNode> nodes;
@@ -154,13 +154,12 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         return true;
     }
 
-    @Override
-    public Set<ArtifactTrieNode> vertexSet()
+    public Set<String> getVertexLabelsSet()
     {
-        return super.vertexSet();
+        return vertexSet().stream().map(ArtifactTrieNode::getLabel).collect(Collectors.toSet());
     }
 
-    public Multiset<String> vertexMultiSet()
+    public Multiset<String> getVertexLabelsMultiSet()
     {
         final Multiset<String> multiset = HashMultiset.create();
         final Set<ArtifactTrieNode> artifactTrieNodes = vertexSet();
@@ -171,11 +170,10 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         return multiset;
     }
 
-    @Override
-    public void accept(final ATrieVisitorAdapter trieVisitor)
+    public void traverse(final AArtifactTrieTraversalListener traversalListener)
     {
-        final AbstractGraphIterator<ArtifactTrieNode, ArtifactTrieEdge> iterator = trieVisitor.getIterator(this);
-        iterator.addTraversalListener(trieVisitor);
+        final AbstractGraphIterator<ArtifactTrieNode, ArtifactTrieEdge> iterator = traversalListener.getIterator(this);
+        iterator.addTraversalListener(traversalListener);
         while (iterator.hasNext())
         {
             iterator.next();

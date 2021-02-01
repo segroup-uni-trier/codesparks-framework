@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class StatisticDFSArtifactTrieVisitor extends ATrieVisitorAdapter
+public class StatisticDFSArtifactTrieTraversalListener extends AArtifactTrieTraversalListener
 {
     private final Map<Integer, Set<ArtifactTrieNode>> nodesPerLevel;
     private final Set<ArtifactTrieNode> leafNodes;
@@ -22,7 +22,7 @@ public class StatisticDFSArtifactTrieVisitor extends ATrieVisitorAdapter
     private int maxDepth;
     private int edgeCnt;
 
-    public StatisticDFSArtifactTrieVisitor()
+    public StatisticDFSArtifactTrieTraversalListener()
     {
         maxDepth = 0;
         edgeCnt = 0;

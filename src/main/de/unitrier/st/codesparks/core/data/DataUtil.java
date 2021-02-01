@@ -2,6 +2,9 @@ package de.unitrier.st.codesparks.core.data;
 
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
+import com.google.common.collect.Sets;
+
+import java.util.Set;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
@@ -47,14 +50,28 @@ public final class DataUtil
         return threadFilteredMetricValue;
     }
 
-    public static double jaccard(ArtifactTrie t1, ArtifactTrie t2)
+    public static double multisetJaccard(ArtifactTrie t1, ArtifactTrie t2)
     {
-        final Multiset<String> multiSetT1 = t1.vertexMultiSet();
-        final Multiset<String> multiSetT2 = t2.vertexMultiSet();
+        final Multiset<String> multiSetT1 = t1.getVertexLabelsMultiSet();
+        final Multiset<String> multiSetT2 = t2.getVertexLabelsMultiSet();
 
         final Multiset<String> intersection = Multisets.intersection(multiSetT1, multiSetT2);
 
         final Multiset<String> union = Multisets.union(multiSetT1, multiSetT2);
+
+        double ret = intersection.size() / (double) union.size();
+
+        return ret;
+    }
+
+    public static double jaccard(ArtifactTrie t1, ArtifactTrie t2)
+    {
+        final Set<String> vertexLabelsSetT1 = t1.getVertexLabelsSet();
+        final Set<String> vertexLabelsSetT2 = t2.getVertexLabelsSet();
+
+        final Set<String> intersection = Sets.intersection(vertexLabelsSetT1, vertexLabelsSetT2);
+
+        final Set<String> union = Sets.union(vertexLabelsSetT1, vertexLabelsSetT2);
 
         double ret = intersection.size() / (double) union.size();
 

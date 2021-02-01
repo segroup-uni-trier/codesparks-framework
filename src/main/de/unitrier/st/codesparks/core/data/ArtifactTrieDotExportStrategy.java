@@ -24,7 +24,7 @@ public class ArtifactTrieDotExportStrategy implements IArtifactTrieExportStrateg
     public void export(ArtifactTrie artifactTrie)
     {
         GraphExporter<ArtifactTrieNode, ArtifactTrieEdge> exporter = new DOTExporter<>(ArtifactTrieNode::getIdentifier,
-                ArtifactTrieNode::getLabel, ArtifactTrieEdge::getLabel);
+                ArtifactTrieNode::getMetricLabel, ArtifactTrieEdge::getLabel);
         FileWriter fileWriter = null;
         try
         {
