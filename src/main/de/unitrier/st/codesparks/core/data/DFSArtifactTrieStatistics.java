@@ -7,14 +7,15 @@ package de.unitrier.st.codesparks.core.data;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DFSTrieStatisticsIterator
+@Deprecated
+public class DFSArtifactTrieStatistics
 {
     private final ArtifactTrie trie;
     private long maxDepth;
     private final Set<ArtifactTrieNode> leafNodes;
     private final Set<ArtifactTrieNode> innerNodes;
 
-    public DFSTrieStatisticsIterator(final ArtifactTrie trie)
+    public DFSArtifactTrieStatistics(final ArtifactTrie trie)
     {
         this.trie = trie;
         leafNodes = new HashSet<>();

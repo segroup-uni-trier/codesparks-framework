@@ -50,7 +50,7 @@ public final class DataUtil
         return threadFilteredMetricValue;
     }
 
-    public static double multisetJaccard(ArtifactTrie t1, ArtifactTrie t2)
+    public static double multisetJaccard(final ArtifactTrie t1, final ArtifactTrie t2)
     {
         final Multiset<String> multiSetT1 = t1.getVertexLabelsMultiSet();
         final Multiset<String> multiSetT2 = t2.getVertexLabelsMultiSet();
@@ -64,7 +64,7 @@ public final class DataUtil
         return ret;
     }
 
-    public static double jaccard(ArtifactTrie t1, ArtifactTrie t2)
+    public static double jaccard(final ArtifactTrie t1, final ArtifactTrie t2)
     {
         final Set<String> vertexLabelsSetT1 = t1.getVertexLabelsSet();
         final Set<String> vertexLabelsSetT2 = t2.getVertexLabelsSet();

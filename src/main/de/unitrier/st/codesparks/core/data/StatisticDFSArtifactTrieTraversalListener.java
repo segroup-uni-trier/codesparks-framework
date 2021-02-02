@@ -4,7 +4,6 @@
 
 package de.unitrier.st.codesparks.core.data;
 
-import org.jgrapht.Graph;
 import org.jgrapht.event.VertexTraversalEvent;
 import org.jgrapht.traverse.AbstractGraphIterator;
 import org.jgrapht.traverse.DepthFirstIterator;
@@ -93,9 +92,8 @@ public class StatisticDFSArtifactTrieTraversalListener extends AArtifactTrieTrav
     }
 
     @Override
-    AbstractGraphIterator<ArtifactTrieNode, ArtifactTrieEdge> getIterator(final Graph<ArtifactTrieNode, ArtifactTrieEdge> graph)
+    public AbstractGraphIterator<ArtifactTrieNode, ArtifactTrieEdge> getIterator()
     {
-        setGraph(graph);
         return new DepthFirstIterator<>(graph);
     }
 }

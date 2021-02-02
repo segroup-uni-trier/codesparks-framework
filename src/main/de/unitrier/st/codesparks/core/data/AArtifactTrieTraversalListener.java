@@ -15,12 +15,13 @@ public abstract class AArtifactTrieTraversalListener implements TraversalListene
 {
     protected Graph<ArtifactTrieNode, ArtifactTrieEdge> graph;
 
-    final void setGraph(final Graph<ArtifactTrieNode, ArtifactTrieEdge> graph)
+    final AbstractGraphIterator<ArtifactTrieNode, ArtifactTrieEdge> getIterator(final Graph<ArtifactTrieNode, ArtifactTrieEdge> graph)
     {
         this.graph = graph;
+        return getIterator();
     }
 
-    abstract AbstractGraphIterator<ArtifactTrieNode, ArtifactTrieEdge> getIterator(final Graph<ArtifactTrieNode, ArtifactTrieEdge> graph);
+    public abstract AbstractGraphIterator<ArtifactTrieNode, ArtifactTrieEdge> getIterator();
 
     @Override
     public void connectedComponentFinished(final ConnectedComponentTraversalEvent e) { }
