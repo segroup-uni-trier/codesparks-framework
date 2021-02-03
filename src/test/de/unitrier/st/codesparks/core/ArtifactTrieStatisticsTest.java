@@ -6,10 +6,7 @@ package de.unitrier.st.codesparks.core;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
-import de.unitrier.st.codesparks.core.data.ArtifactTrie;
-import de.unitrier.st.codesparks.core.data.ArtifactTrieNode;
-import de.unitrier.st.codesparks.core.data.DataUtil;
-import de.unitrier.st.codesparks.core.data.StatisticDFSArtifactTrieTraversalListener;
+import de.unitrier.st.codesparks.core.data.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -351,7 +348,7 @@ public class ArtifactTrieStatisticsTest
         final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
 
-        final double jaccard = DataUtil.multisetJaccard(t1, t2);
+        final double jaccard = ArtifactTrieUtil.multisetJaccard(t1, t2);
 
         Assert.assertEquals((double) 2 / 3, jaccard, 1e-6);
     }
@@ -362,7 +359,7 @@ public class ArtifactTrieStatisticsTest
         final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
 
-        final double jaccard = DataUtil.jaccard(t1, t2);
+        final double jaccard = ArtifactTrieUtil.jaccard(t1, t2);
 
         Assert.assertEquals((double) 3 / 4, jaccard, 1e-6);
     }

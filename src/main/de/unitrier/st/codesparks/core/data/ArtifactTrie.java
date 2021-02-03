@@ -179,4 +179,32 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
             iterator.next();
         }
     }
+
+    private long getNumberOfNodesTill(final ArtifactTrieNode node, final String artifactIdentifier, long cnt)
+    {
+        cnt = cnt + 1;
+        if (node.getLabel().equals(artifactIdentifier))
+        {
+            return cnt;
+        }
+        final Set<ArtifactTrieEdge> artifactTrieEdges = outgoingEdgesOf(node);
+        for (final ArtifactTrieEdge artifactTrieEdge : artifactTrieEdges)
+        {
+            cnt = getNumberOfNodesTill(artifactTrieEdge.getTarget(), artifactIdentifier, cnt);
+        }
+        return cnt;
+    }
+
+    public long getNumberOfNodesTill(final String artifactIdentifier)
+    {
+        final ArtifactTrieNode root = getRoot();
+        if (root == null)
+        {
+            return 0L;
+        }
+        //noinspection UnnecessaryLocalVariable
+        final long nodesTill = getNumberOfNodesTill(root, artifactIdentifier, 0);
+        return nodesTill;
+    }
+
 }

@@ -6,7 +6,7 @@ package de.unitrier.st.codesparks.core;
 
 import de.unitrier.st.codesparks.core.data.ArtifactTrie;
 import de.unitrier.st.codesparks.core.data.ArtifactTrieDotExportStrategy;
-import de.unitrier.st.codesparks.core.data.DataUtil;
+import de.unitrier.st.codesparks.core.data.ArtifactTrieUtil;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,7 +34,7 @@ public class ArtifactTrieIntersectionTest
 
         final String artifactIdentifier = "b";
 
-        final ArtifactTrie computedIntersectingTrie = DataUtil.intersection(t1, t2, artifactIdentifier);
+        final ArtifactTrie computedIntersectingTrie = ArtifactTrieUtil.intersection(t1, t2, artifactIdentifier);
 
         Assert.assertNotNull(computedIntersectingTrie);
 
@@ -44,12 +44,75 @@ public class ArtifactTrieIntersectionTest
     }
 
     @Test
+    public void testNumberOfNodesTill()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
+        final String artifactIdentifier = "b";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        Assert.assertEquals(6, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTill2()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
+        final String artifactIdentifier = "a";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        Assert.assertEquals(6, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTill3()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
+        final String artifactIdentifier = "c";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        Assert.assertEquals(10, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTill4()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
+        final String artifactIdentifier = "b";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        Assert.assertEquals(8, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTill5()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
+        final String artifactIdentifier = "a";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        Assert.assertEquals(5, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTill6()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
+        final String artifactIdentifier = "c";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        Assert.assertEquals(18, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTill7()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
+        final String artifactIdentifier = "d";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        Assert.assertEquals(21, numberOfNodesTill);
+    }
+
+    @Test
     public void testArtifactTrieSimilarity()
     {
         final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "b";
-        final double similarity = DataUtil.similarity(t1, t2, artifactIdentifier);
+        final double similarity = ArtifactTrieUtil.similarity(t1, t2, artifactIdentifier);
         Assert.assertEquals(0.75, similarity, 1e-8);
     }
 
@@ -59,6 +122,6 @@ public class ArtifactTrieIntersectionTest
         final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "b";
-        Assert.assertEquals(0.25, DataUtil.distance(t1, t2, artifactIdentifier), 1e-8);
+        Assert.assertEquals(0.25, ArtifactTrieUtil.distance(t1, t2, artifactIdentifier), 1e-8);
     }
 }
