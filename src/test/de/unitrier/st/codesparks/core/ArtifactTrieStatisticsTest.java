@@ -350,7 +350,7 @@ public class ArtifactTrieStatisticsTest
 
         final double jaccard = ArtifactTrieUtil.multisetJaccard(t1, t2);
 
-        Assert.assertEquals((double) 2 / 3, jaccard, 1e-6);
+        Assert.assertEquals((double) 11 / 21, jaccard, 1e-6);
     }
 
     @Test
@@ -361,7 +361,7 @@ public class ArtifactTrieStatisticsTest
 
         final double jaccard = ArtifactTrieUtil.jaccard(t1, t2);
 
-        Assert.assertEquals((double) 3 / 4, jaccard, 1e-6);
+        Assert.assertEquals((double) 4 / 5, jaccard, 1e-6);
     }
 
 }
