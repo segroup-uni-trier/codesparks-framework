@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, ArtifactTrieEdge>
 {
-    private final ArtifactTrieNode root;
+    private ArtifactTrieNode root;
     private final Map<String, ArtifactTrieNode> nodes;
 
     public ArtifactTrie(final Class<? extends ArtifactTrieEdge> edgeClass)
@@ -49,6 +49,22 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         ArtifactTrieNode node = getNode(identifier, label);
         addVertex(node);
         return node;
+    }
+
+    @Override
+    public boolean removeVertex(final ArtifactTrieNode trieNode)
+    {
+        final boolean b = super.removeVertex(trieNode);
+        if (b)
+        {
+            final String identifier = trieNode.getIdentifier();
+            nodes.remove(identifier);
+            if ( root != null && root.getIdentifier().equals(identifier))
+            {
+                root = null;
+            }
+        }
+        return b;
     }
 
     @SuppressWarnings("unused")
@@ -182,6 +198,10 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
 
     private long getNumberOfNodesTill(final ArtifactTrieNode node, final String artifactIdentifier, long cnt)
     {
+        if (node == null)
+        {
+            return cnt;
+        }
         cnt = cnt + 1;
         if (node.getLabel().equals(artifactIdentifier))
         {
@@ -198,10 +218,6 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
     public long getNumberOfNodesTill(final String artifactIdentifier)
     {
         final ArtifactTrieNode root = getRoot();
-        if (root == null)
-        {
-            return 0L;
-        }
         //noinspection UnnecessaryLocalVariable
         final long nodesTill = getNumberOfNodesTill(root, artifactIdentifier, 0);
         return nodesTill;

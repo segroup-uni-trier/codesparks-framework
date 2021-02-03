@@ -13,7 +13,7 @@ import java.util.Set;
 
 public final class ArtifactTrieUtil
 {
-    private ArtifactTrieUtil(){}
+    private ArtifactTrieUtil() {}
 
 
     public static double multisetJaccard(final ArtifactTrie t1, final ArtifactTrie t2)
@@ -47,8 +47,14 @@ public final class ArtifactTrieUtil
         return ret;
     }
 
-    private static void dfs(ArtifactTrie t1, ArtifactTrieNode t1Node, ArtifactTrie t2, ArtifactTrieNode t2Node, ArtifactTrie intersection,
-                            String artifactIdentifier)
+    private static void dfs(
+            final ArtifactTrie t1
+            , final ArtifactTrieNode t1Node
+            , final ArtifactTrie t2
+            , final ArtifactTrieNode t2Node
+            , final ArtifactTrie intersection
+            , final String artifactIdentifier
+    )
     {
         if (!t1Node.equals(t2Node))
         {

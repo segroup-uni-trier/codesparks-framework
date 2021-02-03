@@ -6,6 +6,7 @@ package de.unitrier.st.codesparks.core;
 
 import de.unitrier.st.codesparks.core.data.ArtifactTrie;
 import de.unitrier.st.codesparks.core.data.ArtifactTrieDotExportStrategy;
+import de.unitrier.st.codesparks.core.data.ArtifactTrieEdge;
 import de.unitrier.st.codesparks.core.data.ArtifactTrieUtil;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -104,6 +105,34 @@ public class ArtifactTrieIntersectionTest
         final String artifactIdentifier = "d";
         final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
         Assert.assertEquals(21, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTill8()
+    {
+        final ArtifactTrie artifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
+        artifactTrie.removeVertex(artifactTrie.getRoot());
+        final String artifactIdentifier = "Doesn't matter what string is in here!";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        Assert.assertEquals(0, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTill9()
+    {
+        final ArtifactTrie artifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
+        final String artifactIdentifier = "Any string different from 'root'";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        Assert.assertEquals(1, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTill10()
+    {
+        final ArtifactTrie artifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
+        final String artifactIdentifier = "root";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        Assert.assertEquals(1, numberOfNodesTill);
     }
 
     @Test
