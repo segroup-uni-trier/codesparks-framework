@@ -45,6 +45,97 @@ public class ArtifactTrieIntersectionTest
     }
 
     @Test
+    public void testNumberOfNodesTillWithoutDifferentBranches()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
+        final String artifactIdentifier = "b";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        Assert.assertEquals(6, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTillWithoutDifferentBranches2()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
+        final String artifactIdentifier = "a";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        Assert.assertEquals(6, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTillWithoutDifferentBranches3()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
+        final String artifactIdentifier = "c";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        Assert.assertEquals(6, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTillWithoutDifferentBranches4()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
+        final String artifactIdentifier = "Doesn't matter what string is in here!";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        Assert.assertEquals(0, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTillWithoutDifferentBranches5()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
+        final String artifactIdentifier = "b";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        Assert.assertEquals(6, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTillWithoutDifferentBranches6()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
+        final String artifactIdentifier = "a";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        Assert.assertEquals(2, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTillWithoutDifferentBranches7()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
+        final String artifactIdentifier = "c";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        Assert.assertEquals(16, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTillWithoutDifferentBranches8()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
+        final String artifactIdentifier = "d";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        Assert.assertEquals(4, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTillWithoutDifferentBranches9()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
+        final String artifactIdentifier = "Doesn't matter what string is in here!";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        Assert.assertEquals(0, numberOfNodesTill);
+    }
+
+    @Test
+    public void testNumberOfNodesTillWithoutDifferentBranches10()
+    {
+        final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
+        artifactTrie.removeVertex(artifactTrie.getRoot());
+        final String artifactIdentifier = "root";
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        Assert.assertEquals(0, numberOfNodesTill);
+    }
+
+    @Test
     public void testNumberOfNodesTill()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();

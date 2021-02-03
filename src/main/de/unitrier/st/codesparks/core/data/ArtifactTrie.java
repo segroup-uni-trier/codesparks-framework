@@ -59,7 +59,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         {
             final String identifier = trieNode.getIdentifier();
             nodes.remove(identifier);
-            if ( root != null && root.getIdentifier().equals(identifier))
+            if (root != null && root.getIdentifier().equals(identifier))
             {
                 root = null;
             }
@@ -196,30 +196,81 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         }
     }
 
-    private long getNumberOfNodesTill(final ArtifactTrieNode node, final String artifactIdentifier, long cnt)
+    private long getNumberOfNodesTill(final ArtifactTrieNode node, final String artifactIdentifier)
     {
         if (node == null)
         {
-            return cnt;
+            return 0;
         }
-        cnt = cnt + 1;
         if (node.getLabel().equals(artifactIdentifier))
         {
-            return cnt;
+            return 1;
         }
-        final Set<ArtifactTrieEdge> artifactTrieEdges = outgoingEdgesOf(node);
-        for (final ArtifactTrieEdge artifactTrieEdge : artifactTrieEdges)
+        final Set<ArtifactTrieEdge> outEdges = outgoingEdgesOf(node);
+        if (outEdges.size() == 0)
+        { // Is leaf node and is not equal to artifactIdentifier
+            return 1;
+        }
+        long edgeSum = 0;
+        for (final ArtifactTrieEdge artifactTrieEdge : outEdges)
         {
-            cnt = getNumberOfNodesTill(artifactTrieEdge.getTarget(), artifactIdentifier, cnt);
+            final ArtifactTrieNode target = artifactTrieEdge.getTarget();
+            final long edgeCnt = getNumberOfNodesTill(target, artifactIdentifier);
+            edgeSum += edgeCnt;
         }
-        return cnt;
+        long ret = edgeSum;
+        if (edgeSum > 0)
+        { // if any of the outgoing edges produced a value greater than zero, the current node is on a path to a node with label equal to
+            // 'artifactIdentifier' and thus has to be counted as well
+            ret += 1;
+        }
+        return ret;
+    }
+
+    private long getNumberOfNodesTillWithoutDifferentBranches(final ArtifactTrieNode node, final String artifactIdentifier)
+    {
+        if (node == null)
+        {
+            return 0;
+        }
+        if (node.getLabel().equals(artifactIdentifier))
+        {
+            return 1;
+        }
+        final Set<ArtifactTrieEdge> outEdges = outgoingEdgesOf(node);
+        if (outEdges.size() == 0)
+        { // Is leaf node and is not equal to artifactIdentifier
+            return 0;
+        }
+        long edgeSum = 0;
+        for (final ArtifactTrieEdge artifactTrieEdge : outEdges)
+        {
+            final ArtifactTrieNode target = artifactTrieEdge.getTarget();
+            final long edgeCnt = getNumberOfNodesTillWithoutDifferentBranches(target, artifactIdentifier);
+            edgeSum += edgeCnt;
+        }
+        long ret = edgeSum;
+        if (edgeSum > 0)
+        { // if any of the outgoing edges produced a value greater than zero, the current node is on a path to a node with label equal to
+            // 'artifactIdentifier' and thus has to be counted as well
+            ret += 1;
+        }
+        return ret;
     }
 
     public long getNumberOfNodesTill(final String artifactIdentifier)
     {
         final ArtifactTrieNode root = getRoot();
         //noinspection UnnecessaryLocalVariable
-        final long nodesTill = getNumberOfNodesTill(root, artifactIdentifier, 0);
+        final long nodesTill = getNumberOfNodesTill(root, artifactIdentifier);
+        return nodesTill;
+    }
+
+    public long getNumberOfNodesTillWithoutDifferentBranches(final String artifactIdentifier)
+    {
+        final ArtifactTrieNode root = getRoot();
+        //noinspection UnnecessaryLocalVariable
+        final long nodesTill = getNumberOfNodesTillWithoutDifferentBranches(root, artifactIdentifier);
         return nodesTill;
     }
 
