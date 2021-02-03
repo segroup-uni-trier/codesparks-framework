@@ -1,0 +1,13 @@
+strict digraph G {
+  root [ label="root (1)" ];
+  rootb [ label="b (1)" ];
+  roota [ label="a (1)" ];
+  rootab [ label="b (1)" ];
+  rootaa [ label="a (1)" ];
+  rootaab [ label="b (1)" ];
+  root -> rootb [ label="" ];
+  root -> roota [ label="" ];
+  roota -> rootab [ label="" ];
+  roota -> rootaa [ label="" ];
+  rootaa -> rootaab [ label="" ];
+}

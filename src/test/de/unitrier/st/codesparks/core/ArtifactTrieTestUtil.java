@@ -161,4 +161,25 @@ public final class ArtifactTrieTestUtil
         profilingArtifactTrie.addEdge(rootAAA, rootAAAA, new ArtifactTrieEdge(rootAAA, rootAAAA));
         return profilingArtifactTrie;
     }
+
+    public static ArtifactTrie constructIntersectingTrieManually()
+    {
+        ArtifactTrie profilingArtifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
+        String rootStr = "root";
+        // Add first stack trace
+        ArtifactTrieNode root = profilingArtifactTrie.addVertex(rootStr, rootStr);
+        ArtifactTrieNode rootB = profilingArtifactTrie.addVertex("rootb", "b");
+        profilingArtifactTrie.addEdge(root, rootB, new ArtifactTrieEdge(root, rootB));
+
+        ArtifactTrieNode rootA = profilingArtifactTrie.addVertex("roota", "a");
+        profilingArtifactTrie.addEdge(root, rootA, new ArtifactTrieEdge(root, rootA));
+        ArtifactTrieNode rootAB = profilingArtifactTrie.addVertex("rootab", "b");
+        profilingArtifactTrie.addEdge(rootA, rootAB, new ArtifactTrieEdge(rootA, rootAB));
+        ArtifactTrieNode rootAA = profilingArtifactTrie.addVertex("rootaa", "a");
+        profilingArtifactTrie.addEdge(rootA, rootAA, new ArtifactTrieEdge(rootA, rootAA));
+        ArtifactTrieNode rootAAB = profilingArtifactTrie.addVertex("rootaab", "b");
+        profilingArtifactTrie.addEdge(rootAA, rootAAB, new ArtifactTrieEdge(rootAA, rootAAB));
+
+        return profilingArtifactTrie;
+    }
 }
