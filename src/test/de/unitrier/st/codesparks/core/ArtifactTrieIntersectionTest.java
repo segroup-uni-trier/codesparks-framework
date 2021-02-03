@@ -45,6 +45,21 @@ public class ArtifactTrieIntersectionTest
     }
 
     @Test
+    public void testArtifactTrieIntersectionCommutativity()
+    {
+        final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
+        final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
+
+        final String artifactIdentifier = "b";
+
+        final ArtifactTrie intersection = ArtifactTrieUtil.intersection(t1, t2, artifactIdentifier);
+
+        final ArtifactTrie intersection1 = ArtifactTrieUtil.intersection(t2, t1, artifactIdentifier);
+
+        Assert.assertEquals(intersection, intersection1);
+    }
+
+    @Test
     public void testNumberOfNodesTillWithoutDifferentBranches()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
