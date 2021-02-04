@@ -7,7 +7,7 @@ package de.unitrier.st.codesparks.core;
 import de.unitrier.st.codesparks.core.data.ArtifactTrie;
 import de.unitrier.st.codesparks.core.data.ArtifactTrieDotExportStrategy;
 import de.unitrier.st.codesparks.core.data.ArtifactTrieEdge;
-import de.unitrier.st.codesparks.core.data.ArtifactTrieUtil;
+import de.unitrier.st.codesparks.core.data.ArtifactTrieUtilKt;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class ArtifactTrieIntersectionTest
 
         final String artifactIdentifier = "b";
 
-        final ArtifactTrie computedIntersectingTrie = ArtifactTrieUtil.intersection(t1, t2, artifactIdentifier);
+        final ArtifactTrie computedIntersectingTrie = ArtifactTrieUtilKt.intersection(t1, t2, artifactIdentifier);
 
         Assert.assertNotNull(computedIntersectingTrie);
 
@@ -52,9 +52,9 @@ public class ArtifactTrieIntersectionTest
 
         final String artifactIdentifier = "b";
 
-        final ArtifactTrie intersection = ArtifactTrieUtil.intersection(t1, t2, artifactIdentifier);
+        final ArtifactTrie intersection = ArtifactTrieUtilKt.intersection(t1, t2, artifactIdentifier);
 
-        final ArtifactTrie intersection1 = ArtifactTrieUtil.intersection(t2, t1, artifactIdentifier);
+        final ArtifactTrie intersection1 = ArtifactTrieUtilKt.intersection(t2, t1, artifactIdentifier);
 
         Assert.assertEquals(intersection, intersection1);
     }
@@ -247,7 +247,7 @@ public class ArtifactTrieIntersectionTest
         final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "b";
-        final double similarity = ArtifactTrieUtil.similarity(t1, t2, artifactIdentifier);
+        final double similarity = ArtifactTrieUtilKt.similarity(t1, t2, artifactIdentifier);
         Assert.assertEquals(1D, similarity, 1e-8);
     }
 
@@ -257,6 +257,6 @@ public class ArtifactTrieIntersectionTest
         final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "b";
-        Assert.assertEquals(0D, ArtifactTrieUtil.distance(t1, t2, artifactIdentifier), 1e-8);
+        Assert.assertEquals(0D, ArtifactTrieUtilKt.distance(t1, t2, artifactIdentifier), 1e-8);
     }
 }
