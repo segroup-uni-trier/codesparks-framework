@@ -1,3 +1,7 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
+
 package de.unitrier.st.codesparks.core.data;
 
 import com.google.common.collect.HashMultiset;
@@ -8,47 +12,31 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.AbstractGraphIterator;
 import org.jgrapht.util.TypeUtil;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, ArtifactTrieEdge>
 {
     private ArtifactTrieNode root;
-    private final Map<String, ArtifactTrieNode> nodes;
 
     public ArtifactTrie(final Class<? extends ArtifactTrieEdge> edgeClass)
     {
         super(edgeClass);
-        nodes = new HashMap<>();
         final String rootIdentifier = "root";
-        this.root = new ArtifactTrieNode(rootIdentifier, rootIdentifier);
-        nodes.put(rootIdentifier, this.root);
-        addVertex(this.root);
-    }
-
-    private ArtifactTrieNode getNode(final String identifier, final String label)
-    {
-        ArtifactTrieNode node = nodes.get(identifier);
-        if (node == null)
-        {
-            node = new ArtifactTrieNode(identifier, label);
-            nodes.put(identifier, node);
-        }
-        node.inc();
-        return node;
+        root = new ArtifactTrieNode(rootIdentifier, rootIdentifier);
+        super.addVertex(root);
     }
 
     public ArtifactTrieNode addVertex(final String identifier, final String label)
     {
-        ArtifactTrieNode node = getNode(identifier, label);
-        addVertex(node);
-        return node;
+        final ArtifactTrieNode node = new ArtifactTrieNode(identifier, label);
+        final boolean b = addVertex(node);
+        if (b)
+        {
+            return node;
+        }
+        return vertexSet().stream().filter(trieNode -> trieNode.getIdentifier().equals(identifier)).findFirst().orElseThrow();
     }
 
     @Override
@@ -58,7 +46,6 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         if (b)
         {
             final String identifier = trieNode.getIdentifier();
-            nodes.remove(identifier);
             if (root != null && root.getIdentifier().equals(identifier))
             {
                 root = null;
@@ -84,6 +71,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
             ArtifactTrieNode current = addVertex(rootStr, rootStr);
             for (int i = methods.size() - 1; i > -1; i--)
             {
+                current.inc();
                 Element method = methods.get(i);
                 String methodName = removeWhiteSpace(method.getText());
                 strb.append(methodName);
@@ -196,7 +184,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         }
     }
 
-    private long getNumberOfNodesTill(final ArtifactTrieNode node, final String artifactIdentifier)
+    private long getNumberOfNodesOfSubtreeIncludingOtherPaths(final ArtifactTrieNode node, final String artifactIdentifier)
     {
         if (node == null)
         {
@@ -215,7 +203,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         for (final ArtifactTrieEdge artifactTrieEdge : outEdges)
         {
             final ArtifactTrieNode target = artifactTrieEdge.getTarget();
-            final long edgeCnt = getNumberOfNodesTill(target, artifactIdentifier);
+            final long edgeCnt = getNumberOfNodesOfSubtreeIncludingOtherPaths(target, artifactIdentifier);
             edgeSum += edgeCnt;
         }
         long ret = edgeSum;
@@ -227,7 +215,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         return ret;
     }
 
-    private long getNumberOfNodesTillWithoutDifferentBranches(final ArtifactTrieNode node, final String artifactIdentifier)
+    private long getNumberOfNodesOfSubtree(final ArtifactTrieNode node, final String artifactIdentifier)
     {
         if (node == null)
         {
@@ -246,7 +234,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         for (final ArtifactTrieEdge artifactTrieEdge : outEdges)
         {
             final ArtifactTrieNode target = artifactTrieEdge.getTarget();
-            final long edgeCnt = getNumberOfNodesTillWithoutDifferentBranches(target, artifactIdentifier);
+            final long edgeCnt = getNumberOfNodesOfSubtree(target, artifactIdentifier);
             edgeSum += edgeCnt;
         }
         long ret = edgeSum;
@@ -258,19 +246,34 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         return ret;
     }
 
-    public long getNumberOfNodesTill(final String artifactIdentifier)
+    /**
+     * Computes the number of nodes of the subtree which consists of minimal paths from the 'root' to nodes with label
+     * 'artifactIdentifier' and all other paths which do not contain any node with label 'artifactIdentifier'. The 'root' node can already have label
+     * 'artifactIdentifier' and thus, paths of length 0 are considered.
+     *
+     * @param artifactIdentifier The label of the node where the paths must end.
+     * @return The number of nodes of the resulting subtree.
+     */
+    public long getNumberOfNodesOfSubtreeIncludingOtherPaths(final String artifactIdentifier)
     {
         final ArtifactTrieNode root = getRoot();
         //noinspection UnnecessaryLocalVariable
-        final long nodesTill = getNumberOfNodesTill(root, artifactIdentifier);
+        final long nodesTill = getNumberOfNodesOfSubtreeIncludingOtherPaths(root, artifactIdentifier);
         return nodesTill;
     }
 
-    public long getNumberOfNodesTillWithoutDifferentBranches(final String artifactIdentifier)
+    /**
+     * Computes the number of nodes of the subtree which consists solely of minimal paths from the 'root' to nodes with label
+     * 'artifactIdentifier'. The 'root' node can already have label 'artifactIdentifier' and thus, paths of length 0 are considered.
+     *
+     * @param artifactIdentifier The label of the node where the paths must end.
+     * @return The number of nodes of the resulting subtree.
+     */
+    public long getNumberOfNodesOfSubtree(final String artifactIdentifier)
     {
         final ArtifactTrieNode root = getRoot();
         //noinspection UnnecessaryLocalVariable
-        final long nodesTill = getNumberOfNodesTillWithoutDifferentBranches(root, artifactIdentifier);
+        final long nodesTill = getNumberOfNodesOfSubtree(root, artifactIdentifier);
         return nodesTill;
     }
 

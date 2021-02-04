@@ -60,184 +60,184 @@ public class ArtifactTrieIntersectionTest
     }
 
     @Test
-    public void testNumberOfNodesTillWithoutDifferentBranches()
+    public void getNumberOfNodesOfSubtree()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
         final String artifactIdentifier = "b";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
         Assert.assertEquals(6, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTillWithoutDifferentBranches2()
+    public void getNumberOfNodesOfSubtree2()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
         final String artifactIdentifier = "a";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
         Assert.assertEquals(6, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTillWithoutDifferentBranches3()
+    public void getNumberOfNodesOfSubtree3()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
         final String artifactIdentifier = "c";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
         Assert.assertEquals(6, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTillWithoutDifferentBranches4()
+    public void getNumberOfNodesOfSubtree4()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
         final String artifactIdentifier = "Doesn't matter what string is in here!";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
         Assert.assertEquals(0, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTillWithoutDifferentBranches5()
+    public void getNumberOfNodesOfSubtree5()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "b";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
         Assert.assertEquals(6, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTillWithoutDifferentBranches6()
+    public void getNumberOfNodesOfSubtree6()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "a";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
         Assert.assertEquals(2, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTillWithoutDifferentBranches7()
+    public void getNumberOfNodesOfSubtree7()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "c";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
         Assert.assertEquals(16, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTillWithoutDifferentBranches8()
+    public void getNumberOfNodesOfSubtree8()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "d";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
         Assert.assertEquals(4, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTillWithoutDifferentBranches9()
+    public void getNumberOfNodesOfSubtree9()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "Doesn't matter what string is in here!";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
         Assert.assertEquals(0, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTillWithoutDifferentBranches10()
+    public void getNumberOfNodesOfSubtree10()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
         artifactTrie.removeVertex(artifactTrie.getRoot());
         final String artifactIdentifier = "root";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTillWithoutDifferentBranches(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
         Assert.assertEquals(0, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTill()
+    public void getNumberOfNodesOfSubtreeIncludingOtherPaths()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
         final String artifactIdentifier = "b";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
         Assert.assertEquals(6, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTill2()
+    public void getNumberOfNodesOfSubtreeIncludingOtherPaths2()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
         final String artifactIdentifier = "a";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
         Assert.assertEquals(6, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTill3()
+    public void getNumberOfNodesOfSubtreeIncludingOtherPaths3()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
         final String artifactIdentifier = "c";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
         Assert.assertEquals(10, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTill4()
+    public void getNumberOfNodesOfSubtreeIncludingOtherPaths4()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "b";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
         Assert.assertEquals(8, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTill5()
+    public void getNumberOfNodesOfSubtreeIncludingOtherPaths5()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "a";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
         Assert.assertEquals(5, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTill6()
+    public void getNumberOfNodesOfSubtreeIncludingOtherPaths6()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "c";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
         Assert.assertEquals(18, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTill7()
+    public void getNumberOfNodesOfSubtreeIncludingOtherPaths7()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "d";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
         Assert.assertEquals(21, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTill8()
+    public void getNumberOfNodesOfSubtreeIncludingOtherPaths8()
     {
         final ArtifactTrie artifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
         artifactTrie.removeVertex(artifactTrie.getRoot());
         final String artifactIdentifier = "Doesn't matter what string is in here!";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
         Assert.assertEquals(0, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTill9()
+    public void getNumberOfNodesOfSubtreeIncludingOtherPaths9()
     {
         final ArtifactTrie artifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
         final String artifactIdentifier = "Any string different from 'root'";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
         Assert.assertEquals(1, numberOfNodesTill);
     }
 
     @Test
-    public void testNumberOfNodesTill10()
+    public void getNumberOfNodesOfSubtreeIncludingOtherPaths10()
     {
         final ArtifactTrie artifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
         final String artifactIdentifier = "root";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesTill(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
         Assert.assertEquals(1, numberOfNodesTill);
     }
 
@@ -248,7 +248,7 @@ public class ArtifactTrieIntersectionTest
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "b";
         final double similarity = ArtifactTrieUtil.similarity(t1, t2, artifactIdentifier);
-        Assert.assertEquals(0.75, similarity, 1e-8);
+        Assert.assertEquals(1D, similarity, 1e-8);
     }
 
     @Test
@@ -257,6 +257,6 @@ public class ArtifactTrieIntersectionTest
         final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
         final String artifactIdentifier = "b";
-        Assert.assertEquals(0.25, ArtifactTrieUtil.distance(t1, t2, artifactIdentifier), 1e-8);
+        Assert.assertEquals(0D, ArtifactTrieUtil.distance(t1, t2, artifactIdentifier), 1e-8);
     }
 }

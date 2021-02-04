@@ -15,7 +15,6 @@ public final class ArtifactTrieUtil
 {
     private ArtifactTrieUtil() {}
 
-
     public static double multisetJaccard(final ArtifactTrie t1, final ArtifactTrie t2)
     {
         final Multiset<String> multiSetT1 = t1.getVertexLabelsMultiSet();
@@ -62,14 +61,12 @@ public final class ArtifactTrieUtil
         }
         intersection.addVertex(t1Node.getIdentifier(), t1Node.getLabel());
 
-        // Has a parent, so add that edge to the intersecting trie
         final Set<ArtifactTrieEdge> artifactTrieEdges = t1.incomingEdgesOf(t1Node);
         final Optional<ArtifactTrieEdge> first = artifactTrieEdges.stream().findFirst(); // In trees there is only one parent
         if (first.isPresent())
-        {
+        {  // Has a parent, so add that edge to the intersecting trie
             final ArtifactTrieEdge artifactTrieEdge = first.get();
             final ArtifactTrieNode source = t1.getEdgeSource(artifactTrieEdge);
-//            intersection.addVertex(source.getIdentifier(), source.getLabel());
             intersection.addEdge(source, t1Node, new ArtifactTrieEdge(source, t1Node));
         }
         if (t1Node.getLabel().equals(artifactIdentifier))
@@ -77,7 +74,6 @@ public final class ArtifactTrieUtil
             return;
         }
         final Set<ArtifactTrieEdge> outEdgesOfT1 = t1.outgoingEdgesOf(t1Node);
-//        final Set<ArtifactTrieEdge> outEdgesOfT2 = t2.outgoingEdgesOf(t2Node);
         for (final ArtifactTrieEdge artifactTrieEdge : outEdgesOfT1)
         {
             if (t2.containsEdge(artifactTrieEdge))
@@ -126,8 +122,8 @@ public final class ArtifactTrieUtil
             return 0D;
         }
 
-        final long sizeT1 = t1.getNumberOfNodesTill(artifactIdentifier);
-        final long sizeT2 = t2.getNumberOfNodesTill(artifactIdentifier);
+        final long sizeT1 = t1.getNumberOfNodesOfSubtree(artifactIdentifier);
+        final long sizeT2 = t2.getNumberOfNodesOfSubtree(artifactIdentifier);
 
         //noinspection UnnecessaryLocalVariable
         final double similarity = (double) intersectionSize / Math.max(sizeT1, sizeT2);
