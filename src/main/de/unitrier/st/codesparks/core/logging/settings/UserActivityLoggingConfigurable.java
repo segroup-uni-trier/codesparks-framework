@@ -24,7 +24,6 @@ final class UserActivityLoggingConfigurable implements Configurable
         service.registerConfigurable(this);
     }
 
-    @Nls(capitalization = Nls.Capitalization.Title)
     @Override
     public String getDisplayName()
     {

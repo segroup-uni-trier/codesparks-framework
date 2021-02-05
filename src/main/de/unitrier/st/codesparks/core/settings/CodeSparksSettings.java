@@ -35,7 +35,6 @@ public final class CodeSparksSettings implements SearchableConfigurable.Parent
         return CODESPARKS_SETTINGS_ID;
     }
 
-    @Nls(capitalization = Nls.Capitalization.Title)
     @Override
     public String getDisplayName()
     {
