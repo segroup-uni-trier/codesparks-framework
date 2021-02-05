@@ -13,30 +13,34 @@ import org.jgrapht.traverse.AbstractGraphIterator;
 import org.jgrapht.util.TypeUtil;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, ArtifactTrieEdge>
 {
     private ArtifactTrieNode root;
+    private static final String rootLabel = "root";
+    private static final int rootId = rootLabel.hashCode();
 
     public ArtifactTrie(final Class<? extends ArtifactTrieEdge> edgeClass)
     {
         super(edgeClass);
-        final String rootIdentifier = "root";
-        root = new ArtifactTrieNode(rootIdentifier, rootIdentifier);
+        root = new ArtifactTrieNode(rootId, rootLabel);
         super.addVertex(root);
     }
 
-    public ArtifactTrieNode addVertex(final String identifier, final String label)
+    public ArtifactTrieNode addVertex(final int id, final String label)
     {
-        final ArtifactTrieNode node = new ArtifactTrieNode(identifier, label);
-        final boolean b = addVertex(node);
-        if (b)
-        {
+        final Optional<ArtifactTrieNode> first = vertexSet().stream().filter(trieNode -> trieNode.getId() == id).findFirst(); // It is more likely that a
+        // node is already present!
+        if (first.isEmpty())
+        { // Only create the node if it's really necessary.
+            final ArtifactTrieNode node = new ArtifactTrieNode(id, label);
+            addVertex(node);
             return node;
         }
-        return vertexSet().stream().filter(trieNode -> trieNode.getIdentifier().equals(identifier)).findFirst().orElseThrow();
+        return first.get();
     }
 
     @Override
@@ -45,8 +49,8 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         final boolean b = super.removeVertex(trieNode);
         if (b)
         {
-            final String identifier = trieNode.getIdentifier();
-            if (root != null && root.getIdentifier().equals(identifier))
+            final int id = trieNode.getId();
+            if (root != null && root.getId() == id)
             {
                 root = null;
             }
@@ -64,26 +68,29 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
 
     public void add(final List<Element> methods)
     {
-        final String rootStr = "root";
-        final StringBuilder strb = new StringBuilder(rootStr);
+        final StringBuilder strb = new StringBuilder(rootLabel);
         synchronized (trieLock)
         {
-            ArtifactTrieNode current = addVertex(rootStr, rootStr);
+            ArtifactTrieNode current = root != null ? root : addVertex(rootId, rootLabel);//addVertex(rootId, rootLabel);
             for (int i = methods.size() - 1; i > -1; i--)
             {
                 current.inc();
                 Element method = methods.get(i);
                 String methodName = removeWhiteSpace(method.getText());
                 strb.append(methodName);
-                String identifier = removeWhiteSpace(strb.toString()
+                String rawIdentifier = strb.toString();
+                rawIdentifier = rawIdentifier
                         .replaceAll("<", "")
                         .replaceAll(">", "")
-                        .replaceAll("\\$", ""));
-                ArtifactTrieNode node = addVertex(identifier, methodName);
+                        .replaceAll("\\$", "");
+//                int id = removeWhiteSpace(rawIdentifier).hashCode(); // I guess another time whitespace removal is not necessary
+                int id = rawIdentifier.hashCode();
+                ArtifactTrieNode node = addVertex(id, methodName);
                 ArtifactTrieEdge edge = new ArtifactTrieEdge(current, node);
                 this.addEdge(current, node, edge);
                 current = node;
             }
+            current.inc(); // The leaf node has to be incremented as well
         }
     }
 

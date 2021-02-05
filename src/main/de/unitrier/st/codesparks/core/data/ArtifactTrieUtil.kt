@@ -41,7 +41,7 @@ private fun dfs(
     if (t1Node != t2Node) {
         return
     }
-    intersection.addVertex(t1Node.identifier, t1Node.label)
+    intersection.addVertex(t1Node.id, t1Node.label)
 
     // Has a parent, so add that edge to the intersecting trie
     val artifactTrieEdges = t1.incomingEdgesOf(t1Node)

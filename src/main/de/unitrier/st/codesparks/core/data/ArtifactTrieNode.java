@@ -5,19 +5,24 @@ package de.unitrier.st.codesparks.core.data;
  */
 public class ArtifactTrieNode
 {
-    private final String identifier;
+    private final int id;
     private final String label;
     private long cnt;
 
-    ArtifactTrieNode(final String identifier, final String label)
+    ArtifactTrieNode(final int id, final String label)
     {
-        this.identifier = identifier;
+        this.id = id;
         this.label = label;
+    }
+
+    int getId()
+    {
+        return id;
     }
 
     private final Object cntLock = new Object();
 
-    void inc()
+    final void inc()
     {
         synchronized (cntLock)
         {
@@ -30,7 +35,7 @@ public class ArtifactTrieNode
      *
      * @return The actual satellite data 'cnt' associated with the node. It represents the number of times that node occurs in the respective calling context.
      */
-    public long getCnt()
+    public final long getCnt()
     {
         synchronized (cntLock)
         {
@@ -38,12 +43,7 @@ public class ArtifactTrieNode
         }
     }
 
-    public String getIdentifier()
-    {
-        return identifier;
-    }
-
-    public String getMetricLabel()
+    public final String getMetricLabel()
     {
         synchronized (cntLock)
         {
@@ -56,10 +56,15 @@ public class ArtifactTrieNode
         return label;
     }
 
+    public String getIdString()
+    {
+        return String.valueOf(id);
+    }
+
     @Override
     public String toString()
     {
-        return identifier;
+        return id + ":" + label;
     }
 
     @Override
@@ -68,13 +73,12 @@ public class ArtifactTrieNode
         if (obj == null) return false;
         if (!(obj instanceof ArtifactTrieNode)) return false;
 //        if (identifier == null) return false; // the member "identifier" must never be null!
-        return identifier.equals(((ArtifactTrieNode) obj).getIdentifier());
-//        return super.equals(obj);
+        return id == ((ArtifactTrieNode) obj).getId();//identifier.equals(((ArtifactTrieNode) obj).getIdentifier());
     }
 
     @Override
     public int hashCode()
     {
-        return identifier.hashCode();//super.hashCode();
+        return id;//identifier.hashCode();//super.hashCode();
     }
 }

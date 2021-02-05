@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.data;
 
 import org.jgrapht.io.DOTExporter;
@@ -8,9 +11,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ArtifactTrieDotExportStrategy implements IArtifactTrieExportStrategy
 {
     private final String destinationFilePath;
@@ -23,8 +23,11 @@ public class ArtifactTrieDotExportStrategy implements IArtifactTrieExportStrateg
     @Override
     public void export(ArtifactTrie artifactTrie)
     {
-        GraphExporter<ArtifactTrieNode, ArtifactTrieEdge> exporter = new DOTExporter<>(ArtifactTrieNode::getIdentifier,
-                ArtifactTrieNode::getMetricLabel, ArtifactTrieEdge::getLabel);
+        GraphExporter<ArtifactTrieNode, ArtifactTrieEdge> exporter = new DOTExporter<>(
+                ArtifactTrieNode::getIdString
+                , ArtifactTrieNode::getMetricLabel
+                , ArtifactTrieEdge::getLabel
+        );
         FileWriter fileWriter = null;
         try
         {

@@ -1,13 +1,13 @@
 strict digraph G {
-  root [ label="root (0)" ];
-  rootb [ label="b (0)" ];
-  roota [ label="a (0)" ];
-  rootab [ label="b (0)" ];
-  rootaa [ label="a (0)" ];
-  rootaab [ label="b (0)" ];
-  root -> rootb [ label="" ];
-  root -> roota [ label="" ];
-  roota -> rootab [ label="" ];
-  roota -> rootaa [ label="" ];
-  rootaa -> rootaab [ label="" ];
+  3506402 [ label="root (0)" ];
+  108698560 [ label="b (0)" ];
+  108698559 [ label="a (0)" ];
+  -925311869 [ label="b (0)" ];
+  -925311870 [ label="a (0)" ];
+  1380103200 [ label="b (0)" ];
+  3506402 -> 108698560 [ label="" ];
+  3506402 -> 108698559 [ label="" ];
+  108698559 -> -925311869 [ label="" ];
+  108698559 -> -925311870 [ label="" ];
+  -925311870 -> 1380103200 [ label="" ];
 }
