@@ -75,30 +75,20 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
             for (int i = methods.size() - 1; i > -1; i--)
             {
                 current.inc();
-                Element method = methods.get(i);
-                String methodName = removeWhiteSpace(method.getText());
+                final Element method = methods.get(i);
+                String methodName = method.getText();
+                methodName = methodName.replaceAll("[\n ]", "").trim();
                 strb.append(methodName);
                 String rawIdentifier = strb.toString();
-                rawIdentifier = rawIdentifier
-                        .replaceAll("<", "")
-                        .replaceAll(">", "")
-                        .replaceAll("\\$", "");
-//                int id = removeWhiteSpace(rawIdentifier).hashCode(); // I guess another time whitespace removal is not necessary
-                int id = rawIdentifier.hashCode();
-                ArtifactTrieNode node = addVertex(id, methodName);
-                ArtifactTrieEdge edge = new ArtifactTrieEdge(current, node);
+                rawIdentifier = rawIdentifier.replaceAll("[<>$]", "");
+                final int id = rawIdentifier.hashCode();
+                final ArtifactTrieNode node = addVertex(id, methodName);
+                final ArtifactTrieEdge edge = new ArtifactTrieEdge(current, node);
                 this.addEdge(current, node, edge);
                 current = node;
             }
             current.inc(); // The leaf node has to be incremented as well
         }
-    }
-
-    private String removeWhiteSpace(final String str)
-    {
-        return str.replaceAll("\\n", "")
-                .replaceAll(" ", "")
-                .trim();
     }
 
     public void export(final IArtifactTrieExportStrategy strategy)
