@@ -1,3 +1,7 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
+
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
@@ -13,9 +17,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Set;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public abstract class AThreadRadar extends JPanel
 {
     protected Graphics2D g2d;
@@ -47,7 +48,6 @@ public abstract class AThreadRadar extends JPanel
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        drawRectangleBackground();
     }
 
     private static ImageIcon defaultIcon; // TODO: CodeSparks icon
@@ -69,13 +69,17 @@ public abstract class AThreadRadar extends JPanel
         }
         GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage bi = UIUtil.createImage(defaultConfiguration, panelWidth, panelHeight, BufferedImage.TYPE_INT_RGB,
+        BufferedImage bi = UIUtil.createImage(defaultConfiguration, panelWidth, panelHeight, BufferedImage.TYPE_INT_ARGB,
                 PaintUtil.RoundingMode.CEIL);
+
+        g2d = (Graphics2D) bi.getGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        VisualizationUtil.drawTransparentBackground(g2d, bi);
+
         ImageIcon imageIcon = new ImageIcon(bi);
         add(new JLabel(imageIcon));
-        Graphics graphics = bi.getGraphics();
-        g2d = (Graphics2D) graphics;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
         paintDefault();
     }
 
@@ -85,13 +89,7 @@ public abstract class AThreadRadar extends JPanel
                 (panelHeight - defaultIcon.getIconHeight()) / 2, null);
     }
 
-    private void drawRectangleBackground()
-    {
-        g2d.setColor(Color.decode("#F0F0F0"));
-        g2d.fillRect(0, 0, panelWidth, panelHeight);
-    }
-
-    protected void drawOverallCircle()
+    protected void drawOuterCircle()
     {
         g2d.setColor(JBColor.DARK_GRAY);
         g2d.drawOval((circleFrameSize / 2) - (circleDiameter / 2), (circleFrameSize / 2) - (circleDiameter / 2), circleDiameter,
@@ -154,13 +152,22 @@ public abstract class AThreadRadar extends JPanel
         g2d.setColor(JBColor.BLACK);
     }
 
-    protected void drawNumberOfThreadsLabel(int labelWidth, float fontSize, long numberOfFilteredArtifactThreads, int yOffsetForLabelText)
+    protected void drawNumberOfThreadsLabel(
+            final int labelWidth
+            , final float fontSize
+            , final long numberOfFilteredArtifactThreads
+            , final int yOffsetForLabelText
+    )
     {
         drawPedestal(labelWidth, false, fontSize, numberOfFilteredArtifactThreads, yOffsetForLabelText);
     }
 
-    protected void drawNumberOfDifferentThreadTypesLabel(int labelWidth, float fontSize, long numberOfFilteredArtifactThreads,
-                                                         int yOffsetForLabelText)
+    protected void drawNumberOfDifferentThreadTypesLabel(
+            final int labelWidth
+            , final float fontSize
+            , final long numberOfFilteredArtifactThreads
+            , final int yOffsetForLabelText
+    )
     {
         drawPedestal(labelWidth, true, fontSize, numberOfFilteredArtifactThreads, yOffsetForLabelText);
     }

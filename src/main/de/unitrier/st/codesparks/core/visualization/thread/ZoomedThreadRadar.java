@@ -2,6 +2,7 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.popup.IThreadSelectable;
 
 import java.awt.*;
@@ -45,6 +46,11 @@ public class ZoomedThreadRadar extends AThreadRadar
         {
             return;
         }
+
+        VisualizationUtil.clearAndDrawTransparentBackground(g2d, getWidth(), getHeight());
+
+        //VisualizationUtil.drawTransparentBackground(g2d, getWidth(), getHeight(), AlphaComposite.CLEAR);
+
         List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedDefaultThreadArtifactClustering(metricIdentifier);
         int startAngle = 90; //set start angle to 90 for starting at 12 o'clock
         JBColor[] colors = {new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), new JBColor(Color.decode("#B25283"),
@@ -66,7 +72,7 @@ public class ZoomedThreadRadar extends AThreadRadar
         int labelWidth;
         labelWidth = 5 + completeNumberOfThreadsString.length() * 13;
 
-        drawOverallCircle();
+        drawOuterCircle();
         drawInnerCircle();
         for (int i = 0; i < threadArtifactClusters.size(); i++)
         {

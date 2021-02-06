@@ -89,6 +89,31 @@ public final class VisualizationUtil
         graphics.setComposite(composite);
     }
 
+    public static void drawTransparentBackground(@NotNull final Graphics2D graphics, final int width, final int height)
+    {
+        final Composite composite = graphics.getComposite();
+        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+        graphics.fillRect(0, 0, width, height);
+        graphics.setComposite(composite);
+    }
+
+    public static void clearAndDrawTransparentBackground(@NotNull final Graphics2D graphics, final int width, final int height)
+    {
+        final Composite composite = graphics.getComposite();
+        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0f)); // Will fix the problem that on repainting, the old graphics paintings
+        // remain and the paintings overlap.
+        graphics.fillRect(0, 0, width, height);
+        graphics.setComposite(composite);
+    }
+
+    public static void drawTransparentBackground(@NotNull final Graphics2D graphics, final int width, final int height, final int alphaComposite)
+    {
+        final Composite composite = graphics.getComposite();
+        graphics.setComposite(AlphaComposite.getInstance(alphaComposite, 0f));
+        graphics.fillRect(0, 0, width, height);
+        graphics.setComposite(composite);
+    }
+
     public static void drawRectangle(@NotNull Graphics graphics, @NotNull Rectangle rectangle)
     {
         graphics.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
