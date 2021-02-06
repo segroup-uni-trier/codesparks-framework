@@ -117,10 +117,14 @@ public abstract class AThreadRadar extends JPanel
     protected void drawHoverCluster(final int markedStartAngle, final int markedAngle, final long numberOfFilteredArtifactThreads, final int markedRadius)
     {
         final Stroke defaultStroke = g2d.getStroke();
+        //noinspection UseJBColor
+        final Color surroundColor = new Color(203, 119, 48);
+        final JBColor jbSurroundColor = new JBColor(surroundColor, surroundColor);
+
         if (markedStartAngle != -1 && markedAngle != -360 && numberOfFilteredArtifactThreads > 0)
         {
-            g2d.setColor(new JBColor(new Color(203, 119, 48), new Color(203, 119, 48)));
-            Stroke stroke = new BasicStroke(2);
+            g2d.setColor(jbSurroundColor);
+            final Stroke stroke = new BasicStroke(2);
             g2d.setStroke(stroke);
 
             int x1 = centerPoint;
@@ -139,13 +143,13 @@ public abstract class AThreadRadar extends JPanel
 
         if (markedAngle == -360)
         {
-            final Stroke oldStroke = g2d.getStroke();
-            Stroke stroke = new BasicStroke(3);
+            final Stroke formerStroke = g2d.getStroke();
+            final Stroke stroke = new BasicStroke(3);
             g2d.setStroke(stroke);
-            g2d.setColor(new JBColor(new Color(203, 119, 48), new Color(203, 119, 48)));
+            g2d.setColor(jbSurroundColor);
             g2d.drawOval((centerPoint - (markedRadius / 2) + 1), (centerPoint - (markedRadius / 2) + 1), markedRadius - 3,
                     markedRadius - 3);
-            g2d.setStroke(oldStroke);
+            g2d.setStroke(formerStroke);
         }
 
         g2d.setColor(JBColor.BLACK);

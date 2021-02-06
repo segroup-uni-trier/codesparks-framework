@@ -66,39 +66,49 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
         clusterHover.onExit();
     }
 
-    private boolean isPointInArc(int x, int y, ThreadArtifactCluster cluster)
+    private boolean isPointInArc(int x, int y, final ThreadArtifactCluster cluster)
     {
+        final VisualThreadClusterProperties visualThreadClusterProperties = VisualThreadClusterPropertiesManager.getInstance().getProperties(cluster);
+        final RadialVisualThreadClusterProperties radialVisualThreadClusterProperties = (RadialVisualThreadClusterProperties) visualThreadClusterProperties;
+
+        final double arcAngle = radialVisualThreadClusterProperties.getArcAngle();
+        if (arcAngle == 0)
+        {
+            return false;
+        }
+
         x -= (visualizationWrapper.getWidth() / 2 - ThreadRadarConstants.FRAME_ZOOMED / 2);
         x = frameSize - x;
         y = frameSize - y;
-        double mousePointerAngle = Math.abs(Math.toDegrees(Math.atan2(y - frameSize / 2D, x - frameSize / 2D)) - 180);
-        final VisualThreadClusterProperties props =
-                VisualThreadClusterPropertiesManager.getInstance().getProperties(cluster);
-        RadialVisualThreadClusterProperties properties = (RadialVisualThreadClusterProperties) props;
+
         double distance = Math.sqrt(Math.pow(frameSize / 2D - x, 2) + Math.pow(frameSize / 2D - y, 2));
 
-        double discreteRuntimeRatio;
-        if (properties.getNumericalMetricRationSum() <= 0.33)
-        {
-            discreteRuntimeRatio = 0.33;
-        } else if (properties.getNumericalMetricRationSum() > 0.33 && properties.getNumericalMetricRationSum() <= 0.66)
-        {
-            discreteRuntimeRatio = 0.66;
-        } else
-        {
-            discreteRuntimeRatio = 0.97f;
-        }
-
-        final double arcAngle = properties.getArcAngle();
-        final double startAngle = properties.getArcStartAngle();
-        final double endAngle = (startAngle + properties.getArcAngle()) % 360;
-
-        if (arcAngle == 0)
-            return false;
+        // For better selectability of the circle segments, this is set to 0.97f, i.e. as if the segment has full radius even that it actually has .33f or .66f
+        // radius.
+        final double discreteRuntimeRatio = .97d;
+        // In order to change that behavior and with that only trigger, when the mouse pointer is really in the visible filled circle segment, uncomment the
+        // following lines
+//        double discreteRuntimeRatio;
+//        if (radialVisualThreadClusterProperties.getNumericalMetricRationSum() <= .33)
+//        {
+//            discreteRuntimeRatio = .33d;
+//        } else if (radialVisualThreadClusterProperties.getNumericalMetricRationSum() > .33 && radialVisualThreadClusterProperties
+//        .getNumericalMetricRationSum() <= .66)
+//        {
+//            discreteRuntimeRatio = .66d;
+//        } else
+//        {
+//            discreteRuntimeRatio = .97d;
+//        }
 
         if (distance > (frameSize / 2D) * discreteRuntimeRatio)
+        {
             return false;
+        }
 
+        final double startAngle = radialVisualThreadClusterProperties.getArcStartAngle();
+        final double endAngle = (startAngle + radialVisualThreadClusterProperties.getArcAngle()) % 360;
+        final double mousePointerAngle = Math.abs(Math.toDegrees(Math.atan2(y - frameSize / 2D, x - frameSize / 2D)) - 180);
         if (startAngle >= endAngle)
         {
             if (startAngle <= mousePointerAngle && mousePointerAngle <= 360 || 0 <= mousePointerAngle && mousePointerAngle <= endAngle)
