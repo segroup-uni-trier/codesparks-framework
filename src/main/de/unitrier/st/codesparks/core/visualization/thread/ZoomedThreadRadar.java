@@ -134,13 +134,16 @@ public class ZoomedThreadRadar extends AThreadRadar
         final float fontSize = 16f;
 
         drawHoverCluster(markedStartAngle, markedAngle, numberOfSelectedArtifactThreads, markedRadius);
-        drawNumberOfThreadsLabel(labelWidth, fontSize, numberOfSelectedArtifactThreads, yOffsetForTotalThreadsText);
-        drawNumberOfDifferentThreadTypesLabel(labelWidth, fontSize,
-                ThreadVisualizationUtil.getNumberOfSelectedThreadTypes(artifact, selectedCodeSparksThreads),
-                yOffsetForDifferentClassesText);
+//        drawNumberOfThreadsLabel(labelWidth, fontSize, numberOfSelectedArtifactThreads, yOffsetForTotalThreadsText);
+        // Draw number of threads pedestal at the bottom
+        drawPedestal(labelWidth, false, fontSize, numberOfSelectedArtifactThreads, yOffsetForTotalThreadsText);
+        // Draw number of different thread types pedestal at the top
+        final int numberOfDifferentThreadTypes = ThreadVisualizationUtil.getNumberOfSelectedThreadTypes(artifact, selectedCodeSparksThreads);
+        drawPedestal(labelWidth, true, fontSize, numberOfDifferentThreadTypes, yOffsetForDifferentClassesText);
+//        drawNumberOfDifferentThreadTypesLabel(labelWidth, fontSize, numberOfDifferentThreadTypes, yOffsetForDifferentClassesText);
     }
 
-    void onHoverCluster(int clusterId)
+    void onHoverCluster(final int clusterId)
     {
         hoveredCluster = clusterId;
         repaint();

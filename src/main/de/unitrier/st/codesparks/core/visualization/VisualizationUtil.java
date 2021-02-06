@@ -60,9 +60,12 @@ public final class VisualizationUtil
 
     public static Color getBackgroundMetricColor(Color performanceColor, float alpha)
     {
-        return new JBColor(new Color(performanceColor.getRed() / 255f, performanceColor.getGreen() / 255f,
-                performanceColor.getBlue()
-                        / 255f, alpha), new Color(0));
+        //noinspection UseJBColor
+        final Color color = new Color(performanceColor.getRed() / 255f
+                , performanceColor.getGreen() / 255f
+                , performanceColor.getBlue() / 255f
+                , alpha);
+        return new JBColor(color, color);
     }
 
     public static Color getTextColor(Color performanceColor)

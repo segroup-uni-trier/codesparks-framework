@@ -410,7 +410,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
     }
 
     @Override
-    public void onHover(ThreadArtifactCluster cluster)
+    public void onHover(final ThreadArtifactCluster cluster)
     {
         zoomedThreadRadar.onHoverCluster(cluster.getId());
         updateHoverLabels(cluster);

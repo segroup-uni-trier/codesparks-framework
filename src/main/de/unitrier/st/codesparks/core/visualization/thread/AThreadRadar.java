@@ -31,6 +31,7 @@ public abstract class AThreadRadar extends JPanel
     private int labelDistance = 0;
     private int labelRadius = 0;
 
+    @SuppressWarnings("SameParameterValue")
     protected void setUpVisualizationParameter(final int diameter, final int panelWidthOffset)
     {
         circleFrameSize = diameter;
@@ -105,19 +106,17 @@ public abstract class AThreadRadar extends JPanel
         g2d.setColor(JBColor.DARK_GRAY);
     }
 
-    protected void drawArcForSumAndAvg(Color color, int radiusSum, int radius, int startAngle, int angle)
+    protected void drawArcForSumAndAvg(final Color color, final int radiusSum, final int radius, final int startAngle, final int angle)
     {
         g2d.setColor(VisualizationUtil.getBackgroundMetricColor(color, .25f));
-        g2d.fillArc(centerPoint - (radiusSum / 2), centerPoint - (radiusSum / 2), radiusSum, radiusSum,
-                startAngle, angle);
+        g2d.fillArc(centerPoint - (radiusSum / 2), centerPoint - (radiusSum / 2), radiusSum, radiusSum, startAngle, angle);
         g2d.setColor(color);
-        g2d.fillArc(centerPoint - (radius / 2), centerPoint - (radius / 2), radius, radius, startAngle,
-                angle);
+        g2d.fillArc(centerPoint - (radius / 2), centerPoint - (radius / 2), radius, radius, startAngle, angle);
     }
 
-    protected void drawHoverCluster(int markedStartAngle, int markedAngle, long numberOfFilteredArtifactThreads, int markedRadius)
+    protected void drawHoverCluster(final int markedStartAngle, final int markedAngle, final long numberOfFilteredArtifactThreads, final int markedRadius)
     {
-        Stroke defaultStroke = g2d.getStroke();
+        final Stroke defaultStroke = g2d.getStroke();
         if (markedStartAngle != -1 && markedAngle != -360 && numberOfFilteredArtifactThreads > 0)
         {
             g2d.setColor(new JBColor(new Color(203, 119, 48), new Color(203, 119, 48)));
@@ -152,27 +151,28 @@ public abstract class AThreadRadar extends JPanel
         g2d.setColor(JBColor.BLACK);
     }
 
-    protected void drawNumberOfThreadsLabel(
-            final int labelWidth
-            , final float fontSize
-            , final long numberOfFilteredArtifactThreads
-            , final int yOffsetForLabelText
-    )
-    {
-        drawPedestal(labelWidth, false, fontSize, numberOfFilteredArtifactThreads, yOffsetForLabelText);
-    }
+//    protected void drawNumberOfThreadsLabel(
+//            final int labelWidth
+//            , final float fontSize
+//            , final long numberOfFilteredArtifactThreads
+//            , final int yOffsetForLabelText
+//    )
+//    {
+//        drawPedestal(labelWidth, false, fontSize, numberOfFilteredArtifactThreads, yOffsetForLabelText);
+//    }
+//
+//    protected void drawNumberOfDifferentThreadTypesLabel(
+//            final int labelWidth
+//            , final float fontSize
+//            , final long numberOfFilteredArtifactThreads
+//            , final int yOffsetForLabelText
+//    )
+//    {
+//        drawPedestal(labelWidth, true, fontSize, numberOfFilteredArtifactThreads, yOffsetForLabelText);
+//    }
 
-    protected void drawNumberOfDifferentThreadTypesLabel(
-            final int labelWidth
-            , final float fontSize
-            , final long numberOfFilteredArtifactThreads
-            , final int yOffsetForLabelText
-    )
-    {
-        drawPedestal(labelWidth, true, fontSize, numberOfFilteredArtifactThreads, yOffsetForLabelText);
-    }
-
-    private void drawPedestal(int labelWidth, boolean top, float fontSize, long number, int offset)
+    @SuppressWarnings("SameParameterValue")
+    protected void drawPedestal(final int labelWidth, final boolean top, final float fontSize, final long number, final int offset)
     {
         final int factor = top ? -1 : 1;
         final int adjustment = top ? -1 : 0;
