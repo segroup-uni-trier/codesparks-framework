@@ -27,7 +27,7 @@ public class ArtifactTrieIntersectionTest
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
 
         final ArtifactTrie manuallyConstructedIntersectingTrie = ArtifactTrieTestUtil.constructIntersectingTrieManually();
-        manuallyConstructedIntersectingTrie.export(new ArtifactTrieDotExportStrategy("testresources/ManuallyConstructedIntersectingTrie.dot"));
+        manuallyConstructedIntersectingTrie.export(new ArtifactTrieDotExportStrategy("testresources/manual-intersection-t1-t2.dot"));
 
         final int nrNodesOfIntersectingTrie = manuallyConstructedIntersectingTrie.vertexSet().size();
 
@@ -39,7 +39,7 @@ public class ArtifactTrieIntersectionTest
 
         Assert.assertNotNull(computedIntersectingTrie);
 
-        computedIntersectingTrie.export(new ArtifactTrieDotExportStrategy("testresources/ComputedIntersectingTrie.dot"));
+        computedIntersectingTrie.export(new ArtifactTrieDotExportStrategy("testresources/computed-intersection-t1-t2.dot"));
 
         Assert.assertEquals(manuallyConstructedIntersectingTrie, computedIntersectingTrie);
     }
@@ -49,7 +49,7 @@ public class ArtifactTrieIntersectionTest
     {
         final ArtifactTrie t3 = ArtifactTrieTestUtil.constructThirdTrieManually();
 
-        t3.export(new ArtifactTrieDotExportStrategy("testresources/manually-constructed-t3.dot"));
+        t3.export(new ArtifactTrieDotExportStrategy("testresources/manual-constructed-t3.dot"));
 
         final ArtifactTrie computedIntersectingTrie = ArtifactTrieUtilKt.intersection(t3, t3, "a");
 
@@ -61,7 +61,7 @@ public class ArtifactTrieIntersectionTest
 
         manualIntersecting.export(new ArtifactTrieDotExportStrategy("testresources/manual-intersection-t3-t3.dot"));
 
-        Assert.assertEquals(computedIntersectingTrie, manualIntersecting);
+        Assert.assertEquals(manualIntersecting, computedIntersectingTrie);
     }
 
     @Test

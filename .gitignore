@@ -6,6 +6,8 @@
 build
 lib
 out
+testresources/*.dot
+testresources/*.pdf
 
 # Compiled class file
 *.class
