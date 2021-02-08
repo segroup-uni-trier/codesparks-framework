@@ -70,7 +70,7 @@ fun intersection(t1: ArtifactTrie, t2: ArtifactTrie, artifactIdentifier: String)
     if (t1Root != t2Root) {
         return null
     }
-    val intersection = ArtifactTrie(ArtifactTrieEdge::class.java)
+    val intersection = ArtifactTrie(ArtifactTrieEdge::class.java, false)
     dfs(t1, t1Root, t2, t2Root, intersection, artifactIdentifier)
     return intersection
 }

@@ -23,11 +23,19 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
     private static final String rootLabel = "root";
     private static final int rootId = rootLabel.hashCode();
 
-    public ArtifactTrie(final Class<? extends ArtifactTrieEdge> edgeClass)
+    public ArtifactTrie(final Class<? extends ArtifactTrieEdge> edgeClass, final boolean withRoot)
     {
         super(edgeClass);
-        root = new ArtifactTrieNode(rootId, rootLabel);
-        super.addVertex(root);
+        if (withRoot)
+        {
+            root = new ArtifactTrieNode(rootId, rootLabel);
+            super.addVertex(root);
+        }
+    }
+
+    public ArtifactTrie(final Class<? extends ArtifactTrieEdge> edgeClass)
+    {
+        this(edgeClass, true);
     }
 
     public ArtifactTrieNode addVertex(final int id, final String label)

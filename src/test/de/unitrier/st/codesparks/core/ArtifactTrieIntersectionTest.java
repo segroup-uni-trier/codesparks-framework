@@ -7,10 +7,14 @@ package de.unitrier.st.codesparks.core;
 import de.unitrier.st.codesparks.core.data.ArtifactTrie;
 import de.unitrier.st.codesparks.core.data.ArtifactTrieDotExportStrategy;
 import de.unitrier.st.codesparks.core.data.ArtifactTrieEdge;
+
+
 import de.unitrier.st.codesparks.core.data.ArtifactTrieUtilKt;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+
 
 public class ArtifactTrieIntersectionTest
 {

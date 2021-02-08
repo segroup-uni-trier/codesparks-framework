@@ -8,7 +8,6 @@
 //import com.google.common.collect.Multisets;
 //import com.google.common.collect.Sets;
 //
-//import java.util.Optional;
 //import java.util.Set;
 //
 //public final class ArtifactTrieUtil
@@ -46,7 +45,7 @@
 //        return ret;
 //    }
 //
-//    private static void dfs(
+//    private static int dfs(
 //            final ArtifactTrie t1
 //            , final ArtifactTrieNode t1Node
 //            , final ArtifactTrie t2
@@ -57,32 +56,32 @@
 //    {
 //        if (!t1Node.equals(t2Node))
 //        {
-//            return;
-//        }
-//        intersection.addVertex(t1Node.getIdentifier(), t1Node.getLabel());
-//
-//        final Set<ArtifactTrieEdge> artifactTrieEdges = t1.incomingEdgesOf(t1Node);
-//        final Optional<ArtifactTrieEdge> first = artifactTrieEdges.stream().findFirst(); // In trees there is only one parent
-//        if (first.isPresent())
-//        {  // Has a parent, so add that edge to the intersecting trie
-//            final ArtifactTrieEdge artifactTrieEdge = first.get();
-//            final ArtifactTrieNode source = t1.getEdgeSource(artifactTrieEdge);
-//            intersection.addEdge(source, t1Node, new ArtifactTrieEdge(source, t1Node));
+//            return 0;
 //        }
 //        if (t1Node.getLabel().equals(artifactIdentifier))
 //        {
-//            return;
+//            return 1;
 //        }
+//
 //        final Set<ArtifactTrieEdge> outEdgesOfT1 = t1.outgoingEdgesOf(t1Node);
+//        int ret = 0;
 //        for (final ArtifactTrieEdge artifactTrieEdge : outEdgesOfT1)
 //        {
 //            if (t2.containsEdge(artifactTrieEdge))
 //            {
 //                final ArtifactTrieNode targetT1 = artifactTrieEdge.getTarget();
 //                final ArtifactTrieNode targetT2 = t2.getEdgeTarget(artifactTrieEdge);
-//                dfs(t1, targetT1, t2, targetT2, intersection, artifactIdentifier);
+//                final int childValue = dfs(t1, targetT1, t2, targetT2, intersection, artifactIdentifier);
+//                if (childValue > 0)
+//                {
+//                    ret = 1;
+//                    intersection.addVertex(t1Node.getId(), t1Node.getLabel());
+//                    intersection.addVertex(targetT1.getId(), targetT1.getLabel());
+//                    intersection.addEdge(t1Node, targetT1, new ArtifactTrieEdge(t1Node, targetT1));
+//                }
 //            }
 //        }
+//        return ret;
 //    }
 //
 //    public static ArtifactTrie intersection(final ArtifactTrie t1, final ArtifactTrie t2, final String artifactIdentifier)
@@ -94,7 +93,7 @@
 //            return null;
 //        }
 //
-//        ArtifactTrie intersection = new ArtifactTrie(ArtifactTrieEdge.class);
+//        ArtifactTrie intersection = new ArtifactTrie(ArtifactTrieEdge.class, false);
 //
 //        dfs(t1, t1Root, t2, t2Root, intersection, artifactIdentifier);
 //
