@@ -163,6 +163,66 @@ public final class ArtifactTrieTestUtil
         return profilingArtifactTrie;
     }
 
+    public static ArtifactTrie constructThirdTrieManually()
+    {
+        ArtifactTrie profilingArtifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
+        // Add first stack trace
+        ArtifactTrieNode root = profilingArtifactTrie.addVertex(rootId, rootLabel);
+        ArtifactTrieNode rootA = profilingArtifactTrie.addVertex("roota".hashCode(), "a");
+        profilingArtifactTrie.addEdge(root, rootA, new ArtifactTrieEdge(root, rootA));
+        ArtifactTrieNode rootAB = profilingArtifactTrie.addVertex("rootab".hashCode(), "b");
+        profilingArtifactTrie.addEdge(rootA, rootAB, new ArtifactTrieEdge(rootA, rootAB));
+        ArtifactTrieNode rootABC = profilingArtifactTrie.addVertex("rootabc".hashCode(), "c");
+        profilingArtifactTrie.addEdge(rootAB, rootABC, new ArtifactTrieEdge(rootAB, rootABC));
+        // add second stack trace
+        root = profilingArtifactTrie.addVertex(rootId, rootLabel);
+        rootA = profilingArtifactTrie.addVertex("roota".hashCode(), "a");
+        profilingArtifactTrie.addEdge(root, rootA, new ArtifactTrieEdge(root, rootA));
+        rootAB = profilingArtifactTrie.addVertex("rootab".hashCode(), "b");
+        profilingArtifactTrie.addEdge(rootA, rootAB, new ArtifactTrieEdge(rootA, rootAB));
+        // add third stack trace
+        root = profilingArtifactTrie.addVertex(rootId, rootLabel);
+        rootA = profilingArtifactTrie.addVertex("roota".hashCode(), "a");
+        profilingArtifactTrie.addEdge(root, rootA, new ArtifactTrieEdge(root, rootA));
+        // add fourth stack trace
+        root = profilingArtifactTrie.addVertex(rootId, rootLabel);
+        rootA = profilingArtifactTrie.addVertex("roota".hashCode(), "a");
+        profilingArtifactTrie.addEdge(root, rootA, new ArtifactTrieEdge(root, rootA));
+        rootAB = profilingArtifactTrie.addVertex("rootab".hashCode(), "b");
+        profilingArtifactTrie.addEdge(rootA, rootAB, new ArtifactTrieEdge(rootA, rootAB));
+        ArtifactTrieNode rootABA = profilingArtifactTrie.addVertex("rootaba".hashCode(), "a");
+        profilingArtifactTrie.addEdge(rootAB, rootABA, new ArtifactTrieEdge(rootAB, rootABA));
+        // add fifth stack trace
+        root = profilingArtifactTrie.addVertex(rootId, rootLabel);
+        rootA = profilingArtifactTrie.addVertex("roota".hashCode(), "a");
+        profilingArtifactTrie.addEdge(root, rootA, new ArtifactTrieEdge(root, rootA));
+        rootAB = profilingArtifactTrie.addVertex("rootab".hashCode(), "b");
+        profilingArtifactTrie.addEdge(rootA, rootAB, new ArtifactTrieEdge(rootA, rootAB));
+        rootABA = profilingArtifactTrie.addVertex("rootaba".hashCode(), "a");
+        profilingArtifactTrie.addEdge(rootAB, rootABA, new ArtifactTrieEdge(rootAB, rootABA));
+        // add sixth stack trace
+        root = profilingArtifactTrie.addVertex(rootId, rootLabel);
+        rootA = profilingArtifactTrie.addVertex("roota".hashCode(), "a");
+        profilingArtifactTrie.addEdge(root, rootA, new ArtifactTrieEdge(root, rootA));
+        ArtifactTrieNode rootAA = profilingArtifactTrie.addVertex("rootaa".hashCode(), "a");
+        profilingArtifactTrie.addEdge(rootA, rootAA, new ArtifactTrieEdge(rootA, rootAA));
+        ArtifactTrieNode rootAAB = profilingArtifactTrie.addVertex("rootaab".hashCode(), "b");
+        profilingArtifactTrie.addEdge(rootAA, rootAAB, new ArtifactTrieEdge(rootAA, rootAAB));
+        // add seventh stack trace
+        root = profilingArtifactTrie.addVertex(rootId, rootLabel);
+        ArtifactTrieNode rootB = profilingArtifactTrie.addVertex("rootb".hashCode(), "b");
+        profilingArtifactTrie.addEdge(root, rootB, new ArtifactTrieEdge(root, rootB));
+        ArtifactTrieNode rootBA = profilingArtifactTrie.addVertex("rootba".hashCode(), "a");
+        profilingArtifactTrie.addEdge(rootB, rootBA, new ArtifactTrieEdge(rootB, rootBA));
+        // add eighth stack trace
+        root = profilingArtifactTrie.addVertex(rootId, rootLabel);
+        rootB = profilingArtifactTrie.addVertex("rootb".hashCode(), "b");
+        profilingArtifactTrie.addEdge(root, rootB, new ArtifactTrieEdge(root, rootB));
+        ArtifactTrieNode rootBC = profilingArtifactTrie.addVertex("rootbc".hashCode(), "c");
+        profilingArtifactTrie.addEdge(rootB, rootBC, new ArtifactTrieEdge(rootB, rootBC));
+        return profilingArtifactTrie;
+    }
+
     public static ArtifactTrie constructIntersectingTrieManually()
     {
         ArtifactTrie profilingArtifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
@@ -179,6 +239,20 @@ public final class ArtifactTrieTestUtil
         profilingArtifactTrie.addEdge(rootA, rootAA, new ArtifactTrieEdge(rootA, rootAA));
         ArtifactTrieNode rootAAB = profilingArtifactTrie.addVertex("rootaab".hashCode(), "b");
         profilingArtifactTrie.addEdge(rootAA, rootAAB, new ArtifactTrieEdge(rootAA, rootAAB));
+
+        return profilingArtifactTrie;
+    }
+
+    public static ArtifactTrie constructIntersectingThirdTrieManually()
+    {
+        ArtifactTrie profilingArtifactTrie = new ArtifactTrie(ArtifactTrieEdge.class);
+        ArtifactTrieNode root = profilingArtifactTrie.addVertex(rootId, rootLabel);
+        ArtifactTrieNode rootB = profilingArtifactTrie.addVertex("rootb".hashCode(), "b");
+        profilingArtifactTrie.addEdge(root, rootB, new ArtifactTrieEdge(root, rootB));
+        ArtifactTrieNode rootA = profilingArtifactTrie.addVertex("roota".hashCode(), "a");
+        profilingArtifactTrie.addEdge(root, rootA, new ArtifactTrieEdge(root, rootA));
+        ArtifactTrieNode rootBA = profilingArtifactTrie.addVertex("rootba".hashCode(), "a");
+        profilingArtifactTrie.addEdge(rootB, rootBA, new ArtifactTrieEdge(rootA, rootBA));
 
         return profilingArtifactTrie;
     }

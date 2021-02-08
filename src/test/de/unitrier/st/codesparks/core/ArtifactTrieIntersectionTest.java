@@ -45,6 +45,26 @@ public class ArtifactTrieIntersectionTest
     }
 
     @Test
+    public void testArtifactTrieIntersectionT3ToT3()
+    {
+        final ArtifactTrie t3 = ArtifactTrieTestUtil.constructThirdTrieManually();
+
+        t3.export(new ArtifactTrieDotExportStrategy("testresources/manually-constructed-t3.dot"));
+
+        final ArtifactTrie computedIntersectingTrie = ArtifactTrieUtilKt.intersection(t3, t3, "a");
+
+        Assert.assertNotNull(computedIntersectingTrie);
+
+        computedIntersectingTrie.export(new ArtifactTrieDotExportStrategy("testresources/computed-intersection-t3-t3.dot"));
+
+        final ArtifactTrie manualIntersecting = ArtifactTrieTestUtil.constructIntersectingThirdTrieManually();
+
+        manualIntersecting.export(new ArtifactTrieDotExportStrategy("testresources/manual-intersection-t3-t3.dot"));
+
+        Assert.assertEquals(computedIntersectingTrie, manualIntersecting);
+    }
+
+    @Test
     public void testArtifactTrieIntersectionCommutativity()
     {
         final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();

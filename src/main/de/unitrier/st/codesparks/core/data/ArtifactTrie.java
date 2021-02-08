@@ -38,9 +38,12 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         { // Only create the node if it's really necessary.
             final ArtifactTrieNode node = new ArtifactTrieNode(id, label);
             addVertex(node);
+            node.inc();
             return node;
         }
-        return first.get();
+        final ArtifactTrieNode node = first.get();
+        node.inc();
+        return node;
     }
 
     @Override
@@ -58,7 +61,6 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         return b;
     }
 
-    @SuppressWarnings("unused")
     public ArtifactTrieNode getRoot()
     {
         return root;
@@ -71,10 +73,19 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         final StringBuilder strb = new StringBuilder(rootLabel);
         synchronized (trieLock)
         {
-            ArtifactTrieNode current = root != null ? root : addVertex(rootId, rootLabel);//addVertex(rootId, rootLabel);
+            ArtifactTrieNode current;
+            final ArtifactTrieNode root = getRoot();
+            if (root == null)
+            {
+                current = addVertex(rootId, rootLabel);
+                this.root = current;
+            } else
+            {
+                current = root;
+                current.inc();
+            }
             for (int i = methods.size() - 1; i > -1; i--)
             {
-                current.inc();
                 final Element method = methods.get(i);
                 String methodName = method.getText();
                 methodName = methodName.replaceAll("[\n ]", "").trim();
@@ -87,7 +98,6 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
                 this.addEdge(current, node, edge);
                 current = node;
             }
-            current.inc(); // The leaf node has to be incremented as well
         }
     }
 

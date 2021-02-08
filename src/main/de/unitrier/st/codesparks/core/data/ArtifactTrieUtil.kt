@@ -37,33 +37,31 @@ private fun dfs(
         , t2Node: ArtifactTrieNode
         , intersection: ArtifactTrie
         , artifactIdentifier: String
-) {
+): Int {
     if (t1Node != t2Node) {
-        return
-    }
-    intersection.addVertex(t1Node.id, t1Node.label)
-
-    // Has a parent, so add that edge to the intersecting trie
-    val artifactTrieEdges = t1.incomingEdgesOf(t1Node)
-    val first = artifactTrieEdges.stream().findFirst() // In trees there is only one parent
-    if (first.isPresent) {
-        val artifactTrieEdge = first.get()
-        val source = t1.getEdgeSource(artifactTrieEdge)
-        //            intersection.addVertex(source.getIdentifier(), source.getLabel());
-        intersection.addEdge(source, t1Node, ArtifactTrieEdge(source, t1Node))
+        return 0
     }
     if (t1Node.label == artifactIdentifier) {
-        return
+        return 1
     }
+
     val outEdgesOfT1 = t1.outgoingEdgesOf(t1Node)
-    //        final Set<ArtifactTrieEdge> outEdgesOfT2 = t2.outgoingEdgesOf(t2Node);
+    var ret = 0
     for (artifactTrieEdge in outEdgesOfT1) {
         if (t2.containsEdge(artifactTrieEdge)) {
             val targetT1 = artifactTrieEdge.target
             val targetT2 = t2.getEdgeTarget(artifactTrieEdge)
-            dfs(t1, targetT1, t2, targetT2, intersection, artifactIdentifier)
+            val childValue = dfs(t1, targetT1, t2, targetT2, intersection, artifactIdentifier)
+            if (childValue > 0)
+            {
+                ret = 1
+                intersection.addVertex(t1Node.id, t1Node.label)
+                intersection.addVertex(targetT1.id, targetT1.label)
+                intersection.addEdge(t1Node, targetT1, ArtifactTrieEdge(t1Node, targetT1))
+            }
         }
     }
+    return ret
 }
 
 fun intersection(t1: ArtifactTrie, t2: ArtifactTrie, artifactIdentifier: String): ArtifactTrie? {
