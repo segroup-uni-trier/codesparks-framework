@@ -31,12 +31,7 @@ fun distance(t1: ArtifactTrie, t2: ArtifactTrie, artifactIdentifier: String): Do
 
 
 private fun dfs(
-        t1: ArtifactTrie
-        , t1Node: ArtifactTrieNode
-        , t2: ArtifactTrie
-        , t2Node: ArtifactTrieNode
-        , intersection: ArtifactTrie
-        , artifactIdentifier: String
+        t1: ArtifactTrie, t1Node: ArtifactTrieNode, t2: ArtifactTrie, t2Node: ArtifactTrieNode, intersection: ArtifactTrie, artifactIdentifier: String
 ): Int {
     if (t1Node != t2Node) {
         return 0
@@ -52,8 +47,7 @@ private fun dfs(
             val targetT1 = artifactTrieEdge.target
             val targetT2 = t2.getEdgeTarget(artifactTrieEdge)
             val childValue = dfs(t1, targetT1, t2, targetT2, intersection, artifactIdentifier)
-            if (childValue > 0)
-            {
+            if (childValue > 0) {
                 ret = 1
                 intersection.addVertex(t1Node.id, t1Node.label)
                 intersection.addVertex(targetT1.id, targetT1.label)
