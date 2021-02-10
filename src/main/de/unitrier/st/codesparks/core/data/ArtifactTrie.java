@@ -15,6 +15,7 @@ import org.jgrapht.util.TypeUtil;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, ArtifactTrieEdge>
@@ -76,9 +77,12 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
 
     private final Object trieLock = new Object();
 
-    public void add(final List<Element> methods)
+    public void add(final List<Element> methods
+            , final Function<Element, String> methodElementToIdFunc
+            , final Function<Element, String> methodElementToLabelFunc
+    )
     {
-        final StringBuilder strb = new StringBuilder(rootLabel);
+        final StringBuilder pathIdStringBuilder = new StringBuilder(rootLabel);
         synchronized (trieLock)
         {
             ArtifactTrieNode current;
@@ -94,14 +98,16 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
             }
             for (int i = methods.size() - 1; i > -1; i--)
             {
-                final Element method = methods.get(i);
-                String methodName = method.getText();
-                methodName = methodName.replaceAll("[\n ]", "").trim();
-                strb.append(methodName);
-                String rawIdentifier = strb.toString();
-                rawIdentifier = rawIdentifier.replaceAll("[<>$]", "");
-                final int id = rawIdentifier.hashCode();
-                final ArtifactTrieNode node = addVertex(id, methodName);
+                final Element methodElement = methods.get(i);
+
+                String currentMethodIdentifier = methodElementToIdFunc.apply(methodElement);
+                currentMethodIdentifier = currentMethodIdentifier.replaceAll("[\n <>$]", "").trim();
+                pathIdStringBuilder.append(currentMethodIdentifier);
+                final String pathIdentifier = pathIdStringBuilder.toString();
+                final int nodeId = pathIdentifier.hashCode();
+                String currentMethodLabel = methodElementToLabelFunc.apply(methodElement);
+                currentMethodLabel = currentMethodLabel.replaceAll("[\n ]", "").trim();
+                final ArtifactTrieNode node = addVertex(nodeId, currentMethodLabel);
                 final ArtifactTrieEdge edge = new ArtifactTrieEdge(current, node);
                 this.addEdge(current, node, edge);
                 current = node;
