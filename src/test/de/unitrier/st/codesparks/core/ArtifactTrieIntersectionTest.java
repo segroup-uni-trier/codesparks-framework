@@ -9,7 +9,7 @@ import de.unitrier.st.codesparks.core.data.ArtifactTrieDotExportStrategy;
 import de.unitrier.st.codesparks.core.data.ArtifactTrieEdge;
 
 
-import de.unitrier.st.codesparks.core.data.ArtifactTrieUtilKt;
+import de.unitrier.st.codesparks.core.data.ArtifactTrieUtil;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,6 +22,12 @@ public class ArtifactTrieIntersectionTest
     {
 
     }
+
+    private static final String a = "java.lang.Object.a()";
+    private static final String b = "java.lang.Object.b()";
+    private static final String c = "java.lang.Object.c()";
+    private static final String d = "java.lang.Object.d()";
+
 
     @Test
     public void testArtifactTrieIntersection()
@@ -36,9 +42,7 @@ public class ArtifactTrieIntersectionTest
 
         Assert.assertEquals(6, nrNodesOfIntersectingTrie);
 
-        final String artifactIdentifier = "b";
-
-        final ArtifactTrie computedIntersectingTrie = ArtifactTrieUtilKt.intersection(t1, t2, artifactIdentifier);
+        final ArtifactTrie computedIntersectingTrie = ArtifactTrieUtil.intersection(t1, t2, b);
 
         Assert.assertNotNull(computedIntersectingTrie);
 
@@ -54,7 +58,7 @@ public class ArtifactTrieIntersectionTest
 
         t3.export(new ArtifactTrieDotExportStrategy("testresources/manual-constructed-t3.dot"));
 
-        final ArtifactTrie computedIntersectingTrie = ArtifactTrieUtilKt.intersection(t3, t3, "a");
+        final ArtifactTrie computedIntersectingTrie = ArtifactTrieUtil.intersection(t3, t3, a);
 
         Assert.assertNotNull(computedIntersectingTrie);
 
@@ -73,11 +77,9 @@ public class ArtifactTrieIntersectionTest
         final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
 
-        final String artifactIdentifier = "b";
+        final ArtifactTrie intersection = ArtifactTrieUtil.intersection(t1, t2, b);
 
-        final ArtifactTrie intersection = ArtifactTrieUtilKt.intersection(t1, t2, artifactIdentifier);
-
-        final ArtifactTrie intersection1 = ArtifactTrieUtilKt.intersection(t2, t1, artifactIdentifier);
+        final ArtifactTrie intersection1 = ArtifactTrieUtil.intersection(t2, t1, b);
 
         Assert.assertEquals(intersection, intersection1);
     }
@@ -86,8 +88,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtree()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
-        final String artifactIdentifier = "b";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(b);
         Assert.assertEquals(6, numberOfNodesTill);
     }
 
@@ -95,8 +96,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtree2()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
-        final String artifactIdentifier = "a";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(a);
         Assert.assertEquals(6, numberOfNodesTill);
     }
 
@@ -104,8 +104,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtree3()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
-        final String artifactIdentifier = "c";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(c);
         Assert.assertEquals(6, numberOfNodesTill);
     }
 
@@ -122,8 +121,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtree5()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
-        final String artifactIdentifier = "b";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(b);
         Assert.assertEquals(6, numberOfNodesTill);
     }
 
@@ -131,8 +129,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtree6()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
-        final String artifactIdentifier = "a";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(a);
         Assert.assertEquals(2, numberOfNodesTill);
     }
 
@@ -140,8 +137,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtree7()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
-        final String artifactIdentifier = "c";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(c);
         Assert.assertEquals(16, numberOfNodesTill);
     }
 
@@ -149,8 +145,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtree8()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
-        final String artifactIdentifier = "d";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtree(d);
         Assert.assertEquals(4, numberOfNodesTill);
     }
 
@@ -177,8 +172,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtreeIncludingOtherPaths()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
-        final String artifactIdentifier = "b";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(b);
         Assert.assertEquals(6, numberOfNodesTill);
     }
 
@@ -186,8 +180,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtreeIncludingOtherPaths2()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
-        final String artifactIdentifier = "a";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(a);
         Assert.assertEquals(6, numberOfNodesTill);
     }
 
@@ -195,8 +188,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtreeIncludingOtherPaths3()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructFirstTrieManually();
-        final String artifactIdentifier = "c";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(c);
         Assert.assertEquals(10, numberOfNodesTill);
     }
 
@@ -204,8 +196,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtreeIncludingOtherPaths4()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
-        final String artifactIdentifier = "b";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(b);
         Assert.assertEquals(8, numberOfNodesTill);
     }
 
@@ -213,8 +204,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtreeIncludingOtherPaths5()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
-        final String artifactIdentifier = "a";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(a);
         Assert.assertEquals(5, numberOfNodesTill);
     }
 
@@ -222,8 +212,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtreeIncludingOtherPaths6()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
-        final String artifactIdentifier = "c";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(c);
         Assert.assertEquals(18, numberOfNodesTill);
     }
 
@@ -231,8 +220,7 @@ public class ArtifactTrieIntersectionTest
     public void getNumberOfNodesOfSubtreeIncludingOtherPaths7()
     {
         final ArtifactTrie artifactTrie = ArtifactTrieTestUtil.constructSecondTrieManually();
-        final String artifactIdentifier = "d";
-        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(artifactIdentifier);
+        final long numberOfNodesTill = artifactTrie.getNumberOfNodesOfSubtreeIncludingOtherPaths(d);
         Assert.assertEquals(21, numberOfNodesTill);
     }
 
@@ -269,8 +257,7 @@ public class ArtifactTrieIntersectionTest
     {
         final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
-        final String artifactIdentifier = "b";
-        final double similarity = ArtifactTrieUtilKt.similarity(t1, t2, artifactIdentifier);
+        final double similarity = ArtifactTrieUtil.similarity(t1, t2, b);
         Assert.assertEquals(1D, similarity, 1e-8);
     }
 
@@ -279,7 +266,6 @@ public class ArtifactTrieIntersectionTest
     {
         final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
-        final String artifactIdentifier = "b";
-        Assert.assertEquals(0D, ArtifactTrieUtilKt.distance(t1, t2, artifactIdentifier), 1e-8);
+        Assert.assertEquals(0D, ArtifactTrieUtil.distance(t1, t2, b), 1e-8);
     }
 }

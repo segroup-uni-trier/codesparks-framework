@@ -5,19 +5,26 @@ package de.unitrier.st.codesparks.core.data;
  */
 public class ArtifactTrieNode
 {
-    private final int id;
+    private final int pathId;
+    private final String nodeId;
     private final String label;
     private long cnt;
 
-    ArtifactTrieNode(final int id, final String label)
+    ArtifactTrieNode(final int pathId, final String nodeId, final String label)
     {
-        this.id = id;
+        this.pathId = pathId;
+        this.nodeId = nodeId;
         this.label = label;
     }
 
-    int getId()
+    int getPathId()
     {
-        return id;
+        return pathId;
+    }
+
+    String getNodeId()
+    {
+        return nodeId;
     }
 
     private final Object cntLock = new Object();
@@ -58,13 +65,13 @@ public class ArtifactTrieNode
 
     public String getIdString()
     {
-        return String.valueOf(id);
+        return String.valueOf(pathId);
     }
 
     @Override
     public String toString()
     {
-        return id + ":" + label;
+        return pathId + ":" + label;
     }
 
     @Override
@@ -73,12 +80,12 @@ public class ArtifactTrieNode
         if (obj == null) return false;
         if (!(obj instanceof ArtifactTrieNode)) return false;
 //        if (identifier == null) return false; // the member "identifier" must never be null!
-        return id == ((ArtifactTrieNode) obj).getId();//identifier.equals(((ArtifactTrieNode) obj).getIdentifier());
+        return pathId == ((ArtifactTrieNode) obj).getPathId();//identifier.equals(((ArtifactTrieNode) obj).getIdentifier());
     }
 
     @Override
     public int hashCode()
     {
-        return id;//identifier.hashCode();//super.hashCode();
+        return pathId;//identifier.hashCode();//super.hashCode();
     }
 }

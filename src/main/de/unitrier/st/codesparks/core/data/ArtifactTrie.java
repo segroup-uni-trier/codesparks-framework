@@ -29,7 +29,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         super(edgeClass);
         if (withRoot)
         {
-            root = new ArtifactTrieNode(rootId, rootLabel);
+            root = new ArtifactTrieNode(rootId, rootLabel, rootLabel);
             super.addVertex(root);
         }
     }
@@ -39,13 +39,14 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         this(edgeClass, true);
     }
 
-    public ArtifactTrieNode addVertex(final int id, final String label)
+    public ArtifactTrieNode addVertex(final int pathId, final String nodeId, final String label)
     {
-        final Optional<ArtifactTrieNode> first = vertexSet().stream().filter(trieNode -> trieNode.getId() == id).findFirst(); // It is more likely that a
+        final Optional<ArtifactTrieNode> first = vertexSet().stream().filter(trieNode -> trieNode.getPathId() == pathId).findFirst(); // It is more likely
+        // that a
         // node is already present!
         if (first.isEmpty())
         { // Only create the node if it's really necessary.
-            final ArtifactTrieNode node = new ArtifactTrieNode(id, label);
+            final ArtifactTrieNode node = new ArtifactTrieNode(pathId, nodeId, label);
             addVertex(node);
             node.inc();
             return node;
@@ -61,8 +62,8 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         final boolean b = super.removeVertex(trieNode);
         if (b)
         {
-            final int id = trieNode.getId();
-            if (root != null && root.getId() == id)
+            final int id = trieNode.getPathId();
+            if (root != null && root.getPathId() == id)
             {
                 root = null;
             }
@@ -89,7 +90,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
             final ArtifactTrieNode root = getRoot();
             if (root == null)
             {
-                current = addVertex(rootId, rootLabel);
+                current = addVertex(rootId, rootLabel, rootLabel);
                 this.root = current;
             } else
             {
@@ -104,10 +105,10 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
                 currentMethodIdentifier = currentMethodIdentifier.replaceAll("[\n <>$]", "").trim();
                 pathIdStringBuilder.append(currentMethodIdentifier);
                 final String pathIdentifier = pathIdStringBuilder.toString();
-                final int nodeId = pathIdentifier.hashCode();
+                final int pathId = pathIdentifier.hashCode();
                 String currentMethodLabel = methodElementToLabelFunc.apply(methodElement);
                 currentMethodLabel = currentMethodLabel.replaceAll("[\n ]", "").trim();
-                final ArtifactTrieNode node = addVertex(nodeId, currentMethodLabel);
+                final ArtifactTrieNode node = addVertex(pathId, currentMethodIdentifier, currentMethodLabel);
                 final ArtifactTrieEdge edge = new ArtifactTrieEdge(current, node);
                 this.addEdge(current, node, edge);
                 current = node;
@@ -211,7 +212,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         {
             return 0;
         }
-        if (node.getLabel().equals(artifactIdentifier))
+        if (node.getNodeId().equals(artifactIdentifier))
         {
             return 1;
         }
@@ -242,7 +243,7 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
         {
             return 0;
         }
-        if (node.getLabel().equals(artifactIdentifier))
+        if (node.getNodeId().equals(artifactIdentifier))
         {
             return 1;
         }

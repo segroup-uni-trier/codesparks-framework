@@ -348,7 +348,7 @@ public class ArtifactTrieStatisticsTest
         final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
 
-        final double jaccard = ArtifactTrieUtilKt.multisetJaccard(t1, t2);
+        final double jaccard = ArtifactTrieUtil.multisetJaccard(t1, t2);
 
         Assert.assertEquals((double) 11 / 21, jaccard, 1e-6);
     }
@@ -359,7 +359,7 @@ public class ArtifactTrieStatisticsTest
         final ArtifactTrie t1 = ArtifactTrieTestUtil.constructFirstTrieManually();
         final ArtifactTrie t2 = ArtifactTrieTestUtil.constructSecondTrieManually();
 
-        final double jaccard = ArtifactTrieUtilKt.jaccard(t1, t2);
+        final double jaccard = ArtifactTrieUtil.jaccard(t1, t2);
 
         Assert.assertEquals((double) 4 / 5, jaccard, 1e-6);
     }
