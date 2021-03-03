@@ -42,16 +42,16 @@ public class ArtifactTrie extends DefaultDirectedGraph<ArtifactTrieNode, Artifac
     public ArtifactTrieNode addVertex(final int pathId, final String nodeId, final String label)
     {
         final Optional<ArtifactTrieNode> first = vertexSet().stream().filter(trieNode -> trieNode.getPathId() == pathId).findFirst(); // It is more likely
-        // that a
-        // node is already present!
-        if (first.isEmpty())
+        // that a node is already present!
+        ArtifactTrieNode node;
+        if (first.isPresent())
+        {
+            node = first.get();
+        } else
         { // Only create the node if it's really necessary.
-            final ArtifactTrieNode node = new ArtifactTrieNode(pathId, nodeId, label);
+            node = new ArtifactTrieNode(pathId, nodeId, label);
             addVertex(node);
-            node.inc();
-            return node;
         }
-        final ArtifactTrieNode node = first.get();
         node.inc();
         return node;
     }
