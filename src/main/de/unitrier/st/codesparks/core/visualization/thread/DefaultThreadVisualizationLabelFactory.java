@@ -63,7 +63,8 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
             JBColor color = ThreadColor.getNextColor(i);
             ThreadArtifactCluster cluster = threadArtifactClustering.get(i);
 
-            VisualThreadClusterProperties clusterProperties = new VisualThreadClusterProperties(cluster, color);
+//            VisualThreadClusterProperties clusterProperties = new VisualThreadClusterProperties(cluster, color);
+            final VisualThreadClusterProperties clusterProperties = new VisualThreadClusterPropertiesBuilder(cluster).setColor(color).get();
             VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
             propertiesManager.registerProperties(clusterProperties);
 

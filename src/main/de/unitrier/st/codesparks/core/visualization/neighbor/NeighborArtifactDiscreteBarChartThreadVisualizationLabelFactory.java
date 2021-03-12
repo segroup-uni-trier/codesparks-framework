@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
@@ -33,53 +34,60 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
         super(primaryMetricIdentifier, sequence);
     }
 
+    private double getClusterRuntime(final List<ANeighborArtifact> neighborArtifacts, final List<AThreadArtifact> cluster,
+                                     double totalRuntimeOfAllNeighborsOfLine)
+    {
+//        final List<ANeighborArtifact> neighborArtifactsExecutedByCluster =
+//                neighborArtifacts
+//                        .stream()
+//                        .filter(neighbor -> neighbor.getThreadArtifacts()
+//                                .stream()
+//                                .anyMatch(cluster::contains))
+//                        .collect(Collectors.toList());
+
+        final List<ANeighborArtifact> neighborArtifactsExecutedByCluster =
+                neighborArtifacts.stream()
+                        .filter(n -> n.getThreadArtifacts()
+                                .stream()
+                                .anyMatch(t -> !t.isFiltered() &&
+                                        cluster.stream()
+                                                .anyMatch(ct -> !ct.isFiltered() && ct.getIdentifier().equals(t.getIdentifier()))))
+                        .collect(Collectors.toList());
+
+        double lineRuntimeClusterThreads = 0;
+
+        for (final ANeighborArtifact neighborExecutedByAnyClusterThread : neighborArtifactsExecutedByCluster)
+        {
+            final double neighborRuntime = neighborExecutedByAnyClusterThread.getNumericalMetricValue(primaryMetricIdentifier);
+            for (final AThreadArtifact thread : cluster.stream().filter(thr -> !thr.isFiltered()).collect(Collectors.toList()))
+            {
+                final AThreadArtifact neighborThread = neighborExecutedByAnyClusterThread.getThreadArtifact(thread.getIdentifier());
+                if (neighborThread == null) continue;
+                final double neighborThreadRuntimeRatio = neighborThread.getNumericalMetricValue(primaryMetricIdentifier);
+                lineRuntimeClusterThreads += (neighborRuntime / totalRuntimeOfAllNeighborsOfLine) * neighborThreadRuntimeRatio;
+            }
+        }
+
+        return lineRuntimeClusterThreads;
+    }
+
     @Override
     public JLabel createNeighborArtifactLabel(
             final AArtifact artifact
             , final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
     )
     {
-        final double totalThreadFilteredCalleeTime = summedThreadMetricValuesOfNeighbors(threadFilteredNeighborArtifactsOfLine);
-
-        Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterComparator.getInstance(primaryMetricIdentifier);
+        Comparator<ThreadArtifactCluster> threadClusterComparator = ThreadArtifactClusterComparator.getInstance(primaryMetricIdentifier);
 
         List<ThreadArtifactCluster> threadClusters =
                 artifact.getDefaultThreadArtifactClustering(primaryMetricIdentifier)
                         .stream()
-                        .sorted(codeSparksThreadClusterComparator)
-                        .filter(cluster -> !cluster.isEmpty())
+                        .sorted(threadClusterComparator)
+                        .filter(cluster -> !cluster.isEmpty()
+                                &&
+                                cluster.stream().anyMatch(t -> !t.isFiltered()))
                         .collect(Collectors.toList());
 
-        SortedMap<ThreadArtifactCluster, Set<String>> artifactClusterSets =
-                new TreeMap<>(codeSparksThreadClusterComparator);
-        SortedMap<ThreadArtifactCluster, Set<AThreadArtifact>> neighborClusterSets =
-                new TreeMap<>(codeSparksThreadClusterComparator);
-
-        for (ThreadArtifactCluster threadCluster : threadClusters)
-        {
-            artifactClusterSets.put(threadCluster,
-                    new HashSet<>(threadCluster.stream().map(AThreadArtifact::getIdentifier).collect(Collectors.toList())));
-            neighborClusterSets.put(threadCluster, new HashSet<>());
-        }
-
-        for (ANeighborArtifact neighborArtifact : threadFilteredNeighborArtifactsOfLine)
-        {
-            for (AThreadArtifact neighborCodeSparksThread :
-                    neighborArtifact.getThreadArtifacts()
-                            .stream()
-                            .filter(threadArtifact -> !threadArtifact.isFiltered())
-                            .collect(Collectors.toList()))
-            {
-                String threadArtifactIdentifier = neighborCodeSparksThread.getIdentifier();
-                for (Map.Entry<ThreadArtifactCluster, Set<String>> artifactClusterSetEntry : artifactClusterSets.entrySet())
-                {
-                    if (artifactClusterSetEntry.getValue().contains(threadArtifactIdentifier))
-                    {
-                        neighborClusterSets.get(artifactClusterSetEntry.getKey()).add(neighborCodeSparksThread);
-                    }
-                }
-            }
-        }
         final int threadsPerColumn = 3;
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
 
@@ -95,7 +103,8 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
 
         final int threadSquareEdgeLength = 3;//(lineHeight - 6) / threadsPerColumn;
 
-        int threadSquareYPos = lineHeight - threadSquareEdgeLength - 2;
+        final int initialThreadSquareYPos = lineHeight - threadSquareEdgeLength - 2;
+        //int currentThreadSquareYPos = initialThreadSquareYPos;
         final int threadSquareOffset = threadSquareEdgeLength + 1;
 
         GraphicsConfiguration defaultConfiguration =
@@ -131,29 +140,56 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
         Rectangle threadVisualisationArea = new Rectangle(
                 X_OFFSET_LEFT + threadMetaphorWidth, 0, barChartWidth - 1, lineHeight - 1);
 
-
         VisualizationUtil.drawRectangle(graphics, threadVisualisationArea);
         int clusterCnt = 0;
         VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-        for (Map.Entry<ThreadArtifactCluster, Set<AThreadArtifact>> threadArtifactClusterSetEntry : neighborClusterSets.entrySet())
+
+        final boolean[] positionsTaken = new boolean[3];
+
+        final double totalMetricValueOfAllNeighborsOfLine =
+                threadFilteredNeighborArtifactsOfLine.stream().mapToDouble(neighbor -> {
+                            final List<AThreadArtifact> neighborNonFilteredThreadArtifacts =
+                                    neighbor.getThreadArtifacts().stream().filter(t -> !t.isFiltered()).collect(Collectors.toList());
+                            final double neighborNumericalMetricValue = neighbor.getNumericalMetricValue(primaryMetricIdentifier);
+                            double neighborTotal = 0;
+                            for (final AThreadArtifact neighborThread : neighborNonFilteredThreadArtifacts)
+                            {
+                                neighborTotal += neighborThread.getNumericalMetricValue(primaryMetricIdentifier) * neighborNumericalMetricValue;
+                            }
+                            return neighborTotal;
+                        }
+                ).sum();
+
+        for (ThreadArtifactCluster threadCluster : threadClusters)
         {
-            ThreadArtifactCluster cluster = threadArtifactClusterSetEntry.getKey();
-            VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(cluster);
+            VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(threadCluster); // Will be set in the respective thread
+            // clustering visualization for the artifact, e.g. ThreadRadarLabelFactory or ThreadForkLabelFactory
+            int position = -1;
             JBColor color;
             if (properties != null)
             {
                 color = properties.getColor();
+                position = properties.getPosition();
             } else
             {
                 color = ThreadColor.getNextColor(clusterCnt++);
             }
 
-            double clusterThreadArtifactMetric = summedThreadMetricValues(threadArtifactClusterSetEntry.getValue());
+
+            final int positionIndex = findPositionToDraw(positionsTaken, position, clusterCnt);
+
+            if (positionIndex < 0)
+            { // No more position to draw available. Only happens when the number of clusters is set up to be greater than k=3
+                break;
+            }
 
             graphics.setColor(color);
 
             int clusterWidth;
-            double percent = clusterThreadArtifactMetric / totalThreadFilteredCalleeTime;
+
+            double percent = getClusterRuntime(threadFilteredNeighborArtifactsOfLine, threadCluster, totalMetricValueOfAllNeighborsOfLine);
+
+            percent = Math.min(1., percent); // Possible floating point arithmetic rounding errors!
 
             if (percent > 0D)
             {
@@ -163,14 +199,16 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
             {
                 clusterWidth = 0;
             }
-            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, threadSquareYPos, clusterWidth, threadSquareEdgeLength);
 
+            final int positionToDraw = initialThreadSquareYPos - positionIndex * threadSquareOffset;
+
+            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, positionToDraw, clusterWidth, threadSquareEdgeLength);
             if (clusterWidth > 0)
             {
                 // Arrows after barrier
-                graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, threadSquareYPos + 1, barrierXPos - 1, 1);
+                graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, positionToDraw + 1, barrierXPos - 1, 1);
             }
-            threadSquareYPos -= threadSquareOffset;
+            //currentThreadSquareYPos -= threadSquareOffset;
         }
 
         BufferedImage subimage = bi.getSubimage(0, 0, bi.getWidth(), bi.getHeight());
@@ -185,18 +223,33 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
         return jLabel;
     }
 
-    private double summedThreadMetricValues(Collection<AThreadArtifact> codeSparksThreads)
+    private int findPositionToDraw(final boolean[] positionsTaken, final int currentPos, final int clusterCnt)
     {
-        return codeSparksThreads
-                .stream()
-                .filter(codeSparksThread -> !codeSparksThread.isFiltered())
-                .map(codeSparksThread -> codeSparksThread.getNumericalMetricValue(primaryMetricIdentifier)).reduce(0d, Double::sum);
+        if (currentPos < 0)
+        {
+            return getNextFreePos(positionsTaken, clusterCnt);
+        }
+        if (!positionsTaken[currentPos])
+        {
+            positionsTaken[currentPos] = true;
+            return currentPos;
+        } else
+        {
+            return getNextFreePos(positionsTaken, currentPos);
+        }
     }
 
-    private double summedThreadMetricValuesOfNeighbors(Collection<ANeighborArtifact> neighborProfilingArtifacts)
+    private int getNextFreePos(final boolean[] positionsTaken, final int currentPos)
     {
-        return neighborProfilingArtifacts.stream().map(aNeighborProfilingArtifact ->
-                summedThreadMetricValues(aNeighborProfilingArtifact.getThreadArtifacts())
-        ).reduce(0d, Double::sum);
+        for (int i = 0; i < positionsTaken.length; i++)
+        {
+            int nextPos = currentPos + i % positionsTaken.length;
+            if (!positionsTaken[nextPos])
+            {
+                positionsTaken[nextPos] = true;
+                return nextPos;
+            }
+        }
+        return -1;
     }
 }

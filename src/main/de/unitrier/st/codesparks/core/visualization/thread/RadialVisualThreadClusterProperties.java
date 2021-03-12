@@ -27,7 +27,8 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
             , final int numberOfArtifactThreads
             , final IMetricIdentifier metricIdentifier)
     {
-        super(cluster, color);
+        super(cluster);
+        setColor(color);
         calculateNumberOfThreads(cluster);
         calculateThreadRatio(cluster, numberOfArtifactThreads);
         calculateMaxNumericalMetricRatio(cluster, metricIdentifier);

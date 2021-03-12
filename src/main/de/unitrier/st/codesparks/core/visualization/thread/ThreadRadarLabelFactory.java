@@ -60,14 +60,14 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             final AArtifact artifact
     )
     {
-        Collection<AThreadArtifact> codeSparksThreads = artifact.getThreadArtifacts();
+        final Collection<AThreadArtifact> codeSparksThreads = artifact.getThreadArtifacts();
 
         if (codeSparksThreads.isEmpty())
         {
             return emptyLabel();
         }
 
-        List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        final List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
         int startAngle = 90;
         boolean useDisabledColors = false;
         JBColor[] colors = {new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), new JBColor(Color.decode("#B25283"),
@@ -244,14 +244,6 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
         jLabel.addMouseListener(new ThreadRadarMouseListener(jLabel, artifact, radialThreadVisualizationPopupData, primaryMetricIdentifier,
                 secondaryMetricIdentifier));
 
-        return jLabel;
-    }
-
-    private JLabel emptyLabel()
-    {
-        JLabel jLabel = new JLabel();
-        jLabel.setIcon(new ImageIcon());
-        jLabel.setSize(0, 0);
         return jLabel;
     }
 }

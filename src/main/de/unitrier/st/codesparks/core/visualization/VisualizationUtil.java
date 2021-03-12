@@ -5,11 +5,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.CoreUtil;
+import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
+import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 import java.util.Objects;
 
 /*
@@ -139,5 +143,22 @@ public final class VisualizationUtil
             lineHeight += 1;
         }
         return lineHeight;
+    }
+
+    public static double summedFilteredThreadMetricValues(final Collection<AThreadArtifact> threadArtifacts, final IMetricIdentifier metricIdentifier)
+    {
+        return threadArtifacts
+                .stream()
+                .filter(threadArtifact -> !threadArtifact.isFiltered())
+                .map(threadArtifact -> threadArtifact.getNumericalMetricValue(metricIdentifier))
+                .reduce(0d, Double::sum);
+    }
+
+    public static double summedFilteredThreadMetricValuesOfNeighbors(final Collection<ANeighborArtifact> neighborArtifacts,
+                                                                     final IMetricIdentifier metricIdentifier)
+    {
+        return neighborArtifacts.stream().map(neighborArtifact ->
+                summedFilteredThreadMetricValues(neighborArtifact.getThreadArtifacts(), metricIdentifier))
+                .reduce(0d, Double::sum);
     }
 }

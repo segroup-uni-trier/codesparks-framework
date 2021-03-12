@@ -9,13 +9,26 @@ import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 public class VisualThreadClusterProperties
 {
     private final ThreadArtifactCluster cluster;
-    private final JBColor color;
+    private JBColor color;
+    private int position;
 
-    public VisualThreadClusterProperties(ThreadArtifactCluster cluster, JBColor color)
+    public VisualThreadClusterProperties(final ThreadArtifactCluster cluster)
     {
+//        this(cluster, null, -1);
         this.cluster = cluster;
-        this.color = color;
     }
+
+//    public VisualThreadClusterProperties(final ThreadArtifactCluster cluster,  final JBColor color)
+//    {
+//        this(cluster, color, -1);
+//    }
+//
+//    public VisualThreadClusterProperties(final ThreadArtifactCluster cluster, final JBColor color, final int position)
+//    {
+//        this.cluster = cluster;
+//        this.color = color;
+//        this.position = position;
+//    }
 
     public JBColor getColor()
     {
@@ -25,5 +38,20 @@ public class VisualThreadClusterProperties
     public ThreadArtifactCluster getCluster()
     {
         return cluster;
+    }
+
+    void setColor(final JBColor color)
+    {
+        this.color = color;
+    }
+
+    void setPosition(final int position)
+    {
+        this.position = position;
+    }
+
+    public int getPosition()
+    {
+        return position;
     }
 }
