@@ -9,9 +9,9 @@ import java.util.Comparator;
 /*
  * Copyright (C) 2020, Oliver Moseler
  */
-class ArtifactVisualizationWrapper extends AArtifactVisualization
+public class ArtifactVisualizationWrapper extends AArtifactVisualization
 {
-    ArtifactVisualizationWrapper(final AArtifact artifact, final AArtifactVisualizationLabelFactory... factories)
+    public ArtifactVisualizationWrapper(final AArtifact artifact, final AArtifactVisualizationLabelFactory... factories)
     {
         super(artifact);
 

@@ -21,14 +21,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.OptionalDouble;
 
-public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
+public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    public ThreadForkLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
+    public MirroredClusterSizeThreadForkLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
     }
 
-    public ThreadForkLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
+    public MirroredClusterSizeThreadForkLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(primaryMetricIdentifier, sequence);
     }
@@ -46,11 +46,11 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
-        final int X_OFFSET_LEFT = 2;
+        final int X_OFFSET_LEFT = 0;
         final int threadsPerColumn = 3;
         final int threadMetaphorWidth = 24;
         final int barChartWidth = 24;
-        final int X_OFFSET_RIGHT = 0;
+        final int X_OFFSET_RIGHT = 2;
 
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
 
@@ -62,25 +62,27 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         // Draw the fully transparent background
         VisualizationUtil.drawTransparentBackground(graphics, bi);
 
-        // Thread metaphor
+
+        // The rectangle for the bars
         graphics.setColor(VisConstants.BORDER_COLOR);
 
+        final Rectangle threadVisualisationArea = new Rectangle(
+                X_OFFSET_LEFT, 0, barChartWidth - 1, lineHeight - 1);
+        VisualizationUtil.drawRectangle(graphics, threadVisualisationArea);
 
-        final int barrierXPos = threadMetaphorWidth / 2;
-
-        // Leading arrow
-        graphics.fillRect(X_OFFSET_LEFT, lineHeight / 2, barrierXPos - 1, 1);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 3, lineHeight / 2 - 3, X_OFFSET_LEFT + barrierXPos, lineHeight / 2);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 3, lineHeight / 2 + 3, X_OFFSET_LEFT + barrierXPos, lineHeight / 2);
-
+        // Thread metaphor
+        final int barrierXOffset = 9;
+        final int barrierXPos = barChartWidth + barrierXOffset;//threadMetaphorWidth / 2;
         // Vertical bar or barrier, respectively
         final int barrierWidth = 3;
         graphics.fillRect(X_OFFSET_LEFT + barrierXPos, 0, barrierWidth, lineHeight);
 
-        final Rectangle threadVisualisationArea = new Rectangle(
-                X_OFFSET_LEFT + threadMetaphorWidth, 0, barChartWidth - 1, lineHeight - 1);
-
-        VisualizationUtil.drawRectangle(graphics, threadVisualisationArea);
+        // Subsequent arrow
+        final int arrowLenght = threadMetaphorWidth / 2;
+        final int arrowStartX = X_OFFSET_LEFT + barrierXPos + barrierWidth;
+        graphics.fillRect(arrowStartX, lineHeight / 2, arrowLenght, 1);
+        graphics.drawLine(arrowStartX + arrowLenght - 3, lineHeight / 2 - 3, arrowStartX + arrowLenght, lineHeight / 2);
+        graphics.drawLine(arrowStartX + arrowLenght - 3, lineHeight / 2 + 3, arrowStartX + arrowLenght, lineHeight / 2);
 
 
         // Draw the clusters
@@ -94,27 +96,19 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         //final double threadFilteredTotalArtifactMetricValue = DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, primaryMetricIdentifier);
 
-        final double threadFilteredTotalMetricValueOfArtifact = getThreadFilteredTotalMetricValueOfArtifact(artifact);
+        final double totalNumberOfFilteredThreads =
+                (double) artifact.getThreadArtifacts().stream().filter(threadExecutingArtifact -> !threadExecutingArtifact.isFiltered()).count();
 
         final List<ThreadArtifactCluster> threadClusters = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
 
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {
             JBColor clusterColor = ThreadColor.getNextColor(clusterNum);
+            graphics.setColor(clusterColor);
 
-            /*
-             * Draw the metric value sum bar
-             */
-
-            final Color backgroundMetricColor = VisualizationUtil.getBackgroundMetricColor(clusterColor, .25f);
-            JBColor clusterMetricValueSumColor = new JBColor(backgroundMetricColor, backgroundMetricColor);
-
-            graphics.setColor(clusterMetricValueSumColor);
+            double percent = threadCluster.size() / totalNumberOfFilteredThreads;
 
             int clusterWidth;
-            double percent = getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(threadArtifacts, threadCluster,
-                    threadFilteredTotalMetricValueOfArtifact);
-
             if (percent > 0D)
             {
                 int discrete = (int) (percent * 100 / 10 + 0.9999);
@@ -123,51 +117,13 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             {
                 clusterWidth = 0;
             }
-            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, threadSquareYPos, clusterWidth, threadSquareEdgeLength);
+            graphics.fillRect(X_OFFSET_LEFT + barChartWidth - clusterWidth - 2, threadSquareYPos, clusterWidth, threadSquareEdgeLength);
 
             if (clusterWidth > 0)
             {
                 // Arrows after barrier
-                graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, threadSquareYPos + 1, barrierXPos - 1, 1);
+                graphics.fillRect(X_OFFSET_LEFT + barChartWidth - 2, threadSquareYPos + 1, arrowLenght - 1, 1);
             }
-
-            // Save the position and color to the properties such that they can be reused in the neighbor artifact visualization
-            final VisualThreadClusterProperties visualThreadClusterProperties =
-                    new VisualThreadClusterPropertiesBuilder(threadCluster)
-                            .setColor(clusterColor)
-                            .setPosition(clusterNum)
-                            .get();
-            clusterPropertiesManager.registerProperties(visualThreadClusterProperties);
-
-            /*
-             * Draw the metric value avg bar
-             */
-
-            graphics.setColor(clusterColor);
-            percent = getThreadFilteredArtifactMetricValueAverageOfClusterRelativeToTotal(threadArtifacts, threadCluster,
-                    threadFilteredTotalMetricValueOfArtifact);
-
-            if (percent > 0D)
-            {
-                int discrete = (int) (percent * 100 / 10 + 0.9999);
-                clusterWidth = clusterBarMaxWidth / 10 * discrete;
-            } else
-            {
-                clusterWidth = 0;
-            }
-            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, threadSquareYPos, clusterWidth, threadSquareEdgeLength);
-
-            if (clusterWidth > 0)
-            {
-                // Arrows after barrier
-                graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, threadSquareYPos + 1, barrierXPos - 1, 1);
-            }
-
-
-            /*
-             * -------------------------------------------
-             */
-
             clusterNum += 1;
 
             threadSquareYPos -= threadSquareOffset;
