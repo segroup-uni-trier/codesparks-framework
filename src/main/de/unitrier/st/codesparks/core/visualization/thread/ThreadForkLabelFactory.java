@@ -19,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.OptionalDouble;
 
 public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
 {
@@ -98,11 +99,19 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {
-            JBColor color = ThreadColor.getNextColor(clusterNum);
-            graphics.setColor(color);
+            JBColor clusterColor = ThreadColor.getNextColor(clusterNum);
+
+            /*
+             * Draw the metric value sum bar
+             */
+
+            final Color backgroundMetricColor = VisualizationUtil.getBackgroundMetricColor(clusterColor, .25f);
+            JBColor clusterMetricValueSumColor = new JBColor(backgroundMetricColor, backgroundMetricColor);
+
+            graphics.setColor(clusterMetricValueSumColor);
 
             int clusterWidth;
-            double percent = getThreadFilteredArtifactMetricValueOfClusterRelativeToTotal(threadArtifacts, threadCluster,
+            double percent = getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(threadArtifacts, threadCluster,
                     threadFilteredTotalMetricValueOfArtifact);
 
             if (percent > 0D)
@@ -121,12 +130,42 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
                 graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, threadSquareYPos + 1, barrierXPos - 1, 1);
             }
 
+            // Save the position and color to the properties such that they can be reused in the neighbor artifact visualization
             final VisualThreadClusterProperties visualThreadClusterProperties =
                     new VisualThreadClusterPropertiesBuilder(threadCluster)
-                            .setColor(color)
+                            .setColor(clusterColor)
                             .setPosition(clusterNum)
                             .get();
             clusterPropertiesManager.registerProperties(visualThreadClusterProperties);
+
+            /*
+             * Draw the metric value avg bar
+             */
+
+            graphics.setColor(clusterColor);
+            percent = getThreadFilteredArtifactMetricValueAverageOfClusterRelativeToTotal(threadArtifacts, threadCluster,
+                    threadFilteredTotalMetricValueOfArtifact);
+
+            if (percent > 0D)
+            {
+                int discrete = (int) (percent * 100 / 10 + 0.9999);
+                clusterWidth = clusterBarMaxWidth / 10 * discrete;
+            } else
+            {
+                clusterWidth = 0;
+            }
+            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, threadSquareYPos, clusterWidth, threadSquareEdgeLength);
+
+            if (clusterWidth > 0)
+            {
+                // Arrows after barrier
+                graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, threadSquareYPos + 1, barrierXPos - 1, 1);
+            }
+
+
+            /*
+             * -------------------------------------------
+             */
 
             clusterNum += 1;
 
@@ -149,22 +188,41 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
     private double getThreadFilteredTotalMetricValueOfArtifact(final AArtifact artifact)
     {
+        //noinspection UnnecessaryLocalVariable
         final double total =
                 artifact.getThreadArtifacts().stream().filter(threadExecutingArtifact -> !threadExecutingArtifact.isFiltered())
                         .mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(primaryMetricIdentifier)).sum();
         return total;
     }
 
-    private double getThreadFilteredArtifactMetricValueOfClusterRelativeToTotal(final List<AThreadArtifact> threadsOfArtifact,
-                                                                                final ThreadArtifactCluster threadArtifactCluster,
-                                                                                double total)
+    private double getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(final List<AThreadArtifact> threadsOfArtifact,
+                                                                                   final ThreadArtifactCluster threadArtifactCluster,
+                                                                                   final double total)
     {
         final double sum =
                 threadsOfArtifact.stream().filter(threadExecutingArtifact -> !threadExecutingArtifact.isFiltered() && threadArtifactCluster.stream().anyMatch(
                         clusterThread -> !clusterThread.isFiltered() && clusterThread.getIdentifier().equals(threadExecutingArtifact.getIdentifier())
                 )).mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(primaryMetricIdentifier)).sum();
+        //noinspection UnnecessaryLocalVariable
         final double ratio = sum / total;
         return ratio;
+    }
+
+    private double getThreadFilteredArtifactMetricValueAverageOfClusterRelativeToTotal(final List<AThreadArtifact> threadsOfArtifact,
+                                                                                       final ThreadArtifactCluster threadArtifactCluster,
+                                                                                       final double total)
+    {
+        final OptionalDouble average =
+                threadsOfArtifact.stream().filter(threadExecutingArtifact -> !threadExecutingArtifact.isFiltered() && threadArtifactCluster.stream().anyMatch(
+                        clusterThread -> !clusterThread.isFiltered() && clusterThread.getIdentifier().equals(threadExecutingArtifact.getIdentifier())
+                )).mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(primaryMetricIdentifier)).average();
+        if (average.isPresent())
+        {
+            //noinspection UnnecessaryLocalVariable
+            final double ratio = average.getAsDouble() / total;
+            return ratio;
+        }
+        return Double.NaN;
     }
 
 }
