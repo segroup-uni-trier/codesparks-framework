@@ -144,21 +144,4 @@ public final class VisualizationUtil
         }
         return lineHeight;
     }
-
-    public static double summedFilteredThreadMetricValues(final Collection<AThreadArtifact> threadArtifacts, final IMetricIdentifier metricIdentifier)
-    {
-        return threadArtifacts
-                .stream()
-                .filter(threadArtifact -> !threadArtifact.isFiltered())
-                .map(threadArtifact -> threadArtifact.getNumericalMetricValue(metricIdentifier))
-                .reduce(0d, Double::sum);
-    }
-
-    public static double summedFilteredThreadMetricValuesOfNeighbors(final Collection<ANeighborArtifact> neighborArtifacts,
-                                                                     final IMetricIdentifier metricIdentifier)
-    {
-        return neighborArtifacts.stream().map(neighborArtifact ->
-                summedFilteredThreadMetricValues(neighborArtifact.getThreadArtifacts(), metricIdentifier))
-                .reduce(0d, Double::sum);
-    }
 }

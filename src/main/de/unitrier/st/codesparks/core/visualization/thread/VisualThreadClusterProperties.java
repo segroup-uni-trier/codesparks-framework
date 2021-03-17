@@ -16,6 +16,8 @@ public class VisualThreadClusterProperties
     {
 //        this(cluster, null, -1);
         this.cluster = cluster;
+        this.position = -1;
+        this.color = null;
     }
 
 //    public VisualThreadClusterProperties(final ThreadArtifactCluster cluster,  final JBColor color)
