@@ -7,7 +7,10 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
@@ -17,9 +20,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.OptionalDouble;
 
 public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
 {
@@ -46,7 +47,7 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
         final GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
-        final int X_OFFSET_LEFT = 0;
+        final int X_OFFSET_LEFT = -1;
         final int threadsPerColumn = 3;
         final int threadMetaphorWidth = 24;
         final int barChartWidth = 24;
@@ -78,11 +79,11 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
         graphics.fillRect(X_OFFSET_LEFT + barrierXPos, 0, barrierWidth, lineHeight);
 
         // Subsequent arrow
-        final int arrowLenght = threadMetaphorWidth / 2;
+        final int arrowLength = threadMetaphorWidth / 2;
         final int arrowStartX = X_OFFSET_LEFT + barrierXPos + barrierWidth;
-        graphics.fillRect(arrowStartX, lineHeight / 2, arrowLenght, 1);
-        graphics.drawLine(arrowStartX + arrowLenght - 3, lineHeight / 2 - 3, arrowStartX + arrowLenght, lineHeight / 2);
-        graphics.drawLine(arrowStartX + arrowLenght - 3, lineHeight / 2 + 3, arrowStartX + arrowLenght, lineHeight / 2);
+        graphics.fillRect(arrowStartX, lineHeight / 2, arrowLength, 1);
+        graphics.drawLine(arrowStartX + arrowLength - 3, lineHeight / 2 - 3, arrowStartX + arrowLength, lineHeight / 2);
+        graphics.drawLine(arrowStartX + arrowLength - 3, lineHeight / 2 + 3, arrowStartX + arrowLength, lineHeight / 2);
 
 
         // Draw the clusters
@@ -92,9 +93,9 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
         final int threadSquareOffset = threadSquareEdgeLength + 1;
 
         int clusterNum = 0;
-        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
 
-        //final double threadFilteredTotalArtifactMetricValue = DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, primaryMetricIdentifier);
+//        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+//        final double threadFilteredTotalArtifactMetricValue = DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, primaryMetricIdentifier);
 
         final double totalNumberOfFilteredThreads =
                 (double) artifact.getThreadArtifacts().stream().filter(threadExecutingArtifact -> !threadExecutingArtifact.isFiltered()).count();
@@ -122,7 +123,7 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
             if (clusterWidth > 0)
             {
                 // Arrows after barrier
-                graphics.fillRect(X_OFFSET_LEFT + barChartWidth - 2, threadSquareYPos + 1, arrowLenght - 1, 1);
+                graphics.fillRect(X_OFFSET_LEFT + barChartWidth - 2, threadSquareYPos + 1, arrowLength - 1, 1);
             }
             clusterNum += 1;
 
@@ -142,44 +143,4 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
 
         return jLabel;
     }
-
-    private double getThreadFilteredTotalMetricValueOfArtifact(final AArtifact artifact)
-    {
-        //noinspection UnnecessaryLocalVariable
-        final double total =
-                artifact.getThreadArtifacts().stream().filter(threadExecutingArtifact -> !threadExecutingArtifact.isFiltered())
-                        .mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(primaryMetricIdentifier)).sum();
-        return total;
-    }
-
-    private double getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(final List<AThreadArtifact> threadsOfArtifact,
-                                                                                   final ThreadArtifactCluster threadArtifactCluster,
-                                                                                   final double total)
-    {
-        final double sum =
-                threadsOfArtifact.stream().filter(threadExecutingArtifact -> !threadExecutingArtifact.isFiltered() && threadArtifactCluster.stream().anyMatch(
-                        clusterThread -> !clusterThread.isFiltered() && clusterThread.getIdentifier().equals(threadExecutingArtifact.getIdentifier())
-                )).mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(primaryMetricIdentifier)).sum();
-        //noinspection UnnecessaryLocalVariable
-        final double ratio = sum / total;
-        return ratio;
-    }
-
-    private double getThreadFilteredArtifactMetricValueAverageOfClusterRelativeToTotal(final List<AThreadArtifact> threadsOfArtifact,
-                                                                                       final ThreadArtifactCluster threadArtifactCluster,
-                                                                                       final double total)
-    {
-        final OptionalDouble average =
-                threadsOfArtifact.stream().filter(threadExecutingArtifact -> !threadExecutingArtifact.isFiltered() && threadArtifactCluster.stream().anyMatch(
-                        clusterThread -> !clusterThread.isFiltered() && clusterThread.getIdentifier().equals(threadExecutingArtifact.getIdentifier())
-                )).mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(primaryMetricIdentifier)).average();
-        if (average.isPresent())
-        {
-            //noinspection UnnecessaryLocalVariable
-            final double ratio = average.getAsDouble() / total;
-            return ratio;
-        }
-        return Double.NaN;
-    }
-
 }

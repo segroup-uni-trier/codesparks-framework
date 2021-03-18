@@ -79,7 +79,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
         int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfSelectedThreadTypes(artifact, null);
 
         if (numberOfSelectedArtifactThreads == 0)
-        {
+        { // In case any thread is deselected, i.e. where for all threads thr the method call thr.isFiltered() yields true
             numberOfSelectedArtifactThreads = artifact.getNumberOfThreads();
             Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
             numberOfSelectedThreadTypes = threadTypeLists == null ? 0 : threadTypeLists.size();
