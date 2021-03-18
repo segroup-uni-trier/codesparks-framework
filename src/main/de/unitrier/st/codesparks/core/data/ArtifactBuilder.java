@@ -58,7 +58,7 @@ public class ArtifactBuilder
         return this;
     }
 
-    public ArtifactBuilder setNumericMetricValue(final IMetricIdentifier metricIdentifier, double metricValue)
+    public ArtifactBuilder setNumericMetricValue(final AMetricIdentifier metricIdentifier, double metricValue)
     {
         artifact.setNumericalMetricValue(metricIdentifier, metricValue);
         return this;

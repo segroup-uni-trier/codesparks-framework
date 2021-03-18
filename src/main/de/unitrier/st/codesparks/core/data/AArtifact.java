@@ -6,17 +6,19 @@ import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.IThreadArtifactFilterable;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadArtifactFilterable
+public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadArtifactFilterable, Serializable
 {
     /*
      * Final fields
@@ -72,10 +74,10 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         this.name = name == null ? "" : name;
         this.identifier = identifier == null ? "" : identifier;
         this.threadArtifactClass = threadArtifactClass;
-        this.metrics = new Lazy<>(() -> new HashMap<>(4));
-        this.threadMap = new Lazy<>(() -> new HashMap<>(8));
-        this.predecessors = new Lazy<>(() -> new HashMap<>(8));
-        this.successors = new Lazy<>(() -> new HashMap<>(8));
+        this.metrics = new Lazy<>((Supplier<Map<IMetricIdentifier, Object>> & Serializable) () -> new HashMap<>(4));
+        this.threadMap = new Lazy<>((Supplier<Map<String, AThreadArtifact>> & Serializable) () -> new HashMap<>(8));
+        this.predecessors = new Lazy<>((Supplier<Map<Integer, List<ANeighborArtifact>>> & Serializable) () -> new HashMap<>(8));
+        this.successors = new Lazy<>((Supplier<Map<Integer, List<ANeighborArtifact>>> & Serializable) () -> new HashMap<>(8));
     }
 
     /*
@@ -84,7 +86,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
 
     private PsiElement visPsiElement;
 
-    private final Object visPsiElementLock = new Object();
+    private final Object visPsiElementLock = new SerializableLockObject();
 
     public PsiElement getVisPsiElement()
     {
@@ -122,13 +124,13 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
      */
 
     @Override
-    public String getDisplayString(final IMetricIdentifier metricIdentifier, final int maxLen)
+    public String getDisplayString(final AMetricIdentifier metricIdentifier, final int maxLen)
     {
         return CoreUtil.reduceToLength(getDisplayString(metricIdentifier), maxLen);
     }
 
     @Override
-    public String getDisplayString(final IMetricIdentifier metricIdentifier)
+    public String getDisplayString(final AMetricIdentifier metricIdentifier)
     {
         String metricValueString;
         if (metricIdentifier.isNumerical())
@@ -153,7 +155,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
      */
 
 
-    private final Object metricsLock = new Object();
+    private final Object metricsLock = new SerializableLockObject();
 
     public Collection<Metric> getMetrics()
     {
@@ -175,7 +177,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return ret;
     }
 
-    public Metric getMetric(final IMetricIdentifier metricIdentifier)
+    public Metric getMetric(final AMetricIdentifier metricIdentifier)
     {
         if (metricIdentifier == null)
         {
@@ -192,7 +194,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return m;
     }
 
-    public Object getMetricValue(final IMetricIdentifier metricIdentifier)
+    public Object getMetricValue(final AMetricIdentifier metricIdentifier)
     {
         if (metricIdentifier == null)
         {
@@ -213,7 +215,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
      * @param metricIdentifier The metric identifier.
      * @return The value (as object) associated with the metric identifier.
      */
-    public final Object getOrCreateMetricValue(final IMetricIdentifier metricIdentifier, final Constructor<?> constructor, final Object... initArgs)
+    public final Object getOrCreateMetricValue(final AMetricIdentifier metricIdentifier, final Constructor<?> constructor, final Object... initArgs)
     {
         if (metricIdentifier == null)
         {
@@ -242,7 +244,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return metricValue;
     }
 
-    public void setMetricValue(final IMetricIdentifier metricIdentifier, final Object value)
+    public void setMetricValue(final AMetricIdentifier metricIdentifier, final Object value)
     {
         if (metricIdentifier == null || value == null)
         {
@@ -254,7 +256,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         }
     }
 
-    public void increaseNumericalMetricValue(final IMetricIdentifier metricIdentifier, final double toIncrease)
+    public void increaseNumericalMetricValue(final AMetricIdentifier metricIdentifier, final double toIncrease)
     {
         if (metricIdentifier == null || !metricIdentifier.isNumerical())
         {
@@ -272,12 +274,12 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         }
     }
 
-    public void decreaseNumericalMetricValue(final IMetricIdentifier metricIdentifier, final double toDecrease)
+    public void decreaseNumericalMetricValue(final AMetricIdentifier metricIdentifier, final double toDecrease)
     {
         increaseNumericalMetricValue(metricIdentifier, (-1) * toDecrease);
     }
 
-    public double getNumericalMetricValue(final IMetricIdentifier metricIdentifier)
+    public double getNumericalMetricValue(final AMetricIdentifier metricIdentifier)
     {
         if (metricIdentifier == null || !metricIdentifier.isNumerical())
         {
@@ -295,7 +297,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return val;
     }
 
-    public void setNumericalMetricValue(final IMetricIdentifier metricIdentifier, final double value)
+    public void setNumericalMetricValue(final AMetricIdentifier metricIdentifier, final double value)
     {
         if (metricIdentifier == null || !metricIdentifier.isNumerical())
         {
@@ -316,7 +318,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return !getThreadArtifacts().isEmpty();
     }
 
-    private final Object threadMapLock = new Object();
+    private final Object threadMapLock = new SerializableLockObject();
 
     public Collection<AThreadArtifact> getThreadArtifacts()
     {
@@ -390,7 +392,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     }
 
     public void increaseNumericalMetricValueThread(
-            final IMetricIdentifier metricIdentifier
+            final AMetricIdentifier metricIdentifier
             , final String threadIdentifier
             , final double toIncrease
     )
@@ -470,12 +472,12 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return lookupClustering(clusteringStrategy);
     }
 
-    public ThreadArtifactClustering getDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
+    public ThreadArtifactClustering getDefaultThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
     {
         return lookupClustering(DefaultThreadArtifactClusteringStrategy.getInstance(metricIdentifier));
     }
 
-    public ThreadArtifactClustering getSortedDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
+    public ThreadArtifactClustering getSortedDefaultThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
     {
         ThreadArtifactClustering defaultThreadArtifactClusters = lookupClustering(DefaultThreadArtifactClusteringStrategy.getInstance(metricIdentifier));
         Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterComparator.getInstance(metricIdentifier);
@@ -483,7 +485,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return defaultThreadArtifactClusters;
     }
 
-    public void initDefaultThreadArtifactClustering(final IMetricIdentifier metricIdentifier)
+    public void initDefaultThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
     {
         IThreadArtifactClusteringStrategy instance = DefaultThreadArtifactClusteringStrategy.getInstance(metricIdentifier);
         synchronized (clusterings)
@@ -500,7 +502,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
      * Predecessors
      */
 
-    private final Object predecessorsLock = new Object();
+    private final Object predecessorsLock = new SerializableLockObject();
 
     public Map<Integer, List<ANeighborArtifact>> getPredecessors()
     {
@@ -526,7 +528,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
             final String identifier,
             final Class<? extends ANeighborArtifact> neighborArtifactClass,
             final int lineNumber,
-            final IMetricIdentifier metricIdentifier,
+            final AMetricIdentifier metricIdentifier,
             final double neighborMetricValue,
             final String threadIdentifier
     )
@@ -553,7 +555,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
      * Successors
      */
 
-    private final Object successorsLock = new Object();
+    private final Object successorsLock = new SerializableLockObject();
 
     public Map<Integer, List<ANeighborArtifact>> getSuccessors()
     {
@@ -568,7 +570,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
             , final String identifier
             , final Class<? extends ANeighborArtifact> neighborArtifactClass
             , final int lineNumber
-            , final IMetricIdentifier metricIdentifier
+            , final AMetricIdentifier metricIdentifier
             , final double neighborMetricValue
             , final String threadIdentifier
     )

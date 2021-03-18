@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization;
 
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 
 import javax.swing.*;
 
@@ -9,19 +9,19 @@ import javax.swing.*;
  */
 public abstract class AArtifactVisualizationLabelFactory extends AVisualizationSequence implements IArtifactVisualizationLabelFactory
 {
-    protected final IMetricIdentifier primaryMetricIdentifier;
+    protected final AMetricIdentifier primaryMetricIdentifier;
 
-    public IMetricIdentifier getPrimaryMetricIdentifier()
+    public AMetricIdentifier getPrimaryMetricIdentifier()
     {
         return primaryMetricIdentifier;
     }
 
-    protected AArtifactVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
+    protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         this.primaryMetricIdentifier = primaryMetricIdentifier;
     }
 
-    protected AArtifactVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
+    protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(sequence);
         this.primaryMetricIdentifier = primaryMetricIdentifier;

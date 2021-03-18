@@ -17,7 +17,7 @@ public final class ThreadVisualizationUtil
 
     public static double calculateFilteredAvgNumericalMetricRatio(
             final ThreadArtifactCluster cluster
-            , final IMetricIdentifier metricIdentifier
+            , final AMetricIdentifier metricIdentifier
             , final boolean ignoreFilter
     )
     {
@@ -37,7 +37,7 @@ public final class ThreadVisualizationUtil
     public static double calculateFilteredAvgNumericalMetricRatioForZoomVisualization(
             final ThreadArtifactCluster cluster
             , final Set<AThreadArtifact> selectedCodeSparksThreads
-            , final IMetricIdentifier metricIdentifier
+            , final AMetricIdentifier metricIdentifier
             , final boolean ignoreFilter
     )
     {
@@ -63,7 +63,7 @@ public final class ThreadVisualizationUtil
 
     public static double calculateFilteredSumNumericalMetricRatio(
             final ThreadArtifactCluster cluster
-            , final IMetricIdentifier metricIdentifier
+            , final AMetricIdentifier metricIdentifier
             , final boolean ignoreFilter
     )
     {
@@ -88,13 +88,13 @@ public final class ThreadVisualizationUtil
         return sum;
     }
 
-    public static double calculateFilteredSumNumericalMetricRatioForZoomVisualisation(ThreadArtifactCluster cluster,
-                                                                                      final IMetricIdentifier metricIdentifier,
-                                                                                      Set<AThreadArtifact> selectedCodeSparksThreads,
-                                                                                      boolean ignoreFilter)
+    public static double calculateFilteredSumNumericalMetricRatioForZoomVisualisation(final ThreadArtifactCluster cluster,
+                                                                                      final AMetricIdentifier metricIdentifier,
+                                                                                      final Set<AThreadArtifact> selectedThreadArtifacts,
+                                                                                      final boolean ignoreFilter)
     {
         double sum = 0;
-        for (AThreadArtifact codeSparksThread : selectedCodeSparksThreads)
+        for (AThreadArtifact codeSparksThread : selectedThreadArtifacts)
         {
             if (!cluster.contains(codeSparksThread) && !ignoreFilter)
                 continue;

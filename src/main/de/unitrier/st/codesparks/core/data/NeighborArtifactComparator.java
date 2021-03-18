@@ -7,9 +7,9 @@ import java.util.Comparator;
  */
 public class NeighborArtifactComparator implements Comparator<ANeighborArtifact>
 {
-    private final IMetricIdentifier metricIdentifier;
+    private final AMetricIdentifier metricIdentifier;
 
-    public NeighborArtifactComparator(final IMetricIdentifier metricIdentifier)
+    public NeighborArtifactComparator(final AMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }

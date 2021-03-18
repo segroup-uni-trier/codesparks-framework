@@ -42,7 +42,7 @@ public abstract class AThreadArtifact extends AArtifact
     }
 
     @Override
-    public String getDisplayString(final IMetricIdentifier metricIdentifier, int maxLen)
+    public String getDisplayString(final AMetricIdentifier metricIdentifier, int maxLen)
     {
         String metricValueString;
         if (metricIdentifier.isNumerical())
@@ -64,7 +64,7 @@ public abstract class AThreadArtifact extends AArtifact
     }
 
     @Override
-    public String getDisplayString(final IMetricIdentifier metricIdentifier)
+    public String getDisplayString(final AMetricIdentifier metricIdentifier)
     {
         return getDisplayString(metricIdentifier, 39);
     }

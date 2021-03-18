@@ -20,7 +20,7 @@ public class NumericalMetricListModel extends DefaultListModel<JBTextArea>
 
     public NumericalMetricListModel(
             final AArtifact artifact
-            , final IMetricIdentifier numericalMetricIdentifier
+            , final AMetricIdentifier numericalMetricIdentifier
             , final List<ANeighborArtifact> neighborArtifacts)
     {
         this.neighborArtifacts = neighborArtifacts;

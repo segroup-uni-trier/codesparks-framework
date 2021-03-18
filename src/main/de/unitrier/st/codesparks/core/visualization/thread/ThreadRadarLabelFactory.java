@@ -5,7 +5,7 @@ import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
@@ -24,19 +24,19 @@ import java.util.Map;
 public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 {
     private final IThreadRadarDisplayData radialThreadVisualizationPopupData;
-    private final IMetricIdentifier secondaryMetricIdentifier;
+    private final AMetricIdentifier secondaryMetricIdentifier;
 
     public ThreadRadarLabelFactory(
-            final IMetricIdentifier primaryMetricIdentifier
-            , final IMetricIdentifier secondaryMetricIdentifier
+            final AMetricIdentifier primaryMetricIdentifier
+            , final AMetricIdentifier secondaryMetricIdentifier
     )
     {
         this(primaryMetricIdentifier, secondaryMetricIdentifier, 0, new DefaultThreadRadarDisplayData(primaryMetricIdentifier));
     }
 
     public ThreadRadarLabelFactory(
-            final IMetricIdentifier primaryMetricIdentifier
-            , final IMetricIdentifier secondaryMetricIdentifier
+            final AMetricIdentifier primaryMetricIdentifier
+            , final AMetricIdentifier secondaryMetricIdentifier
             , final int sequence
     )
     {
@@ -44,8 +44,8 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
     }
 
     public ThreadRadarLabelFactory(
-            final IMetricIdentifier primaryMetricIdentifier
-            , final IMetricIdentifier secondaryMetricIdentifier
+            final AMetricIdentifier primaryMetricIdentifier
+            , final AMetricIdentifier secondaryMetricIdentifier
             , final int sequence
             , final IThreadRadarDisplayData radialThreadVisualizationPopupData
     )

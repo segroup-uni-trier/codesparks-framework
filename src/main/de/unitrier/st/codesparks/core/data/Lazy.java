@@ -1,10 +1,11 @@
 package de.unitrier.st.codesparks.core.data;
 
+import java.io.Serializable;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-class Lazy<T>
+class Lazy<T> implements Serializable
 {
     private T value;
 

@@ -361,11 +361,11 @@ public class ArtifactOverview
     private JBTextField includeFilter;
 
     private final Object metricIdentifierLock = new Object();
-    private final Map<Class<? extends AArtifact>, IMetricIdentifier> artifactClassMetricIdentifier = new HashMap<>(8);
+    private final Map<Class<? extends AArtifact>, AMetricIdentifier> artifactClassMetricIdentifier = new HashMap<>(8);
 
     public void registerMetricIdentifier(
             final Class<? extends AArtifact> artifactClass
-            , final IMetricIdentifier metricIdentifier
+            , final AMetricIdentifier metricIdentifier
     )
     {
         if (artifactClass == null || metricIdentifier == null)
@@ -440,7 +440,7 @@ public class ArtifactOverview
                 artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
 
                 String tabName = artifactPool.getArtifactClassDisplayName(artifactClass);
-                final IMetricIdentifier metricIdentifier = artifactClassMetricIdentifier.get(artifactClass);
+                final AMetricIdentifier metricIdentifier = artifactClassMetricIdentifier.get(artifactClass);
                 if (metricIdentifier != null)
                 {
                     addTab(tabName, artifacts, metricIdentifier);
@@ -457,7 +457,7 @@ public class ArtifactOverview
         });
     }
 
-    private void addTab(final String title, final List<AArtifact> artifacts, final IMetricIdentifier metricIdentifier)
+    private void addTab(final String title, final List<AArtifact> artifacts, final AMetricIdentifier metricIdentifier)
     {
         final ArtifactOverViewTableModel tableModel = new ArtifactOverViewTableModel(artifacts, metricIdentifier);
         final MetricTable jbTable = new MetricTable(tableModel)

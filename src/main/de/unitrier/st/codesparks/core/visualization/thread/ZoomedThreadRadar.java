@@ -17,13 +17,13 @@ public class ZoomedThreadRadar extends AThreadRadar
     private final List<IThreadSelectable> threadSelectables;
     private final IThreadSelectableIndexProvider indexProvider;
     private int hoveredCluster = -1;
-    private final IMetricIdentifier metricIdentifier;
+    private final AMetricIdentifier metricIdentifier;
 
     ZoomedThreadRadar(
             final AArtifact artifact
             , final IThreadSelectableIndexProvider indexProvider
             , final List<IThreadSelectable> threadSelectables
-            , final IMetricIdentifier metricIdentifier
+            , final AMetricIdentifier metricIdentifier
     )
     {
         setUpVisualizationParameter(154, 50);

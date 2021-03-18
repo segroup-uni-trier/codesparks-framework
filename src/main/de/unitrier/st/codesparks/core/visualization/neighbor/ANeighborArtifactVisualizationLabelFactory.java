@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.AVisualizationSequence;
 
 /*
@@ -9,14 +9,14 @@ import de.unitrier.st.codesparks.core.visualization.AVisualizationSequence;
 public abstract class ANeighborArtifactVisualizationLabelFactory extends AVisualizationSequence
         implements INeighborArtifactVisualizationLabelFactory
 {
-    protected final IMetricIdentifier primaryMetricIdentifier;
+    protected final AMetricIdentifier primaryMetricIdentifier;
 
-    protected ANeighborArtifactVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
+    protected ANeighborArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         this.primaryMetricIdentifier = primaryMetricIdentifier;
     }
 
-    protected ANeighborArtifactVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
+    protected ANeighborArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(sequence);
         this.primaryMetricIdentifier = primaryMetricIdentifier;

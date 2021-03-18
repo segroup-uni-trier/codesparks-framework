@@ -5,7 +5,7 @@ import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ArtifactTrie;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 
 import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
 
@@ -15,7 +15,7 @@ import java.awt.image.BufferedImage;
 
 public class ArtifactTrieMetricVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    public ArtifactTrieMetricVisualizationLabelFactory(final IMetricIdentifier artifactTrieMetricIdentifier)
+    public ArtifactTrieMetricVisualizationLabelFactory(final AMetricIdentifier artifactTrieMetricIdentifier)
     {
         super(artifactTrieMetricIdentifier);
     }

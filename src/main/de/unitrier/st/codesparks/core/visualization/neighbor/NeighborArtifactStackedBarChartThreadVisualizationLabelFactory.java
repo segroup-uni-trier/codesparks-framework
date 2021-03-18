@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
-    public NeighborArtifactStackedBarChartThreadVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
+    public NeighborArtifactStackedBarChartThreadVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
     }
 
-    public NeighborArtifactStackedBarChartThreadVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
+    public NeighborArtifactStackedBarChartThreadVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(primaryMetricIdentifier, sequence);
     }

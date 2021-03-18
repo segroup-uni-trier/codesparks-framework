@@ -23,12 +23,12 @@ import java.util.OptionalDouble;
 
 public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    public MirroredClusterSizeThreadForkLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
+    public MirroredClusterSizeThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
     }
 
-    public MirroredClusterSizeThreadForkLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
+    public MirroredClusterSizeThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(primaryMetricIdentifier, sequence);
     }

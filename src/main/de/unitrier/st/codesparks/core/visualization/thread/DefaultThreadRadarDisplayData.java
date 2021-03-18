@@ -2,7 +2,7 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 
 import java.util.Set;
 
@@ -11,9 +11,9 @@ import java.util.Set;
  */
 public class DefaultThreadRadarDisplayData implements IThreadRadarDisplayData
 {
-    private final IMetricIdentifier metricIdentifier;
+    private final AMetricIdentifier metricIdentifier;
 
-    public DefaultThreadRadarDisplayData(final IMetricIdentifier metricIdentifier)
+    public DefaultThreadRadarDisplayData(final AMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }

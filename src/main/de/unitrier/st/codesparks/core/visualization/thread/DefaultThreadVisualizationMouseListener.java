@@ -25,7 +25,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
     DefaultThreadVisualizationMouseListener(
             final JComponent component
             , final AArtifact artifact
-            , final IMetricIdentifier primaryMetricIdentifier
+            , final AMetricIdentifier primaryMetricIdentifier
     )
     {
         super(component, new Dimension(520, 170), artifact, primaryMetricIdentifier);

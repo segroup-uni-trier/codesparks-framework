@@ -10,9 +10,9 @@ import java.util.function.ToDoubleFunction;
  */
 public class ThreadArtifactClusterComparator implements Comparator<ThreadArtifactCluster>
 {
-    private final static Map<IMetricIdentifier, Comparator<ThreadArtifactCluster>> comparators = new HashMap<>();
+    private final static Map<AMetricIdentifier, Comparator<ThreadArtifactCluster>> comparators = new HashMap<>();
 
-    public static Comparator<ThreadArtifactCluster> getInstance(final IMetricIdentifier metricIdentifier)
+    public static Comparator<ThreadArtifactCluster> getInstance(final AMetricIdentifier metricIdentifier)
     {
         synchronized (ThreadArtifactClusterComparator.class)
         {
@@ -26,9 +26,9 @@ public class ThreadArtifactClusterComparator implements Comparator<ThreadArtifac
         }
     }
 
-    private final IMetricIdentifier metricIdentifier;
+    private final AMetricIdentifier metricIdentifier;
 
-    private ThreadArtifactClusterComparator(final IMetricIdentifier metricIdentifier)
+    private ThreadArtifactClusterComparator(final AMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }

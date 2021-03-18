@@ -1,12 +1,5 @@
 package de.unitrier.st.codesparks.core.data;
 
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
-import com.google.common.collect.Sets;
-
-import java.util.Optional;
-import java.util.Set;
-
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
@@ -17,7 +10,7 @@ public final class DataUtil
     //TODO: inline in method below
     private static double getThreadFilteredRelativeNumericMetricValueRatioOfArtifact(
             final AArtifact artifact
-            , final IMetricIdentifier metricIdentifier
+            , final AMetricIdentifier metricIdentifier
     )
     {
         if (!metricIdentifier.isNumerical() || !metricIdentifier.isRelative())
@@ -33,7 +26,7 @@ public final class DataUtil
 
     public static double getThreadFilteredRelativeNumericMetricValueOf(
             final AArtifact artifact
-            , final IMetricIdentifier metricIdentifier
+            , final AMetricIdentifier metricIdentifier
     )
     {
         if (artifact == null || metricIdentifier == null)

@@ -23,12 +23,12 @@ import java.util.OptionalDouble;
 
 public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    public ThreadForkLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
+    public ThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
     }
 
-    public ThreadForkLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
+    public ThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(primaryMetricIdentifier, sequence);
     }

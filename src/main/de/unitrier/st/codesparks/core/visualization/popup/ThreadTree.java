@@ -3,7 +3,7 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.util.ui.ThreeStateCheckBox;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
@@ -31,7 +31,7 @@ public class ThreadTree extends AThreadSelectable
 
     public ThreadTree(
             final Map<String, List<AThreadArtifact>> threadTreeContent
-            , final IMetricIdentifier metricIdentifier
+            , final AMetricIdentifier metricIdentifier
     )
     {
         leafNodes = new ArrayList<>();

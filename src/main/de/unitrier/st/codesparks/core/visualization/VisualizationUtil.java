@@ -5,15 +5,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.CoreUtil;
-import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Collection;
 import java.util.Objects;
 
 /*
@@ -83,12 +78,12 @@ public final class VisualizationUtil
         return y * (1 + (1 - alpha)) > 145 ? JBColor.BLACK : JBColor.WHITE;
     }
 
-    public static void fillRectangle(@NotNull Graphics graphics, @NotNull Rectangle rectangle)
+    public static void fillRectangle(Graphics graphics, Rectangle rectangle)
     {
         graphics.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
     }
 
-    public static void drawTransparentBackground(@NotNull final Graphics2D graphics, final BufferedImage bi)
+    public static void drawTransparentBackground(final Graphics2D graphics, final BufferedImage bi)
     {
         final Composite composite = graphics.getComposite();
         graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
@@ -96,7 +91,7 @@ public final class VisualizationUtil
         graphics.setComposite(composite);
     }
 
-    public static void drawTransparentBackground(@NotNull final Graphics2D graphics, final int width, final int height)
+    public static void drawTransparentBackground(final Graphics2D graphics, final int width, final int height)
     {
         final Composite composite = graphics.getComposite();
         graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
@@ -104,7 +99,7 @@ public final class VisualizationUtil
         graphics.setComposite(composite);
     }
 
-    public static void clearAndDrawTransparentBackground(@NotNull final Graphics2D graphics, final int width, final int height)
+    public static void clearAndDrawTransparentBackground(final Graphics2D graphics, final int width, final int height)
     {
         final Composite composite = graphics.getComposite();
         graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0f)); // Will fix the problem that on repainting, the old graphics paintings
@@ -113,7 +108,7 @@ public final class VisualizationUtil
         graphics.setComposite(composite);
     }
 
-    public static void drawTransparentBackground(@NotNull final Graphics2D graphics, final int width, final int height, final int alphaComposite)
+    public static void drawTransparentBackground(final Graphics2D graphics, final int width, final int height, final int alphaComposite)
     {
         final Composite composite = graphics.getComposite();
         graphics.setComposite(AlphaComposite.getInstance(alphaComposite, 0f));
@@ -121,7 +116,7 @@ public final class VisualizationUtil
         graphics.setComposite(composite);
     }
 
-    public static void drawRectangle(@NotNull Graphics graphics, @NotNull Rectangle rectangle)
+    public static void drawRectangle(Graphics graphics, Rectangle rectangle)
     {
         graphics.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
     }

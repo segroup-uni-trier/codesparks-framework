@@ -15,7 +15,7 @@ import com.intellij.ui.content.ContentManager;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
@@ -35,13 +35,13 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
     protected JComponent component;
     protected final Dimension dimension;
     protected final AArtifact artifact;
-    protected final IMetricIdentifier primaryMetricIdentifier;
+    protected final AMetricIdentifier primaryMetricIdentifier;
 
     protected AArtifactVisualizationMouseListener(
             final JComponent component
             , final Dimension dimension
             , final AArtifact artifact
-            , final IMetricIdentifier primaryMetricIdentifier
+            , final AMetricIdentifier primaryMetricIdentifier
     )
     {
         this.component = component;

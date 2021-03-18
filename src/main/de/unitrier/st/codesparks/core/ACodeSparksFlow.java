@@ -356,7 +356,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         ArtifactOverview.getInstance().registerProgramArtifactVisualizationLabelFactory(factory);
     }
 
-    public void registerMetricIdentifier(final Class<? extends AArtifact> artifactClass, final IMetricIdentifier metricIdentifier)
+    public void registerMetricIdentifier(final Class<? extends AArtifact> artifactClass, final AMetricIdentifier metricIdentifier)
     {
         ArtifactOverview.getInstance().registerMetricIdentifier(artifactClass, metricIdentifier);
     }

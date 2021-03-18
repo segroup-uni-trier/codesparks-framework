@@ -225,7 +225,7 @@ public abstract class AThreadRadar extends JPanel
     }
 
     @SuppressWarnings("unused")
-    static double calculateFilteredMedianRuntimeRatio(final ThreadArtifactCluster cluster, final IMetricIdentifier metricIdentifier)
+    static double calculateFilteredMedianRuntimeRatio(final ThreadArtifactCluster cluster, final AMetricIdentifier metricIdentifier)
     {
         int unfilteredThreads = 0;
         for (AThreadArtifact codeSparksThread : cluster)
@@ -257,7 +257,7 @@ public abstract class AThreadRadar extends JPanel
 
     static double getFilteredMetricSumOfCluster(
             final ThreadArtifactCluster cluster
-            , final IMetricIdentifier metricIdentifier
+            , final AMetricIdentifier metricIdentifier
             , final Set<AThreadArtifact> filteredThreads
     )
     {

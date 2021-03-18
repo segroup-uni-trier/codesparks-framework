@@ -7,9 +7,9 @@ import java.util.Comparator;
  */
 public class ThreadArtifactComparator implements Comparator<AThreadArtifact>
 {
-    private final IMetricIdentifier metricIdentifier;
+    private final AMetricIdentifier metricIdentifier;
 
-    public ThreadArtifactComparator(final IMetricIdentifier metricIdentifier)
+    public ThreadArtifactComparator(final AMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }

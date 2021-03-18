@@ -5,7 +5,7 @@ import com.intellij.ui.components.JBTabbedPane;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
@@ -20,13 +20,13 @@ import java.util.stream.Collectors;
  */
 public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
-    private final IMetricIdentifier secondaryMetricIdentifier;
+    private final AMetricIdentifier secondaryMetricIdentifier;
 
     public DefaultArtifactVisualizationMouseListener(
             final JComponent component
             , final AArtifact artifact
-            , final IMetricIdentifier primaryMetricIdentifier
-            , final IMetricIdentifier secondaryMetricIdentifier
+            , final AMetricIdentifier primaryMetricIdentifier
+            , final AMetricIdentifier secondaryMetricIdentifier
     )
     {
         super(component, new Dimension(500, 175), artifact, primaryMetricIdentifier);

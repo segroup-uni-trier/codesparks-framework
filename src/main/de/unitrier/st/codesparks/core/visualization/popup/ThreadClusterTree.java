@@ -3,7 +3,7 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 
@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class ThreadClusterTree extends ThreadTree
 {
-    public ThreadClusterTree(Map<String, List<AThreadArtifact>> threadTreeContent, final IMetricIdentifier metricIdentifier)
+    public ThreadClusterTree(Map<String, List<AThreadArtifact>> threadTreeContent, final AMetricIdentifier metricIdentifier)
     {
         super(threadTreeContent, metricIdentifier);
         VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();

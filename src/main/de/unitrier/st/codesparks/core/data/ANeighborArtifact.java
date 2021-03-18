@@ -21,7 +21,7 @@ public abstract class ANeighborArtifact extends AArtifact
         this.lineNumber = lineNumber;
     }
 
-    public double getNumericalMetricValueRelativeTo(final AArtifact artifact, final IMetricIdentifier metricIdentifier)
+    public double getNumericalMetricValueRelativeTo(final AArtifact artifact, final AMetricIdentifier metricIdentifier)
     {
         if (!metricIdentifier.isNumerical())
         {
@@ -32,12 +32,12 @@ public abstract class ANeighborArtifact extends AArtifact
         return metricValue / artifactNumericalMetricValue;
     }
 
-    public String getDisplayStringRelativeTo(final AArtifact artifact, final IMetricIdentifier metricIdentifier, final int maxLen)
+    public String getDisplayStringRelativeTo(final AArtifact artifact, final AMetricIdentifier metricIdentifier, final int maxLen)
     {
         return CoreUtil.reduceToLength(getDisplayStringRelativeTo(artifact, metricIdentifier), maxLen);
     }
 
-    public String getDisplayStringRelativeTo(final AArtifact artifact, final IMetricIdentifier metricIdentifier)
+    public String getDisplayStringRelativeTo(final AArtifact artifact, final AMetricIdentifier metricIdentifier)
     {
         String metricValueString;
         if (metricIdentifier.isNumerical())

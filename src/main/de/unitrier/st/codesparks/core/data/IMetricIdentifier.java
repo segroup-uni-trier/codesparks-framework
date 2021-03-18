@@ -1,10 +1,14 @@
 package de.unitrier.st.codesparks.core.data;
 
+import java.io.Serializable;
+
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public interface IMetricIdentifier
+interface IMetricIdentifier extends Serializable
 {
+    String getIdentifier();
+
     String getName();
 
     String getDisplayString();

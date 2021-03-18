@@ -4,7 +4,7 @@ import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 
@@ -19,7 +19,7 @@ public class ThreadTypeTree extends ThreadTree
 {
     public ThreadTypeTree(
             final Map<String, List<AThreadArtifact>> threadTreeContent
-            , final IMetricIdentifier metricIdentifier
+            , final AMetricIdentifier metricIdentifier
             , final ThreadArtifactClustering clustering
     )
     {

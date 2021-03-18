@@ -30,12 +30,12 @@ import static com.intellij.ui.JBColor.WHITE;
  */
 public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
-    public DefaultNeighborArtifactVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier)
+    public DefaultNeighborArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
     }
 
-    public DefaultNeighborArtifactVisualizationLabelFactory(final IMetricIdentifier primaryMetricIdentifier, final int sequence)
+    public DefaultNeighborArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(primaryMetricIdentifier, sequence);
     }

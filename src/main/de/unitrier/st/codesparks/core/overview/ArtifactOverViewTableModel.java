@@ -3,7 +3,7 @@ package de.unitrier.st.codesparks.core.overview;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.DataUtil;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.DummyArtifactVisualizationLabelFactory;
@@ -26,7 +26,7 @@ public class ArtifactOverViewTableModel implements TableModel
 {
     private final List<AArtifact> artifacts;
 
-    ArtifactOverViewTableModel(@NotNull final List<AArtifact> artifacts, final IMetricIdentifier metricIdentifier)
+    ArtifactOverViewTableModel(@NotNull final List<AArtifact> artifacts, final AMetricIdentifier metricIdentifier)
     {
         if (metricIdentifier == null)
         {

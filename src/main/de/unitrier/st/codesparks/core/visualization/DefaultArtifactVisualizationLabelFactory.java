@@ -6,7 +6,7 @@ import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.DataUtil;
-import de.unitrier.st.codesparks.core.data.IMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -21,20 +21,20 @@ import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
  */
 public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    private final IMetricIdentifier secondaryMetricIdentifier;
+    private final AMetricIdentifier secondaryMetricIdentifier;
 
     @SuppressWarnings("unused")
     public DefaultArtifactVisualizationLabelFactory(
-            final IMetricIdentifier primaryMetricIdentifier
-            , final IMetricIdentifier secondaryMetricIdentifier
+            final AMetricIdentifier primaryMetricIdentifier
+            , final AMetricIdentifier secondaryMetricIdentifier
     )
     {
         this(primaryMetricIdentifier, secondaryMetricIdentifier, 0);
     }
 
     public DefaultArtifactVisualizationLabelFactory(
-            final IMetricIdentifier primaryMetricIdentifier
-            , final IMetricIdentifier secondaryMetricIdentifier
+            final AMetricIdentifier primaryMetricIdentifier
+            , final AMetricIdentifier secondaryMetricIdentifier
             , final int sequence
     )
     {

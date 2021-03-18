@@ -18,10 +18,10 @@ public class MetricTableModel extends DefaultTableModel
     private final int preSize;
     private final int sucSize;
 
-    private final IMetricIdentifier metricIdentifier;
+    private final AMetricIdentifier metricIdentifier;
     private final AArtifact artifact;
 
-    public MetricTableModel(@NotNull final AArtifact artifact, final IMetricIdentifier metricIdentifier)
+    public MetricTableModel(@NotNull final AArtifact artifact, final AMetricIdentifier metricIdentifier)
     {
         this.artifact = artifact;
         this.metricIdentifier = metricIdentifier;

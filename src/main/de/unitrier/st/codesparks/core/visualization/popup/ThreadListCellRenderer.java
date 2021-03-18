@@ -22,7 +22,7 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
     private final boolean[] selected;
     private final Map<String, Integer> threadIdIndex;
 
-    public ThreadListCellRenderer(final AArtifact artifact, final IMetricIdentifier metricIdentifier)
+    public ThreadListCellRenderer(final AArtifact artifact, final AMetricIdentifier metricIdentifier)
     {
         int numberOfThreads = artifact.getNumberOfThreads();
         this.displayColors = new Color[numberOfThreads];
