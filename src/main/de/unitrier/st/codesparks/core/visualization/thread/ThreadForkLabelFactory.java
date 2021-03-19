@@ -70,8 +70,8 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         // Leading arrow
         graphics.fillRect(X_OFFSET_LEFT, lineHeight / 2, barrierXPos - 1, 1);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 3, lineHeight / 2 - 3, X_OFFSET_LEFT + barrierXPos, lineHeight / 2);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 3, lineHeight / 2 + 3, X_OFFSET_LEFT + barrierXPos, lineHeight / 2);
+        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, lineHeight / 2 - 3, X_OFFSET_LEFT + barrierXPos-1, lineHeight / 2);
+        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, lineHeight / 2 + 3, X_OFFSET_LEFT + barrierXPos-1, lineHeight / 2);
 
         // Vertical bar or barrier, respectively
         final int barrierWidth = 3;

@@ -72,6 +72,7 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
         BufferedImage bi = UIUtil.createImage(defaultConfiguration, totalWidth, lineHeight, BufferedImage.TYPE_INT_ARGB,
                 PaintUtil.RoundingMode.CEIL);
         Graphics2D graphics = (Graphics2D) bi.getGraphics();
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         VisualizationUtil.drawTransparentBackground(graphics, bi);
 
@@ -82,8 +83,8 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
 
         // Leading arrow
         graphics.fillRect(X_OFFSET_LEFT, lineHeight / 2, barrierXPos - 1, 1);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 3, lineHeight / 2 - 3, X_OFFSET_LEFT + barrierXPos, lineHeight / 2);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 3, lineHeight / 2 + 3, X_OFFSET_LEFT + barrierXPos, lineHeight / 2);
+        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, lineHeight / 2 - 3, X_OFFSET_LEFT + barrierXPos - 1, lineHeight / 2);
+        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, lineHeight / 2 + 3, X_OFFSET_LEFT + barrierXPos - 1, lineHeight / 2);
 
         // Vertical bar or barrier, respectively
         final int barrierWidth = 3;

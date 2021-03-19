@@ -47,11 +47,11 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
         final GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
-        final int X_OFFSET_LEFT = -1;
+        final int X_OFFSET_LEFT = -1; // We don't need the left vertical line of the rectangle when used in conjunction with the original ThreadFork
         final int threadsPerColumn = 3;
         final int threadMetaphorWidth = 24;
         final int barChartWidth = 24;
-        final int X_OFFSET_RIGHT = 2;
+        final int X_OFFSET_RIGHT = 1;
 
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
 
@@ -82,8 +82,8 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
         final int arrowLength = threadMetaphorWidth / 2;
         final int arrowStartX = X_OFFSET_LEFT + barrierXPos + barrierWidth;
         graphics.fillRect(arrowStartX, lineHeight / 2, arrowLength, 1);
-        graphics.drawLine(arrowStartX + arrowLength - 3, lineHeight / 2 - 3, arrowStartX + arrowLength, lineHeight / 2);
-        graphics.drawLine(arrowStartX + arrowLength - 3, lineHeight / 2 + 3, arrowStartX + arrowLength, lineHeight / 2);
+        graphics.drawLine(arrowStartX + 3, lineHeight / 2 - 3, arrowStartX , lineHeight / 2);
+        graphics.drawLine(arrowStartX + 3, lineHeight / 2 + 3, arrowStartX , lineHeight / 2);
 
 
         // Draw the clusters
@@ -107,7 +107,9 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
             JBColor clusterColor = ThreadColor.getNextColor(clusterNum);
             graphics.setColor(clusterColor);
 
-            double percent = threadCluster.size() / totalNumberOfFilteredThreads;
+            final long numberOfThreadsOfCluster = threadCluster.stream().filter(clusterThread -> !clusterThread.isFiltered()).count();
+
+            double percent = numberOfThreadsOfCluster / totalNumberOfFilteredThreads;
 
             int clusterWidth;
             if (percent > 0D)

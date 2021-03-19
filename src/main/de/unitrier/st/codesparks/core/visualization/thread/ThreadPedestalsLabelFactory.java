@@ -4,17 +4,14 @@
 
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
-import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -59,19 +56,20 @@ public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLab
         }
 
         final String numberOfSelectedArtifactThreadsString =
-                String.valueOf(numberOfSelectedThreadTypes) + "|" + String.valueOf(numberOfSelectedArtifactThreads);
-
+                numberOfSelectedThreadTypes +
+                        //"\u00a6"
+                        "/"
+                        //"\u01c0 "
+                        + numberOfSelectedArtifactThreads;
 
         final int threadsPerColumn = 3;
-        final int X_OFFSET_LEFT = 4;
-        final int PEDESTAL_OFFSET_LEFT = 15;
-        final int PEDESTAL_OFFSET_RIGHT = 5;
+        final int X_OFFSET_LEFT = 0;
+        final int PEDESTAL_START_OFFSET_LEFT = 2;
+        final int PEDESTAL_WIDTH_TO_TEXT = 15;
 
-
-        final int pedestalWidth = PEDESTAL_OFFSET_LEFT + numberOfSelectedArtifactThreadsString.length() * 3 + PEDESTAL_OFFSET_RIGHT;
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
 
-        final BufferedImage bi = UIUtil.createImage(defaultConfiguration, X_OFFSET_LEFT + pedestalWidth, lineHeight,
+        final BufferedImage bi = UIUtil.createImage(defaultConfiguration, 300, lineHeight,
                 BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
 
         final Graphics2D graphics = (Graphics2D) bi.getGraphics();
@@ -82,36 +80,34 @@ public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLab
         final Font currentFont = graphics.getFont();
         final Font newFont = currentFont.deriveFont(currentFont.getSize() * 0.9f);
         graphics.setFont(newFont);
-        graphics.getFontMetrics().stringWidth(numberOfSelectedArtifactThreadsString);
+
         final int textHeight = graphics.getFontMetrics().getHeight();
 
-        graphics.drawString("\u0023", 1, lineHeight / 2 + (textHeight / 2) - 2 );
+        final String hashSymbol = "\u0023"; // '\u0023' equals the '#' symbol
+        graphics.drawString(hashSymbol, X_OFFSET_LEFT, lineHeight / 2 + (textHeight / 2) - 2);
 
-
-
+        final int textLength = graphics.getFontMetrics().stringWidth(numberOfSelectedArtifactThreadsString);
+        int pedestalWidth = PEDESTAL_WIDTH_TO_TEXT + textLength;
 
         // Draw bottom line
-        graphics.drawLine(X_OFFSET_LEFT, lineHeight - 1, X_OFFSET_LEFT + pedestalWidth, lineHeight - 1);
+        graphics.drawLine(X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT, lineHeight - 1, X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT + pedestalWidth, lineHeight - 1);
         // Draw ceil line
-        graphics.drawLine(X_OFFSET_LEFT, 0, X_OFFSET_LEFT + pedestalWidth, 0);
+        graphics.drawLine(X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT, 0, X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT + pedestalWidth, 0);
         // Draw back line
-        graphics.drawLine(X_OFFSET_LEFT + pedestalWidth - 1, 0, X_OFFSET_LEFT + pedestalWidth - 1, lineHeight - 1);
-
-        //graphics.drawArc();
+        graphics.drawLine(X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT + pedestalWidth, 0, X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT + pedestalWidth,
+                lineHeight - 1);
 
         final int diameter = lineHeight - 1;
         final int radius = lineHeight / 2;
 
-        graphics.drawArc(-radius + X_OFFSET_LEFT, 0, diameter, diameter, -90, 180);
+        graphics.drawArc(-radius + X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT, 0, diameter, diameter, -90, 180);
 
-
-
-        graphics.drawString(numberOfSelectedArtifactThreadsString, X_OFFSET_LEFT + radius + 2, lineHeight / 2 + (textHeight / 2) - 3);
-
+        graphics.drawString(numberOfSelectedArtifactThreadsString, X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT + radius + 3,
+                lineHeight / 2 + (textHeight / 2) - 3);
 
         // Creation of the label
 
-        BufferedImage subimage = bi.getSubimage(0, 0, bi.getWidth(), bi.getHeight());
+        BufferedImage subimage = bi.getSubimage(0, 0, X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT + pedestalWidth + 1, bi.getHeight());
         ImageIcon imageIcon = new ImageIcon(subimage);
 
         JLabel jLabel = new JLabel();
