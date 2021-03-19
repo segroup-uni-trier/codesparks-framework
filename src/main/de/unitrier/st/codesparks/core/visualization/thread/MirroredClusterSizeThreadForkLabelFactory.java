@@ -82,8 +82,8 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
         final int arrowLength = threadMetaphorWidth / 2;
         final int arrowStartX = X_OFFSET_LEFT + barrierXPos + barrierWidth;
         graphics.fillRect(arrowStartX, lineHeight / 2, arrowLength, 1);
-        graphics.drawLine(arrowStartX + 3, lineHeight / 2 - 3, arrowStartX , lineHeight / 2);
-        graphics.drawLine(arrowStartX + 3, lineHeight / 2 + 3, arrowStartX , lineHeight / 2);
+        graphics.drawLine(arrowStartX + 3, lineHeight / 2 - 3, arrowStartX, lineHeight / 2);
+        graphics.drawLine(arrowStartX + 3, lineHeight / 2 + 3, arrowStartX, lineHeight / 2);
 
 
         // Draw the clusters
@@ -97,17 +97,20 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
 //        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
 //        final double threadFilteredTotalArtifactMetricValue = DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, primaryMetricIdentifier);
 
+        boolean createDisabledViz = threadArtifacts.stream().allMatch(AThreadArtifact::isFiltered);
+
         final double totalNumberOfFilteredThreads =
-                (double) artifact.getThreadArtifacts().stream().filter(threadExecutingArtifact -> !threadExecutingArtifact.isFiltered()).count();
+                (double) artifact.getThreadArtifacts().stream().filter(threadExecutingArtifact -> (createDisabledViz || !threadExecutingArtifact.isFiltered()))
+                        .count();
 
         final List<ThreadArtifactCluster> threadClusters = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
 
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {
-            JBColor clusterColor = ThreadColor.getNextColor(clusterNum);
+            JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);
             graphics.setColor(clusterColor);
 
-            final long numberOfThreadsOfCluster = threadCluster.stream().filter(clusterThread -> !clusterThread.isFiltered()).count();
+            final long numberOfThreadsOfCluster = threadCluster.stream().filter(clusterThread -> (createDisabledViz || !clusterThread.isFiltered())).count();
 
             double percent = numberOfThreadsOfCluster / totalNumberOfFilteredThreads;
 

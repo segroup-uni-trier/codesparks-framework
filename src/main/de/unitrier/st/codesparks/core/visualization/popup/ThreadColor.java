@@ -1,16 +1,21 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
-import org.jetbrains.annotations.Contract;
 
 import java.awt.*;
 
 /*
- * Copyright (c), Oliver Moseler, 2020
+ * Copyright (c), Oliver Moseler, 2021
  */
 public final class ThreadColor
 {
     private ThreadColor() {}
+
+    private static final JBColor[] disabledColorList = {
+            new JBColor(Color.decode("#999999"), Color.decode("#999999")),
+            new JBColor(Color.decode("#777777"), Color.decode("#777777")),
+            new JBColor(Color.decode("#555555"), Color.decode("#555555"))
+    };
 
     private static final JBColor[] colorList =
             {
@@ -30,14 +35,22 @@ public final class ThreadColor
 //                    new JBColor(new Color(197, 0, 124), new Color(197, 0, 124)),
 //                    new JBColor(new Color(0, 97, 181), new Color(0, 97, 191)),
 
-                    new JBColor(Color.decode("#5F4E95"), new Color(99, 0, 164)),
-                    new JBColor(Color.decode("#B25283"), new Color(197, 0, 124)),
-                    new JBColor(Color.decode("#3E877F"), new Color(0, 97, 191)),
+                    new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")),
+                    new JBColor(Color.decode("#B25283"), Color.decode("#B25283")),
+                    new JBColor(Color.decode("#3E877F"), Color.decode("#3E877F")),
             };
 
-    @Contract(pure = true)
-    public static JBColor getNextColor(int i)
+    public static JBColor getNextColor(final int i)
     {
+        return getNextColor(i, false);
+    }
+
+    public static JBColor getNextColor(final int i, final boolean disabledColor)
+    {
+        if (disabledColor)
+        {
+            return disabledColorList[i % disabledColorList.length];
+        }
         return colorList[i % colorList.length];
     }
 }
