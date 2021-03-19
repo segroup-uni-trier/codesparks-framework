@@ -7,7 +7,6 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
@@ -22,14 +21,19 @@ import java.util.Map;
 
 public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    public ThreadPedestalsLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
+    public ThreadPedestalsLabelFactory()
     {
-        super(primaryMetricIdentifier);
+        super(null);
     }
 
-    public ThreadPedestalsLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
+    public ThreadPedestalsLabelFactory(final int sequence)
     {
-        super(primaryMetricIdentifier, sequence);
+        super(null, sequence);
+    }
+
+    public ThreadPedestalsLabelFactory(final int sequence, final int xOffsetLeft)
+    {
+        super(null, sequence, xOffsetLeft);
     }
 
     @Override
@@ -63,7 +67,7 @@ public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLab
                         + numberOfSelectedArtifactThreads;
 
         final int threadsPerColumn = 3;
-        final int X_OFFSET_LEFT = 0;
+        final int X_OFFSET_LEFT = this.X_OFFSET_LEFT + 0;
         final int PEDESTAL_START_OFFSET_LEFT = 2;
         final int PEDESTAL_WIDTH_TO_TEXT = 15;
 
@@ -90,7 +94,8 @@ public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLab
         int pedestalWidth = PEDESTAL_WIDTH_TO_TEXT + textLength;
 
         // Draw bottom line
-        graphics.drawLine(X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT, lineHeight - 1, X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT + pedestalWidth, lineHeight - 1);
+        graphics.drawLine(X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT, lineHeight - 1, X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT + pedestalWidth,
+                lineHeight - 1);
         // Draw ceil line
         graphics.drawLine(X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT, 0, X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT + pedestalWidth, 0);
         // Draw back line
@@ -114,7 +119,6 @@ public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLab
         jLabel.setIcon(imageIcon);
 
         jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
-        jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
 
         return jLabel;
     }

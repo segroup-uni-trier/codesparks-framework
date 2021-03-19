@@ -7,7 +7,10 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
@@ -17,7 +20,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.OptionalDouble;
 
@@ -25,12 +27,17 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 {
     public ThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
-        super(primaryMetricIdentifier);
+        super(primaryMetricIdentifier, -1);
     }
 
     public ThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(primaryMetricIdentifier, sequence);
+    }
+
+    public ThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence, final int xOffsetLeft)
+    {
+        super(primaryMetricIdentifier, sequence, xOffsetLeft);
     }
 
     @Override
@@ -46,7 +53,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
-        final int X_OFFSET_LEFT = 2;
+        final int X_OFFSET_LEFT = this.X_OFFSET_LEFT + 1;
         final int threadsPerColumn = 3;
         final int threadMetaphorWidth = 24;
         final int barChartWidth = 24;
@@ -70,8 +77,8 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         // Leading arrow
         graphics.fillRect(X_OFFSET_LEFT, lineHeight / 2, barrierXPos - 1, 1);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, lineHeight / 2 - 3, X_OFFSET_LEFT + barrierXPos-1, lineHeight / 2);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, lineHeight / 2 + 3, X_OFFSET_LEFT + barrierXPos-1, lineHeight / 2);
+        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, lineHeight / 2 - 3, X_OFFSET_LEFT + barrierXPos - 1, lineHeight / 2);
+        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, lineHeight / 2 + 3, X_OFFSET_LEFT + barrierXPos - 1, lineHeight / 2);
 
         // Vertical bar or barrier, respectively
         final int barrierWidth = 3;
