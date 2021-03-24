@@ -297,6 +297,15 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return val;
     }
 
+    public double getThreadFilteredTotalNumericalMetricValue(final AMetricIdentifier metricIdentifier, final boolean ignoreTheFilteredFlagOfThreads)
+    {
+        //noinspection UnnecessaryLocalVariable
+        final double total =
+                getThreadArtifacts().stream().filter(threadExecutingArtifact -> ignoreTheFilteredFlagOfThreads || !threadExecutingArtifact.isFiltered())
+                        .mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(metricIdentifier)).sum();
+        return total;
+    }
+
     public void setNumericalMetricValue(final AMetricIdentifier metricIdentifier, final double value)
     {
         if (metricIdentifier == null || !metricIdentifier.isNumerical())

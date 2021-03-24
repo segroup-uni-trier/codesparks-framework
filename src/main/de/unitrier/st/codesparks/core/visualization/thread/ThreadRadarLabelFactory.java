@@ -1,20 +1,18 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import com.intellij.ui.paint.PaintUtil;
-import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
+import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -88,15 +86,17 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
         final int frameSize = ThreadRadarConstants.FRAME + completeNumberOfThreadsString.length() * 5;
         final int labelWidth = 5 + completeNumberOfThreadsString.length() * 5;
 
-        GraphicsConfiguration defaultConfiguration =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage bi = UIUtil.createImage(defaultConfiguration, frameSize, ThreadRadarConstants.CIRCLE_FRAMESIZE,
-                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
+        final CodeSparksGraphics graphics = getGraphics(frameSize, ThreadRadarConstants.CIRCLE_FRAMESIZE);
 
-        Graphics2D graphics = (Graphics2D) bi.getGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        // Draw the fully transparent background
-        VisualizationUtil.drawTransparentBackground(graphics, bi);
+//        GraphicsConfiguration defaultConfiguration =
+//                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+//        BufferedImage bi = UIUtil.createImage(defaultConfiguration, frameSize, ThreadRadarConstants.CIRCLE_FRAMESIZE,
+//                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
+//
+//        Graphics2D graphics = (Graphics2D) bi.getGraphics();
+//        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//        // Draw the fully transparent background
+//        VisualizationUtil.drawTransparentBackground(graphics, bi);
         //
         double threadRationFromRunBefore = 0;
         for (int i = 0; i < threadArtifactClusters.size(); i++)
@@ -204,25 +204,26 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 
         graphics.drawString(numberOfSelectedThreadTypes + "", x1 + 2, y3 + 8);
 
-        ImageIcon imageIcon = new ImageIcon(bi);
 
+//        ImageIcon imageIcon = new ImageIcon(bi);
+//        JLabel jLabel = new JLabel();
+////        {
+////            @Override
+////            protected void paintComponent(final Graphics g)
+////            {
+//////                g.setColor(getBackground());
+//////                g.fillRect(0, 0, getWidth(), getHeight());
+////                g.drawImage(bi, 0, 0, null);
+////                super.paintComponent(g);
+////            }
+////        };
+//        jLabel.setOpaque(false);
+////        jLabel.getGraphics().drawImage(bi, 0, 0, null);
+//        jLabel.setIcon(imageIcon);
+//        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
 
-        JLabel jLabel = new JLabel();
-//        {
-//            @Override
-//            protected void paintComponent(final Graphics g)
-//            {
-////                g.setColor(getBackground());
-////                g.fillRect(0, 0, getWidth(), getHeight());
-//                g.drawImage(bi, 0, 0, null);
-//                super.paintComponent(g);
-//            }
-//        };
-        jLabel.setOpaque(false);
-//        jLabel.getGraphics().drawImage(bi, 0, 0, null);
+        final JLabel jLabel = makeLabel(graphics);
 
-        jLabel.setIcon(imageIcon);
-        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
         for (MouseListener mouseListener : jLabel.getMouseListeners())
         {// Is necessary since there is some kind of caching implemented in the jetbrains ide core. Otherwise every listener would
             // trigger each time a click occurs. For each click a new listener will be attached!

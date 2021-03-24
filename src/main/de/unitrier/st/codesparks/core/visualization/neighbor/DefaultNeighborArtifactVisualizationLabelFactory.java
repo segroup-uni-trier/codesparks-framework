@@ -3,14 +3,13 @@ package de.unitrier.st.codesparks.core.visualization.neighbor;
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.paint.PaintUtil;
-import com.intellij.util.ui.UIUtil;
+import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
+import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
-import de.unitrier.st.codesparks.core.CoreUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -18,7 +17,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
-import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,7 +24,7 @@ import java.util.stream.Collectors;
 import static com.intellij.ui.JBColor.WHITE;
 
 /*
- * Copyright (c), Oliver Moseler, 2020
+ * Copyright (c), Oliver Moseler, 2021
  */
 public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
@@ -58,17 +56,11 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
 
         numberOfCalleesInSameLine -= selftimeCnt;
 
-        int lineHeight = VisConstants.getLineHeight();
         // Initial visualization area.
+        final int visualizationArea = VisConstants.CALLEE_X_OFFSET + VisConstants.INVOCATION_WIDTH + 7;
+        int lineHeight = VisConstants.getLineHeight();
 
-        GraphicsConfiguration defaultConfiguration =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage bi = UIUtil.createImage(defaultConfiguration, VisConstants.CALLEE_X_OFFSET + VisConstants.INVOCATION_WIDTH + 7, lineHeight,
-                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
-
-        Graphics2D graphics = (Graphics2D) bi.getGraphics();
-
-        VisualizationUtil.drawTransparentBackground(graphics, bi);
+        final CodeSparksGraphics graphics = getGraphics(visualizationArea, lineHeight);
 
         final Color neighborBackgroundColor = VisualizationUtil.getBackgroundMetricColor(metricColor, .25f);
         int numberOfShadowCalleesToDraw = Math.min(numberOfCalleesInSameLine, 3);
@@ -79,12 +71,20 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
             int xOffset = i * 2; // 4, 2, 0
             int yOffset = 4 - i * 2; // 0, 2, 4
             Rectangle rect = new Rectangle(VisConstants.CALLEE_X_OFFSET + xOffset, yOffset, VisConstants.INVOCATION_WIDTH, lineHeight - 6);
-            graphics.setColor(WHITE);
-            VisualizationUtil.fillRectangle(graphics, rect);
-            graphics.setColor(neighborBackgroundColor);
-            VisualizationUtil.fillRectangle(graphics, rect);
-            graphics.setColor(VisConstants.BORDER_COLOR);
-            VisualizationUtil.drawRectangle(graphics, rect);
+//            graphics.setColor(WHITE);
+//            VisualizationUtil.fillRectangle(graphics, rect);
+
+            graphics.fillRectangle(rect, WHITE);
+
+//            graphics.setColor(neighborBackgroundColor);
+//            VisualizationUtil.fillRectangle(graphics, rect);
+
+            graphics.fillRectangle(rect, neighborBackgroundColor);
+
+//            graphics.setColor(VisConstants.BORDER_COLOR);
+//            VisualizationUtil.drawRectangle(graphics, rect);
+
+            graphics.drawRectangle(rect, VisConstants.BORDER_COLOR);
         }
 
         PsiElement psiElement = null;
@@ -119,27 +119,27 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
         // Draw background
         Rectangle calleeVisualizationArea = new Rectangle(VisConstants.CALLEE_X_OFFSET, VisConstants.CALLEE_Y_OFFSET, VisConstants.INVOCATION_WIDTH,
                 lineHeight - 6);
-        graphics.setColor(WHITE);
-        VisualizationUtil.fillRectangle(graphics, calleeVisualizationArea);
-        graphics.setColor(neighborBackgroundColor);
-        VisualizationUtil.fillRectangle(graphics, calleeVisualizationArea);
+//        graphics.setColor(WHITE);
+//        VisualizationUtil.fillRectangle(graphics, calleeVisualizationArea);
+
+        graphics.fillRectangle(calleeVisualizationArea, WHITE);
+
+//        graphics.setColor(neighborBackgroundColor);
+//        VisualizationUtil.fillRectangle(graphics, calleeVisualizationArea);
+        graphics.fillRectangle(calleeVisualizationArea, neighborBackgroundColor);
 
         // Draw the bar
         int barWidth = (int) Math.round(VisConstants.INVOCATION_WIDTH * calleeRuntimeSum / threadFilteredMetricValue);
-        Rectangle calleeRuntimeArea = new Rectangle(VisConstants.CALLEE_X_OFFSET, VisConstants.CALLEE_Y_OFFSET, barWidth, lineHeight - 6);
-        graphics.setColor(metricColor);
-        VisualizationUtil.fillRectangle(graphics, calleeRuntimeArea);
+        final Rectangle calleeRuntimeArea = new Rectangle(VisConstants.CALLEE_X_OFFSET, VisConstants.CALLEE_Y_OFFSET, barWidth, lineHeight - 6);
+
+        graphics.fillRectangle(calleeRuntimeArea, metricColor);
 
         // Draw the border.
-        graphics.setColor(VisConstants.BORDER_COLOR);
-        VisualizationUtil.drawRectangle(graphics, calleeVisualizationArea);
-        BufferedImage subimage = bi.getSubimage(0, 0, bi.getWidth(), bi.getHeight());
-        ImageIcon imageIcon = new ImageIcon(subimage);
 
-        JLabel jLabel = new JLabel();
-        jLabel.setIcon(imageIcon);
+        graphics.drawRectangle(calleeVisualizationArea, VisConstants.BORDER_COLOR);
 
-        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
+        final JLabel jLabel = makeLabel(graphics);
+
         jLabel.addMouseListener(new DefaultArtifactCalleeVisualizationMouseListener(methodRuntimes, threadFilteredMetricValue, jLabel));
 
         return jLabel;

@@ -1,17 +1,14 @@
 package de.unitrier.st.codesparks.core.visualization;
 
 import com.intellij.ui.JBColor;
-import com.intellij.ui.paint.PaintUtil;
-import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ArtifactTrie;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
-
-import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
+import de.unitrier.st.codesparks.core.data.ArtifactTrie;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+
+import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
 
 public class ArtifactTrieMetricVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
@@ -24,13 +21,8 @@ public class ArtifactTrieMetricVisualizationLabelFactory extends AArtifactVisual
     public JLabel createArtifactLabel(final AArtifact artifact)
     {
         int lineHeight = VisConstants.getLineHeight();
-        GraphicsConfiguration defaultConfiguration =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage bi = UIUtil.createImage(defaultConfiguration, 500, lineHeight,
-                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
 
-        Graphics2D graphics = (Graphics2D) bi.getGraphics();
-        VisualizationUtil.drawTransparentBackground(graphics, bi);
+        final CodeSparksGraphics graphics = getGraphics(500, lineHeight);
 
         graphics.setColor(BORDER_COLOR);
         graphics.drawRect(X_OFFSET, 0, RECTANGLE_WIDTH, lineHeight);
@@ -45,15 +37,6 @@ public class ArtifactTrieMetricVisualizationLabelFactory extends AArtifactVisual
         graphics.setFont(font);
         graphics.drawString("CCT root:" + rootCnt, X_OFFSET + 3, lineHeight / 2 + 3);
 
-
-        BufferedImage subImage = bi.getSubimage(0, 0, X_OFFSET + RECTANGLE_WIDTH + X_OFFSET, bi.getHeight());
-        ImageIcon imageIcon = new ImageIcon(subImage);
-
-        JLabel jLabel = new JLabel();
-        jLabel.setIcon(imageIcon);
-
-        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
-
-        return jLabel;
+        return makeLabel(graphics, X_OFFSET + RECTANGLE_WIDTH + X_OFFSET);
     }
 }

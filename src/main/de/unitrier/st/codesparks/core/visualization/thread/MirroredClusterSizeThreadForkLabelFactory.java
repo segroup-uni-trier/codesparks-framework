@@ -5,20 +5,18 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import com.intellij.ui.paint.PaintUtil;
-import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
+import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,9 +42,6 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
             return emptyLabel();
         }
 
-        final GraphicsConfiguration defaultConfiguration =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-
         final int X_OFFSET_LEFT = -1; // We don't need the left vertical line of the rectangle when used in conjunction with the original ThreadFork
         final int threadsPerColumn = 3;
         final int threadMetaphorWidth = 24;
@@ -55,21 +50,15 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
 
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
 
-        final BufferedImage bi = UIUtil.createImage(defaultConfiguration, X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight,
-                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
-
-        final Graphics2D graphics = (Graphics2D) bi.getGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        // Draw the fully transparent background
-        VisualizationUtil.drawTransparentBackground(graphics, bi);
-
+        final CodeSparksGraphics graphics = getGraphics(X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight);
 
         // The rectangle for the bars
         graphics.setColor(VisConstants.BORDER_COLOR);
 
         final Rectangle threadVisualisationArea = new Rectangle(
                 X_OFFSET_LEFT, 0, barChartWidth - 1, lineHeight - 1);
-        VisualizationUtil.drawRectangle(graphics, threadVisualisationArea);
+
+        graphics.drawRectangle(threadVisualisationArea);
 
         // Thread metaphor
         final int barrierXOffset = 9;
@@ -137,15 +126,8 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
         }
         // Creation of the label
 
-        BufferedImage subimage = bi.getSubimage(0, 0, bi.getWidth(), bi.getHeight());
-        ImageIcon imageIcon = new ImageIcon(subimage);
-
-        JLabel jLabel = new JLabel();
-        jLabel.setIcon(imageIcon);
-
-        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
+        final JLabel jLabel = makeLabel(graphics);
         jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
-
         return jLabel;
     }
 }

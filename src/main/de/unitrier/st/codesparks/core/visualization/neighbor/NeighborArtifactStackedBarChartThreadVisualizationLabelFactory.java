@@ -1,9 +1,8 @@
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import com.intellij.ui.JBColor;
-import com.intellij.ui.paint.PaintUtil;
-import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
@@ -11,9 +10,6 @@ import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPr
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -92,13 +88,7 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
 
         final int totalWidth = X_OFFSET_LEFT + visWidth + X_OFFSET_RIGHT;
 
-        GraphicsConfiguration defaultConfiguration =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage bi = UIUtil.createImage(defaultConfiguration, totalWidth, lineHeight, BufferedImage.TYPE_INT_RGB,
-                PaintUtil.RoundingMode.CEIL);
-        Graphics2D graphics = (Graphics2D) bi.getGraphics();
-
-        VisualizationUtil.drawTransparentBackground(graphics, bi);
+        final CodeSparksGraphics graphics = getGraphics(totalWidth, lineHeight);
 
         int yPos = lineHeight;
 
@@ -139,16 +129,7 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
 
         }
 
-        BufferedImage subimage = bi.getSubimage(0, 0, bi.getWidth(), bi.getHeight());
-        ImageIcon imageIcon = new ImageIcon(subimage);
-
-        JLabel jLabel = new JLabel();
-        jLabel.setIcon(imageIcon);
-
-        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
-        // jLabel.addMouseListener(??);
-
-        return jLabel;
+        return makeLabel(graphics);
     }
 
     private int totalThreads(Map<ThreadArtifactCluster, Set<AThreadArtifact>> neighborClusterSets)

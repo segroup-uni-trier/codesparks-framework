@@ -4,19 +4,18 @@
 
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-import com.intellij.ui.paint.PaintUtil;
-import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
-import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
+import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.util.Collection;
 
 public class RelativeMeterArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
+    @SuppressWarnings("unused")
     public RelativeMeterArtifactVisualizationLabelFactory() { super(null);}
 
     public RelativeMeterArtifactVisualizationLabelFactory(final int sequence)
@@ -24,6 +23,7 @@ public class RelativeMeterArtifactVisualizationLabelFactory extends AArtifactVis
         super(null, sequence);
     }
 
+    @SuppressWarnings("unused")
     public RelativeMeterArtifactVisualizationLabelFactory(final int sequence, final int xOffsetLeft)
     {
         super(null, sequence, xOffsetLeft);
@@ -32,16 +32,31 @@ public class RelativeMeterArtifactVisualizationLabelFactory extends AArtifactVis
     @Override
     public JLabel createArtifactLabel(@NotNull final AArtifact artifact)
     {
-        final ImageIcon imageIcon = new ImageIcon(getClass().getResource("/icons/relative-meter.png"));
-        GraphicsConfiguration defaultConfiguration =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage bi = UIUtil.createImage(defaultConfiguration, imageIcon.getIconWidth(), imageIcon.getIconHeight(),
-                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
-        Graphics2D graphics = (Graphics2D) bi.getGraphics();
-        VisualizationUtil.drawTransparentBackground(graphics, bi);
+        final Collection<AThreadArtifact> threadArtifacts = artifact.getThreadArtifacts();
+        if (threadArtifacts.isEmpty())
+        {
+            return emptyLabel();
+        }
+        final ImageIcon imageIconFromFile = new ImageIcon(getClass().getResource("/icons/relative-meter.png"));
         final int X_OFFSET_LEFT = this.X_OFFSET_LEFT + 1;
-        graphics.drawImage(imageIcon.getImage(), X_OFFSET_LEFT, 0, null);
-        ImageIcon imageIcon1 = new ImageIcon(bi);
-        return new JLabel(imageIcon1);
+//        final GraphicsConfiguration defaultConfiguration =
+//                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+//        final BufferedImage bi = UIUtil.createImage(
+//                defaultConfiguration
+//                , X_OFFSET_LEFT + imageIconFromFile.getIconWidth()
+//                , imageIconFromFile.getIconHeight()
+//                , BufferedImage.TYPE_INT_ARGB
+//                , PaintUtil.RoundingMode.CEIL
+//        );
+//        final Graphics2D graphics = (Graphics2D) bi.getGraphics();
+//        VisualizationUtil.drawTransparentBackground(graphics, bi);
+
+        final CodeSparksGraphics graphics = getGraphics(X_OFFSET_LEFT + imageIconFromFile.getIconWidth(), imageIconFromFile.getIconHeight());
+        graphics.drawImage(imageIconFromFile.getImage(), X_OFFSET_LEFT, 0, null);
+
+//        final ImageIcon imageIcon = new ImageIcon(bi);
+//        final JLabel jLabel = new JLabel(imageIcon);
+//        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
+        return makeLabel(graphics);
     }
 }

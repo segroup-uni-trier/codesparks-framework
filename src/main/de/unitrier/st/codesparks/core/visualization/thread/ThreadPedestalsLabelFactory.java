@@ -4,17 +4,15 @@
 
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-import com.intellij.ui.paint.PaintUtil;
-import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
+import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +44,6 @@ public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLab
             return emptyLabel();
         }
 
-        final GraphicsConfiguration defaultConfiguration =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
         long numberOfSelectedArtifactThreads = artifact.getThreadArtifacts().stream().filter(t -> !t.isFiltered()).count();
         int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfSelectedThreadTypes(artifact, null);
@@ -73,13 +69,18 @@ public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLab
 
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
 
-        final BufferedImage bi = UIUtil.createImage(defaultConfiguration, 300, lineHeight,
-                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
+//        final GraphicsConfiguration defaultConfiguration =
+//                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+//        final BufferedImage bi = UIUtil.createImage(defaultConfiguration, 300, lineHeight,
+//                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
+//
+//        final Graphics2D graphics = (Graphics2D) bi.getGraphics();
+//        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//        // Draw the fully transparent background
+//        VisualizationUtil.drawTransparentBackground(graphics, bi);
 
-        final Graphics2D graphics = (Graphics2D) bi.getGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        // Draw the fully transparent background
-        VisualizationUtil.drawTransparentBackground(graphics, bi);
+        final CodeSparksGraphics graphics = getGraphics(300, lineHeight);
+
         graphics.setColor(VisConstants.BORDER_COLOR);
         final Font currentFont = graphics.getFont();
         final Font newFont = currentFont.deriveFont(currentFont.getSize() * 0.9f);
@@ -112,13 +113,16 @@ public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLab
 
         // Creation of the label
 
-        BufferedImage subimage = bi.getSubimage(0, 0, X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT + pedestalWidth + 1, bi.getHeight());
-        ImageIcon imageIcon = new ImageIcon(subimage);
+//        BufferedImage subimage = bi.getSubimage(0, 0, X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT + pedestalWidth + 1, bi.getHeight());
+//        ImageIcon imageIcon = new ImageIcon(subimage);
+//
+//        JLabel jLabel = new JLabel();
+//        jLabel.setIcon(imageIcon);
+//
+//        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
 
-        JLabel jLabel = new JLabel();
-        jLabel.setIcon(imageIcon);
-
-        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
+        //noinspection UnnecessaryLocalVariable -> debugging purpose
+        final JLabel jLabel = makeLabel(graphics, X_OFFSET_LEFT + PEDESTAL_START_OFFSET_LEFT + pedestalWidth + 1);
 
         return jLabel;
     }

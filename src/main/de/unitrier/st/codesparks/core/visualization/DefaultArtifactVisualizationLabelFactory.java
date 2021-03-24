@@ -1,17 +1,14 @@
 package de.unitrier.st.codesparks.core.visualization;
 
 import com.intellij.ui.JBColor;
-import com.intellij.ui.paint.PaintUtil;
-import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.DataUtil;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.DataUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.Collection;
 
 import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
@@ -47,13 +44,8 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
     {
         final int lineHeight = VisConstants.getLineHeight();
         final int iconWidth = X_OFFSET + RECTANGLE_WIDTH + 4 * CALLEE_TRIANGLES_WIDTH + 1;
-        GraphicsConfiguration defaultConfiguration =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage bi = UIUtil.createImage(defaultConfiguration, iconWidth, lineHeight,
-                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
 
-        Graphics2D graphics = (Graphics2D) bi.getGraphics();
-        VisualizationUtil.drawTransparentBackground(graphics, bi);
+        final CodeSparksGraphics graphics = getGraphics(iconWidth, lineHeight);
 
         final int selfBarHeight = 2;
         final int X_OFFSET = VisConstants.X_OFFSET;
@@ -65,8 +57,10 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         final Rectangle intensityRectangle = new Rectangle(X_OFFSET, Y_OFFSET, RECTANGLE_WIDTH, lineHeight - 1 - selfBarHeight);
         final double threadFilteredMetricValue = DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, primaryMetricIdentifier);
         final Color metricColor = VisualizationUtil.getMetricColor(threadFilteredMetricValue);
+
         graphics.setColor(metricColor);
-        VisualizationUtil.fillRectangle(graphics, intensityRectangle);
+        graphics.fillRectangle(intensityRectangle);
+
         /*
          * Draw the self metric
          */
@@ -112,17 +106,9 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
          */
         drawPredecessors(artifact, intensityRectangle, graphics, lineHeight, metricColor);
         drawSuccessors(artifact, intensityRectangle, graphics, lineHeight, metricColor);
-        /*
-         * Set the actual image icon size
-         */
-//        final int iconWidth = X_OFFSET + RECTANGLE_WIDTH + 4 * CALLEE_TRIANGLES_WIDTH + 1;
-        BufferedImage subImage = bi.getSubimage(0, 0, iconWidth, bi.getHeight());
-        ImageIcon imageIcon = new ImageIcon(subImage);
 
-        JLabel jLabel = new JLabel();
-        jLabel.setIcon(imageIcon);
+        final JLabel jLabel = makeLabel(graphics, iconWidth);
 
-        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
         jLabel.addMouseListener(new DefaultArtifactVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier, secondaryMetricIdentifier));
 
         return jLabel;

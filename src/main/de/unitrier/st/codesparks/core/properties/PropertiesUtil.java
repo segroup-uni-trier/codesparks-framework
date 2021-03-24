@@ -19,20 +19,29 @@ public final class PropertiesUtil
 {
     private PropertiesUtil() {}
 
-    private static final String PLUGIN_PATH;
+    private static String PLUGIN_PATH;
 
     static
     {
-        final ACodeSparksInstanceService service = ServiceManager.getService(ACodeSparksInstanceService.class);
-        assert service != null : "There is no implementation of the interface " + ACodeSparksInstanceService.class + "! Please create an implementation and " +
-                "register that implementation as 'applicationService' in the plugin-xml. See https://jetbrains" +
+        String errMessage = "There is no implementation of the interface " + ACodeSparksInstanceService.class + "! Please create an implementation " +
+                "and register that implementation as 'applicationService' in the plugin-xml. See https://jetbrains" +
                 ".org/intellij/sdk/docs/basics/plugin_structure/plugin_services.html";
-        final String pluginIdString = service.getPluginIdString();
-        PluginId id = PluginId.getId(pluginIdString);
-        IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(id);
-        assert plugin != null;
-        //PLUGIN_PATH = plugin.getPath().getAbsolutePath();
-        PLUGIN_PATH = plugin.getPluginPath().toString();
+        try
+        {
+            final ACodeSparksInstanceService service = ServiceManager.getService(ACodeSparksInstanceService.class);
+            assert service != null : errMessage;
+            final String pluginIdString = service.getPluginIdString();
+            PluginId id = PluginId.getId(pluginIdString);
+            IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(id);
+            assert plugin != null;
+            //PLUGIN_PATH = plugin.getPath().getAbsolutePath();
+            PLUGIN_PATH = plugin.getPluginPath().toString();
+
+        } catch (NullPointerException e)
+        {
+            System.err.println(errMessage);
+            PLUGIN_PATH = "";
+        }
     }
 
     private static String getPropertiesFilePath(String propertiesFile, boolean createOnMissing)

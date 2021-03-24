@@ -1,9 +1,8 @@
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import com.intellij.ui.JBColor;
-import com.intellij.ui.paint.PaintUtil;
-import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
@@ -12,7 +11,6 @@ import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPr
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,14 +65,7 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
         final int initialThreadSquareYPos = lineHeight - threadSquareEdgeLength - 2;
         final int threadSquareOffset = threadSquareEdgeLength + 1;
 
-        GraphicsConfiguration defaultConfiguration =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage bi = UIUtil.createImage(defaultConfiguration, totalWidth, lineHeight, BufferedImage.TYPE_INT_ARGB,
-                PaintUtil.RoundingMode.CEIL);
-        Graphics2D graphics = (Graphics2D) bi.getGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        VisualizationUtil.drawTransparentBackground(graphics, bi);
+        final CodeSparksGraphics graphics = getGraphics(totalWidth, lineHeight);
 
         // Thread metaphor
         graphics.setColor(VisConstants.BORDER_COLOR);
@@ -90,9 +81,9 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
         final int barrierWidth = 3;
         graphics.fillRect(X_OFFSET_LEFT + barrierXPos, 0, barrierWidth, lineHeight);
 
-        Rectangle threadVisualisationArea = new Rectangle(X_OFFSET_LEFT + threadMetaphorWidth, 0, barChartWidth - 1, lineHeight - 1);
+        final Rectangle threadVisualisationArea = new Rectangle(X_OFFSET_LEFT + threadMetaphorWidth, 0, barChartWidth - 1, lineHeight - 1);
 
-        VisualizationUtil.drawRectangle(graphics, threadVisualisationArea);
+        graphics.drawRectangle(threadVisualisationArea);
 
         final double totalThreadFilteredMetricValueOfAllNeighborsOfLine =
                 getTotalThreadFilteredMetricValueOfAllNeighborsOfLine(threadFilteredNeighborArtifactsOfLine);
@@ -157,16 +148,7 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
             }
         }
 
-        BufferedImage subimage = bi.getSubimage(0, 0, bi.getWidth(), bi.getHeight());
-        ImageIcon imageIcon = new ImageIcon(subimage);
-
-        JLabel jLabel = new JLabel();
-        jLabel.setIcon(imageIcon);
-
-        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
-        // jLabel.addMouseListener(??);
-
-        return jLabel;
+        return makeLabel(graphics);
     }
 
     private double getTotalThreadFilteredMetricValueOfAllNeighborsOfLine(final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine)

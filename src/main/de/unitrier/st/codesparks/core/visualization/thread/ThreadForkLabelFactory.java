@@ -5,26 +5,25 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import com.intellij.ui.paint.PaintUtil;
-import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
+import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.List;
 import java.util.OptionalDouble;
 
 public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
 {
+    @SuppressWarnings("unused")
     public ThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier, -1);
@@ -35,6 +34,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         super(primaryMetricIdentifier, sequence);
     }
 
+    @SuppressWarnings("unused")
     public ThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence, final int xOffsetLeft)
     {
         super(primaryMetricIdentifier, sequence, xOffsetLeft);
@@ -50,8 +50,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             return emptyLabel();
         }
 
-        final GraphicsConfiguration defaultConfiguration =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+
 
         final int X_OFFSET_LEFT = this.X_OFFSET_LEFT + 1;
         final int threadsPerColumn = 3;
@@ -61,13 +60,17 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
 
-        final BufferedImage bi = UIUtil.createImage(defaultConfiguration, X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight,
-                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
+//        final GraphicsConfiguration defaultConfiguration =
+//                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+//        final BufferedImage bi = UIUtil.createImage(defaultConfiguration, X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight,
+//                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
+//
+//        final Graphics2D graphics = (Graphics2D) bi.getGraphics();
+//        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//        // Draw the fully transparent background
+//        VisualizationUtil.drawTransparentBackground(graphics, bi);
 
-        final Graphics2D graphics = (Graphics2D) bi.getGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        // Draw the fully transparent background
-        VisualizationUtil.drawTransparentBackground(graphics, bi);
+        final CodeSparksGraphics graphics = getGraphics(X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight);
 
         // Thread metaphor
         graphics.setColor(VisConstants.BORDER_COLOR);
@@ -86,7 +89,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final Rectangle threadVisualisationArea = new Rectangle(
                 X_OFFSET_LEFT + threadMetaphorWidth, 0, barChartWidth - 1, lineHeight - 1);
 
-        VisualizationUtil.drawRectangle(graphics, threadVisualisationArea);
+        graphics.drawRectangle(threadVisualisationArea);
 
 
         // Draw the clusters
@@ -101,7 +104,8 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         // If there is no thread which is selected, i.e. all threads executing this artifact are filtered
         boolean createDisabledViz = threadArtifacts.stream().allMatch(AThreadArtifact::isFiltered);
 
-        final double threadFilteredTotalMetricValueOfArtifact = getThreadFilteredTotalMetricValueOfArtifact(artifact, createDisabledViz);
+        final double threadFilteredTotalMetricValueOfArtifact = artifact.getThreadFilteredTotalNumericalMetricValue(primaryMetricIdentifier, createDisabledViz);
+        //getThreadFilteredTotalMetricValueOfArtifact(artifact, createDisabledViz);
 
         final List<ThreadArtifactCluster> threadClusters = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
 
@@ -183,18 +187,25 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         }
         // Creation of the label
 
-        BufferedImage subimage = bi.getSubimage(0, 0, bi.getWidth(), bi.getHeight());
-        ImageIcon imageIcon = new ImageIcon(subimage);
+//        BufferedImage subimage = bi.getSubimage(0, 0, bi.getWidth(), bi.getHeight());
+//        ImageIcon imageIcon = new ImageIcon(subimage);
+//
+//        JLabel jLabel = new JLabel();
+//        jLabel.setIcon(imageIcon);
+//
+//        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
 
-        JLabel jLabel = new JLabel();
-        jLabel.setIcon(imageIcon);
+        final JLabel jLabel = makeLabel(graphics);
 
-        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
         jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
 
         return jLabel;
     }
 
+    /**
+     * @deprecated Moved to class AArtifact
+     */
+    @Deprecated
     private double getThreadFilteredTotalMetricValueOfArtifact(final AArtifact artifact, final boolean createDisabledViz)
     {
         //noinspection UnnecessaryLocalVariable

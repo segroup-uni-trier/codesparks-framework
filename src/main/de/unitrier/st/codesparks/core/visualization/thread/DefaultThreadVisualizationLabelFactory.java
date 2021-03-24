@@ -1,20 +1,18 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import com.intellij.ui.paint.PaintUtil;
-import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
+import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 /*
@@ -40,12 +38,9 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
         final int threadsPerColumn = 3;
         int lineHeight = VisualizationUtil.getLineHeightCeil(VisConstants.getLineHeight(), threadsPerColumn);
         int width = 5000; // We don't know the width yet because the viz does not visually scale.
-        GraphicsConfiguration defaultConfiguration =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage bi = UIUtil.createImage(defaultConfiguration, width, lineHeight,
-                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
-        Graphics2D graphics = (Graphics2D) bi.getGraphics();
-        VisualizationUtil.drawTransparentBackground(graphics, bi);
+
+        final CodeSparksGraphics graphics = getGraphics(width, lineHeight);
+
         /*
          * Draw the threads
          */
@@ -92,18 +87,13 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
                 threadDotXPos - 2, 0, ((threadSquareOffset)
                 * ((totalThreadCnt - 1) / 3) + 1)
                 + threadSquareOffset + 1, lineHeight - 1);
-        graphics.setColor(VisConstants.BORDER_COLOR);
 
-        VisualizationUtil.drawRectangle(graphics, threadVisualisationArea);
+
+        graphics.drawRectangle(threadVisualisationArea, VisConstants.BORDER_COLOR);
 
         final int iconWidth = threadDotXPos + threadVisualisationArea.width;
-        BufferedImage subimage = bi.getSubimage(0, 0, iconWidth, bi.getHeight());
-        ImageIcon imageIcon = new ImageIcon(subimage);
+        final JLabel jLabel = makeLabel(graphics, iconWidth);
 
-        JLabel jLabel = new JLabel();
-        jLabel.setIcon(imageIcon);
-
-        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
         jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
 
         return jLabel;

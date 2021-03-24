@@ -8,6 +8,7 @@ import de.unitrier.st.codesparks.core.editorcoverlayer.IEditorCoverLayerLogger;
 import de.unitrier.st.codesparks.core.properties.PropertiesFile;
 import de.unitrier.st.codesparks.core.properties.PropertiesUtil;
 import de.unitrier.st.codesparks.core.properties.PropertyKey;
+import org.apache.commons.lang.ObjectUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -112,25 +113,37 @@ public final class UserActivityLogger implements IUserActivityLogger, IEditorCov
     @Override
     public void log(UserActivityEnum action, String... additionalInformation)
     {
-        if (!checkEnabled())
+        try
         {
-            return;
-        }
-        setup();
+            if (!checkEnabled())
+            {
+                return;
+            }
+            setup();
 
-        log(String.valueOf(action), additionalInformation);
+            log(String.valueOf(action), additionalInformation);
+        } catch (NullPointerException e)
+        { // Might happen, when the com.intellij.openapi.project.ProjectManager cannot be instantiated
+            // ignored
+        }
     }
 
     @Override
     public void log(EditorCoverLayerLogEnum action, String... additionalInformation)
     {
-        if (!checkEnabled())
+        try
         {
-            return;
-        }
-        setup();
+            if (!checkEnabled())
+            {
+                return;
+            }
+            setup();
 
-        log(String.valueOf(action), additionalInformation);
+            log(String.valueOf(action), additionalInformation);
+        }catch (NullPointerException e)
+        { // Might happen, when the com.intellij.openapi.project.ProjectManager cannot be instantiated
+            // ignored
+        }
     }
 
     private void log(String actionString, String... additionalInformation)

@@ -1,9 +1,8 @@
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import com.intellij.ui.JBColor;
-import com.intellij.ui.paint.PaintUtil;
-import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
@@ -12,7 +11,6 @@ import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPr
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -96,19 +94,13 @@ public class NeighborArtifactThreadDotVisualizationLabelFactory extends ANeighbo
 
         int totalWidth = X_OFFSET_LEFT + visWidth + X_OFFSET_RIGHT;
 
-        GraphicsConfiguration defaultConfiguration =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage bi = UIUtil.createImage(defaultConfiguration, totalWidth, lineHeight, BufferedImage.TYPE_INT_ARGB,
-                PaintUtil.RoundingMode.CEIL);
-        Graphics2D graphics = (Graphics2D) bi.getGraphics();
+        final CodeSparksGraphics graphics = getGraphics(totalWidth, lineHeight);
 
-        VisualizationUtil.drawTransparentBackground(graphics, bi);
-
-        Rectangle threadVisualisationArea = new Rectangle(
+        final Rectangle threadVisualisationArea = new Rectangle(
                 X_OFFSET_LEFT, 0, visWidth, lineHeight - 1);
-        graphics.setColor(VisConstants.BORDER_COLOR);
 
-        VisualizationUtil.drawRectangle(graphics, threadVisualisationArea);
+        graphics.drawRectangle(threadVisualisationArea, VisConstants.BORDER_COLOR);
+
         int clusterCnt = 0;
         VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
         for (Map.Entry<ThreadArtifactCluster, Set<AThreadArtifact>> threadArtifactClusterSetEntry : neighborClusterSets.entrySet())
@@ -133,15 +125,6 @@ public class NeighborArtifactThreadDotVisualizationLabelFactory extends ANeighbo
             threadSquareYPos -= threadSquareOffset;
         }
 
-        BufferedImage subimage = bi.getSubimage(0, 0, bi.getWidth(), bi.getHeight());
-        ImageIcon imageIcon = new ImageIcon(subimage);
-
-        JLabel jLabel = new JLabel();
-        jLabel.setIcon(imageIcon);
-
-        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
-        // jLabel.addMouseListener(??);
-
-        return jLabel;
+        return makeLabel(graphics);
     }
 }

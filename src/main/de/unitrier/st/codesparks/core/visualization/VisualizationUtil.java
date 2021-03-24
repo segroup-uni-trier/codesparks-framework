@@ -44,11 +44,6 @@ public final class VisualizationUtil
             }
         }
         return Objects.requireNonNullElseGet(backgroundColor, () -> UIUtil.isUnderDarcula() ? Color.decode("#2b2b2b") : Color.decode("#ffffff"));
-        //        if (backgroundColor == null)
-//        {
-//            return UIUtil.isUnderDarcula() ? Color.decode("#2b2b2b") : Color.decode("#ffffff");
-//        }
-//        return backgroundColor;
     }
 
     public static Color getMetricColor(double metricValue)
@@ -78,11 +73,6 @@ public final class VisualizationUtil
         return y * (1 + (1 - alpha)) > 145 ? JBColor.BLACK : JBColor.WHITE;
     }
 
-    public static void fillRectangle(Graphics graphics, Rectangle rectangle)
-    {
-        graphics.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-    }
-
     public static void drawTransparentBackground(final Graphics2D graphics, final BufferedImage bi)
     {
         final Composite composite = graphics.getComposite();
@@ -99,15 +89,6 @@ public final class VisualizationUtil
         graphics.setComposite(composite);
     }
 
-    public static void clearAndDrawTransparentBackground(final Graphics2D graphics, final int width, final int height)
-    {
-        final Composite composite = graphics.getComposite();
-        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0f)); // Will fix the problem that on repainting, the old graphics paintings
-        // remain and the paintings overlap.
-        graphics.fillRect(0, 0, width, height);
-        graphics.setComposite(composite);
-    }
-
     public static void drawTransparentBackground(final Graphics2D graphics, final int width, final int height, final int alphaComposite)
     {
         final Composite composite = graphics.getComposite();
@@ -116,9 +97,13 @@ public final class VisualizationUtil
         graphics.setComposite(composite);
     }
 
-    public static void drawRectangle(Graphics graphics, Rectangle rectangle)
+    public static void clearAndDrawTransparentBackground(final Graphics2D graphics, final int width, final int height)
     {
-        graphics.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        final Composite composite = graphics.getComposite();
+        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0f)); // Will fix the problem that on repainting, the old graphics paintings
+        // remain and the paintings overlap.
+        graphics.fillRect(0, 0, width, height);
+        graphics.setComposite(composite);
     }
 
     public static int getLineHeightFloor(int lineHeight, int threadsPerColumn)
