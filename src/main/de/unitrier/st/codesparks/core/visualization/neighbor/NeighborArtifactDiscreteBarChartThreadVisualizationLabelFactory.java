@@ -222,7 +222,7 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
     {
         for (int i = 0; i < positionsTaken.length; i++)
         {
-            int nextPos = currentPos + i % positionsTaken.length;
+            int nextPos = (currentPos + i) % positionsTaken.length;
             if (!positionsTaken[nextPos])
             {
                 positionsTaken[nextPos] = true;
