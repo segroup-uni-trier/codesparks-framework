@@ -3,6 +3,7 @@ package de.unitrier.st.codesparks.core.overview;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -32,6 +33,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.*;
@@ -42,6 +45,10 @@ import java.util.stream.Collectors;
  */
 public class ArtifactOverview
 {
+    /*
+     * Instantiation
+     */
+
     private static volatile ArtifactOverview instance;
 
     public static ArtifactOverview getInstance()
@@ -59,10 +66,284 @@ public class ArtifactOverview
         return instance;
     }
 
+    private ArtifactOverview() { setupUI(); }
+
+    private void setupUI()
+    {
+        rootPanel = new BorderLayoutPanel();//new JBPanel();
+//        rootPanel.setPreferredSize(new Dimension(300, 500));
+//        rootPanel.setMaximumSize(new Dimension(300, 500));
+//        rootPanel.setLayout(new BorderLayout());
+        final JBPanel<BorderLayoutPanel> filterPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
+        final JBPanel<BorderLayoutPanel> filterPanelWrapper = new JBPanel<>();
+        filterPanelWrapper.setLayout(new BoxLayout(filterPanelWrapper, BoxLayout.Y_AXIS));
+
+        final JBPanel<BorderLayoutPanel> filterByIdentifierPanel = new JBPanel<>();
+        filterByIdentifierPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                "Filter artifacts by identifier (separate with comma)"));
+
+        filterByIdentifierPanel.setLayout(new BoxLayout(filterByIdentifierPanel, BoxLayout.Y_AXIS));
+
+        excludeFilter = new JBTextField();
+        final JBPanel<BorderLayoutPanel> excludeFilterPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
+        excludeFilterPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        final JBPanel<BorderLayoutPanel> excludeFilterPanelWrapper = new JBPanel<>();
+        excludeFilterPanelWrapper.setLayout(new BoxLayout(excludeFilterPanelWrapper, BoxLayout.X_AXIS));
+        excludeFilterPanelWrapper.add(new JBLabel("Exclude: "));
+        excludeFilterPanelWrapper.add(excludeFilter);
+        excludeFilterPanel.add(excludeFilterPanelWrapper, BorderLayout.CENTER);
+        filterByIdentifierPanel.add(excludeFilterPanel);
+
+        includeFilter = new JBTextField();
+        final JBPanel<BorderLayoutPanel> includeFilterPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
+        includeFilterPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        final JBPanel<BorderLayoutPanel> includeFilterPanelWrapper = new JBPanel<>();
+        includeFilterPanelWrapper.setLayout(new BoxLayout(includeFilterPanelWrapper, BoxLayout.X_AXIS));
+        includeFilterPanelWrapper.add(new JBLabel("Include: "));
+        includeFilterPanelWrapper.add(Box.createRigidArea(new Dimension(2, 0)));
+        includeFilterPanelWrapper.add(includeFilter);
+        includeFilterPanel.add(includeFilterPanelWrapper, BorderLayout.CENTER);
+        filterByIdentifierPanel.add(includeFilterPanel);
+
+
+        final JBPanel<BorderLayoutPanel> filterArtifactButtonsPanelWrapper = new JBPanel<>();
+        filterArtifactButtonsPanelWrapper.setLayout(new BoxLayout(filterArtifactButtonsPanelWrapper, BoxLayout.X_AXIS));
+
+        final JBPanel<BorderLayoutPanel> applyArtifactFilterButtonPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
+        applyArtifactFilterButtonPanel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 2));
+        final JButton applyArtifactFilterButton = new JButton(
+                LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.apply.artifact.filter"));
+        applyArtifactFilterButtonPanel.add(applyArtifactFilterButton, BorderLayout.CENTER);
+
+        final JBPanel<BorderLayoutPanel> resetArtifactFilterPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
+        resetArtifactFilterPanel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 2));
+        final JButton resetArtifactFilterButton = new JButton(
+                LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.apply.artifact.filter.reset"));
+        resetArtifactFilterPanel.add(resetArtifactFilterButton, BorderLayout.CENTER);
+
+        filterArtifactButtonsPanelWrapper.add(resetArtifactFilterPanel);
+        filterArtifactButtonsPanelWrapper.add(applyArtifactFilterButtonPanel);
+
+        filterByIdentifierPanel.add(filterArtifactButtonsPanelWrapper/*, FlowLayout.TRAILING*/);
+
+        /*
+         * Filter artifacts checkboxes
+         */
+        final JBPanel<BorderLayoutPanel> filterCheckboxesPanel = new BorderLayoutPanel();// new JBPanel(new BorderLayout());
+        filterCheckboxesPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
+        final JBPanel<BorderLayoutPanel> filterCheckboxesPanelWrapper = new JBPanel<>();
+        filterCheckboxesPanelWrapper.setLayout(new BoxLayout(filterCheckboxesPanelWrapper, BoxLayout.X_AXIS));
+
+        filterCheckboxesPanelWrapper.add(new JBLabel("Predefined filters: "));
+        filterCheckboxesPanelWrapper.add(Box.createRigidArea(new Dimension(10, 0)));
+        currentFileFilter = new JCheckBox("Include current editor's artifacts only.");
+        currentFileFilter.setSelected(false);
+        currentFileFilter.setEnabled(false);
+        standardLibraryFilter = new JCheckBox("Exclude standard library.");
+        standardLibraryFilter.setSelected(true);
+        standardLibraryFilter.setEnabled(false);
+        filterCheckboxesPanelWrapper.add(currentFileFilter);
+        filterCheckboxesPanelWrapper.add(Box.createRigidArea(new Dimension(10, 0)));
+        filterCheckboxesPanelWrapper.add(standardLibraryFilter);
+        filterCheckboxesPanelWrapper.add(Box.createVerticalGlue());
+        filterCheckboxesPanel.add(filterCheckboxesPanelWrapper, BorderLayout.CENTER);
+
+        filterByIdentifierPanel.add(filterCheckboxesPanel);
+
+        filterPanelWrapper.add(filterByIdentifierPanel);
+
+        /*
+         * Sort artifacts strategy
+         */
+
+        final JBPanel<BorderLayoutPanel> sortArtifactsPanel = new BorderLayoutPanel();
+        sortArtifactsPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
+        final JBPanel<BorderLayoutPanel> sortArtifactsPanelWrapper = new JBPanel<>();
+        sortArtifactsPanelWrapper.setLayout(new BoxLayout(sortArtifactsPanelWrapper, BoxLayout.X_AXIS));
+
+        sortArtifactsPanelWrapper.add(new JBLabel("Sort artifacts by metric: "));
+        sortArtifactsPanelWrapper.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        artifactSortingComboBox = new ComboBox<>();
+        artifactSortingComboBox.addItemListener(new ItemListener()
+        {
+            @Override
+            public void itemStateChanged(final ItemEvent e)
+            {
+                final int stateChange = e.getStateChange();
+                final AMetricIdentifier metricIdentifier = (AMetricIdentifier) e.getItem();
+                if (stateChange == ItemEvent.SELECTED)
+                {
+                    System.out.println("Selected: " + metricIdentifier.getDisplayString());
+                } else
+                {
+                    if (stateChange == ItemEvent.DESELECTED)
+                    {
+                        System.out.println("Deselected: " + metricIdentifier.getDisplayString());
+                    }
+                }
+            }
+        });
+
+        sortArtifactsPanelWrapper.add(artifactSortingComboBox);
+
+
+        sortArtifactsPanel.add(sortArtifactsPanelWrapper, BorderLayout.CENTER);
+        filterByIdentifierPanel.add(sortArtifactsPanel);
+
+        /*
+         * Filter by threads panel
+         */
+
+        filterByThreadPanel = new BorderLayoutPanel();// new JBPanel(new BorderLayout());
+        filterByThreadPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                "Filter artifacts by thread"));
+
+        final JBPanel<BorderLayoutPanel> threadFilterWrapper = new JBPanel<>();
+        threadFilterWrapper.setLayout(new BoxLayout(threadFilterWrapper, BoxLayout.X_AXIS));
+
+        programArtifactVisualizationPanel = new JBPanel<>();
+        threadFilterWrapper.add(programArtifactVisualizationPanel);
+
+        final JButton resetThreadFilterButton = new JButton(
+                LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
+        resetThreadFilterButton.addActionListener(e -> {
+
+            UserActivityLogger.getInstance().log(UserActivityEnum.OverviewThreadFilterReset);
+
+            CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(GlobalResetThreadArtifactFilter
+                    .getInstance());
+        });
+        final JBPanel<BorderLayoutPanel> resetThreadFilterButtonWrapper = new BorderLayoutPanel();// new JBPanel(new BorderLayout());
+        resetThreadFilterButtonWrapper.add(resetThreadFilterButton, BorderLayout.CENTER);
+        resetThreadFilterButtonWrapper.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
+
+        threadFilterWrapper.add(resetThreadFilterButtonWrapper);
+        if (threadStateFilterWrapper == null)
+        {
+            threadStateFilterWrapper = new BorderLayoutPanel();//new JBPanel<>();
+        }
+        threadFilterWrapper.add(threadStateFilterWrapper);
+        filterByThreadPanel.add(threadFilterWrapper, BorderLayout.CENTER);
+
+        filterPanelWrapper.add(filterByThreadPanel);
+
+        filterPanel.add(filterPanelWrapper, BorderLayout.CENTER);
+        rootPanel.add(filterPanel, BorderLayout.NORTH);
+
+        /*
+         * The results panel in the CENTER. The results panel contains the tabbed pane of the artifacts.
+         */
+
+        final JBPanel<BorderLayoutPanel> resultsPanel = new BorderLayoutPanel();// new JBPanel(new BorderLayout());
+        tabbedPane = new JBTabbedPane();
+        tabbedPaneChangeListener = new ArtifactTabbedPaneChangeListener(tabbedPane);
+
+        resultsPanel.add(tabbedPane, BorderLayout.CENTER);
+        rootPanel.add(resultsPanel, BorderLayout.CENTER);
+
+        final ActionListener actionListener = e -> filterOverView();
+
+
+        excludeFilter.addActionListener(actionListener);
+        includeFilter.addActionListener(actionListener);
+        applyArtifactFilterButton.addActionListener(actionListener);
+        currentFileFilter.addActionListener(
+                e -> {
+                    boolean selected = currentFileFilter.isSelected();
+
+                    String s = !selected ? "disabled" : "enabled";
+
+                    UserActivityLogger.getInstance().log(UserActivityEnum.OverviewArtifactFilterCurrentEditorArtifactsOnlyChecked, s);
+
+                    filterOverView();
+                }
+        );
+        standardLibraryFilter.addActionListener(
+                e -> {
+                    boolean selected = standardLibraryFilter.isSelected();
+
+                    String s = !selected ? "disabled" : "enabled";
+
+                    UserActivityLogger.getInstance().log(UserActivityEnum.OverviewArtifactFilterExcludeStandardLibraryChecked, s);
+
+                    filterOverView();
+                }
+        );
+
+        resetArtifactFilterButton.addActionListener(e -> {
+            UserActivityLogger.getInstance().log(UserActivityEnum.OverviewArtifactFilterReset);
+            excludeFilter.setText("");
+            includeFilter.setText("");
+            if (currentFileArtifactFilter != null)
+            {
+                currentFileFilter.setSelected(false);
+            }
+            if (standardLibraryArtifactFilter != null)
+            {
+                standardLibraryFilter.setSelected(true);
+            }
+            filterOverView();
+        });
+    }
+
+    public JPanel getRootPanel()
+    {
+        return this.rootPanel;
+    }
+
+    private JBPanel<BorderLayoutPanel> programArtifactVisualizationPanel;
+    private JCheckBox currentFileFilter;
+    private JCheckBox standardLibraryFilter;
+    private ComboBox<Object> artifactSortingComboBox;
+    private JBPanel<BorderLayoutPanel> rootPanel;
+    private JBPanel<BorderLayoutPanel> filterByThreadPanel;
+    private JBTabbedPane tabbedPane;
+    private ChangeListener tabbedPaneChangeListener;
+    private JBTextField excludeFilter;
+    private JBTextField includeFilter;
+
+    /*
+     * Artifact tabbed pane change listener inner class
+     */
+
+    private static class ArtifactTabbedPaneChangeListener implements ChangeListener
+    {
+        private final JBTabbedPane tabbedPane;
+        private final IUserActivityLogger userActivityLogger;
+
+        ArtifactTabbedPaneChangeListener(final JBTabbedPane tabbedPane)
+        {
+            this.tabbedPane = tabbedPane;
+            this.userActivityLogger = UserActivityLogger.getInstance();
+        }
+
+        @Override
+        public void stateChanged(ChangeEvent e)
+        {
+            final int selectedIndex = tabbedPane.getSelectedIndex();
+            if (selectedIndex == 0)
+            {
+                userActivityLogger.log(UserActivityEnum.OverviewMethodTabEntered);
+            } else
+            {
+                userActivityLogger.log(UserActivityEnum.OverviewClassesTabEntered);
+            }
+        }
+    }
+
+    /*
+     * UI components related methods
+     */
+
     public void setFilterByThreadPanelVisible(Boolean threadVisualizationsEnabled)
     {
         filterByThreadPanel.setVisible(threadVisualizationsEnabled);
     }
+
+    /*
+     * Artifact pool
+     */
 
     private IArtifactPool artifactPool;
 
@@ -77,6 +358,10 @@ public class ArtifactOverview
         filterOverView();
         rootPanel.repaint();
     }
+
+    /*
+     * Register the artifact visualization label factories used in the tabbed pane
+     */
 
     private Set<AArtifactVisualizationLabelFactory> programArtifactVisualizationLabelFactories;
 
@@ -138,253 +423,62 @@ public class ArtifactOverview
         rootPanel.repaint();
     }
 
-    private ArtifactOverview() { setupUI(); }
+    private final Object registeredArtifactSortingMetricsLock = new Object();
 
-    private JBPanel<BorderLayoutPanel> programArtifactVisualizationPanel;
-
-    private void setupUI()
+    public void registerArtifactSortingMetric(final AMetricIdentifier metricIdentifier)
     {
-
-//        ProgramThreadRadar programThreadRadar = new ProgramThreadRadar(this);
-
-        rootPanel = new BorderLayoutPanel();//new JBPanel();
-//        rootPanel.setPreferredSize(new Dimension(300, 500));
-//        rootPanel.setMaximumSize(new Dimension(300, 500));
-//        rootPanel.setLayout(new BorderLayout());
-        JBPanel<BorderLayoutPanel> filterPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
-
-        JBPanel<BorderLayoutPanel> filterPanelWrapper = new JBPanel<>();
-        filterPanelWrapper.setLayout(new BoxLayout(filterPanelWrapper, BoxLayout.Y_AXIS));
-
-        JBPanel<BorderLayoutPanel> filterByIdentifierPanel = new JBPanel<>();
-        filterByIdentifierPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                "Filter artifacts by identifier (separate with comma)"));
-
-        filterByIdentifierPanel.setLayout(new BoxLayout(filterByIdentifierPanel, BoxLayout.Y_AXIS));
-
-        excludeFilter = new JBTextField();
-        JBPanel<BorderLayoutPanel> excludeFilterPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
-        excludeFilterPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        JBPanel<BorderLayoutPanel> excludeFilterPanelWrapper = new JBPanel<>();
-        excludeFilterPanelWrapper.setLayout(new BoxLayout(excludeFilterPanelWrapper, BoxLayout.X_AXIS));
-        excludeFilterPanelWrapper.add(new JBLabel("Exclude: "));
-        excludeFilterPanelWrapper.add(excludeFilter);
-        excludeFilterPanel.add(excludeFilterPanelWrapper, BorderLayout.CENTER);
-        filterByIdentifierPanel.add(excludeFilterPanel);
-
-        includeFilter = new JBTextField();
-        JBPanel<BorderLayoutPanel> includeFilterPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
-        includeFilterPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        JBPanel<BorderLayoutPanel> includeFilterPanelWrapper = new JBPanel<>();
-        includeFilterPanelWrapper.setLayout(new BoxLayout(includeFilterPanelWrapper, BoxLayout.X_AXIS));
-        includeFilterPanelWrapper.add(new JBLabel("Include: "));
-        includeFilterPanelWrapper.add(Box.createRigidArea(new Dimension(2, 0)));
-        includeFilterPanelWrapper.add(includeFilter);
-        includeFilterPanel.add(includeFilterPanelWrapper, BorderLayout.CENTER);
-        filterByIdentifierPanel.add(includeFilterPanel);
-
-
-        JBPanel<BorderLayoutPanel> filterArtifactButtonsPanelWrapper = new JBPanel<>();
-        filterArtifactButtonsPanelWrapper.setLayout(new BoxLayout(filterArtifactButtonsPanelWrapper, BoxLayout.X_AXIS));
-
-        JBPanel<BorderLayoutPanel> applyArtifactFilterButtonPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
-        applyArtifactFilterButtonPanel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 2));
-        JButton applyArtifactFilterButton = new JButton(
-                LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.apply.artifact.filter"));
-        applyArtifactFilterButtonPanel.add(applyArtifactFilterButton, BorderLayout.CENTER);
-
-        JBPanel<BorderLayoutPanel> resetArtifactFilterPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
-        resetArtifactFilterPanel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 2));
-        JButton resetArtifactFilterButton = new JButton(
-                LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.apply.artifact.filter.reset"));
-        resetArtifactFilterPanel.add(resetArtifactFilterButton, BorderLayout.CENTER);
-
-        filterArtifactButtonsPanelWrapper.add(resetArtifactFilterPanel);
-        filterArtifactButtonsPanelWrapper.add(applyArtifactFilterButtonPanel);
-
-        filterByIdentifierPanel.add(filterArtifactButtonsPanelWrapper/*, FlowLayout.TRAILING*/);
-
-        /*
-         * Filter checkboxes
-         */
-        JBPanel<BorderLayoutPanel> filterCheckboxesPanel = new BorderLayoutPanel();// new JBPanel(new BorderLayout());
-        filterCheckboxesPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
-        JBPanel<BorderLayoutPanel> filterCheckboxesPanelWrapper = new JBPanel<>();
-        filterCheckboxesPanelWrapper.setLayout(new BoxLayout(filterCheckboxesPanelWrapper, BoxLayout.X_AXIS));
-
-        filterCheckboxesPanelWrapper.add(new JBLabel("Predefined filters: "));
-        filterCheckboxesPanelWrapper.add(Box.createRigidArea(new Dimension(10, 0)));
-        currentFileFilter = new JCheckBox("Include current editor's artifacts only.");
-        currentFileFilter.setSelected(false);
-        currentFileFilter.setEnabled(false);
-        standardLibraryFilter = new JCheckBox("Exclude standard library.");
-        standardLibraryFilter.setSelected(true);
-        standardLibraryFilter.setEnabled(false);
-        filterCheckboxesPanelWrapper.add(currentFileFilter);
-        filterCheckboxesPanelWrapper.add(Box.createRigidArea(new Dimension(10, 0)));
-        filterCheckboxesPanelWrapper.add(standardLibraryFilter);
-        filterCheckboxesPanelWrapper.add(Box.createVerticalGlue());
-        filterCheckboxesPanel.add(filterCheckboxesPanelWrapper, BorderLayout.CENTER);
-
-        filterByIdentifierPanel.add(filterCheckboxesPanel);
-
-        filterPanelWrapper.add(filterByIdentifierPanel);
-
-//        final Boolean threadVisualizationsEnabled = PropertiesUtil.getBooleanPropertyValueOrDefault(PropertiesFile.USER_INTERFACE_PROPERTIES,
-//                PropertyKey.THREAD_VISUALIZATIONS_ENABLED, true);
-//
-//        if (threadVisualizationsEnabled)
-//        {
-        filterByThreadPanel = new BorderLayoutPanel();// new JBPanel(new BorderLayout());
-        filterByThreadPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                "Filter artifacts by thread"));
-
-        JBPanel<BorderLayoutPanel> threadFilterWrapper = new JBPanel<>();
-        threadFilterWrapper.setLayout(new BoxLayout(threadFilterWrapper, BoxLayout.X_AXIS));
-
-        programArtifactVisualizationPanel = new JBPanel<>();
-        threadFilterWrapper.add(programArtifactVisualizationPanel);
-
-        final JButton resetThreadFilterButton = new JButton(
-                LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
-        resetThreadFilterButton.addActionListener(e -> {
-
-            UserActivityLogger.getInstance().log(UserActivityEnum.OverviewThreadFilterReset);
-
-            CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(GlobalResetThreadArtifactFilter
-                    .getInstance());
-        });
-        JBPanel<BorderLayoutPanel> resetThreadFilterButtonWrapper = new BorderLayoutPanel();// new JBPanel(new BorderLayout());
-        resetThreadFilterButtonWrapper.add(resetThreadFilterButton, BorderLayout.CENTER);
-        resetThreadFilterButtonWrapper.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
-
-        threadFilterWrapper.add(resetThreadFilterButtonWrapper);
-        if (threadStateFilterWrapper == null)
+        synchronized (registeredArtifactSortingMetricsLock)
         {
-            threadStateFilterWrapper = new BorderLayoutPanel();//new JBPanel<>();
-        }
-        threadFilterWrapper.add(threadStateFilterWrapper);
-        filterByThreadPanel.add(threadFilterWrapper, BorderLayout.CENTER);
-
-        filterPanelWrapper.add(filterByThreadPanel);
-//        }
-
-        filterPanel.add(filterPanelWrapper, BorderLayout.CENTER);
-
-        rootPanel.add(filterPanel, BorderLayout.NORTH);
-        JBPanel<BorderLayoutPanel> resultsPanel = new BorderLayoutPanel();// new JBPanel(new BorderLayout());
-        tabbedPane = new JBTabbedPane();
-        tabbedPaneChangeListener = new ArtifactTabbedPaneChangeListener(tabbedPane);
-
-        resultsPanel.add(tabbedPane, BorderLayout.CENTER);
-        rootPanel.add(resultsPanel, BorderLayout.CENTER);
-
-        ActionListener actionListener = e -> filterOverView();
-
-
-        excludeFilter.addActionListener(actionListener);
-        includeFilter.addActionListener(actionListener);
-        applyArtifactFilterButton.addActionListener(actionListener);
-        currentFileFilter.addActionListener(
-                e -> {
-                    boolean selected = currentFileFilter.isSelected();
-
-                    String s = !selected ? "disabled" : "enabled";
-
-                    UserActivityLogger.getInstance().log(UserActivityEnum.OverviewArtifactFilterCurrentEditorArtifactsOnlyChecked, s);
-
-                    filterOverView();
+            boolean containsMetricAlready = false;
+            for (int i = 0; i < artifactSortingComboBox.getItemCount(); i++)
+            {
+                final AMetricIdentifier metricAt = (AMetricIdentifier) artifactSortingComboBox.getItemAt(i);
+                if (metricAt.equals(metricIdentifier))
+                {
+                    containsMetricAlready = true;
                 }
-        );
-        standardLibraryFilter.addActionListener(
-                e -> {
-                    boolean selected = standardLibraryFilter.isSelected();
-
-                    String s = !selected ? "disabled" : "enabled";
-
-                    UserActivityLogger.getInstance().log(UserActivityEnum.OverviewArtifactFilterExcludeStandardLibraryChecked, s);
-
-                    filterOverView();
-                }
-        );
-
-        resetArtifactFilterButton.addActionListener(e -> {
-            UserActivityLogger.getInstance().log(UserActivityEnum.OverviewArtifactFilterReset);
-            excludeFilter.setText("");
-            includeFilter.setText("");
-            if (currentFileArtifactFilter != null)
-            {
-                currentFileFilter.setSelected(false);
             }
-            if (standardLibraryArtifactFilter != null)
-            {
-                standardLibraryFilter.setSelected(true);
-            }
-            filterOverView();
-        });
-    }
-
-    private JCheckBox currentFileFilter;
-    private JCheckBox standardLibraryFilter;
-    private JBPanel<BorderLayoutPanel> rootPanel;
-    private JBPanel<BorderLayoutPanel> filterByThreadPanel;
-    private JBTabbedPane tabbedPane;
-
-    private static class ArtifactTabbedPaneChangeListener implements ChangeListener
-    {
-        private final JBTabbedPane tabbedPane;
-        private final IUserActivityLogger userActivityLogger;
-
-        ArtifactTabbedPaneChangeListener(final JBTabbedPane tabbedPane)
-        {
-            this.tabbedPane = tabbedPane;
-            this.userActivityLogger = UserActivityLogger.getInstance();
-        }
-
-        @Override
-        public void stateChanged(ChangeEvent e)
-        {
-            final int selectedIndex = tabbedPane.getSelectedIndex();
-            if (selectedIndex == 0)
-            {
-                userActivityLogger.log(UserActivityEnum.OverviewMethodTabEntered);
-            } else
-            {
-                userActivityLogger.log(UserActivityEnum.OverviewClassesTabEntered);
-            }
+            if (!containsMetricAlready) artifactSortingComboBox.addItem(metricIdentifier);
         }
     }
 
-    private ChangeListener tabbedPaneChangeListener;
+    public void removeArtifactSortingMetric(final AMetricIdentifier metricIdentifier)
+    {
+        synchronized (registeredArtifactSortingMetricsLock)
+        {
+            artifactSortingComboBox.removeItem(metricIdentifier);
+        }
+    }
 
-    private JBTextField excludeFilter;
-    private JBTextField includeFilter;
+    /*
+     * The metric identifier with which the artifact list in the tabs should be sorted.
+     */
 
-    private final Object metricIdentifierLock = new Object();
-    private final Map<Class<? extends AArtifact>, AMetricIdentifier> artifactClassMetricIdentifier = new HashMap<>(8);
+    private final Object artifactSortingMetricIdentifierLock = new Object();
+    private final Map<Class<? extends AArtifact>, AMetricIdentifier> artifactSortingArtifactClassMetricIdentifier = new HashMap<>(8);
 
-    public void registerMetricIdentifier(
-            final Class<? extends AArtifact> artifactClass
-            , final AMetricIdentifier metricIdentifier
-    )
+    public void setArtifactSortingMetricIdentifier(final Class<? extends AArtifact> artifactClass, final AMetricIdentifier metricIdentifier)
     {
         if (artifactClass == null || metricIdentifier == null)
         {
             return;
         }
-        synchronized (metricIdentifierLock)
+        synchronized (artifactSortingMetricIdentifierLock)
         {
-            artifactClassMetricIdentifier.put(artifactClass, metricIdentifier);
+            artifactSortingArtifactClassMetricIdentifier.put(artifactClass, metricIdentifier);
         }
+        // TODO: Maybe I need to setup a metric sorting for each artifact class in the tabbed pane!
+        registerArtifactSortingMetric(metricIdentifier);
     }
+
+    /*
+     *  The artifact visualization label factories which will be used to visualize the artifacts in the lists in the tabbed pane
+     */
 
     private final Object artifactClassVisualizationLabelFactoriesLock = new Object();
     private final Map<Class<? extends AArtifact>, AArtifactVisualizationLabelFactory> artifactClassVisualizationLabelFactories = new HashMap<>(8);
 
-    public void registerArtifactClassVisualizationLabelFactory(
-            final Class<? extends AArtifact> artifactClass
-            , final AArtifactVisualizationLabelFactory factory
-    )
+    public void registerArtifactClassVisualizationLabelFactory(final Class<? extends AArtifact> artifactClass, final AArtifactVisualizationLabelFactory factory)
     {
         if (artifactClass == null || factory == null)
         {
@@ -407,6 +501,10 @@ public class ArtifactOverview
             return artifactClassVisualizationLabelFactories.get(artifactClass);
         }
     }
+
+    /*
+     * That is what happens if any UI interaction takes place!
+     */
 
     public void filterOverView()
     {
@@ -440,7 +538,7 @@ public class ArtifactOverview
                 artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
 
                 String tabName = artifactPool.getArtifactClassDisplayName(artifactClass);
-                final AMetricIdentifier metricIdentifier = artifactClassMetricIdentifier.get(artifactClass);
+                final AMetricIdentifier metricIdentifier = artifactSortingArtifactClassMetricIdentifier.get(artifactClass);
                 if (metricIdentifier != null)
                 {
                     addTab(tabName, artifacts, metricIdentifier);
@@ -459,7 +557,8 @@ public class ArtifactOverview
 
     private void addTab(final String title, final List<AArtifact> artifacts, final AMetricIdentifier metricIdentifier)
     {
-        final ArtifactOverViewTableModel tableModel = new ArtifactOverViewTableModel(artifacts, metricIdentifier);
+        final Comparator<AArtifact> comparator = ArtifactMetricComparator.getInstance(metricIdentifier).reversed();
+        final ArtifactOverViewTableModel tableModel = new ArtifactOverViewTableModel(artifacts, comparator);
         final MetricTable jbTable = new MetricTable(tableModel)
         {
             @Override
@@ -494,11 +593,6 @@ public class ArtifactOverview
         jbTable.setRowHeight(jbTable.getRowHeight() + 5);
 
         tabbedPane.addTab(title, new JBScrollPane(jbTable));
-    }
-
-    public JPanel getRootPanel()
-    {
-        return this.rootPanel;
     }
 
     private Set<String> retrieveCustomFilters(final JBTextField filter)

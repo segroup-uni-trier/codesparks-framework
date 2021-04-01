@@ -2,9 +2,6 @@ package de.unitrier.st.codesparks.core.overview;
 
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.DataUtil;
-import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
-import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.DummyArtifactVisualizationLabelFactory;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +11,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.ToDoubleFunction;
 
 /**
  * Created by Oliver Moseler on 05.10.2014.
@@ -26,49 +22,10 @@ public class ArtifactOverViewTableModel implements TableModel
 {
     private final List<AArtifact> artifacts;
 
-    ArtifactOverViewTableModel(@NotNull final List<AArtifact> artifacts, final AMetricIdentifier metricIdentifier)
+    ArtifactOverViewTableModel(@NotNull final List<AArtifact> artifacts, final Comparator<AArtifact> comparator)
     {
-        if (metricIdentifier == null)
-        {
-            CodeSparksLogger.addText("%s: Metric identifier not setup! Please register a metric identifier to the overview through the CodeSparksFlow.",
-                    getClass());
-        }
         this.artifacts = artifacts;
-//        this.artifacts =
-//                artifacts.stream()
-//                        .filter(artifact ->
-//                        {
-//                            if (metricIdentifier == null)
-//                            {
-//                                return true;
-//                            }
-//                            if (metricIdentifier.isNumerical())
-//                            {
-//                                if (artifact.hasThreads())
-//                                {
-//                                    return DataUtil.getThreadFilteredRelativeNumericMetricValueRatioOfArtifact(artifact, metricIdentifier) > 0;
-//                                } else
-//                                {
-//                                    return artifact.getNumericalMetricValue(metricIdentifier) > 0;
-//                                }
-//                            } else
-//                            {
-//                                return artifact.getMetricValue(metricIdentifier) != null;
-//                            }
-//                        })
-//                        .collect(Collectors.toList());
-//        this.artifacts.sort(Comparator.comparingDouble(DataUtil::getThreadFilteredMetricValue).reversed());
-        final ToDoubleFunction<? super AArtifact> f = artifact -> {
-            if (artifact != null)
-            {
-                return DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, metricIdentifier);
-            } else
-            {
-                return 0d;
-            }
-        };
-        this.artifacts.sort(Comparator.comparingDouble(f).reversed());
-
+        this.artifacts.sort(comparator);
     }
 
     @Override

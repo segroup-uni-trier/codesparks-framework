@@ -19,4 +19,10 @@ public abstract class AMetricIdentifier implements IMetricIdentifier
         if (!(obj instanceof IMetricIdentifier)) return false;
         return this.getIdentifier().equals(((IMetricIdentifier) obj).getIdentifier());
     }
+
+    @Override
+    public String toString()
+    {
+        return getDisplayString();
+    }
 }
