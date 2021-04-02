@@ -26,10 +26,7 @@ import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
-import de.unitrier.st.codesparks.core.overview.AThreadStateArtifactFilter;
-import de.unitrier.st.codesparks.core.overview.ArtifactOverview;
-import de.unitrier.st.codesparks.core.overview.IArtifactFilter;
-import de.unitrier.st.codesparks.core.overview.ICurrentFileArtifactFilter;
+import de.unitrier.st.codesparks.core.overview.*;
 import de.unitrier.st.codesparks.core.properties.PropertiesFile;
 import de.unitrier.st.codesparks.core.properties.PropertiesUtil;
 import de.unitrier.st.codesparks.core.properties.PropertyKey;
@@ -356,9 +353,10 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         ArtifactOverview.getInstance().registerProgramArtifactVisualizationLabelFactory(factory);
     }
 
-    public void setArtifactSortingMetricIdentifier(final Class<? extends AArtifact> artifactClass, final AMetricIdentifier metricIdentifier)
+    public void registerArtifactMetricComparatorForSorting(final Class<? extends AArtifact> artifactClass,
+                                                           final ArtifactMetricComparator... artifactMetricComparators)
     {
-        ArtifactOverview.getInstance().setArtifactSortingMetricIdentifier(artifactClass, metricIdentifier);
+        ArtifactOverview.getInstance().registerArtifactMetricComparatorForSorting(artifactClass, artifactMetricComparators);
     }
 
     public void registerArtifactClassVisualizationLabelFactory(

@@ -154,47 +154,7 @@ public class ArtifactOverview
         filterCheckboxesPanel.add(filterCheckboxesPanelWrapper, BorderLayout.CENTER);
 
         filterByIdentifierPanel.add(filterCheckboxesPanel);
-
         filterPanelWrapper.add(filterByIdentifierPanel);
-
-        /*
-         * Sort artifacts strategy
-         */
-
-        final JBPanel<BorderLayoutPanel> sortArtifactsPanel = new BorderLayoutPanel();
-        sortArtifactsPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
-        final JBPanel<BorderLayoutPanel> sortArtifactsPanelWrapper = new JBPanel<>();
-        sortArtifactsPanelWrapper.setLayout(new BoxLayout(sortArtifactsPanelWrapper, BoxLayout.X_AXIS));
-
-        sortArtifactsPanelWrapper.add(new JBLabel("Sort artifacts by metric: "));
-        sortArtifactsPanelWrapper.add(Box.createRigidArea(new Dimension(10, 0)));
-
-        artifactSortingComboBox = new ComboBox<>();
-        artifactSortingComboBox.addItemListener(new ItemListener()
-        {
-            @Override
-            public void itemStateChanged(final ItemEvent e)
-            {
-                final int stateChange = e.getStateChange();
-                final AMetricIdentifier metricIdentifier = (AMetricIdentifier) e.getItem();
-                if (stateChange == ItemEvent.SELECTED)
-                {
-                    System.out.println("Selected: " + metricIdentifier.getDisplayString());
-                } else
-                {
-                    if (stateChange == ItemEvent.DESELECTED)
-                    {
-                        //System.out.println("Deselected: " + metricIdentifier.getDisplayString());
-                    }
-                }
-            }
-        });
-
-        sortArtifactsPanelWrapper.add(artifactSortingComboBox);
-
-
-        sortArtifactsPanel.add(sortArtifactsPanelWrapper, BorderLayout.CENTER);
-        filterByIdentifierPanel.add(sortArtifactsPanel);
 
         /*
          * Filter by threads panel
@@ -300,7 +260,6 @@ public class ArtifactOverview
     private JBPanel<BorderLayoutPanel> programArtifactVisualizationPanel;
     private JCheckBox currentFileFilter;
     private JCheckBox standardLibraryFilter;
-    private ComboBox<Object> artifactSortingComboBox;
     private JBPanel<BorderLayoutPanel> rootPanel;
     private JBPanel<BorderLayoutPanel> filterByThreadPanel;
     private JBPanel<BorderLayoutPanel> threadStateFilterWrapper;
@@ -360,7 +319,7 @@ public class ArtifactOverview
             return;
         }
         this.artifactPool = artifactPool;
-        applyProgramArtifactVisualizations();
+        applyProgramArtifactVisualizationLabelFactories();
         filterOverView();
         rootPanel.repaint();
     }
@@ -399,22 +358,18 @@ public class ArtifactOverview
         return programArtifactVisualizationLabelFactories.remove(factory);
     }
 
-    private void applyProgramArtifactVisualizations()
+    private void applyProgramArtifactVisualizationLabelFactories()
     {
         if (programArtifactVisualizationLabelFactories == null || artifactPool == null)
         {
             return;
         }
-        AArtifact programArtifact = artifactPool.getProgramArtifact();
+        final AArtifact programArtifact = artifactPool.getProgramArtifact();
         if (programArtifact == null)
         {
             return;
         }
-        JPanel wrapper = new JPanel(new BottomFlowLayout());
-
-        // TODO : sort by sequence
-
-//        programArtifactVisualizationLabelFactories.stream().sorted(Comparator.comparing(AVisualizationSequence::getSequence));
+        final JPanel wrapper = new JPanel(new BottomFlowLayout());
 
         for (final AArtifactVisualizationLabelFactory programArtifactVisualizationLabelFactory :
                 programArtifactVisualizationLabelFactories
@@ -422,7 +377,7 @@ public class ArtifactOverview
                         .sorted(Comparator.comparing(AVisualizationSequence::getSequence))
                         .collect(Collectors.toList()))
         {
-            JLabel artifactLabel = programArtifactVisualizationLabelFactory.createArtifactLabel(programArtifact);
+            final JLabel artifactLabel = programArtifactVisualizationLabelFactory.createArtifactLabel(programArtifact);
             wrapper.add(artifactLabel);
         }
         programArtifactVisualizationPanel.removeAll();
@@ -430,52 +385,65 @@ public class ArtifactOverview
         rootPanel.repaint();
     }
 
-    private final Object registeredArtifactSortingMetricsLock = new Object();
-
-    public void registerArtifactSortingMetric(final AMetricIdentifier metricIdentifier)
-    {
-        synchronized (registeredArtifactSortingMetricsLock)
-        {
-            boolean containsMetricAlready = false;
-            for (int i = 0; i < artifactSortingComboBox.getItemCount(); i++)
-            {
-                final AMetricIdentifier metricAt = (AMetricIdentifier) artifactSortingComboBox.getItemAt(i);
-                if (metricAt.equals(metricIdentifier))
-                {
-                    containsMetricAlready = true;
-                }
-            }
-            if (!containsMetricAlready) artifactSortingComboBox.addItem(metricIdentifier);
-        }
-    }
-
-    public void removeArtifactSortingMetric(final AMetricIdentifier metricIdentifier)
-    {
-        synchronized (registeredArtifactSortingMetricsLock)
-        {
-            artifactSortingComboBox.removeItem(metricIdentifier);
-        }
-    }
 
     /*
      * The metric identifier with which the artifact list in the tabs should be sorted.
      */
 
-    private final Object artifactSortingMetricIdentifierLock = new Object();
-    private final Map<Class<? extends AArtifact>, AMetricIdentifier> artifactSortingArtifactClassMetricIdentifier = new HashMap<>(8);
+    private final Object artifactMetricComparatorsForSortingLock = new Object();
+    private final Map<Class<? extends AArtifact>, Set<ArtifactMetricComparator>> artifactMetricComparatorsForSorting = new HashMap<>(4);
 
-    public void setArtifactSortingMetricIdentifier(final Class<? extends AArtifact> artifactClass, final AMetricIdentifier metricIdentifier)
+    public void registerArtifactMetricComparatorForSorting(final Class<? extends AArtifact> artifactClass,
+                                                           final ArtifactMetricComparator... artifactMetricComparators)
     {
-        if (artifactClass == null || metricIdentifier == null)
+        if (artifactClass == null || artifactMetricComparators == null)
         {
             return;
         }
-        synchronized (artifactSortingMetricIdentifierLock)
+        synchronized (artifactMetricComparatorsForSortingLock)
         {
-            artifactSortingArtifactClassMetricIdentifier.put(artifactClass, metricIdentifier);
+
+            final Set<ArtifactMetricComparator> comparators = artifactMetricComparatorsForSorting.computeIfAbsent(artifactClass,
+                    (ac) -> new HashSet<>(4));
+
+            for (final ArtifactMetricComparator artifactMetricComparator : artifactMetricComparators)
+            {
+                if (artifactMetricComparator.isEnabled())
+                {
+                    comparators.forEach(comp -> comp.setEnabled(false));
+                }
+
+                comparators.add(artifactMetricComparator);
+            }
+
+            //artifactMetricComparatorsForSorting.put(artifactClass, artifactMetricComparators);
         }
-        // TODO: Maybe I need to setup a metric sorting for each artifact class in the tabbed pane!
-        registerArtifactSortingMetric(metricIdentifier);
+    }
+
+    private Set<ArtifactMetricComparator> getArtifactMetricComparatorsFor(final Class<? extends AArtifact> artifactClass)
+    {
+        synchronized (artifactMetricComparatorsForSortingLock)
+        {
+            //noinspection UnnecessaryLocalVariable
+            final Set<ArtifactMetricComparator> comparators = artifactMetricComparatorsForSorting.computeIfAbsent(artifactClass,
+                    (ac) -> new HashSet<>(4));
+            return comparators;
+        }
+    }
+
+    private ArtifactMetricComparator getAnyArtifactMetricComparator(final Class<? extends AArtifact> artifactClass)
+    {
+        if (artifactClass == null)
+        {
+            return null;
+        }
+        synchronized (artifactMetricComparatorsForSortingLock)
+        {
+            final Set<ArtifactMetricComparator> artifactMetricComparators = artifactMetricComparatorsForSorting.computeIfAbsent(artifactClass,
+                    ac -> new HashSet<>(4));
+            final Optional<ArtifactMetricComparator> any = artifactMetricComparators.stream().findAny();
+            return any.orElse(null);
+        }
     }
 
     /*
@@ -544,12 +512,13 @@ public class ArtifactOverview
 
                 artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
 
-                String tabName = artifactPool.getArtifactClassDisplayName(artifactClass);
-                final AMetricIdentifier metricIdentifier = artifactSortingArtifactClassMetricIdentifier.get(artifactClass);
-                if (metricIdentifier != null)
-                {
-                    addTab(tabName, artifacts, metricIdentifier);
-                }
+//                final String tabName = artifactPool.getArtifactClassDisplayName(artifactClass);
+//                final AMetricIdentifier metricIdentifier = artifactSortingArtifactClassMetricIdentifier.get(artifactClass);
+//                if (metricIdentifier != null)
+//                {
+//                    addTab(tabName, artifacts, metricIdentifier);
+                addTab(artifactClass, artifacts);
+//                }
             }
 
             if (lastSelectedTabIndex > 0 && lastSelectedTabIndex < tabbedPane.getTabCount())
@@ -562,10 +531,82 @@ public class ArtifactOverview
         });
     }
 
-    private void addTab(final String title, final List<AArtifact> artifacts, final AMetricIdentifier metricIdentifier)
+
+    private void addTab(final Class<? extends AArtifact> artifactClass, final List<AArtifact> artifacts)
     {
-        final Comparator<AArtifact> comparator = ArtifactMetricComparator.getInstance(metricIdentifier).reversed();
-        final ArtifactOverViewTableModel tableModel = new ArtifactOverViewTableModel(artifacts, comparator);
+        //final ArtifactMetricComparator comparator = getEnabledOrAnyArtifactMetricComparator(artifactClass);
+
+        /*
+         * Build the UI
+         */
+
+        final JBPanel<BorderLayoutPanel> tabPanel = new BorderLayoutPanel();
+
+        /*
+         * Add the sorting panel to the tab panel
+         */
+
+        final JBPanel<BorderLayoutPanel> sortArtifactsPanel = new BorderLayoutPanel();
+        sortArtifactsPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
+        final JBPanel<BorderLayoutPanel> sortArtifactsPanelWrapper = new JBPanel<>();
+        sortArtifactsPanelWrapper.setLayout(new BoxLayout(sortArtifactsPanelWrapper, BoxLayout.X_AXIS));
+
+        sortArtifactsPanelWrapper.add(new JBLabel("Sort artifacts by metric: "));
+        sortArtifactsPanelWrapper.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        ComboBox<Comparator<AArtifact>> artifactSortingComboBox = new ComboBox<>();
+
+        //artifactSortingComboBox.addItem(comparator);
+
+        final Set<ArtifactMetricComparator> artifactMetricComparators = getArtifactMetricComparatorsFor(artifactClass);
+        ArtifactMetricComparator enabledArtifactMetricComparator = null;
+        for (final ArtifactMetricComparator artifactMetricComparator : artifactMetricComparators)
+        {
+            artifactSortingComboBox.addItem(artifactMetricComparator);
+            if (artifactMetricComparator.isEnabled())
+            {
+                artifactSortingComboBox.setSelectedItem(artifactMetricComparators);
+                enabledArtifactMetricComparator = artifactMetricComparator;
+            }
+        }
+        if (enabledArtifactMetricComparator == null)
+        {
+            enabledArtifactMetricComparator = getAnyArtifactMetricComparator(artifactClass);
+        }
+
+        artifactSortingComboBox.addItemListener(new ItemListener()
+        {
+            @Override
+            public void itemStateChanged(final ItemEvent e)
+            {
+                final int stateChange = e.getStateChange();
+                final ArtifactMetricComparator artifactMetricComparator = (ArtifactMetricComparator) e.getItem();
+                if (stateChange == ItemEvent.SELECTED)
+                {
+                    System.out.println("Selected: " + artifactMetricComparator);
+                    artifactMetricComparator.setEnabled(true);
+                } else
+                {
+                    if (stateChange == ItemEvent.DESELECTED)
+                    {
+                        System.out.println("Deselected: " + artifactMetricComparator);
+                        artifactMetricComparator.setEnabled(false);
+                    }
+                }
+            }
+        });
+
+        sortArtifactsPanelWrapper.add(artifactSortingComboBox);
+        sortArtifactsPanel.add(sortArtifactsPanelWrapper, BorderLayout.NORTH);
+
+        tabPanel.add(sortArtifactsPanelWrapper, BorderLayout.NORTH);
+
+
+        /*
+         * Build the artifact table and add it to the tab panel
+         */
+
+        final ArtifactOverViewTableModel tableModel = new ArtifactOverViewTableModel(artifacts, enabledArtifactMetricComparator);
         final MetricTable jbTable = new MetricTable(tableModel)
         {
             @Override
@@ -598,8 +639,14 @@ public class ArtifactOverview
         visColumn.setMaxWidth(maxWidth);
 
         jbTable.setRowHeight(jbTable.getRowHeight() + 5);
+        tabPanel.add(new JBScrollPane(jbTable), BorderLayout.CENTER);
 
-        tabbedPane.addTab(title, new JBScrollPane(jbTable));
+        /*
+         *
+         */
+
+        final String tabName = artifactPool.getArtifactClassDisplayName(artifactClass);
+        tabbedPane.addTab(tabName, tabPanel);
     }
 
     private Set<String> retrieveCustomFilters(final JBTextField filter)

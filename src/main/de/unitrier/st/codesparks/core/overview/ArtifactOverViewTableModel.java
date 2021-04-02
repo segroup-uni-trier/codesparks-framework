@@ -25,7 +25,10 @@ public class ArtifactOverViewTableModel implements TableModel
     ArtifactOverViewTableModel(@NotNull final List<AArtifact> artifacts, final Comparator<AArtifact> comparator)
     {
         this.artifacts = artifacts;
-        this.artifacts.sort(comparator);
+        if (comparator != null)
+        {
+            this.artifacts.sort(comparator);
+        }
     }
 
     @Override
