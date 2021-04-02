@@ -163,6 +163,8 @@ public class ArtifactOverview
         filterByThreadPanel = new BorderLayoutPanel();// new JBPanel(new BorderLayout());
         filterByThreadPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 "Filter artifacts by thread"));
+        // TODO: Only for the clex study!
+        filterByThreadPanel.setVisible(false);
 
         final JBPanel<BorderLayoutPanel> threadFilterWrapper = new JBPanel<>();
         threadFilterWrapper.setLayout(new BoxLayout(threadFilterWrapper, BoxLayout.X_AXIS));
@@ -303,7 +305,9 @@ public class ArtifactOverview
 
     public void setFilterByThreadPanelVisible(Boolean threadVisualizationsEnabled)
     {
-        filterByThreadPanel.setVisible(threadVisualizationsEnabled);
+        //filterByThreadPanel.setVisible(threadVisualizationsEnabled);
+        // TODO: Only for the clex study! Delete following line and uncomment the line above!
+        filterByThreadPanel.setVisible(false);
     }
 
     /*
