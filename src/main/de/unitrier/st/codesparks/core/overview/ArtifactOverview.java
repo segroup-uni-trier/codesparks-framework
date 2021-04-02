@@ -70,14 +70,19 @@ public class ArtifactOverview
 
     private void setupUI()
     {
-        rootPanel = new BorderLayoutPanel();//new JBPanel();
-//        rootPanel.setPreferredSize(new Dimension(300, 500));
-//        rootPanel.setMaximumSize(new Dimension(300, 500));
-//        rootPanel.setLayout(new BorderLayout());
+        rootPanel = new BorderLayoutPanel();
+
+        /*
+         * The filter panel is placed in the NORTH of the root panel
+         */
+
         final JBPanel<BorderLayoutPanel> filterPanel = new BorderLayoutPanel();//new JBPanel(new BorderLayout());
         final JBPanel<BorderLayoutPanel> filterPanelWrapper = new JBPanel<>();
         filterPanelWrapper.setLayout(new BoxLayout(filterPanelWrapper, BoxLayout.Y_AXIS));
 
+        /*
+         * The filter panel contains one the one hand the filter by identifier elements, i.e. pure text filters
+         */
         final JBPanel<BorderLayoutPanel> filterByIdentifierPanel = new JBPanel<>();
         filterByIdentifierPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 "Filter artifacts by identifier (separate with comma)"));
@@ -127,7 +132,7 @@ public class ArtifactOverview
         filterByIdentifierPanel.add(filterArtifactButtonsPanelWrapper/*, FlowLayout.TRAILING*/);
 
         /*
-         * Filter artifacts checkboxes
+         * Filter artifact checkboxes, i.e. standard-library filter and current-opened-file filter
          */
         final JBPanel<BorderLayoutPanel> filterCheckboxesPanel = new BorderLayoutPanel();// new JBPanel(new BorderLayout());
         filterCheckboxesPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
@@ -179,7 +184,7 @@ public class ArtifactOverview
                 {
                     if (stateChange == ItemEvent.DESELECTED)
                     {
-                        System.out.println("Deselected: " + metricIdentifier.getDisplayString());
+                        //System.out.println("Deselected: " + metricIdentifier.getDisplayString());
                     }
                 }
             }
@@ -298,6 +303,7 @@ public class ArtifactOverview
     private ComboBox<Object> artifactSortingComboBox;
     private JBPanel<BorderLayoutPanel> rootPanel;
     private JBPanel<BorderLayoutPanel> filterByThreadPanel;
+    private JBPanel<BorderLayoutPanel> threadStateFilterWrapper;
     private JBTabbedPane tabbedPane;
     private ChangeListener tabbedPaneChangeListener;
     private JBTextField excludeFilter;
@@ -383,6 +389,7 @@ public class ArtifactOverview
         }
     }
 
+    @SuppressWarnings("unused")
     public boolean removeProgramArtifactVisualizationLabelFactory(final AArtifactVisualizationLabelFactory factory)
     {
         if (programArtifactVisualizationLabelFactories == null)
@@ -528,7 +535,7 @@ public class ArtifactOverview
 
             tabbedPane.removeChangeListener(tabbedPaneChangeListener);
 
-            clear();
+            clearTabs();
 
             for (final Map.Entry<Class<? extends AArtifact>, List<AArtifact>> entry : map.entrySet())
             {
@@ -545,9 +552,9 @@ public class ArtifactOverview
                 }
             }
 
-            if (lastSelectedIndex > 0 && lastSelectedIndex < tabbedPane.getTabCount())
+            if (lastSelectedTabIndex > 0 && lastSelectedTabIndex < tabbedPane.getTabCount())
             {
-                tabbedPane.setSelectedIndex(lastSelectedIndex);
+                tabbedPane.setSelectedIndex(lastSelectedTabIndex);
             }
 
             tabbedPane.addChangeListener(tabbedPaneChangeListener);
@@ -634,7 +641,6 @@ public class ArtifactOverview
     }
 
     private AThreadStateArtifactFilter threadStateArtifactFilter;
-    private JBPanel<BorderLayoutPanel> threadStateFilterWrapper;
 
     public void registerThreadStateArtifactFilter(final AThreadStateArtifactFilter threadStateArtifactFilter)
     {
@@ -782,13 +788,13 @@ public class ArtifactOverview
         return new ArrayList<>(filtered);
     }
 
-    private int lastSelectedIndex = -1;
+    private int lastSelectedTabIndex = -1;
 
-    private void clear()
+    private void clearTabs()
     {
         if (tabbedPane != null)
         {
-            lastSelectedIndex = tabbedPane.getSelectedIndex();
+            lastSelectedTabIndex = tabbedPane.getSelectedIndex();
             tabbedPane.removeAll();
         }
     }
