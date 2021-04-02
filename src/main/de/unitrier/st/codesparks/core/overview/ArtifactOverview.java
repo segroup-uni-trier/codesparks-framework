@@ -534,79 +534,14 @@ public class ArtifactOverview
 
     private void addTab(final Class<? extends AArtifact> artifactClass, final List<AArtifact> artifacts)
     {
-        //final ArtifactMetricComparator comparator = getEnabledOrAnyArtifactMetricComparator(artifactClass);
-
         /*
          * Build the UI
          */
 
         final JBPanel<BorderLayoutPanel> tabPanel = new BorderLayoutPanel();
 
-        /*
-         * Add the sorting panel to the tab panel
-         */
-
-        final JBPanel<BorderLayoutPanel> sortArtifactsPanel = new BorderLayoutPanel();
-        sortArtifactsPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
-        final JBPanel<BorderLayoutPanel> sortArtifactsPanelWrapper = new JBPanel<>();
-        sortArtifactsPanelWrapper.setLayout(new BoxLayout(sortArtifactsPanelWrapper, BoxLayout.X_AXIS));
-
-        sortArtifactsPanelWrapper.add(new JBLabel("Sort artifacts by metric: "));
-        sortArtifactsPanelWrapper.add(Box.createRigidArea(new Dimension(10, 0)));
-
-        ComboBox<Comparator<AArtifact>> artifactSortingComboBox = new ComboBox<>();
-
-        //artifactSortingComboBox.addItem(comparator);
-
-        final Set<ArtifactMetricComparator> artifactMetricComparators = getArtifactMetricComparatorsFor(artifactClass);
-        ArtifactMetricComparator enabledArtifactMetricComparator = null;
-        for (final ArtifactMetricComparator artifactMetricComparator : artifactMetricComparators)
-        {
-            artifactSortingComboBox.addItem(artifactMetricComparator);
-            if (artifactMetricComparator.isEnabled())
-            {
-                artifactSortingComboBox.setSelectedItem(artifactMetricComparators);
-                enabledArtifactMetricComparator = artifactMetricComparator;
-            }
-        }
-        if (enabledArtifactMetricComparator == null)
-        {
-            enabledArtifactMetricComparator = getAnyArtifactMetricComparator(artifactClass);
-        }
-
-        artifactSortingComboBox.addItemListener(new ItemListener()
-        {
-            @Override
-            public void itemStateChanged(final ItemEvent e)
-            {
-                final int stateChange = e.getStateChange();
-                final ArtifactMetricComparator artifactMetricComparator = (ArtifactMetricComparator) e.getItem();
-                if (stateChange == ItemEvent.SELECTED)
-                {
-                    System.out.println("Selected: " + artifactMetricComparator);
-                    artifactMetricComparator.setEnabled(true);
-                } else
-                {
-                    if (stateChange == ItemEvent.DESELECTED)
-                    {
-                        System.out.println("Deselected: " + artifactMetricComparator);
-                        artifactMetricComparator.setEnabled(false);
-                    }
-                }
-            }
-        });
-
-        sortArtifactsPanelWrapper.add(artifactSortingComboBox);
-        sortArtifactsPanel.add(sortArtifactsPanelWrapper, BorderLayout.NORTH);
-
-        tabPanel.add(sortArtifactsPanelWrapper, BorderLayout.NORTH);
-
-
-        /*
-         * Build the artifact table and add it to the tab panel
-         */
-
-        final ArtifactOverViewTableModel tableModel = new ArtifactOverViewTableModel(artifacts, enabledArtifactMetricComparator);
+        // Need to create these first because they are used in the listener of the combo box for sorting
+        final ArtifactOverViewTableModel tableModel = new ArtifactOverViewTableModel(artifacts);
         final MetricTable jbTable = new MetricTable(tableModel)
         {
             @Override
@@ -624,6 +559,75 @@ public class ArtifactOverview
                 return identifier;
             }
         };
+        /*
+         * Add the sorting panel to the tab panel
+         */
+
+        final JBPanel<BorderLayoutPanel> sortArtifactsPanel = new BorderLayoutPanel();
+        sortArtifactsPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
+        final JBPanel<BorderLayoutPanel> sortArtifactsPanelWrapper = new JBPanel<>();
+        sortArtifactsPanelWrapper.setLayout(new BoxLayout(sortArtifactsPanelWrapper, BoxLayout.X_AXIS));
+
+        sortArtifactsPanelWrapper.add(new JBLabel("Sort artifacts by metric: "));
+        sortArtifactsPanelWrapper.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        ComboBox<Comparator<AArtifact>> artifactSortingComboBox = new ComboBox<>();
+
+        final Set<ArtifactMetricComparator> artifactMetricComparators = getArtifactMetricComparatorsFor(artifactClass);
+        ArtifactMetricComparator enabledArtifactMetricComparator = null;
+        for (final ArtifactMetricComparator artifactMetricComparator : artifactMetricComparators)
+        {
+            artifactSortingComboBox.addItem(artifactMetricComparator);
+            if (artifactMetricComparator.isEnabled())
+            {
+                artifactSortingComboBox.setSelectedItem(artifactMetricComparator);
+                enabledArtifactMetricComparator = artifactMetricComparator;
+            }
+        }
+        if (enabledArtifactMetricComparator == null)
+        {
+            enabledArtifactMetricComparator = getAnyArtifactMetricComparator(artifactClass);
+        }
+
+        tableModel.sortArtifacts(enabledArtifactMetricComparator); // Sort the artifacts in the table
+
+        //noinspection Convert2Lambda
+        artifactSortingComboBox.addItemListener(new ItemListener()
+        {
+            @Override
+            public void itemStateChanged(final ItemEvent e)
+            {
+                final int stateChange = e.getStateChange();
+                final ArtifactMetricComparator artifactMetricComparator = (ArtifactMetricComparator) e.getItem();
+                if (stateChange == ItemEvent.SELECTED)
+                {
+                    artifactMetricComparator.setEnabled(true);
+                    //noinspection ConstantConditions
+                    if (tableModel != null)
+                    {
+                        tableModel.sortArtifacts(artifactMetricComparator);
+                        jbTable.repaint();
+                    }
+                } else
+                {
+                    if (stateChange == ItemEvent.DESELECTED)
+                    {
+                        artifactMetricComparator.setEnabled(false);
+                    }
+                }
+            }
+        });
+
+        sortArtifactsPanelWrapper.add(artifactSortingComboBox);
+        sortArtifactsPanel.add(sortArtifactsPanelWrapper, BorderLayout.NORTH);
+
+        tabPanel.add(sortArtifactsPanelWrapper, BorderLayout.NORTH);
+
+
+        /*
+         * Build the artifact table and add it to the tab panel
+         */
+
         final MetricTableCellRenderer metricTableCellRenderer = new MetricTableCellRenderer(0);
         jbTable.setDefaultRenderer(Object.class, metricTableCellRenderer);
         jbTable.addMouseMotionListener(new MetricTableMouseMotionAdapter(jbTable));
@@ -808,30 +812,14 @@ public class ArtifactOverview
         }
 
         /*
-         * Remove all artifacts which have threads and all of their threads are filtered (not selected to be considered).
-         */
-//        final List<AArtifact> threadFilterArtifacts = filtered.stream()
-//                .filter(artifact -> artifact.hasThreads() &&
-//                        artifact.getThreadArtifacts().stream().allMatch(AThreadArtifact::isFiltered))
-//                .collect(Collectors.toList());
-//        filtered.removeAll(threadFilterArtifacts);
-
-        /*
          * Alternatively, keep all artifacts which have at least one thread which is not filtered.
          */
-//        long elapsed = -System.nanoTime();
-//        try
-//        {
         final Set<AArtifact> nonThreadFilterArtifacts = filtered.stream()
                 .filter(artifact -> artifact.hasThreads() &&
                         artifact.getThreadArtifacts().stream().anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
                 .collect(Collectors.toSet());
         filtered.retainAll(nonThreadFilterArtifacts);
-//        } finally
-//        {
-//            elapsed += System.nanoTime();
-//            System.out.println("retain all non thread filtered artifacts took=" + elapsed / 1E9);
-//        }
+
         return new ArrayList<>(filtered);
     }
 

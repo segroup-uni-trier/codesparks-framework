@@ -13,22 +13,6 @@ import java.util.function.ToDoubleFunction;
 
 public class ArtifactMetricComparator implements Comparator<AArtifact>
 {
-//    private static final Map<AMetricIdentifier, ArtifactMetricComparator> instances = new HashMap<>(8);
-//
-//    public static ArtifactMetricComparator getInstance(final AMetricIdentifier metricIdentifier)
-//    {
-//        synchronized (instances)
-//        {
-//            ArtifactMetricComparator artifactMetricComparator = instances.get(metricIdentifier);
-//            if (artifactMetricComparator == null)
-//            {
-//                artifactMetricComparator = new ArtifactMetricComparator(metricIdentifier);
-//                instances.put(metricIdentifier, artifactMetricComparator);
-//            }
-//            return artifactMetricComparator;
-//        }
-//    }
-
     protected ToDoubleFunction<? super AArtifact> toDoubleFunction;
     private final AMetricIdentifier metricIdentifier;
     private boolean enabled;

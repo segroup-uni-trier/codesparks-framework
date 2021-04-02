@@ -1,10 +1,12 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.overview;
 
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.DummyArtifactVisualizationLabelFactory;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.TableModelListener;
@@ -15,16 +17,27 @@ import java.util.List;
 /**
  * Created by Oliver Moseler on 05.10.2014.
  */
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ArtifactOverViewTableModel implements TableModel
 {
     private final List<AArtifact> artifacts;
 
-    ArtifactOverViewTableModel(@NotNull final List<AArtifact> artifacts, final Comparator<AArtifact> comparator)
+    @SuppressWarnings("unused")
+    ArtifactOverViewTableModel(final List<AArtifact> artifacts, final Comparator<AArtifact> comparator)
     {
         this.artifacts = artifacts;
+        if (comparator != null)
+        {
+            this.artifacts.sort(comparator);
+        }
+    }
+
+    ArtifactOverViewTableModel(final List<AArtifact> artifacts)
+    {
+        this.artifacts = artifacts;
+    }
+
+    public void sortArtifacts(final Comparator<AArtifact> comparator)
+    {
         if (comparator != null)
         {
             this.artifacts.sort(comparator);
