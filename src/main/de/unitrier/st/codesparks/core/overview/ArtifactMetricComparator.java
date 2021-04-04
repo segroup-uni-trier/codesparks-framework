@@ -9,6 +9,7 @@ import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.DataUtil;
 
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 
 public class ArtifactMetricComparator implements Comparator<AArtifact>
@@ -19,6 +20,10 @@ public class ArtifactMetricComparator implements Comparator<AArtifact>
 
     public ArtifactMetricComparator(final AMetricIdentifier metricIdentifier, final boolean enabled)
     {
+        if (metricIdentifier == null)
+        {
+            throw new IllegalArgumentException("The argument 'metricIdentifier' must not be null!");
+        }
         this.metricIdentifier = metricIdentifier;
         if (metricIdentifier.isNumerical() && metricIdentifier.isRelative())
         {
@@ -50,10 +55,30 @@ public class ArtifactMetricComparator implements Comparator<AArtifact>
         this.enabled = enabled;
     }
 
+    AMetricIdentifier getMetricIdentifier()
+    {
+        return metricIdentifier;
+    }
+
     @Override
     public int compare(final AArtifact o1, final AArtifact o2)
     {
         return Comparator.comparingDouble(toDoubleFunction).reversed().compare(o1, o2);
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final ArtifactMetricComparator that = (ArtifactMetricComparator) o;
+        return enabled == that.enabled && Objects.equals(toDoubleFunction, that.toDoubleFunction) && Objects.equals(metricIdentifier, that.metricIdentifier);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(toDoubleFunction, metricIdentifier, enabled);
     }
 
     @Override

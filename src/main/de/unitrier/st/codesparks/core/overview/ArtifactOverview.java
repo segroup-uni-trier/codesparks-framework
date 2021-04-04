@@ -406,21 +406,20 @@ public class ArtifactOverview
         }
         synchronized (artifactMetricComparatorsForSortingLock)
         {
-
             final Set<ArtifactMetricComparator> comparators = artifactMetricComparatorsForSorting.computeIfAbsent(artifactClass,
                     (ac) -> new HashSet<>(4));
-
             for (final ArtifactMetricComparator artifactMetricComparator : artifactMetricComparators)
             {
-                if (artifactMetricComparator.isEnabled())
+                if (comparators.stream().noneMatch(comp -> comp.getMetricIdentifier().equals(artifactMetricComparator.getMetricIdentifier())))
                 {
-                    comparators.forEach(comp -> comp.setEnabled(false));
+                    if (artifactMetricComparator.isEnabled())
+                    {
+                        comparators.forEach(comp -> comp.setEnabled(false));
+                    }
+
+                    comparators.add(artifactMetricComparator);
                 }
-
-                comparators.add(artifactMetricComparator);
             }
-
-            //artifactMetricComparatorsForSorting.put(artifactClass, artifactMetricComparators);
         }
     }
 
