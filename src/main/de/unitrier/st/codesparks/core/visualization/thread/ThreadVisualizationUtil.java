@@ -104,7 +104,7 @@ public final class ThreadVisualizationUtil
         return sum;
     }
 
-    public static double getStartAngle(int radius, int labelRadius)
+    public static double getStartAngle(final int radius, final int labelRadius)
     {
         double x = (double) radius / (double) labelRadius;
         double radian = Math.PI + Math.asin(x) + 2 * Math.PI;
@@ -116,7 +116,7 @@ public final class ThreadVisualizationUtil
         return (d1 - 2 * d3);
     }
 
-    public static int metricToDiscreteMetric(double metric, int circleDiameter)
+    public static int metricToDiscreteMetric(final double metric, final int circleDiameter)
     {
         int discreteMetric;
         if (metric <= 0.33)
@@ -133,7 +133,7 @@ public final class ThreadVisualizationUtil
         return discreteMetric;
     }
 
-    public static int getNumberOfThreadTypesInSet(AArtifact artifact, Set<AThreadArtifact> codeSparksThreadArtifactsSet)
+    public static int getNumberOfThreadTypesInSet(final AArtifact artifact, Set<AThreadArtifact> codeSparksThreadArtifactsSet)
     {
         if (codeSparksThreadArtifactsSet == null)
         {
@@ -152,7 +152,7 @@ public final class ThreadVisualizationUtil
         return collect.size();
     }
 
-    public static int getNumberOfFilteredThreadTypes(AArtifact artifact, Set<AThreadArtifact> filteredCodeSparksThreads)
+    public static int getNumberOfFilteredThreadTypes(final AArtifact artifact, Set<AThreadArtifact> filteredCodeSparksThreads)
     {
         if (filteredCodeSparksThreads == null)
         {
@@ -165,7 +165,7 @@ public final class ThreadVisualizationUtil
         return getNumberOfThreadTypesInSet(artifact, filteredCodeSparksThreads);
     }
 
-    public static int getNumberOfSelectedThreadTypes(AArtifact artifact, Set<AThreadArtifact> selectedCodeSparksThreads)
+    public static int getNumberOfSelectedThreadTypes(final AArtifact artifact, Set<AThreadArtifact> selectedCodeSparksThreads)
     {
         if (selectedCodeSparksThreads == null)
         {
