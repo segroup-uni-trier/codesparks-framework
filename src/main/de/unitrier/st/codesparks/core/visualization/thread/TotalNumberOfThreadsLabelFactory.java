@@ -66,7 +66,7 @@ public final class TotalNumberOfThreadsLabelFactory extends AArtifactVisualizati
         final int halfFontHeight = (int) Math.ceil(fontHeight / 2D);
         final int textYPos = halfLineHeight + halfFontHeight - (int) (Math.floor(halfFontHeight / 2D) - 1);
 
-        graphics.drawString(sumAndColonString, X_OFFSET_LEFT + TEXT_START_OFFSET_LEFT, textYPos);
+        graphics.drawString(sumAndColonString, X_OFFSET_LEFT + TEXT_START_OFFSET_LEFT, textYPos - 1);
 
         textWidth += graphics.stringWidth(sumAndColonString);
 

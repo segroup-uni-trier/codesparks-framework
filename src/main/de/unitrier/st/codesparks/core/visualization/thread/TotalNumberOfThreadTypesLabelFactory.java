@@ -15,19 +15,15 @@ import java.util.List;
 
 public final class TotalNumberOfThreadTypesLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    public TotalNumberOfThreadTypesLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
+
+    public TotalNumberOfThreadTypesLabelFactory( final int sequence)
     {
-        super(primaryMetricIdentifier);
+        super(null, sequence);
     }
 
-    public TotalNumberOfThreadTypesLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
+    public TotalNumberOfThreadTypesLabelFactory(final int sequence, final int xOffsetLeft)
     {
-        super(primaryMetricIdentifier, sequence);
-    }
-
-    public TotalNumberOfThreadTypesLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence, final int xOffsetLeft)
-    {
-        super(primaryMetricIdentifier, sequence, xOffsetLeft);
+        super(null, sequence, xOffsetLeft);
     }
 
     @Override

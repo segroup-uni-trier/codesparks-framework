@@ -102,7 +102,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
              * Draw the metric value sum bar
              */
 
-            final Color backgroundMetricColor = VisualizationUtil.getBackgroundMetricColor(clusterColor, .45f);
+            final Color backgroundMetricColor = VisualizationUtil.getBackgroundMetricColor(clusterColor, .35f);
             JBColor clusterMetricValueSumColor = new JBColor(backgroundMetricColor, backgroundMetricColor);
 
             graphics.setColor(clusterMetricValueSumColor);
