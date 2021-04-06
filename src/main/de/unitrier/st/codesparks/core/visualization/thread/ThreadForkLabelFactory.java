@@ -44,13 +44,10 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
     public JLabel createArtifactLabel(final AArtifact artifact)
     {
         final Collection<AThreadArtifact> threadArtifacts = artifact.getThreadArtifacts();
-
         if (threadArtifacts.isEmpty())
         {
             return emptyLabel();
         }
-
-
 
         final int X_OFFSET_LEFT = this.X_OFFSET_LEFT + 1;
         final int threadsPerColumn = 3;
@@ -59,17 +56,6 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final int X_OFFSET_RIGHT = 0;
 
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
-
-//        final GraphicsConfiguration defaultConfiguration =
-//                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-//        final BufferedImage bi = UIUtil.createImage(defaultConfiguration, X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight,
-//                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
-//
-//        final Graphics2D graphics = (Graphics2D) bi.getGraphics();
-//        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//        // Draw the fully transparent background
-//        VisualizationUtil.drawTransparentBackground(graphics, bi);
-
         final CodeSparksGraphics graphics = getGraphics(X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight);
 
         // Thread metaphor
@@ -88,9 +74,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         final Rectangle threadVisualisationArea = new Rectangle(
                 X_OFFSET_LEFT + threadMetaphorWidth, 0, barChartWidth - 1, lineHeight - 1);
-
         graphics.drawRectangle(threadVisualisationArea);
-
 
         // Draw the clusters
         final int threadSquareEdgeLength = 3;//(lineHeight - 6) / threadsPerColumn;
@@ -105,11 +89,8 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         boolean createDisabledViz = threadArtifacts.stream().allMatch(AThreadArtifact::isFiltered);
 
         final double threadFilteredTotalMetricValueOfArtifact = artifact.getThreadFilteredTotalNumericalMetricValue(primaryMetricIdentifier, createDisabledViz);
-        //getThreadFilteredTotalMetricValueOfArtifact(artifact, createDisabledViz);
 
         final List<ThreadArtifactCluster> threadClusters = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
-
-
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {
             JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);
@@ -118,7 +99,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
              * Draw the metric value sum bar
              */
 
-            final Color backgroundMetricColor = VisualizationUtil.getBackgroundMetricColor(clusterColor, .25f);
+            final Color backgroundMetricColor = VisualizationUtil.getBackgroundMetricColor(clusterColor, .45f);
             JBColor clusterMetricValueSumColor = new JBColor(backgroundMetricColor, backgroundMetricColor);
 
             graphics.setColor(clusterMetricValueSumColor);
@@ -175,7 +156,6 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
                 graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, threadSquareYPos + 1, barrierXPos - 1, 1);
             }
 
-
             /*
              * -------------------------------------------
              */
@@ -183,36 +163,12 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             clusterNum += 1;
 
             threadSquareYPos -= threadSquareOffset;
-
         }
         // Creation of the label
 
-//        BufferedImage subimage = bi.getSubimage(0, 0, bi.getWidth(), bi.getHeight());
-//        ImageIcon imageIcon = new ImageIcon(subimage);
-//
-//        JLabel jLabel = new JLabel();
-//        jLabel.setIcon(imageIcon);
-//
-//        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
-
         final JLabel jLabel = makeLabel(graphics);
-
         jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
-
         return jLabel;
-    }
-
-    /**
-     * @deprecated Moved to class AArtifact
-     */
-    @Deprecated
-    private double getThreadFilteredTotalMetricValueOfArtifact(final AArtifact artifact, final boolean createDisabledViz)
-    {
-        //noinspection UnnecessaryLocalVariable
-        final double total =
-                artifact.getThreadArtifacts().stream().filter(threadExecutingArtifact -> createDisabledViz || !threadExecutingArtifact.isFiltered())
-                        .mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(primaryMetricIdentifier)).sum();
-        return total;
     }
 
     private double getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(final Collection<AThreadArtifact> threadsOfArtifact,

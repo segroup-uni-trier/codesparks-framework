@@ -74,7 +74,6 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
         graphics.drawLine(arrowStartX + 3, lineHeight / 2 - 3, arrowStartX, lineHeight / 2);
         graphics.drawLine(arrowStartX + 3, lineHeight / 2 + 3, arrowStartX, lineHeight / 2);
 
-
         // Draw the clusters
         final int threadSquareEdgeLength = 3;//(lineHeight - 6) / threadsPerColumn;
         final int clusterBarMaxWidth = 20;
@@ -82,10 +81,6 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
         final int threadSquareOffset = threadSquareEdgeLength + 1;
 
         int clusterNum = 0;
-
-//        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-//        final double threadFilteredTotalArtifactMetricValue = DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, primaryMetricIdentifier);
-
         boolean createDisabledViz = threadArtifacts.stream().allMatch(AThreadArtifact::isFiltered);
 
         final double totalNumberOfFilteredThreads =
