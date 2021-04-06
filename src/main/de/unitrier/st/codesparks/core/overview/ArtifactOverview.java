@@ -8,6 +8,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.ui.JBIntSpinner;
 import com.intellij.ui.components.*;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
@@ -28,6 +29,7 @@ import de.unitrier.st.codesparks.core.visualization.popup.MetricTableMouseMotion
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableColumn;
@@ -157,14 +159,69 @@ public class ArtifactOverview
         filterPanelWrapper.add(filterByIdentifierPanel);
 
         /*
-         * Filter by threads panel
+         * Thread clusters and filter panel
          */
 
-        filterByThreadPanel = new BorderLayoutPanel();// new JBPanel(new BorderLayout());
-        filterByThreadPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                "Filter artifacts by thread"));
+        threadsPanel = new BorderLayoutPanel();
+        threadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                "Thread clusters and filtering"));
+        final JBPanel<BorderLayoutPanel> threadsPanelWrapper = new JBPanel<>();
+        threadsPanelWrapper.setLayout(new BoxLayout(threadsPanelWrapper, BoxLayout.Y_AXIS));
+
+        final JBPanel<BorderLayoutPanel> threadClusterPanel = new JBPanel<>();
+        threadClusterPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
+        threadClusterPanel.setLayout(new BoxLayout(threadClusterPanel, BoxLayout.Y_AXIS));
+
+        // Number of clusters panel
+        final JBPanel<BorderLayoutPanel> numberOfClustersPanel = new JBPanel<>();
+        numberOfClustersPanel.setLayout(new BoxLayout(numberOfClustersPanel, BoxLayout.X_AXIS));
+
+        final JBLabel jbLabel = new JBLabel("Compute a maximum number of (k) clusters: ");
+        numberOfClustersPanel.add(jbLabel);
+
+        final ComboBox<Integer> numberOfClustersComboBox = new ComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6});
+        numberOfClustersComboBox.setSelectedIndex(2);
+        numberOfClustersPanel.add(numberOfClustersComboBox);
+
+        threadClusterPanel.add(numberOfClustersPanel);
+
+        // Cluster selection strategy for in-situ visualization
+        final JBPanel<BorderLayoutPanel> clusterSelectionPanel = new JBPanel<>();
+        clusterSelectionPanel.setLayout(new BoxLayout(clusterSelectionPanel, BoxLayout.X_AXIS));
+
+        final JBLabel jbLabel1 = new JBLabel("In-situ visualization cluster selection: ");
+        clusterSelectionPanel.add(jbLabel1);
+
+        final ComboBox<String> clusterSelectionComboBox = new ComboBox<>(new String[]{"TODO-1", "TODO-2", "TODO-3"});
+        clusterSelectionComboBox.setEnabled(false);
+        clusterSelectionPanel.add(clusterSelectionComboBox);
+
+        threadClusterPanel.add(clusterSelectionPanel);
+
+        /*
+
+         */
+        numberOfClustersComboBox.addItemListener(e -> {
+            final int stateChange = e.getStateChange();
+            final Integer item = (Integer) e.getItem();
+            if (stateChange == ItemEvent.SELECTED)
+            {
+                if (item < 4)
+                {
+                    clusterSelectionComboBox.setEnabled(false);
+                } else
+                {
+                    clusterSelectionComboBox.setEnabled(true);
+                }
+            }
+        });
+
+
+        // Add the thread complete cluster panel
+        threadsPanelWrapper.add(threadClusterPanel);
+
         // TODO: Only for the clex study!
-        filterByThreadPanel.setVisible(false);
+        //threadsPanel.setVisible(false);
 
         final JBPanel<BorderLayoutPanel> threadFilterWrapper = new JBPanel<>();
         threadFilterWrapper.setLayout(new BoxLayout(threadFilterWrapper, BoxLayout.X_AXIS));
@@ -188,13 +245,15 @@ public class ArtifactOverview
         threadFilterWrapper.add(resetThreadFilterButtonWrapper);
         if (threadStateFilterWrapper == null)
         {
-            threadStateFilterWrapper = new BorderLayoutPanel();//new JBPanel<>();
+            threadStateFilterWrapper = new BorderLayoutPanel();
         }
+
         threadFilterWrapper.add(threadStateFilterWrapper);
-        filterByThreadPanel.add(threadFilterWrapper, BorderLayout.CENTER);
 
-        filterPanelWrapper.add(filterByThreadPanel);
+        threadsPanelWrapper.add(threadFilterWrapper);
 
+        threadsPanel.add(threadsPanelWrapper, BorderLayout.CENTER);
+        filterPanelWrapper.add(threadsPanel);
         filterPanel.add(filterPanelWrapper, BorderLayout.CENTER);
         rootPanel.add(filterPanel, BorderLayout.NORTH);
 
@@ -263,7 +322,7 @@ public class ArtifactOverview
     private JCheckBox currentFileFilter;
     private JCheckBox standardLibraryFilter;
     private JBPanel<BorderLayoutPanel> rootPanel;
-    private JBPanel<BorderLayoutPanel> filterByThreadPanel;
+    private JBPanel<BorderLayoutPanel> threadsPanel;
     private JBPanel<BorderLayoutPanel> threadStateFilterWrapper;
     private JBTabbedPane tabbedPane;
     private ChangeListener tabbedPaneChangeListener;
@@ -305,9 +364,9 @@ public class ArtifactOverview
 
     public void setFilterByThreadPanelVisible(Boolean threadVisualizationsEnabled)
     {
-        //filterByThreadPanel.setVisible(threadVisualizationsEnabled);
+        threadsPanel.setVisible(threadVisualizationsEnabled);
         // TODO: Only for the clex study! Delete following line and uncomment the line above!
-        filterByThreadPanel.setVisible(false);
+        //filterByThreadPanel.setVisible(false);
     }
 
     /*
