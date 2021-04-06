@@ -77,6 +77,11 @@ public class CodeSparksGraphics extends Graphics2D
         return getFontMetrics().getHeight();
     }
 
+    public void setDefaultColor()
+    {
+        setColor(VisConstants.BORDER_COLOR);
+    }
+
     @Override
     public void draw(final Shape s)
     {

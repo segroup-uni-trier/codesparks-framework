@@ -54,26 +54,29 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final int threadMetaphorWidth = 24;
         final int barChartWidth = 24;
         final int X_OFFSET_RIGHT = 0;
+        final int TOP_OFFSET = 5;
 
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
-        final CodeSparksGraphics graphics = getGraphics(X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight);
+        final CodeSparksGraphics graphics = getGraphics(X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight + TOP_OFFSET);
 
         // Thread metaphor
-        graphics.setColor(VisConstants.BORDER_COLOR);
+        graphics.setDefaultColor();
+        //graphics.setColor(VisConstants.BORDER_COLOR);
 
         final int barrierXPos = threadMetaphorWidth / 2;
 
         // Leading arrow
-        graphics.fillRect(X_OFFSET_LEFT, lineHeight / 2, barrierXPos - 1, 1);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, lineHeight / 2 - 3, X_OFFSET_LEFT + barrierXPos - 1, lineHeight / 2);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, lineHeight / 2 + 3, X_OFFSET_LEFT + barrierXPos - 1, lineHeight / 2);
+        graphics.fillRect(X_OFFSET_LEFT, TOP_OFFSET + lineHeight / 2, barrierXPos - 1, 1);
+        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, TOP_OFFSET + lineHeight / 2 - 3, X_OFFSET_LEFT + barrierXPos - 1, TOP_OFFSET + lineHeight / 2);
+        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, TOP_OFFSET + lineHeight / 2 + 3, X_OFFSET_LEFT + barrierXPos - 1, TOP_OFFSET + lineHeight / 2);
+
 
         // Vertical bar or barrier, respectively
         final int barrierWidth = 3;
-        graphics.fillRect(X_OFFSET_LEFT + barrierXPos, 0, barrierWidth, lineHeight);
+        graphics.fillRect(X_OFFSET_LEFT + barrierXPos, TOP_OFFSET, barrierWidth, lineHeight);
 
         final Rectangle threadVisualisationArea = new Rectangle(
-                X_OFFSET_LEFT + threadMetaphorWidth, 0, barChartWidth - 1, lineHeight - 1);
+                X_OFFSET_LEFT + threadMetaphorWidth, TOP_OFFSET, barChartWidth - 1, lineHeight - 1);
         graphics.drawRectangle(threadVisualisationArea);
 
         // Draw the clusters
@@ -116,12 +119,12 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             {
                 clusterWidth = 0;
             }
-            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, threadSquareYPos, clusterWidth, threadSquareEdgeLength);
+            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, TOP_OFFSET + threadSquareYPos, clusterWidth, threadSquareEdgeLength);
 
             if (clusterWidth > 0)
             {
                 // Arrows after barrier
-                graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, threadSquareYPos + 1, barrierXPos - 1, 1);
+                graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, TOP_OFFSET + threadSquareYPos + 1, barrierXPos - 1, 1);
             }
 
             // Save the position and color to the properties such that they can be reused in the neighbor artifact visualization
@@ -148,12 +151,12 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             {
                 clusterWidth = 0;
             }
-            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, threadSquareYPos, clusterWidth, threadSquareEdgeLength);
+            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, TOP_OFFSET + threadSquareYPos, clusterWidth, threadSquareEdgeLength);
 
             if (clusterWidth > 0)
             {
                 // Arrows after barrier
-                graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, threadSquareYPos + 1, barrierXPos - 1, 1);
+                graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, TOP_OFFSET + threadSquareYPos + 1, barrierXPos - 1, 1);
             }
 
             /*
@@ -164,8 +167,17 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
             threadSquareYPos -= threadSquareOffset;
         }
-        // Creation of the label
 
+        if (threadClusters.size() > 0) // TODO: When ready, change this to 3
+        { // The 'plus' symbol indicating that there are more than three thread clusters!
+            graphics.setColor(VisConstants.BORDER_COLOR);
+            final int plusSymbolXOffset = X_OFFSET_LEFT + threadMetaphorWidth - 2;
+            graphics.drawLine(plusSymbolXOffset, 0, plusSymbolXOffset, 4);
+            graphics.drawLine(plusSymbolXOffset - 2, 2, plusSymbolXOffset + 2, 2);
+        }
+
+
+        // Creation of the label
         final JLabel jLabel = makeLabel(graphics);
         jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
         return jLabel;
