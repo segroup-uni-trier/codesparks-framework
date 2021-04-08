@@ -49,7 +49,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
 
         int numberOfCalleesInSameLine = threadFilteredNeighborArtifactsOfLine.size();
 
-        long selftimeCnt = threadFilteredNeighborArtifactsOfLine
+        final long selftimeCnt = threadFilteredNeighborArtifactsOfLine
                 .stream()
                 .filter(npa -> npa.getName().toLowerCase().startsWith("self"))
                 .count();
@@ -58,7 +58,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
 
         // Initial visualization area.
         final int visualizationArea = VisConstants.CALLEE_X_OFFSET + VisConstants.INVOCATION_WIDTH + 7;
-        int lineHeight = VisConstants.getLineHeight();
+        final int lineHeight = VisConstants.getLineHeight();
 
         final CodeSparksGraphics graphics = getGraphics(visualizationArea, lineHeight);
 
@@ -70,39 +70,46 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
         {
             int xOffset = i * 2; // 4, 2, 0
             int yOffset = 4 - i * 2; // 0, 2, 4
-            Rectangle rect = new Rectangle(VisConstants.CALLEE_X_OFFSET + xOffset, yOffset, VisConstants.INVOCATION_WIDTH, lineHeight - 6);
-//            graphics.setColor(WHITE);
-//            VisualizationUtil.fillRectangle(graphics, rect);
 
-            graphics.fillRectangle(rect, WHITE);
+            //final Rectangle rect = new Rectangle(VisConstants.CALLEE_X_OFFSET + xOffset, yOffset, VisConstants.INVOCATION_WIDTH, lineHeight - 6);
 
+            graphics.setColor(VisConstants.BORDER_COLOR);
+            graphics.drawLine(
+                    VisConstants.CALLEE_X_OFFSET + xOffset
+                    , yOffset
+                    , VisConstants.CALLEE_X_OFFSET + xOffset + VisConstants.INVOCATION_WIDTH
+                    , yOffset);
+            graphics.drawLine(
+                    VisConstants.CALLEE_X_OFFSET + xOffset + VisConstants.INVOCATION_WIDTH
+                    , yOffset
+                    , VisConstants.CALLEE_X_OFFSET + xOffset + VisConstants.INVOCATION_WIDTH
+                    , yOffset + lineHeight - 6);
+
+            // Will fill the rect in the background visually
 //            graphics.setColor(neighborBackgroundColor);
-//            VisualizationUtil.fillRectangle(graphics, rect);
-
-            graphics.fillRectangle(rect, neighborBackgroundColor);
-
-//            graphics.setColor(VisConstants.BORDER_COLOR);
-//            VisualizationUtil.drawRectangle(graphics, rect);
-
-            graphics.drawRectangle(rect, VisConstants.BORDER_COLOR);
+//            graphics.drawLine(
+//                    VisConstants.CALLEE_X_OFFSET + xOffset
+//                    , yOffset + 1
+//                    , VisConstants.CALLEE_X_OFFSET + xOffset + VisConstants.INVOCATION_WIDTH
+//                    , yOffset + 1);
         }
 
         PsiElement psiElement = null;
 
         double calleeRuntimeSum = 0D;
 
-        Map<String, Double> methodRuntimes = new HashMap<>();
+        final Map<String, Double> methodRuntimes = new HashMap<>();
 
         for (ANeighborArtifact neighborArtifact : threadFilteredNeighborArtifactsOfLine)
         {
 
             double neighborRuntime = 0D;
-            Collection<AThreadArtifact> codeSparksThreads = neighborArtifact.getThreadArtifacts();
-            for (AThreadArtifact codeSparksThread : codeSparksThreads)
+            final Collection<AThreadArtifact> threadArtifacts = neighborArtifact.getThreadArtifacts();
+            for (final AThreadArtifact threadArtifact : threadArtifacts)
             {
-                if (!codeSparksThread.isFiltered())
+                if (!threadArtifact.isFiltered())
                 {
-                    neighborRuntime += codeSparksThread.getNumericalMetricValue(primaryMetricIdentifier) * neighborArtifact.getNumericalMetricValue(primaryMetricIdentifier);
+                    neighborRuntime += threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) * neighborArtifact.getNumericalMetricValue(primaryMetricIdentifier);
                 }
             }
 
@@ -116,32 +123,25 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
             }
         }
 
-        // Draw background
-        Rectangle calleeVisualizationArea = new Rectangle(VisConstants.CALLEE_X_OFFSET, VisConstants.CALLEE_Y_OFFSET, VisConstants.INVOCATION_WIDTH,
-                lineHeight - 6);
-//        graphics.setColor(WHITE);
-//        VisualizationUtil.fillRectangle(graphics, calleeVisualizationArea);
-
-        graphics.fillRectangle(calleeVisualizationArea, WHITE);
-
-//        graphics.setColor(neighborBackgroundColor);
-//        VisualizationUtil.fillRectangle(graphics, calleeVisualizationArea);
+        // The background drawing area
+        final Rectangle calleeVisualizationArea = new Rectangle(
+                VisConstants.CALLEE_X_OFFSET
+                , VisConstants.CALLEE_Y_OFFSET
+                , VisConstants.INVOCATION_WIDTH
+                , lineHeight - 6);
+        // Draw the background
+        graphics.fillRectangle(calleeVisualizationArea, WHITE); // Will prevent the background from summing up its color intensity on repainting
         graphics.fillRectangle(calleeVisualizationArea, neighborBackgroundColor);
-
-        // Draw the bar
-        int barWidth = (int) Math.round(VisConstants.INVOCATION_WIDTH * calleeRuntimeSum / threadFilteredMetricValue);
+        // Draw the metric bar
+        final int barWidth = (int) Math.round(VisConstants.INVOCATION_WIDTH * calleeRuntimeSum / threadFilteredMetricValue);
         final Rectangle calleeRuntimeArea = new Rectangle(VisConstants.CALLEE_X_OFFSET, VisConstants.CALLEE_Y_OFFSET, barWidth, lineHeight - 6);
-
         graphics.fillRectangle(calleeRuntimeArea, metricColor);
-
         // Draw the border.
-
         graphics.drawRectangle(calleeVisualizationArea, VisConstants.BORDER_COLOR);
 
+        // Get the label
         final JLabel jLabel = makeLabel(graphics);
-
         jLabel.addMouseListener(new DefaultArtifactCalleeVisualizationMouseListener(methodRuntimes, threadFilteredMetricValue, jLabel));
-
         return jLabel;
     }
 
@@ -152,8 +152,10 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
         private final Map<String, Double> methodRuntimes;
         private final double totalMetricValue;
 
-        DefaultArtifactCalleeVisualizationMouseListener(Map<String, Double> methodRuntimes,
-                                                        double totalMetricValue, JLabel visualizationLabel)
+        DefaultArtifactCalleeVisualizationMouseListener(final Map<String, Double> methodRuntimes,
+                                                        final double totalMetricValue,
+                                                        final JLabel visualizationLabel
+        )
         {
             this.methodRuntimes = methodRuntimes;
             this.totalMetricValue = totalMetricValue;
@@ -165,7 +167,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
         {
             // User Activity Logging
             final StringBuilder strb = new StringBuilder();
-            for (Map.Entry<String, Double> stringDoubleEntry : methodRuntimes.entrySet())
+            for (final Map.Entry<String, Double> stringDoubleEntry : methodRuntimes.entrySet())
             {
                 strb.append(stringDoubleEntry.getKey());
                 strb.append("=");
@@ -176,26 +178,26 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
             UserActivityLogger.getInstance().log(UserActivityEnum.CalleeTooltipClicked, strb.toString());
 
 
-            JPanel panel = new JPanel();
+            final JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             double calleeMetricSum = 0D;
-            Graphics g = visualizationLabel.getGraphics();
+            final Graphics g = visualizationLabel.getGraphics();
             //Map<String, Double> methodRuntimes = calleeVisualization.getMethodRuntimes();
 
-            LinkedHashMap<String, Double> collect = methodRuntimes.entrySet().stream()
+            final LinkedHashMap<String, Double> collect = methodRuntimes.entrySet().stream()
                     .sorted((o1, o2) -> -1 * Double.compare(o1.getValue(), o2.getValue()))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (o, o2) -> o, LinkedHashMap::new));
 
-            int lineHeight = VisConstants.getLineHeight();
+            final int lineHeight = VisConstants.getLineHeight();
             for (Map.Entry<String, Double> entry : collect.entrySet())
             {
                 final JTextArea jTextArea = new JTextArea();
                 jTextArea.setEditable(false);
-                String calleeName = entry.getKey(); // JavaUtil.checkAndReplaceConstructorName(calleeName)
+                final String calleeName = entry.getKey(); // JavaUtil.checkAndReplaceConstructorName(calleeName)
                 jTextArea.setText(CoreUtil.formatPercentageWithLeadingWhitespace(entry.getValue() / totalMetricValue) + " " + calleeName);
                 jTextArea.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                double finalCalleeMetricSum = calleeMetricSum;
-                MouseAdapter mouseAdapter = new MouseAdapter()
+                final double finalCalleeMetricSum = calleeMetricSum;
+                final MouseAdapter mouseAdapter = new MouseAdapter()
                 {
                     private Font defaultFont;
                     private Font underlinedFont;
@@ -206,39 +208,39 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
                         if (defaultFont == null || underlinedFont == null)
                         {
                             defaultFont = jTextArea.getFont();
-                            Map<TextAttribute, Object> map = new HashMap<>();
+                            final Map<TextAttribute, Object> map = new HashMap<>();
                             map.put(TextAttribute.FONT, defaultFont);
                             map.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
                             underlinedFont = Font.getFont(map);
                         }
                         jTextArea.setFont(underlinedFont);
 
-                        int xoffset = (int) (VisConstants.INVOCATION_WIDTH * finalCalleeMetricSum / totalMetricValue);
-                        Graphics graphics = visualizationLabel.getGraphics();
+                        final int xOffset = (int) (VisConstants.INVOCATION_WIDTH * finalCalleeMetricSum / totalMetricValue);
+                        final Graphics graphics = visualizationLabel.getGraphics();
                         graphics.setColor(new JBColor(new Color(203, 119, 48), new Color(203, 119, 48)));
-                        int width = (int) (VisConstants.INVOCATION_WIDTH * entry.getValue() / totalMetricValue);
-                        graphics.drawRect(VisConstants.CALLEE_X_OFFSET + xoffset, VisConstants.CALLEE_Y_OFFSET, width, lineHeight - 6);
-                        graphics.drawRect(VisConstants.CALLEE_X_OFFSET + xoffset + 1, VisConstants.CALLEE_Y_OFFSET + 1, width - 2, lineHeight - 8);
+                        final int width = (int) (VisConstants.INVOCATION_WIDTH * entry.getValue() / totalMetricValue);
+                        graphics.drawRect(VisConstants.CALLEE_X_OFFSET + xOffset, VisConstants.CALLEE_Y_OFFSET, width, lineHeight - 6);
+                        graphics.drawRect(VisConstants.CALLEE_X_OFFSET + xOffset + 1, VisConstants.CALLEE_Y_OFFSET + 1, width - 2, lineHeight - 8);
                     }
 
                     @Override
                     public void mouseExited(MouseEvent e)
                     {
-                        visualizationLabel.paint(g);
+                        visualizationLabel.paint(g); // Do NOT replace with repaint as it will flicker
                         jTextArea.setFont(defaultFont);
                     }
 
                     @Override
                     public void mouseClicked(MouseEvent e)
                     {
-                        String artifactName = jTextArea.getText();
+                        final String artifactName = jTextArea.getText();
                         if (artifactName == null || artifactName.isEmpty()) return;
                         if (artifactName.contains("selftime"))
                         {
                             return;
                         }
-                        int indexOfPercent = artifactName.indexOf("%");
-                        String identifier = artifactName.substring(indexOfPercent + 1).trim();
+                        final int indexOfPercent = artifactName.indexOf("%");
+                        final String identifier = artifactName.substring(indexOfPercent + 1).trim();
                         CoreUtil.navigate(identifier);
                         UserActivityLogger.getInstance().log(UserActivityEnum.CalleeTooltipNavigated, identifier);
                         if (popup != null)
@@ -252,7 +254,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
                 calleeMetricSum += entry.getValue();
             }
 
-            ComponentPopupBuilder componentPopupBuilder = JBPopupFactory.getInstance().
+            final ComponentPopupBuilder componentPopupBuilder = JBPopupFactory.getInstance().
                     createComponentPopupBuilder(panel, null).setShowShadow(true);
             popup = componentPopupBuilder.createPopup();
             popup.pack(false, true);

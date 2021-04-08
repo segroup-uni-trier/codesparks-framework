@@ -91,12 +91,12 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         /*
          * Draw the text
          */
-        String percentageText = CoreUtil.formatPercentage(threadFilteredMetricValue);
-        double textWidth = graphics.getFontMetrics().stringWidth(percentageText);
-        graphics.setColor(JBColor.DARK_GRAY);
-        Font font = new Font("Arial", Font.BOLD, 11);  // TODO: support different font sizes
+        final String percentageText = CoreUtil.formatPercentage(threadFilteredMetricValue);
+        final double textWidth = graphics.stringWidth(percentageText);//graphics.getFontMetrics().stringWidth(percentageText);
+        //graphics.setColor(JBColor.DARK_GRAY);
+        final Font font = new Font("Arial", Font.BOLD, 11);  // TODO: support different font sizes
         graphics.setFont(font);
-        Color textColor = VisualizationUtil.getTextColor(metricColor);
+        final Color textColor = VisualizationUtil.getTextColor(metricColor);
         graphics.setColor(textColor);
         graphics.drawString(percentageText, X_OFFSET + 1 + (int) ((RECTANGLE_WIDTH / 2d) - (textWidth / 2d)),
                 Y_OFFSET + (int) ((lineHeight - Y_OFFSET) * .75d));
@@ -108,9 +108,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         drawSuccessors(artifact, intensityRectangle, graphics, lineHeight, metricColor);
 
         final JLabel jLabel = makeLabel(graphics, iconWidth);
-
         jLabel.addMouseListener(new DefaultArtifactVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier, secondaryMetricIdentifier));
-
         return jLabel;
     }
 

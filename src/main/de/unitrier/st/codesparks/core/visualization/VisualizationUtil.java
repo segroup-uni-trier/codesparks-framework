@@ -2,6 +2,7 @@ package de.unitrier.st.codesparks.core.visualization;
 
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.CoreUtil;
@@ -34,10 +35,10 @@ public final class VisualizationUtil
     public static Color getSelectedFileEditorBackgroundColor()
     {
         Color backgroundColor = null;
-        Project currentlyOpenedProject = CoreUtil.getCurrentlyOpenedProject();
+        final Project currentlyOpenedProject = CoreUtil.getCurrentlyOpenedProject();
         if (currentlyOpenedProject != null)
         {
-            EditorEx selectedFileEditor = CoreUtil.getSelectedFileEditor(currentlyOpenedProject);
+            final EditorEx selectedFileEditor = CoreUtil.getSelectedFileEditor(currentlyOpenedProject);
             if (selectedFileEditor != null)
             {
                 backgroundColor = selectedFileEditor.getBackgroundColor();
@@ -46,31 +47,62 @@ public final class VisualizationUtil
         return Objects.requireNonNullElseGet(backgroundColor, () -> UIUtil.isUnderDarcula() ? Color.decode("#2b2b2b") : Color.decode("#ffffff"));
     }
 
-    public static Color getMetricColor(double metricValue)
+    public static Color getMetricColor(final double metricValue)
     {
         double colorParameter = Math.pow(metricValue, .25);
         return ColorScale.getColor(colorParameter);
     }
 
-    public static Color getBackgroundMetricColor(Color performanceColor, float alpha)
+    public static Color getBackgroundMetricColor(final Color metricColor, final float alpha)
     {
         //noinspection UseJBColor
-        final Color color = new Color(performanceColor.getRed() / 255f
-                , performanceColor.getGreen() / 255f
-                , performanceColor.getBlue() / 255f
+        final Color color = new Color(metricColor.getRed() / 255f
+                , metricColor.getGreen() / 255f
+                , metricColor.getBlue() / 255f
                 , alpha);
         return new JBColor(color, color);
     }
 
-    public static Color getTextColor(Color performanceColor)
+    public static Color getTextColor(final Color metricColor)
     {
-        return getTextColor(performanceColor, 1f);
+        return getTextColor(metricColor, 1f);
     }
 
-    public static Color getTextColor(Color performanceColor, float alpha)
+    public static Color getTextColor(final Color metricColor, final float alpha)
     {  // Color space YIQ. Only the Y value is of interest since it determines the brightness.
-        double y = (299 * performanceColor.getRed() + 587 * performanceColor.getGreen() + 114 * performanceColor.getBlue()) / 1000D;
-        return y * (1 + (1 - alpha)) > 145 ? JBColor.BLACK : JBColor.WHITE;
+        final double y = (299 * metricColor.getRed() + 587 * metricColor.getGreen() + 114 * metricColor.getBlue()) / 1000D;
+        //System.out.println("y value = " + y);
+        if (UIUtil.isUnderDarcula())
+        {
+            if (y < 100)// Rather dark color
+            {
+                return Gray._222; // Is close to white
+            } else
+            {
+                if (y < 200)
+                {
+                    return Gray._5; // Is close to black
+                } else
+                {
+                    return Gray._40;
+                }
+            }
+        } else
+        {
+            if (y < 140)
+            {
+                return Gray._242; // Is close to white
+            } else
+            {
+                if (y < 200)
+                {
+                    return Gray._40; // Is close to black
+                } else
+                {
+                    return Gray._5; // Is close to black
+                }
+            }
+        }
     }
 
     public static void drawTransparentBackground(final Graphics2D graphics, final BufferedImage bi)

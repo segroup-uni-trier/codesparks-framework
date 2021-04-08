@@ -1,6 +1,5 @@
 package de.unitrier.st.codesparks.core.visualization;
 
-import com.intellij.ui.DarculaColors;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 
@@ -12,9 +11,9 @@ public abstract class VisConstants
     private VisConstants() {}
 
     public static final double STRIPES_BRIGHTNESS = .94;
-    public static final JBColor BORDER_COLOR = new JBColor(Gray._100, DarculaColors.RED);
-    public static final JBColor STANDARD_FONT_COLOR = new JBColor(Gray._60, DarculaColors.RED);
-    public static int LINE_HEIGHT = 18; // the default line height of Intellij Editors
+    public static final JBColor BORDER_COLOR = new JBColor(Gray._100, JBColor.decode("#666d75"));//DarculaColors.RED);
+    public static final JBColor STANDARD_FONT_COLOR = new JBColor(Gray._60, JBColor.decode("#666d75"));//DarculaColors.RED);
+    public static int LINE_HEIGHT = 18; // the default line height of Intellij source-code editors
     public static final int RECTANGLE_WIDTH = 70;
     public static final int X_OFFSET = 6;
     public static final int X_OFFSET_THREAD = 12;
