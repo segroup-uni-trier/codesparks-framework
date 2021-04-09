@@ -3,7 +3,7 @@ package de.unitrier.st.codesparks.core.data;
 import de.unitrier.st.codesparks.core.CoreUtil;
 
 /*
- * Copyright (c), Oliver Moseler, 2020
+ * Copyright (c), Oliver Moseler, 2021
  */
 public abstract class AThreadArtifact extends AArtifact
 {
@@ -39,6 +39,21 @@ public abstract class AThreadArtifact extends AArtifact
     public void setFiltered(final boolean filtered)
     {
         this.filtered = filtered;
+    }
+
+    /**
+     * Euclidean distance
+     * @param thr The thread artifact to get the distance to
+     * @param metricIdentifier The metric identifier. Note, has to be numerical.
+     * @return The euclidean distance from this thread artifact to thr
+     */
+    public double dist(final AThreadArtifact thr, final AMetricIdentifier metricIdentifier)
+    {
+        final double numericalMetricValue = this.getNumericalMetricValue(metricIdentifier);
+        final double numericalMetricValue1 = thr.getNumericalMetricValue(metricIdentifier);
+        //noinspection UnnecessaryLocalVariable debugging purposes
+        final double dist = Math.abs(numericalMetricValue1 - numericalMetricValue); // Euclidean distance
+        return dist;
     }
 
     @Override

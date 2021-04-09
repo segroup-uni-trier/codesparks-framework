@@ -3,8 +3,102 @@ package de.unitrier.st.codesparks.core.data;
 import java.util.ArrayList;
 
 /*
- * Copyright (c), Oliver Moseler, 2020
+ * Copyright (c), Oliver Moseler, 2021
  */
 public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
 {
+    /**
+     * The distance ...
+     *
+     * @param thr
+     * @param metricIdentifier
+     * @return
+     */
+    public double distToNearestCluster(final AThreadArtifact thr, final AMetricIdentifier metricIdentifier)
+    {
+        double min = Double.MAX_VALUE;
+        for (ThreadArtifactCluster cluster : this)
+        {
+            if (!cluster.contains(thr))
+            {
+                final double dist = cluster.dist(thr, metricIdentifier);
+                min = Math.min(min, dist);
+            }
+        }
+        return min;
+    }
+
+    /**
+     * @param thr
+     * @param clusterOfThr
+     * @param metricIdentifier
+     * @return A value of the fixed interval [-1,1]. A value close to 1 means that the data is appropriately clustered.
+     */
+    public double silhouette(final AThreadArtifact thr, final ThreadArtifactCluster clusterOfThr, final AMetricIdentifier metricIdentifier)
+    {
+        if (!clusterOfThr.contains(thr))
+        {
+            throw new IllegalArgumentException("The passed thread thr must be an element of the passed cluster!");
+        }
+        if (!this.contains(clusterOfThr))
+        {
+            throw new IllegalArgumentException("The passed cluster must be an element of this clustering!");
+        }
+        if (clusterOfThr.size() == 1)
+        { // The thread thr is the only element in the cluster. We already know that the passed cluster contains thr.
+            return 0D;
+        }
+        final double distA = clusterOfThr.dist(thr, metricIdentifier);
+        final double distB = distToNearestCluster(thr, metricIdentifier);
+
+        //noinspection UnnecessaryLocalVariable
+        final double silhouette = (distB - distA) / Math.max(distA, distB);
+        return silhouette;
+    }
+
+    /**
+     * The mean silhouette over all points of a cluster is a measure of how tightly grouped all the points in the cluster are.
+     *
+     * @param cluster
+     * @param metricIdentifier
+     * @return
+     */
+    public double meanSilhouetteCoefficientOfCluster(final ThreadArtifactCluster cluster, final AMetricIdentifier metricIdentifier)
+    {
+        if (!this.contains(cluster))
+        {
+            throw new IllegalArgumentException("The passed cluster must be an element of this clustering!");
+        }
+        double meanSilhouetteOfTheCluster = 0;
+        for (final AThreadArtifact thr : cluster)
+        {
+            meanSilhouetteOfTheCluster += this.silhouette(thr, cluster, metricIdentifier);
+        }
+        meanSilhouetteOfTheCluster = meanSilhouetteOfTheCluster / cluster.size();
+        return meanSilhouetteOfTheCluster;
+    }
+
+    /**
+     * Thus the mean silhouette over all data of the entire dataset is a measure of how appropriately the data have been clustered. If
+     * there are too many or too few clusters, as may occur when a poor choice of k is used in the clustering algorithm (e.g.: k-means),
+     * some of the clusters will typically display much narrower silhouettes than the rest.
+     *
+     * @param metricIdentifier
+     * @return
+     */
+    public double meanSilhouetteCoefficient(final AMetricIdentifier metricIdentifier)
+    {
+        double meanSilhouette = 0;
+        int numberOfThreads = 0;
+        for (final ThreadArtifactCluster cluster : this)
+        {
+            for (final AThreadArtifact thr : cluster)
+            {
+                numberOfThreads += 1;
+                meanSilhouette += this.silhouette(thr, cluster, metricIdentifier);
+            }
+        }
+        meanSilhouette = meanSilhouette / numberOfThreads;
+        return meanSilhouette;
+    }
 }

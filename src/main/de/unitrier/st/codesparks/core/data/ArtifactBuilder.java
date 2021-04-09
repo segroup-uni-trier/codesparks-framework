@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.data;
 
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
@@ -5,27 +8,8 @@ import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ArtifactBuilder
 {
-    private static final class DefaultThreadArtifact extends AThreadArtifact
-    {
-        public DefaultThreadArtifact(final String identifier)
-        {
-            super(identifier, DefaultThreadArtifact.class);
-        }
-    }
-
-    private static final class DefaultCodeSparksArtifact extends AArtifact
-    {
-        public DefaultCodeSparksArtifact(final String name, final String identifier)
-        {
-            super(name, identifier, DefaultThreadArtifact.class);
-        }
-    }
-
     private AArtifact artifact;
 
     public ArtifactBuilder(final String name, final String identifier, final Class<? extends AArtifact> artifactClass)
@@ -43,7 +27,7 @@ public class ArtifactBuilder
 
     public ArtifactBuilder(final String name, final String identifier)
     {
-        artifact = new DefaultCodeSparksArtifact(name, identifier);
+        artifact = new DefaultArtifact(name, identifier);
     }
 
     public ArtifactBuilder setFileName(String fileName)
