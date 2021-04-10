@@ -8,7 +8,6 @@ import de.unitrier.st.codesparks.core.editorcoverlayer.IEditorCoverLayerLogger;
 import de.unitrier.st.codesparks.core.properties.PropertiesFile;
 import de.unitrier.st.codesparks.core.properties.PropertiesUtil;
 import de.unitrier.st.codesparks.core.properties.PropertyKey;
-import org.apache.commons.lang.ObjectUtils;
 
 import java.io.*;
 import java.nio.file.Files;
