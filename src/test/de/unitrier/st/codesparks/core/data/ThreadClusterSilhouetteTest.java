@@ -313,27 +313,35 @@ public final class ThreadClusterSilhouetteTest
     }
 
     @Test
-    public void meanSilhouetteCoefficientOfClusteringA()
+    public void meanElementSilhouetteCoefficientOfClusteringA()
     {
-        final double silhouetteCoefficient = A.meanSilhouetteCoefficient(testMetric);
+        final double silhouetteCoefficient = A.silhouetteCoefficientAsMeanOfEachElement(testMetric);
         final double expected = (1.9 / 2.1 + 1.7 / 1.9 + 1.9 / 2.0 + 1.95 / 2.1 + 1.75 / 1.9) / (a1.size() + a2.size());
         Assert.assertEquals(expected, silhouetteCoefficient, 0.00001);
     }
 
     @Test
-    public void meanSilhouetteCoefficientOfClusteringB()
+    public void meanElementSilhouetteCoefficientOfClusteringB()
     {
-        final double silhouetteCoefficient = B.meanSilhouetteCoefficient(testMetric);
+        final double silhouetteCoefficient = B.silhouetteCoefficientAsMeanOfEachElement(testMetric);
         final double expected =
                 (1.05 / 2.15 + 0.95 / 1.95 + (0.15 - 1.9) / 1.9 + (4.1 / 3 - 0.1) / (4.1 / 3) + (4.4 / 3 - 0.1) / (4.4 / 3)) / (b1.size() + b2.size());
         Assert.assertEquals(expected, silhouetteCoefficient, 0.00001);
     }
 
     @Test
-    public void meanSilhouetteCoefficient()
+    public void meanElementSilhouetteCoefficient()
     {
-        final double silhouetteCoefficientA = A.meanSilhouetteCoefficient(testMetric);
-        final double silhouetteCoefficientB = B.meanSilhouetteCoefficient(testMetric);
+        final double silhouetteCoefficientA = A.silhouetteCoefficientAsMeanOfEachElement(testMetric);
+        final double silhouetteCoefficientB = B.silhouetteCoefficientAsMeanOfEachElement(testMetric);
+        Assert.assertTrue(silhouetteCoefficientA > silhouetteCoefficientB); // A is the better clustering!
+    }
+
+    @Test
+    public void meanClusterSilhouetteCoefficient()
+    {
+        final double silhouetteCoefficientA = A.silhouetteCoefficientAsMeanOfTheClusters(testMetric);
+        final double silhouetteCoefficientB = B.silhouetteCoefficientAsMeanOfTheClusters(testMetric);
         Assert.assertTrue(silhouetteCoefficientA > silhouetteCoefficientB); // A is the better clustering!
     }
 }

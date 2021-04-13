@@ -86,7 +86,7 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
      * @param metricIdentifier
      * @return
      */
-    public double meanSilhouetteCoefficient(final AMetricIdentifier metricIdentifier)
+    public double silhouetteCoefficientAsMeanOfEachElement(final AMetricIdentifier metricIdentifier)
     {
         double meanSilhouette = 0;
         int numberOfThreads = 0;
@@ -99,6 +99,22 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
             }
         }
         meanSilhouette = meanSilhouette / numberOfThreads;
+        return meanSilhouette;
+    }
+
+    /**
+     * This is how it is implemented in the R package.
+     * @param metricIdentifier
+     * @return
+     */
+    public double silhouetteCoefficientAsMeanOfTheClusters(final AMetricIdentifier metricIdentifier)
+    {
+        double meanSilhouette = 0;
+        for (final ThreadArtifactCluster cluster : this)
+        {
+            meanSilhouette += meanSilhouetteCoefficientOfCluster(cluster, metricIdentifier);
+        }
+        meanSilhouette = meanSilhouette / this.size();
         return meanSilhouette;
     }
 }
