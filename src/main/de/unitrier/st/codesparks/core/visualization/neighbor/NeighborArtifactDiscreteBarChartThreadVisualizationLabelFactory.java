@@ -88,7 +88,7 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
         final double totalThreadFilteredMetricValueOfAllNeighborsOfLine =
                 getTotalThreadFilteredMetricValueOfAllNeighborsOfLine(threadFilteredNeighborArtifactsOfLine);
 
-        List<ThreadArtifactCluster> threadClusters = artifact.getDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        List<ThreadArtifactCluster> threadClusters = artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
         final boolean[] positionsTaken = new boolean[3];

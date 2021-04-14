@@ -23,7 +23,7 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
         codeSparksThreads = new ArrayList<>(totalSize);
         int artifactCnt = 0;
 
-        List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedDefaultThreadArtifactClustering(metricIdentifier);
+        List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(metricIdentifier);
 
         for (ThreadArtifactCluster threadArtifactCluster : threadArtifactClusters)
         {

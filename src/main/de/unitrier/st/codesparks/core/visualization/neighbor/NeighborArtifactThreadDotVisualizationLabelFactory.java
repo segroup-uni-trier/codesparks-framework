@@ -39,7 +39,7 @@ public class NeighborArtifactThreadDotVisualizationLabelFactory extends ANeighbo
     {
         Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterComparator.getInstance(primaryMetricIdentifier);
         List<ThreadArtifactCluster> threadClusters =
-                artifact.getDefaultThreadArtifactClustering(primaryMetricIdentifier)
+                artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier)
                         .stream()
                         .sorted(codeSparksThreadClusterComparator)
                         .filter(cluster -> !cluster.isEmpty())

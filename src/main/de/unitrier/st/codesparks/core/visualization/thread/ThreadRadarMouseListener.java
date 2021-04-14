@@ -56,7 +56,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         threadSelectables.clear();
         final JBTabbedPane tabbedPane = new JBTabbedPane();
 
-        ThreadArtifactClustering sortedDefaultThreadArtifactClustering = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        ThreadArtifactClustering sortedDefaultThreadArtifactClustering = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
         Map<String, List<AThreadArtifact>> map = new HashMap<>();
         int clusterId = 1;
         for (ThreadArtifactCluster threadArtifacts : sortedDefaultThreadArtifactClustering)

@@ -40,7 +40,7 @@ import javax.swing.*;
 import java.util.*;
 
 /*
- * Copyright (c), Oliver Moseler, 2020
+ * Copyright (c), Oliver Moseler, 2021
  */
 public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpdater
 {
@@ -55,19 +55,19 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         this.project = project;
         EditorCoverLayerManager.getInstance(project).setEditorCoverLayerUpdater(this);
         CodeSparksFlowManager.getInstance().setCurrentCodeSparksFlow(this);
-        MessageBus messageBus = project.getMessageBus();
+        final MessageBus messageBus = project.getMessageBus();
         messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener()
         {
             @Override
             public void selectionChanged(@NotNull FileEditorManagerEvent event)
             {
-                FileEditor selectedEditor = event.getManager().getSelectedEditor();
+                final FileEditor selectedEditor = event.getManager().getSelectedEditor();
                 if (selectedEditor != null)
                 {
-                    VirtualFile file = selectedEditor.getFile();
+                    final VirtualFile file = selectedEditor.getFile();
                     if (file != null)
                     {
-                        String name = file.getName();
+                        final String name = file.getName();
                         UserActivityLogger.getInstance().log(UserActivityEnum.FileSelected, name);
                     }
                 }
@@ -159,13 +159,13 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                 artifactPool = processData();
                 if (artifactPool != null)
                 {
-                    ArtifactPoolManager instance = ArtifactPoolManager.getInstance();
+                    final ArtifactPoolManager instance = ArtifactPoolManager.getInstance();
                     instance.setArtifactPool(artifactPool);
 
-                    FileEditor[] editors = ApplicationManager.getApplication().runReadAction((Computable<FileEditor[]>) () ->
+                    final FileEditor[] editors = ApplicationManager.getApplication().runReadAction((Computable<FileEditor[]>) () ->
                             FileEditorManager.getInstance(project).getAllEditors());
 
-                    for (FileEditor editor : editors)
+                    for (final FileEditor editor : editors)
                     {
                         final EditorEx editorEx = EditorUtil.getEditorEx(editor);
                         if (editorEx == null)
@@ -180,12 +180,12 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
                     synchronized (uiLock)
                     {
-                        VirtualFile[] virtualFiles = Arrays.stream(editors).map(FileEditor::getFile).toArray(VirtualFile[]::new);
+                        final VirtualFile[] virtualFiles = Arrays.stream(editors).map(FileEditor::getFile).toArray(VirtualFile[]::new);
                         clearVisualizationCache();
 
-                        Collection<AArtifact> matchedArtifacts = matchArtifactsToCodeFiles(virtualFiles);
+                        final Collection<AArtifact> matchedArtifacts = matchArtifactsToCodeFiles(virtualFiles);
 
-                        Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedArtifacts);
+                        final Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedArtifacts);
 
                         displayVisualizations(overlayElements);
                     }
@@ -215,16 +215,16 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
                 clearVisualizationCache();
 
-                ArtifactPoolManager instance = ArtifactPoolManager.getInstance();
+                final ArtifactPoolManager instance = ArtifactPoolManager.getInstance();
 
-                IArtifactPool artifactPool = instance.getArtifactPool();
+                final IArtifactPool artifactPool = instance.getArtifactPool();
 
                 artifactPool.applyThreadFilter(threadFilter);
 
-                FileEditor[] editors = ApplicationManager.getApplication().runReadAction((Computable<FileEditor[]>) () ->
+                final FileEditor[] editors = ApplicationManager.getApplication().runReadAction((Computable<FileEditor[]>) () ->
                         FileEditorManager.getInstance(project).getAllEditors());
 
-                for (FileEditor editor : editors)
+                for (final FileEditor editor : editors)
                 {
                     final EditorEx editorEx = EditorUtil.getEditorEx(editor);
                     assert editorEx != null;
@@ -232,11 +232,11 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                             EditorCoverLayerManager.getInstance(project).registerEditorCoverLayer(editorEx)
                     );
                 }
-                VirtualFile[] virtualFiles = Arrays.stream(editors).map(FileEditor::getFile).toArray(VirtualFile[]::new);
+                final VirtualFile[] virtualFiles = Arrays.stream(editors).map(FileEditor::getFile).toArray(VirtualFile[]::new);
 
-                Collection<AArtifact> matchedResults = matchArtifactsToCodeFiles(virtualFiles);
+                final Collection<AArtifact> matchedResults = matchArtifactsToCodeFiles(virtualFiles);
 
-                Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedResults);
+                final Collection<EditorCoverLayerItem> overlayElements = createVisualization(matchedResults);
 
                 displayVisualizations(overlayElements);
 
@@ -278,10 +278,10 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
     private void addArtifactsTo(ToolWindow toolWindow)
     {
-        ContentManager contentManager = toolWindow.getContentManager();
+        final ContentManager contentManager = toolWindow.getContentManager();
         contentManager.removeAllContents(true);
 
-        ArtifactOverview artifactOverview = ArtifactOverview.getInstance();
+        final ArtifactOverview artifactOverview = ArtifactOverview.getInstance();
 
         final Boolean threadVisualizationsEnabled = PropertiesUtil.getBooleanPropertyValueOrDefault(PropertiesFile.USER_INTERFACE_PROPERTIES,
                 PropertyKey.THREAD_VISUALIZATIONS_ENABLED, true);

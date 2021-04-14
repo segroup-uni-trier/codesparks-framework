@@ -30,7 +30,7 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
         this.selected = new boolean[numberOfThreads];
         this.threadIdIndex = new HashMap<>();
 
-        List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedDefaultThreadArtifactClustering(metricIdentifier);
+        List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(metricIdentifier);
 
         VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
 

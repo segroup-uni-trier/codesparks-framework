@@ -87,7 +87,7 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
                 (double) artifact.getThreadArtifacts().stream().filter(threadExecutingArtifact -> (createDisabledViz || !threadExecutingArtifact.isFiltered()))
                         .count();
 
-        final List<ThreadArtifactCluster> threadClusters = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        final List<ThreadArtifactCluster> threadClusters = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {

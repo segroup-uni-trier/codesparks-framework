@@ -46,7 +46,7 @@ public class SimpleThreadVisualizationMouseListener extends AArtifactVisualizati
 
         final JBTabbedPane tabbedPane = new JBTabbedPane();
 
-        final ThreadArtifactClustering sortedDefaultThreadArtifactClustering = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        final ThreadArtifactClustering sortedDefaultThreadArtifactClustering = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
         final ThreadList threadList = new ThreadList(artifact, primaryMetricIdentifier);
         tabbedPane.addTab("Threads", new JBScrollPane(threadList.getComponent()));

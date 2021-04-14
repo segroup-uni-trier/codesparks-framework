@@ -41,7 +41,7 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
 
 
         List<ThreadArtifactCluster> threadClusters =
-                artifact.getDefaultThreadArtifactClustering(primaryMetricIdentifier)
+                artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier)
                         .stream()
                         .sorted(codeSparksThreadClusterComparator)
                         .filter(cluster -> !cluster.isEmpty())

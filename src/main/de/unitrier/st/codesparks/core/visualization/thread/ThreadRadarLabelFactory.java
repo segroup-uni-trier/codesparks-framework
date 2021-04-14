@@ -66,7 +66,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             return emptyLabel();
         }
 
-        final List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        final List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
         int startAngle = 90;
         boolean createDisabledViz = false;
 

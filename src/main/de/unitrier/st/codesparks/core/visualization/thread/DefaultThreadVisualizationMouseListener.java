@@ -48,7 +48,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         final JBTabbedPane tabbedPane = new JBTabbedPane();
         final IThreadSelectableIndexProvider indexProvider = tabbedPane::getSelectedIndex;
 
-        final ThreadArtifactClustering sortedDefaultThreadArtifactClustering = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        final ThreadArtifactClustering sortedDefaultThreadArtifactClustering = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
         Map<String, List<AThreadArtifact>> map = new HashMap<>();
         int clusterId = 1;
         for (ThreadArtifactCluster threadArtifacts : sortedDefaultThreadArtifactClustering)

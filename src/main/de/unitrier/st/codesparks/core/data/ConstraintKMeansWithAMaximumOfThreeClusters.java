@@ -1,63 +1,58 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.data;
 
 import java.util.*;
 
 /**
- * Implements a k-means clustering for k = 3 and utilizing the two factors: metricValue and callSite
+ * Implements a (partially constraint) k-means clustering for k = 3 and utilizing the two factors: metricValue and callSite
  */
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
-public class DefaultThreadArtifactClusteringStrategy implements IThreadArtifactClusteringStrategy
+public class ConstraintKMeansWithAMaximumOfThreeClusters extends AThreadArtifactClusteringStrategy
 {
-//    private static volatile ICodeSparksThreadClusteringStrategy instance;
+    private static final Map<AMetricIdentifier, AThreadArtifactClusteringStrategy> strategies = new HashMap<>();
 
-    private static final Map<AMetricIdentifier, IThreadArtifactClusteringStrategy> strategies = new HashMap<>();
-
-    public static IThreadArtifactClusteringStrategy getInstance(final AMetricIdentifier metricIdentifier)
+    public static AThreadArtifactClusteringStrategy getInstance(final AMetricIdentifier metricIdentifier)
     {
-        final String id = metricIdentifier.toString();
-        synchronized (DefaultThreadArtifactClusteringStrategy.class)
+        synchronized (ConstraintKMeansWithAMaximumOfThreeClusters.class)
         {
-            IThreadArtifactClusteringStrategy instance = strategies.get(metricIdentifier);
+            AThreadArtifactClusteringStrategy instance = strategies.get(metricIdentifier);
             if (instance == null)
             {
-                instance = new DefaultThreadArtifactClusteringStrategy(metricIdentifier);
+                instance = new ConstraintKMeansWithAMaximumOfThreeClusters(metricIdentifier);
                 strategies.put(metricIdentifier, instance);
             }
             return instance;
         }
     }
 
-    private final AMetricIdentifier metricIdentifier;
-
-    private DefaultThreadArtifactClusteringStrategy(final AMetricIdentifier metricIdentifier)
+    private ConstraintKMeansWithAMaximumOfThreeClusters(final AMetricIdentifier metricIdentifier)
     {
-        this.metricIdentifier = metricIdentifier;
+        super(metricIdentifier);
     }
 
     private List<PointCluster> initClusters(List<Point> points, int k)
     {
         points.sort(Comparator.comparingDouble(o -> o.x * o.x + o.y * o.y));
 
-        List<PointCluster> clusters = new ArrayList<>(k);
+        final List<PointCluster> clusters = new ArrayList<>(k);
 
         if (k > 0)
         { // max value
-            Point centroid = points.get(points.size() - 1);
-            PointCluster artifactCluster = new PointCluster(centroid);
+            final Point centroid = points.get(points.size() - 1);
+            final PointCluster artifactCluster = new PointCluster(centroid);
             clusters.add(artifactCluster);
         }
         if (k > 1)
         { // min value
-            Point centroid = points.get(0);
-            PointCluster artifactCluster = new PointCluster(centroid);
+            final Point centroid = points.get(0);
+            final PointCluster artifactCluster = new PointCluster(centroid);
             clusters.add(artifactCluster);
         }
         if (k > 2)
         {
-            Point centroid = points.get(points.size() / 2);
-            PointCluster artifactCluster = new PointCluster(centroid);
+            final Point centroid = points.get(points.size() / 2);
+            final PointCluster artifactCluster = new PointCluster(centroid);
             clusters.add(artifactCluster);
         }
 
@@ -65,35 +60,35 @@ public class DefaultThreadArtifactClusteringStrategy implements IThreadArtifactC
     }
 
     @Override
-    public ThreadArtifactClustering clusterCodeSparksThreads(Collection<AThreadArtifact> codeSparksThreads)
+    public ThreadArtifactClustering clusterThreadArtifacts(final Collection<AThreadArtifact> threadArtifacts)
     {
         final int k = 3;
         final int maxIterations = 100;
 
-        ThreadArtifactClustering artifactClusters = new ThreadArtifactClustering();
+        final ThreadArtifactClustering clustering = new ThreadArtifactClustering();
 
-        int size = codeSparksThreads.size();
+        int size = threadArtifacts.size();
 
         if (size < 1)
         {
-            return artifactClusters;
+            return clustering;
         }
 
         int kToUse = Math.min(size, k);
 
-        List<Point> points = createPoints(codeSparksThreads, metricIdentifier);
+        final List<Point> points = createPoints(threadArtifacts, this.getMetricIdentifier());
 
-        List<PointCluster> pointClusters = initClusters(points, kToUse);
+        final List<PointCluster> pointClusters = initClusters(points, kToUse);
 
         int iterations = 0;
         boolean clusterChanged = true;
 
-        double epsilon = Math.max(1D / (2 * points.size()), 0.01);
-        Map<Point, List<Point>> mustMatchPointListsMap = new HashMap<>();
-        for (Point p : points)
+        final double epsilon = Math.max(1D / (2 * points.size()), 0.01);
+        final Map<Point, List<Point>> mustMatchPointListsMap = new HashMap<>();
+        for (final Point p : points)
         {
             mustMatchPointListsMap.put(p, new ArrayList<>());
-            for (Point q : points)
+            for (final Point q : points)
             {
                 if (p == q) continue;
 //                if (p != q)
@@ -119,18 +114,18 @@ public class DefaultThreadArtifactClusteringStrategy implements IThreadArtifactC
             }
         }
 
-        for (PointCluster pointCluster : pointClusters)
+        for (final PointCluster pointCluster : pointClusters)
         {
-            ThreadArtifactCluster artifactCluster = new ThreadArtifactCluster();
-            for (Point point : pointCluster.getPoints())
+            final ThreadArtifactCluster cluster = new ThreadArtifactCluster();
+            for (final Point point : pointCluster.getPoints())
             {
-                artifactCluster.add(point.getThreadArtifact());
+                cluster.add(point.getThreadArtifact());
             }
 
-            artifactClusters.add(artifactCluster);
+            clustering.add(cluster);
         }
 
-        return artifactClusters;
+        return clustering;
     }
 
     private double mustMatchDistance(Point p1, Point p2)
@@ -149,8 +144,10 @@ public class DefaultThreadArtifactClusteringStrategy implements IThreadArtifactC
         return Math.sqrt(Math.pow(p1.getX() - p2.getX(), 2) + Math.pow(p1.getY() - p2.getY(), 2));
     }
 
-    private boolean calculateClustersForPoints(List<Point> points, List<PointCluster> clusters,
-                                               Map<Point, List<Point>> mustMatchPointListsMap)
+    private boolean calculateClustersForPoints(final List<Point> points
+            , final List<PointCluster> clusters
+            , final Map<Point, List<Point>> mustMatchPointListsMap
+    )
     {
         boolean clusterChanged = false;
         for (Point p : points)
@@ -226,26 +223,26 @@ public class DefaultThreadArtifactClusteringStrategy implements IThreadArtifactC
         return false;
     }
 
-    private void calculateNewCentroids(Collection<PointCluster> clusters)
+    private void calculateNewCentroids(final Collection<PointCluster> pointClusters)
     {
-        for (PointCluster cluster : clusters)
+        for (final PointCluster pointCluster : pointClusters)
         {
             double x = 0;
             double y = 0;
-            for (Point p : cluster.getPoints())
+            for (Point p : pointCluster.getPoints())
             {
                 x += p.getX();
                 y += p.getY();
             }
-            int clusterSize = cluster.getPoints().size();
+            int clusterSize = pointCluster.getPoints().size();
             double averageX = x / clusterSize;
             double averageY = y / clusterSize;
 
             Point avgCentroid = new Point(averageX, averageY);
 
-            Point centroid = cluster.getCentroid();
+            Point centroid = pointCluster.getCentroid();
 
-            for (Point p : cluster.getPoints())
+            for (Point p : pointCluster.getPoints())
             {
                 if (distance(p, avgCentroid) <= distance(centroid, avgCentroid))
                 {
@@ -253,17 +250,17 @@ public class DefaultThreadArtifactClusteringStrategy implements IThreadArtifactC
                 }
             }
 
-            cluster.setCentroid(centroid);
-            cluster.clear();
+            pointCluster.setCentroid(centroid);
+            pointCluster.clear();
         }
     }
 
-    private List<Point> createPoints(final Collection<AThreadArtifact> codeSparksThreads, final AMetricIdentifier metricIdentifier)
+    private List<Point> createPoints(final Collection<AThreadArtifact> threadArtifacts, final AMetricIdentifier metricIdentifier)
     {
-        ArrayList<Point> points = new ArrayList<>();
-        for (AThreadArtifact codeSparksThread : codeSparksThreads)
+        final ArrayList<Point> points = new ArrayList<>();
+        for (final AThreadArtifact threadArtifact : threadArtifacts)
         {
-            Point point = new Point(codeSparksThread, metricIdentifier);
+            final Point point = new Point(threadArtifact, metricIdentifier);
             points.add(point);
         }
         return points;
@@ -275,7 +272,7 @@ public class DefaultThreadArtifactClusteringStrategy implements IThreadArtifactC
         //        private List<Point> clusterPoints;
         private final Set<Point> clusterPoints;
 
-        PointCluster(Point centroid)
+        PointCluster(final Point centroid)
         {
             this.centroid = centroid;
 //            clusterPoints = new ArrayList<>();
@@ -287,7 +284,7 @@ public class DefaultThreadArtifactClusteringStrategy implements IThreadArtifactC
             return this.centroid;
         }
 
-        void setCentroid(Point centroid)
+        void setCentroid(final Point centroid)
         {
             this.centroid = centroid;
         }
@@ -340,7 +337,7 @@ public class DefaultThreadArtifactClusteringStrategy implements IThreadArtifactC
             return clusterIndex;
         }
 
-        void setClusterIndex(int clusterIndex)
+        void setClusterIndex(final int clusterIndex)
         {
             this.clusterIndex = clusterIndex;
         }

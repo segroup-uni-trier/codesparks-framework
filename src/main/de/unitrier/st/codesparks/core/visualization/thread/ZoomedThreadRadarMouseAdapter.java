@@ -43,7 +43,7 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
     {
         super.mouseMoved(e);
         int hoverCount = 0;
-        for (ThreadArtifactCluster cluster : artifact.getSortedDefaultThreadArtifactClustering(metricIdentifier))
+        for (ThreadArtifactCluster cluster : artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(metricIdentifier))
         {
             if (isPointInArc(e.getX(), e.getY(), cluster))
             {

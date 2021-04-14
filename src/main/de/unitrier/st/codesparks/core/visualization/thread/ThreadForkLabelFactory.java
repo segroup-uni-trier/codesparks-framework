@@ -5,10 +5,7 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
@@ -93,7 +90,11 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         final double threadFilteredTotalMetricValueOfArtifact = artifact.getThreadFilteredTotalNumericalMetricValue(primaryMetricIdentifier, createDisabledViz);
 
-        final List<ThreadArtifactCluster> threadClusters = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        final List<ThreadArtifactCluster> threadClusters =
+            artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+
+//        final List<ThreadArtifactCluster> threadClusters = artifact.getThreadArtifactClustering(new KMeans(primaryMetricIdentifier));
+
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {
             JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);

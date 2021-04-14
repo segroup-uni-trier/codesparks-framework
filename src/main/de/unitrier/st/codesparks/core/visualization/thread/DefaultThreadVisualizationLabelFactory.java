@@ -51,7 +51,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
         int totalThreadCnt = 0;
 
-        List<ThreadArtifactCluster> threadArtifactClustering = artifact.getSortedDefaultThreadArtifactClustering(primaryMetricIdentifier);
+        List<ThreadArtifactCluster> threadArtifactClustering = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
         for (int i = 0; i < threadArtifactClustering.size(); i++)
         {

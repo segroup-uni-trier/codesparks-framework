@@ -460,53 +460,54 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
      Thread Clustering
      */
 
-    private final Map<IThreadArtifactClusteringStrategy, ThreadArtifactClustering> clusterings = new HashMap<>();
+    private final Map<AThreadArtifactClusteringStrategy, ThreadArtifactClustering> clusterings = new HashMap<>();
 
-    private ThreadArtifactClustering lookupClustering(IThreadArtifactClusteringStrategy clusteringStrategy)
+    private ThreadArtifactClustering lookupClustering(final AThreadArtifactClusteringStrategy clusteringStrategy)
     {
         synchronized (clusterings)
         {
             ThreadArtifactClustering threadArtifactClusters = clusterings.get(clusteringStrategy);
             if (threadArtifactClusters == null)
             {
-                threadArtifactClusters = clusteringStrategy.clusterCodeSparksThreads(getThreadArtifacts());
+                threadArtifactClusters = clusteringStrategy.clusterThreadArtifacts(getThreadArtifacts());
                 clusterings.put(clusteringStrategy, threadArtifactClusters);
             }
             return threadArtifactClusters;
         }
     }
 
-    public ThreadArtifactClustering getThreadArtifactClustering(IThreadArtifactClusteringStrategy clusteringStrategy)
+    public ThreadArtifactClustering getThreadArtifactClustering(final AThreadArtifactClusteringStrategy clusteringStrategy)
     {
         return lookupClustering(clusteringStrategy);
     }
 
-    public ThreadArtifactClustering getDefaultThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
+    public ThreadArtifactClustering getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
     {
-        return lookupClustering(DefaultThreadArtifactClusteringStrategy.getInstance(metricIdentifier));
+        return lookupClustering(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
     }
 
-    public ThreadArtifactClustering getSortedDefaultThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
+    public ThreadArtifactClustering getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
     {
-        ThreadArtifactClustering defaultThreadArtifactClusters = lookupClustering(DefaultThreadArtifactClusteringStrategy.getInstance(metricIdentifier));
-        Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterComparator.getInstance(metricIdentifier);
+        final ThreadArtifactClustering defaultThreadArtifactClusters =
+                lookupClustering(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
+        final Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterComparator.getInstance(metricIdentifier);
         defaultThreadArtifactClusters.sort(codeSparksThreadClusterComparator);
         return defaultThreadArtifactClusters;
     }
 
-    public void initDefaultThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
-    {
-        IThreadArtifactClusteringStrategy instance = DefaultThreadArtifactClusteringStrategy.getInstance(metricIdentifier);
-        synchronized (clusterings)
-        {
-            ThreadArtifactClustering threadArtifactClusters = clusterings.get(instance);
-            if (threadArtifactClusters == null)
-            {
-                threadArtifactClusters = instance.clusterCodeSparksThreads(getThreadArtifacts());
-                clusterings.put(instance, threadArtifactClusters);
-            }
-        }
-    }
+//    public void initDefaultThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
+//    {
+//        final IThreadArtifactClusteringStrategy instance = ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier);
+//        synchronized (clusterings)
+//        {
+//            ThreadArtifactClustering threadArtifactClusters = clusterings.get(instance);
+//            if (threadArtifactClusters == null)
+//            {
+//                threadArtifactClusters = instance.clusterThreadArtifacts(getThreadArtifacts());
+//                clusterings.put(instance, threadArtifactClusters);
+//            }
+//        }
+//    }
     /*
      * Predecessors
      */
@@ -556,7 +557,6 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
             assert neighbor != null;
             neighbor.increaseNumericalMetricValue(metricIdentifier, neighborMetricValue);
             neighbor.increaseNumericalMetricValueThread(metricIdentifier, threadIdentifier, neighborMetricValue);
-//            assertSecondaryMetricValue(neighbor.getMetricValue(), "predecessor");
         }
     }
 
@@ -660,37 +660,24 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
             threadArtifactMap.clear();
         }
 
-        final Map<Integer, List<ANeighborArtifact>> pred = this.predecessors.get();
-        if (pred != null)
+        final Map<Integer, List<ANeighborArtifact>> predecessors = this.predecessors.get();
+        if (predecessors != null)
         {
-            for (final Map.Entry<Integer, List<ANeighborArtifact>> integerListEntry : pred.entrySet())
+            for (final Map.Entry<Integer, List<ANeighborArtifact>> integerListEntry : predecessors.entrySet())
             {
                 integerListEntry.getValue().clear();
             }
-            pred.clear();
+            predecessors.clear();
         }
 
-        final Map<Integer, List<ANeighborArtifact>> succ = successors.get();
-        if (succ != null)
+        final Map<Integer, List<ANeighborArtifact>> successors = this.successors.get();
+        if (successors != null)
         {
-            for (final Map.Entry<Integer, List<ANeighborArtifact>> integerListEntry : succ.entrySet())
+            for (final Map.Entry<Integer, List<ANeighborArtifact>> integerListEntry : successors.entrySet())
             {
                 integerListEntry.getValue().clear();
             }
-            succ.clear();
+            successors.clear();
         }
     }
-
-    /*
-     * Helpers
-     */
-    // TODO: enable assertion again!
-
-//    @Deprecated
-//    void assertSecondaryMetricValue(double secondaryMetricValue, String name)
-//    {
-//        double epsilon = .0000000000000001;
-//        assert secondaryMetricValue - epsilon <= metricValue : "secondary metric value (" + name + ") larger than total metric value (" +
-//                secondaryMetricValue + " > " + metricValue + ")";
-//    }
 }
