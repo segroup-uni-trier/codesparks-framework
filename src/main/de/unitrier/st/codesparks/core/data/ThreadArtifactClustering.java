@@ -86,7 +86,7 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
      * @param metricIdentifier
      * @return
      */
-    public double silhouetteCoefficientAsMeanOfEachElement(final AMetricIdentifier metricIdentifier)
+    public double silhouetteCoefficientAsMeanOfEachElementSilhouette(final AMetricIdentifier metricIdentifier)
     {
         double meanSilhouette = 0;
         int numberOfThreads = 0;
@@ -107,7 +107,7 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
      * @param metricIdentifier
      * @return
      */
-    public double silhouetteCoefficientAsMeanOfTheClusters(final AMetricIdentifier metricIdentifier)
+    public double silhouetteCoefficientAsMeanOfEachClusterSilhouette(final AMetricIdentifier metricIdentifier)
     {
         double meanSilhouette = 0;
         for (final ThreadArtifactCluster cluster : this)
