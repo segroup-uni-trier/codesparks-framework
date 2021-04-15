@@ -14,6 +14,19 @@
         <dependency org="org.bytedeco" name="javacpp" rev="1.5.3" transitive="false"/>
         <dependency org="org.deeplearning4j" name="nearestneighbor-core" rev="1.0.0-beta7" transitive="false"/>
 -->
+        <dependency org="org.apache.commons" name="commons-math3" rev="3.6.1" transitive="false"/>
 
+        <dependency org="nz.ac.waikato.cms.weka" name="weka-stable" rev="3.8.5" transitive="false"/>
+        <dependency org="nz.ac.waikato.cms.weka.thirdparty" name="bounce" rev="0.18" transitive="false"/>
+
+        <!--
+        <dependency org="org.apache.spark" name="spark-network-common_2.12" rev="3.1.1" transitive="false"/>
+        <dependency org="org.apache.hadoop" name="hadoop-common" rev="3.3.0" transitive="false"/>
+        <dependency org="org.apache.spark" name="spark-unsafe_2.12" rev="3.1.1" transitive="false"/>
+        <dependency org="org.apache.spark" name="spark-mllib_2.12" rev="3.1.1" transitive="false"/>
+        <dependency org="org.apache.spark" name="spark-core_2.12" rev="3.1.1" transitive="false"/>
+        <dependency org="org.apache.hadoop" name="hadoop-mapreduce-client-core" rev="3.3.0" transitive="false"/>
+        <dependency org="org.scala-lang" name="scala-library" rev="2.12.13" transitive="false"/>
+        -->
     </dependencies>
 </ivy-module>

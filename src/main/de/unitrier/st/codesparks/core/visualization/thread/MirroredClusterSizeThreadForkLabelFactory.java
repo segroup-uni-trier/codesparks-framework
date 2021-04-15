@@ -5,10 +5,7 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
@@ -87,7 +84,15 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
                 (double) artifact.getThreadArtifacts().stream().filter(threadExecutingArtifact -> (createDisabledViz || !threadExecutingArtifact.isFiltered()))
                         .count();
 
-        final List<ThreadArtifactCluster> threadClusters = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+        final List<ThreadArtifactCluster> threadClusters =
+            artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+
+//        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(new ApacheKMeans(primaryMetricIdentifier, 3));
+
+//        final BestSilhouetteKClustering bestSilhouetteKClustering = new BestSilhouetteKClustering(new ApacheKMeans(primaryMetricIdentifier), 6);
+//
+//        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(bestSilhouetteKClustering);
+
 
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {

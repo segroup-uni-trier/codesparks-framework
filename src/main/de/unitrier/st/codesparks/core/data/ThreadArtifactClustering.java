@@ -117,4 +117,22 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
         meanSilhouette = meanSilhouette / this.size();
         return meanSilhouette;
     }
+
+    public String toString(final AMetricIdentifier metricIdentifier)
+    {
+        StringBuilder strb = new StringBuilder();
+        int cl = 0;
+        for (final ThreadArtifactCluster aThreadArtifacts : this)
+        {
+            strb.append("Cluster-").append(++cl).append("\n");
+            for (final AThreadArtifact aThreadArtifact : aThreadArtifacts)
+            {
+                strb.append(aThreadArtifact.getIdentifier())
+                        .append(" : ")
+                        .append(aThreadArtifact.getNumericalMetricValue(metricIdentifier)).append("\n");
+            }
+        }
+
+        return strb.toString();
+    }
 }

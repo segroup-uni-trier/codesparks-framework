@@ -460,9 +460,9 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
      Thread Clustering
      */
 
-    private final Map<AThreadArtifactClusteringStrategy, ThreadArtifactClustering> clusterings = new HashMap<>();
+    private final Map<IThreadArtifactClusteringStrategy, ThreadArtifactClustering> clusterings = new HashMap<>();
 
-    private ThreadArtifactClustering lookupClustering(final AThreadArtifactClusteringStrategy clusteringStrategy)
+    private ThreadArtifactClustering lookupClustering(final IThreadArtifactClusteringStrategy clusteringStrategy)
     {
         synchronized (clusterings)
         {
@@ -476,9 +476,9 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         }
     }
 
-    public ThreadArtifactClustering getThreadArtifactClustering(final AThreadArtifactClusteringStrategy clusteringStrategy)
+    public ThreadArtifactClustering getThreadArtifactClustering(final IThreadArtifactClusteringStrategy clusteringStrategy)
     {
-        return lookupClustering(clusteringStrategy);
+        return lookupClustering(clusteringStrategy);//clusteringStrategy.clusterThreadArtifacts(getThreadArtifacts());
     }
 
     public ThreadArtifactClustering getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(final AMetricIdentifier metricIdentifier)

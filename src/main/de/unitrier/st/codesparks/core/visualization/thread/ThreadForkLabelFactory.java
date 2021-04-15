@@ -15,7 +15,6 @@ import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
-import java.util.List;
 import java.util.OptionalDouble;
 
 public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
@@ -90,10 +89,19 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         final double threadFilteredTotalMetricValueOfArtifact = artifact.getThreadFilteredTotalNumericalMetricValue(primaryMetricIdentifier, createDisabledViz);
 
-        final List<ThreadArtifactCluster> threadClusters =
-            artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+//        final ThreadArtifactClustering threadClusters =
+//            artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
-//        final List<ThreadArtifactCluster> threadClusters = artifact.getThreadArtifactClustering(new KMeans(primaryMetricIdentifier));
+//        final List<ThreadArtifactCluster> threadClusters = artifact.getThreadArtifactClustering(new ApacheKMeans(primaryMetricIdentifier, 3));
+
+//        final BestSilhouetteKClustering bestSilhouetteKClustering = new BestSilhouetteKClustering(new ApacheKMeans(primaryMetricIdentifier), 6);
+//        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(bestSilhouetteKClustering);
+
+        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(new WekaKMeans(primaryMetricIdentifier, 3));
+
+//        final ThreadArtifactClustering threadClusters =
+//                artifact.getThreadArtifactClustering(new KernelDensityThreadClusteringStrategy(primaryMetricIdentifier));
+
 
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {
