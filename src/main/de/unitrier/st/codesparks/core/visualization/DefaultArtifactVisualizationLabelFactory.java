@@ -1,6 +1,8 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.visualization;
 
-import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
@@ -13,9 +15,6 @@ import java.util.Collection;
 
 import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
     private final AMetricIdentifier secondaryMetricIdentifier;
@@ -112,7 +111,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         return jLabel;
     }
 
-    private static void drawPredecessors(
+    private void drawPredecessors(
             final AArtifact artifact
             , final Rectangle visualizationArea
             , final Graphics graphics
@@ -120,24 +119,25 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
             , final Color performanceColor
     )
     {
-        long predecessorSize = artifact.getPredecessors()
+        final long predecessorSize = artifact.getPredecessors()
                 .values()
                 .stream()
                 .flatMap(Collection::stream)
                 .filter(npa -> npa.getThreadArtifacts()
                         .stream()
-                        .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
+                        .anyMatch(threadArtifact -> !threadArtifact.isFiltered()
+                                && threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) > 0))
                 .count();
         if (predecessorSize >= 2)
         {
-            Triangle trianglePointsExtra1 = getTriangle(
+            final Triangle trianglePointsExtra1 = getTriangle(
                     visualizationArea.x - 5,
                     visualizationArea.y - 1, 3);
             graphics.setColor(performanceColor);
             fillTriangle(trianglePointsExtra1, graphics);
             graphics.setColor(BORDER_COLOR);
             drawTriangle(trianglePointsExtra1, graphics);
-            Triangle trianglePointsExtra2 = getTriangle(
+            final Triangle trianglePointsExtra2 = getTriangle(
                     visualizationArea.x - 5,
                     visualizationArea.y + 7, 3);
             graphics.setColor(performanceColor);
@@ -147,7 +147,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         }
         if (predecessorSize == 1 || predecessorSize > 2)
         {
-            Triangle trianglePoints = getTriangle(visualizationArea.x - 6,
+            final Triangle trianglePoints = getTriangle(visualizationArea.x - 6,
                     visualizationArea.y + 15 / 2 - 5, 4);
             graphics.setColor(performanceColor);
             fillTriangle(trianglePoints, graphics);
@@ -156,7 +156,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         }
     }
 
-    private static void drawSuccessors(
+    private void drawSuccessors(
             final AArtifact artifact
             , final Rectangle visualizationArea
             , final Graphics graphics
@@ -164,7 +164,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
             , final Color performanceColor
     )
     {
-        long successorSize =
+        final long successorSize =
                 artifact.getSuccessors()
                         .values()
                         .stream()
@@ -172,18 +172,19 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
                         .filter(npa -> !npa.getName().toLowerCase().startsWith("self"))
                         .filter(npa -> npa.getThreadArtifacts()
                                 .stream()
-                                .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
+                                .anyMatch(threadArtifact -> !threadArtifact.isFiltered()
+                                        && threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) > 0))
                         .count();
         if (successorSize >= 2)
         {
-            Triangle trianglePoints = getTriangle(visualizationArea.x
+            final Triangle trianglePoints = getTriangle(visualizationArea.x
                             + visualizationArea.width + CALLEE_TRIANGLES_WIDTH,
                     visualizationArea.y - 1, 3);
             graphics.setColor(performanceColor);
             fillTriangle(trianglePoints, graphics);
             graphics.setColor(BORDER_COLOR);
             drawTriangle(trianglePoints, graphics);
-            Triangle trianglePointsExtra2 = getTriangle(visualizationArea.x
+            final Triangle trianglePointsExtra2 = getTriangle(visualizationArea.x
                             + visualizationArea.width + CALLEE_TRIANGLES_WIDTH,
                     visualizationArea.y + 7, 3);
             graphics.setColor(performanceColor);
@@ -193,7 +194,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         }
         if (successorSize == 1 || successorSize > 2)
         {
-            Triangle trianglePoints = getTriangle(visualizationArea.x
+            final Triangle trianglePoints = getTriangle(visualizationArea.x
                             + visualizationArea.width + CALLEE_TRIANGLES_WIDTH + 1,
                     visualizationArea.y + 15 / 2 - 5, 4);
             graphics.setColor(performanceColor);

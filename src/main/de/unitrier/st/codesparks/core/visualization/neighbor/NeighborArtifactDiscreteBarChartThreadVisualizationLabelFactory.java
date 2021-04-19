@@ -44,9 +44,18 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
     @Override
     public JLabel createNeighborArtifactLabel(
             final AArtifact artifact
-            , final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
+            , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
     )
     {
+        threadFilteredNeighborArtifactsOfLine =
+                threadFilteredNeighborArtifactsOfLine
+                        .stream()
+                        .filter(neighbor -> neighbor.getNumericalMetricValue(primaryMetricIdentifier) > 0)
+                        .collect(Collectors.toList());
+        if (threadFilteredNeighborArtifactsOfLine.isEmpty())
+        {
+            return emptyLabel();
+        }
         final int threadsPerColumn = 3;
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
 

@@ -89,30 +89,29 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         final double threadFilteredTotalMetricValueOfArtifact = artifact.getThreadFilteredTotalNumericalMetricValue(primaryMetricIdentifier, createDisabledViz);
 
-//        final ThreadArtifactClustering threadClusters =
-//            artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+        final ThreadArtifactClustering threadClusters =
+            artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
 //        final List<ThreadArtifactCluster> threadClusters = artifact.getThreadArtifactClustering(new ApacheKMeans(primaryMetricIdentifier, 3));
 
 //        final BestSilhouetteKClustering bestSilhouetteKClustering = new BestSilhouetteKClustering(new ApacheKMeans(primaryMetricIdentifier), 6);
 //        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(bestSilhouetteKClustering);
 
-        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(new WekaKMeans(primaryMetricIdentifier, 3));
+//        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(new WekaKMeans(primaryMetricIdentifier, 3));
 
 //        final ThreadArtifactClustering threadClusters =
 //                artifact.getThreadArtifactClustering(new KernelDensityThreadClusteringStrategy(primaryMetricIdentifier));
 
-
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {
-            JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);
+            final JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);
 
             /*
              * Draw the metric value sum bar
              */
 
             final Color backgroundMetricColor = VisualizationUtil.getBackgroundMetricColor(clusterColor, .35f);
-            JBColor clusterMetricValueSumColor = new JBColor(backgroundMetricColor, backgroundMetricColor);
+            final JBColor clusterMetricValueSumColor = new JBColor(backgroundMetricColor, backgroundMetricColor);
 
             graphics.setColor(clusterMetricValueSumColor);
 

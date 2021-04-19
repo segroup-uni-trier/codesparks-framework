@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.visualization;
 
 import com.intellij.ui.components.JBScrollPane;
@@ -15,9 +18,6 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
     private final AMetricIdentifier secondaryMetricIdentifier;
@@ -37,7 +37,6 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
     protected PopupPanel createPopupContent(AArtifact artifact)
     {
         final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "MethodPopup");
-
         /*
          * Do not remove the following disabled code!
          */
@@ -60,29 +59,31 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
 //        metricTable.setDoubleBuffered(true);
 //        JBScrollPane runtimeScrollPane = new JBScrollPane(metricTable);
 
-        JBTabbedPane tabbedPane = new JBTabbedPane();
+        final JBTabbedPane tabbedPane = new JBTabbedPane();
 
-        List<ANeighborArtifact> artifactSuccessorsList = artifact.getSuccessorsList()
+        final List<ANeighborArtifact> artifactSuccessorsList = artifact.getSuccessorsList()
                 .stream()
                 .filter(npa -> !npa.getName().toLowerCase().startsWith("self"))
                 .filter(npa -> npa.getThreadArtifacts()
                         .stream()
-                        .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
+                        .anyMatch(threadArtifact -> !threadArtifact.isFiltered()
+                                && threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) > 0))
                 .collect(Collectors.toList());
 
-        MetricList successorsList = new MetricList(new NumericalMetricListModel(artifact, primaryMetricIdentifier, artifactSuccessorsList));
+        final MetricList successorsList = new MetricList(new NumericalMetricListModel(artifact, primaryMetricIdentifier, artifactSuccessorsList));
         successorsList.addMouseMotionListener(new MetricListMouseMotionAdapter(successorsList));
         successorsList.setCellRenderer(new MetricListCellRenderer());
 
-        List<ANeighborArtifact> artifactPredecessorsList =
+        final List<ANeighborArtifact> artifactPredecessorsList =
                 artifact.getPredecessorsList()
                         .stream()
                         .filter(npa -> npa.getThreadArtifacts()
                                 .stream()
-                                .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
+                                .anyMatch(threadArtifact -> !threadArtifact.isFiltered()
+                                        && threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) > 0))
                         .collect(Collectors.toList());
 
-        MetricList predecessorList = new MetricList(new NumericalMetricListModel(artifact, primaryMetricIdentifier, artifactPredecessorsList));
+        final MetricList predecessorList = new MetricList(new NumericalMetricListModel(artifact, primaryMetricIdentifier, artifactPredecessorsList));
         predecessorList.addMouseMotionListener(new MetricListMouseMotionAdapter(predecessorList));
         predecessorList.setCellRenderer(new MetricListCellRenderer());
 
@@ -101,9 +102,9 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
 //            UserActivityLogger.getInstance().log(UserActivityEnum.MethodPopupCalleesTabSelected, artifact.getIdentifier());
 //        }
 
-        MetricListPopupMouseAdapter metricListPopupMouseAdapter = new MetricListPopupMouseAdapter(popupPanel, successorsList);
+        final MetricListPopupMouseAdapter metricListPopupMouseAdapter = new MetricListPopupMouseAdapter(popupPanel, successorsList);
         successorsList.addMouseListener(metricListPopupMouseAdapter);
-        MetricListPopupMouseAdapter metricListPopupMouseAdapter2 = new MetricListPopupMouseAdapter(popupPanel, predecessorList);
+        final MetricListPopupMouseAdapter metricListPopupMouseAdapter2 = new MetricListPopupMouseAdapter(popupPanel, predecessorList);
         predecessorList.addMouseListener(metricListPopupMouseAdapter2);
 
 //        MetricTablePopupMouseAdapter metricTablePopupMouseAdapter = new MetricTablePopupMouseAdapter(popupPanel, metricTable);
@@ -114,7 +115,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
 
         tabbedPane.addChangeListener(e -> {
 
-            int tabSelected = tabbedPane.getSelectedIndex();
+            final int tabSelected = tabbedPane.getSelectedIndex();
 
             if (tabSelected == 0)
             {

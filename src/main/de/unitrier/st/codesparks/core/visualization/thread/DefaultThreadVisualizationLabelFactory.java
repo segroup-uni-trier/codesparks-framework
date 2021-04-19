@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
@@ -15,25 +18,23 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
+
 public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
+    @SuppressWarnings("unused")
     public DefaultThreadVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
     }
 
+    @SuppressWarnings("unused")
     public DefaultThreadVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(primaryMetricIdentifier, sequence);
     }
 
     @Override
-    public JLabel createArtifactLabel(
-            final AArtifact artifact
-    )
+    public JLabel createArtifactLabel(final AArtifact artifact)
     {
         final int threadsPerColumn = 3;
         int lineHeight = VisualizationUtil.getLineHeightCeil(VisConstants.getLineHeight(), threadsPerColumn);
@@ -51,7 +52,8 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
         int totalThreadCnt = 0;
 
-        List<ThreadArtifactCluster> threadArtifactClustering = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+        List<ThreadArtifactCluster> threadArtifactClustering =
+                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
         for (int i = 0; i < threadArtifactClustering.size(); i++)
         {

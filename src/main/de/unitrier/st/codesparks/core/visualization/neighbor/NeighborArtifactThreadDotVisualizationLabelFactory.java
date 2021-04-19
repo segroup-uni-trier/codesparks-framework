@@ -34,9 +34,19 @@ public class NeighborArtifactThreadDotVisualizationLabelFactory extends ANeighbo
     @Override
     public JLabel createNeighborArtifactLabel(
             final AArtifact artifact
-            , final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
+            , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
     )
     {
+        threadFilteredNeighborArtifactsOfLine =
+                threadFilteredNeighborArtifactsOfLine
+                        .stream()
+                        .filter(neighbor -> neighbor.getNumericalMetricValue(primaryMetricIdentifier) > 0)
+                        .collect(Collectors.toList());
+        if (threadFilteredNeighborArtifactsOfLine.isEmpty())
+        {
+            return emptyLabel();
+        }
+
         Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterComparator.getInstance(primaryMetricIdentifier);
         List<ThreadArtifactCluster> threadClusters =
                 artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier)

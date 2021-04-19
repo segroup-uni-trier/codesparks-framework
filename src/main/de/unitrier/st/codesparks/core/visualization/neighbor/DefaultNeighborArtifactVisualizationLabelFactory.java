@@ -28,6 +28,7 @@ import static com.intellij.ui.JBColor.WHITE;
  */
 public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
+    @SuppressWarnings("unused")
     public DefaultNeighborArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
@@ -41,9 +42,19 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
     @Override
     public JLabel createNeighborArtifactLabel(
             final AArtifact artifact
-            , final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
+            , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
     )
     {
+        threadFilteredNeighborArtifactsOfLine =
+                threadFilteredNeighborArtifactsOfLine
+                        .stream()
+                        .filter(neighbor -> neighbor.getNumericalMetricValue(primaryMetricIdentifier) > 0)
+                        .collect(Collectors.toList());
+        if (threadFilteredNeighborArtifactsOfLine.isEmpty())
+        {
+            return emptyLabel();
+        }
+
         final double threadFilteredMetricValue = DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, primaryMetricIdentifier);
         final Color metricColor = VisualizationUtil.getMetricColor(threadFilteredMetricValue);
 
@@ -71,8 +82,6 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
             int xOffset = i * 2; // 4, 2, 0
             int yOffset = 4 - i * 2; // 0, 2, 4
 
-            //final Rectangle rect = new Rectangle(VisConstants.CALLEE_X_OFFSET + xOffset, yOffset, VisConstants.INVOCATION_WIDTH, lineHeight - 6);
-
             graphics.setColor(VisConstants.BORDER_COLOR);
             graphics.drawLine(
                     VisConstants.CALLEE_X_OFFSET + xOffset
@@ -84,14 +93,6 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
                     , yOffset
                     , VisConstants.CALLEE_X_OFFSET + xOffset + VisConstants.INVOCATION_WIDTH
                     , yOffset + lineHeight - 6);
-
-            // Will fill the rect in the background visually
-//            graphics.setColor(neighborBackgroundColor);
-//            graphics.drawLine(
-//                    VisConstants.CALLEE_X_OFFSET + xOffset
-//                    , yOffset + 1
-//                    , VisConstants.CALLEE_X_OFFSET + xOffset + VisConstants.INVOCATION_WIDTH
-//                    , yOffset + 1);
         }
 
         PsiElement psiElement = null;
@@ -100,7 +101,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
 
         final Map<String, Double> methodRuntimes = new HashMap<>();
 
-        for (ANeighborArtifact neighborArtifact : threadFilteredNeighborArtifactsOfLine)
+        for (final ANeighborArtifact neighborArtifact : threadFilteredNeighborArtifactsOfLine)
         {
 
             double neighborRuntime = 0D;
@@ -109,7 +110,8 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
             {
                 if (!threadArtifact.isFiltered())
                 {
-                    neighborRuntime += threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) * neighborArtifact.getNumericalMetricValue(primaryMetricIdentifier);
+                    neighborRuntime += threadArtifact.getNumericalMetricValue(primaryMetricIdentifier)
+                            * neighborArtifact.getNumericalMetricValue(primaryMetricIdentifier);
                 }
             }
 
@@ -177,12 +179,10 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
             strb.deleteCharAt(strb.length() - 1);
             UserActivityLogger.getInstance().log(UserActivityEnum.CalleeTooltipClicked, strb.toString());
 
-
             final JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             double calleeMetricSum = 0D;
             final Graphics g = visualizationLabel.getGraphics();
-            //Map<String, Double> methodRuntimes = calleeVisualization.getMethodRuntimes();
 
             final LinkedHashMap<String, Double> collect = methodRuntimes.entrySet().stream()
                     .sorted((o1, o2) -> -1 * Double.compare(o1.getValue(), o2.getValue()))

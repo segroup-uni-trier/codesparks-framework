@@ -32,9 +32,19 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
     @Override
     public JLabel createNeighborArtifactLabel(
             final AArtifact artifact
-            , final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
+            , List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
     )
     {
+        threadFilteredNeighborArtifactsOfLine =
+                threadFilteredNeighborArtifactsOfLine
+                        .stream()
+                        .filter(neighbor -> neighbor.getNumericalMetricValue(primaryMetricIdentifier) > 0)
+                        .collect(Collectors.toList());
+        if (threadFilteredNeighborArtifactsOfLine.isEmpty())
+        {
+            return emptyLabel();
+        }
+
         final double totalThreadFilteredCalleeTime = summedThreadMetricValuesOfNeighbors(threadFilteredNeighborArtifactsOfLine);
 
         Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterComparator.getInstance(primaryMetricIdentifier);

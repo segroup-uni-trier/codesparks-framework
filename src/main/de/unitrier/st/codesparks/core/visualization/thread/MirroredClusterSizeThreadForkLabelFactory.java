@@ -19,6 +19,7 @@ import java.util.List;
 
 public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
 {
+    @SuppressWarnings("unused")
     public MirroredClusterSizeThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
@@ -85,7 +86,7 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
                         .count();
 
         final List<ThreadArtifactCluster> threadClusters =
-            artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
 //        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(new ApacheKMeans(primaryMetricIdentifier, 3));
 

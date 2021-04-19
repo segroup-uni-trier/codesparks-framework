@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
@@ -12,9 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ThreadTypeTree extends ThreadTree
 {
     public ThreadTypeTree(
@@ -24,68 +24,39 @@ public class ThreadTypeTree extends ThreadTree
     )
     {
         super(threadTreeContent, metricIdentifier);
-
         if (clustering == null)
         {
             return;
         }
-
-        VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-
-        for (ThreadTreeLeafNode leafNode : leafNodes)
+        final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+        for (final ThreadTreeLeafNode leafNode : leafNodes)
         {
-            final AThreadArtifact codeSparksThread = leafNode.getThreadArtifact();
-
-            Optional<ThreadArtifactCluster> first =
-                    clustering.parallelStream().filter(threadArtifacts -> threadArtifacts.contains(codeSparksThread)).findFirst();
-
-//                if (!first.isPresent())
+            final AThreadArtifact threadArtifact = leafNode.getThreadArtifact();
+            final Optional<ThreadArtifactCluster> first =
+                    clustering.parallelStream().filter(threadArtifacts -> threadArtifacts.contains(threadArtifact)).findFirst();
             if (first.isEmpty())
             {
                 continue;
             }
-
-            VisualThreadClusterProperties properties = propertiesManager.getProperties(first.get());
-
-            if (properties == null) continue;
-
-            JBColor color = properties.getColor();
+            final VisualThreadClusterProperties properties = propertiesManager.getProperties(first.get());
+            if (properties == null)
+            {
+                continue;
+            }
+            final JBColor color = properties.getColor();
             leafNode.setColor(color);
-
-//            for (ThreadArtifactCluster cluster : clustering)
-//            {
-//                if (!cluster.contains(threadArtifact)) continue;
-//                VisualThreadArtifactClusterProperties properties = propertiesManager.getProperties(cluster);
-//                if(properties == null) continue;
-//                JBColor color = properties.getColor();
-//                leafNode.setColor(color);
-//                if (properties != null)
-//                {
-//                    JBColor color = properties.getColor();
-//                    leafNode.setColor(color);
-//                }
-//                if (cluster.contains(threadArtifact))
-//                {
-//                    VisualThreadArtifactClusterProperties properties = propertiesManager.getProperties(cluster);
-//                    if (properties != null)
-//                    {
-//                        JBColor color = properties.getColor();
-//                        leafNode.setColor(color);
-//                    }
-//                }
-//            }
         }
     }
 
     @Override
-    public void toggleCluster(ThreadArtifactCluster cluster)
+    public void toggleCluster(final ThreadArtifactCluster cluster)
     {
-        for (AThreadArtifact codeSparksThread : cluster)
+        for (final AThreadArtifact threadArtifact : cluster)
         {
-            for (ThreadTreeLeafNode leafNode : leafNodes)
+            for (final ThreadTreeLeafNode leafNode : leafNodes)
             {
                 final AThreadArtifact nodeCodeSparksThread = leafNode.getThreadArtifact();
-                if (nodeCodeSparksThread == codeSparksThread)
+                if (nodeCodeSparksThread == threadArtifact)
                 {
                     leafNode.toggleSelected();
                     break;

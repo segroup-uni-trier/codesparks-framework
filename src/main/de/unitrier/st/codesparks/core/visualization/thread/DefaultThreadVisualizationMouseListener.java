@@ -36,27 +36,29 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
     }
 
     @Override
-    protected PopupPanel createPopupContent(AArtifact artifact)
+    protected PopupPanel createPopupContent(final AArtifact artifact)
     {
         final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "DefaultThreadVisualizationPopup");
 
         threadSelectables.clear();
 
-        JBPanel<BorderLayoutPanel> centerPanel = new JBPanel<>();
+        final JBPanel<BorderLayoutPanel> centerPanel = new JBPanel<>();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 
         final JBTabbedPane tabbedPane = new JBTabbedPane();
         final IThreadSelectableIndexProvider indexProvider = tabbedPane::getSelectedIndex;
 
-        final ThreadArtifactClustering sortedDefaultThreadArtifactClustering = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
-        Map<String, List<AThreadArtifact>> map = new HashMap<>();
+        final ThreadArtifactClustering sortedDefaultThreadArtifactClustering = artifact
+                .getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+
+        final Map<String, List<AThreadArtifact>> map = new HashMap<>();
         int clusterId = 1;
-        for (ThreadArtifactCluster threadArtifacts : sortedDefaultThreadArtifactClustering)
+        for (final ThreadArtifactCluster threadArtifacts : sortedDefaultThreadArtifactClustering)
         {
             map.put("Cluster:" + clusterId++, threadArtifacts);
         }
 
-        AThreadSelectable threadClustersTree = new ThreadClusterTree(map, primaryMetricIdentifier);
+        final AThreadSelectable threadClustersTree = new ThreadClusterTree(map, primaryMetricIdentifier);
         threadSelectables.add(threadClustersTree);
         tabbedPane.addTab("Clusters", new JBScrollPane(threadClustersTree.getComponent()));
 
@@ -74,19 +76,19 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
 
         centerPanel.add(tabbedPane);
 
-        JBPanel<BorderLayoutPanel> buttonsPanel = new JBPanel<>();
+        final JBPanel<BorderLayoutPanel> buttonsPanel = new JBPanel<>();
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
-        JBPanel<BorderLayoutPanel> buttonsPanelWrapper = new JBPanel<>(new BorderLayout());
+        final JBPanel<BorderLayoutPanel> buttonsPanelWrapper = new JBPanel<>(new BorderLayout());
 
         /*
          ************************* At first the cluster buttons
          */
 
-        JBPanel<BorderLayoutPanel> clusterButtonsPanel = new JBPanel<>();
+        final JBPanel<BorderLayoutPanel> clusterButtonsPanel = new JBPanel<>();
         clusterButtonsPanel.setLayout(new BoxLayout(clusterButtonsPanel, BoxLayout.X_AXIS));
 
         // Toggle cluster buttons.
-        for (ThreadArtifactCluster cluster : sortedDefaultThreadArtifactClustering)
+        for (final ThreadArtifactCluster cluster : sortedDefaultThreadArtifactClustering)
         {
             if (cluster.isEmpty())
             {
@@ -202,7 +204,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         controlButtonsPanel.add(applyThreadFilterButtonWrapper);
 
         /*
-        **************
+         **************
          */
 
         // Add the control buttons panel to the parent buttons panel

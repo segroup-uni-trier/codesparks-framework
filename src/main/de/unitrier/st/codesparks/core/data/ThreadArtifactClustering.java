@@ -1,10 +1,10 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.data;
 
 import java.util.ArrayList;
 
-/*
- * Copyright (c), Oliver Moseler, 2021
- */
 public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
 {
     /**

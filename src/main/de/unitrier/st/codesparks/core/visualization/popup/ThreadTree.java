@@ -36,7 +36,7 @@ public class ThreadTree extends AThreadSelectable
     {
         leafNodes = new ArrayList<>();
         innerNodes = new HashMap<>();
-        JTree tree = new JTree()
+        final JTree tree = new JTree()
         {
             @Override
             public void repaint()
@@ -61,9 +61,9 @@ public class ThreadTree extends AThreadSelectable
         };
         component = tree;
 
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
+        final DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
 
-        List<Map.Entry<String, List<AThreadArtifact>>> entries = new ArrayList<>(threadTreeContent.entrySet());
+        final List<Map.Entry<String, List<AThreadArtifact>>> entries = new ArrayList<>(threadTreeContent.entrySet());
         entries.sort(Map.Entry.comparingByValue((o1, o2) -> {
                     double sum1 = o1.stream().mapToDouble((codeSparksThread) -> codeSparksThread.getNumericalMetricValue(metricIdentifier)).sum();
                     double sum2 = o2.stream().mapToDouble((codeSparksThread) -> codeSparksThread.getNumericalMetricValue(metricIdentifier)).sum();
@@ -74,32 +74,35 @@ public class ThreadTree extends AThreadSelectable
                 }
         ));
 
-        for (Map.Entry<String, List<AThreadArtifact>> entry : entries)
+        for (final Map.Entry<String, List<AThreadArtifact>> entry : entries)
         {
-            if (entry.getValue().isEmpty()) continue;
-            List<AThreadArtifact> codeSparksThreads = entry.getValue();
-            codeSparksThreads.sort(new ThreadArtifactComparator(metricIdentifier));
-            ThreadTreeInnerNode innerNode = new ThreadTreeInnerNode(entry.getKey(), codeSparksThreads, metricIdentifier);
-            boolean isInnerNodeSelected = true;
-            for (AThreadArtifact codeSparksThread : codeSparksThreads)
+            final List<AThreadArtifact> threadArtifacts = entry.getValue();
+            if (threadArtifacts.isEmpty() || !threadArtifacts.stream().allMatch(thread -> thread.getNumericalMetricValue(metricIdentifier) > 0))
             {
-                ThreadTreeLeafNode threadTreeLeafNode = new ThreadTreeLeafNode(codeSparksThread, metricIdentifier);
-                boolean filtered = codeSparksThread.isFiltered();
-                ThreeStateCheckBox.State state = filtered ? ThreeStateCheckBox.State.NOT_SELECTED : ThreeStateCheckBox.State.SELECTED;
+                continue;
+            }
+            threadArtifacts.sort(new ThreadArtifactComparator(metricIdentifier));
+            final ThreadTreeInnerNode innerNode = new ThreadTreeInnerNode(entry.getKey(), threadArtifacts, metricIdentifier);
+            boolean isInnerNodeSelected = true;
+            for (final AThreadArtifact threadArtifact : threadArtifacts)
+            {
+                final ThreadTreeLeafNode threadTreeLeafNode = new ThreadTreeLeafNode(threadArtifact, metricIdentifier);
+                final boolean filtered = threadArtifact.isFiltered();
+                final ThreeStateCheckBox.State state = filtered ? ThreeStateCheckBox.State.NOT_SELECTED : ThreeStateCheckBox.State.SELECTED;
                 threadTreeLeafNode.setState(state);
                 isInnerNodeSelected = isInnerNodeSelected && !filtered;
                 leafNodes.add(threadTreeLeafNode);
                 innerNode.add(threadTreeLeafNode);
             }
             innerNode.setState(retrieveInnerNodeState(innerNode));
-            innerNodes.put(codeSparksThreads, innerNode);
+            innerNodes.put(threadArtifacts, innerNode);
             root.add(innerNode);
         }
 
         tree.setModel(new DefaultTreeModel(root));
         tree.setToggleClickCount(Integer.MAX_VALUE);
 
-        TreeSelectionModel selectionModel = tree.getSelectionModel();
+        final TreeSelectionModel selectionModel = tree.getSelectionModel();
         selectionModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setRootVisible(false);
 

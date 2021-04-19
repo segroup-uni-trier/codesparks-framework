@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.overview;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -8,13 +11,14 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.ui.JBIntSpinner;
 import com.intellij.ui.components.*;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.IArtifactPool;
-import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
+import de.unitrier.st.codesparks.core.data.GlobalResetThreadArtifactFilter;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
@@ -29,7 +33,6 @@ import de.unitrier.st.codesparks.core.visualization.popup.MetricTableMouseMotion
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableColumn;
@@ -42,9 +45,6 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ArtifactOverview
 {
     /*
@@ -206,16 +206,9 @@ public class ArtifactOverview
             final Integer item = (Integer) e.getItem();
             if (stateChange == ItemEvent.SELECTED)
             {
-                if (item < 4)
-                {
-                    clusterSelectionComboBox.setEnabled(false);
-                } else
-                {
-                    clusterSelectionComboBox.setEnabled(true);
-                }
+                clusterSelectionComboBox.setEnabled(item > 3);
             }
         });
-
 
         // Add the thread complete cluster panel
         threadsPanelWrapper.add(threadClusterPanel);
@@ -508,6 +501,21 @@ public class ArtifactOverview
         }
     }
 
+    private ArtifactMetricComparator getEnabledArtifactMetricComparator(final Class<? extends AArtifact> artifactClass)
+    {
+        if (artifactClass == null)
+        {
+            return null;
+        }
+        synchronized (artifactMetricComparatorsForSortingLock)
+        {
+            final Set<ArtifactMetricComparator> artifactMetricComparators = artifactMetricComparatorsForSorting.computeIfAbsent(artifactClass,
+                    ac -> new HashSet<>(4));
+            final Optional<ArtifactMetricComparator> first = artifactMetricComparators.stream().filter(ArtifactMetricComparator::isEnabled).findFirst();
+            return first.orElseGet(() -> getAnyArtifactMetricComparator(artifactClass));
+        }
+    }
+
     /*
      *  The artifact visualization label factories which will be used to visualize the artifacts in the lists in the tabbed pane
      */
@@ -571,16 +579,14 @@ public class ArtifactOverview
             {
                 final Class<? extends AArtifact> artifactClass = entry.getKey();
                 List<AArtifact> artifacts = entry.getValue();
-
+//                final ArtifactMetricComparator enabledArtifactMetricComparator = getEnabledArtifactMetricComparator(artifactClass);
+//                artifacts = artifacts
+//                        .stream()
+//                        .filter(aArtifact -> aArtifact.getNumericalMetricValue(enabledArtifactMetricComparator.getMetricIdentifier()) > 0)
+//                        .collect(Collectors.toList());
                 artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
 
-//                final String tabName = artifactPool.getArtifactClassDisplayName(artifactClass);
-//                final AMetricIdentifier metricIdentifier = artifactSortingArtifactClassMetricIdentifier.get(artifactClass);
-//                if (metricIdentifier != null)
-//                {
-//                    addTab(tabName, artifacts, metricIdentifier);
                 addTab(artifactClass, artifacts);
-//                }
             }
 
             if (lastSelectedTabIndex > 0 && lastSelectedTabIndex < tabbedPane.getTabCount())
@@ -609,9 +615,9 @@ public class ArtifactOverview
             @Override
             public String getToolTipText(@NotNull MouseEvent e)
             {
-                Point p = e.getPoint();
-                int rowIndex = rowAtPoint(p);
-                AArtifact artifactAt = tableModel.getArtifactAt(rowIndex);
+                final Point p = e.getPoint();
+                final int rowIndex = rowAtPoint(p);
+                final AArtifact artifactAt = tableModel.getArtifactAt(rowIndex);
                 if (artifactAt == null)
                 {
                     return "";

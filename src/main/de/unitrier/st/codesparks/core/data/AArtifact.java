@@ -462,21 +462,26 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
 
     private final Map<IThreadArtifactClusteringStrategy, ThreadArtifactClustering> clusterings = new HashMap<>();
 
-    private ThreadArtifactClustering lookupClustering(final IThreadArtifactClusteringStrategy clusteringStrategy)
+    private ThreadArtifactClustering lookupClustering(final AThreadArtifactClusteringStrategy clusteringStrategy)
     {
         synchronized (clusterings)
         {
             ThreadArtifactClustering threadArtifactClusters = clusterings.get(clusteringStrategy);
             if (threadArtifactClusters == null)
             {
-                threadArtifactClusters = clusteringStrategy.clusterThreadArtifacts(getThreadArtifacts());
+                final Collection<AThreadArtifact> threadArtifacts =
+                        getThreadArtifacts()
+                                .stream()
+                                .filter(thread -> thread.getNumericalMetricValue(clusteringStrategy.getMetricIdentifier()) > 0)
+                                .collect(Collectors.toList());
+                threadArtifactClusters = clusteringStrategy.clusterThreadArtifacts(threadArtifacts);
                 clusterings.put(clusteringStrategy, threadArtifactClusters);
             }
             return threadArtifactClusters;
         }
     }
 
-    public ThreadArtifactClustering getThreadArtifactClustering(final IThreadArtifactClusteringStrategy clusteringStrategy)
+    public ThreadArtifactClustering getThreadArtifactClustering(final AThreadArtifactClusteringStrategy clusteringStrategy)
     {
         return lookupClustering(clusteringStrategy);//clusteringStrategy.clusterThreadArtifacts(getThreadArtifacts());
     }
