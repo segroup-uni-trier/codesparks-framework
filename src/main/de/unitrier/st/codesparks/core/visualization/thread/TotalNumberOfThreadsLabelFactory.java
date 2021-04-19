@@ -43,7 +43,7 @@ public final class TotalNumberOfThreadsLabelFactory extends AArtifactVisualizati
             return emptyLabel();
         }
 
-        final String sumAndColonString = "\u2211 \u003a";
+        final String sumAndColonString = "";//"\u2211 \u003a";
 
         final int threadsPerColumn = 3;
         final int X_OFFSET_LEFT = this.X_OFFSET_LEFT + 0;

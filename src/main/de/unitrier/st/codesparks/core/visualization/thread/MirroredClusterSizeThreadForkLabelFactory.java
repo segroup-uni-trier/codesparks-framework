@@ -45,16 +45,18 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
         final int threadMetaphorWidth = 24;
         final int barChartWidth = 24;
         final int X_OFFSET_RIGHT = 1;
+        final int TOP_OFFSET = 6;
 
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
 
-        final CodeSparksGraphics graphics = getGraphics(X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight);
+        final CodeSparksGraphics graphics = getGraphics(X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT,
+                lineHeight + TOP_OFFSET);
 
         // The rectangle for the bars
         graphics.setColor(VisConstants.BORDER_COLOR);
 
         final Rectangle threadVisualisationArea = new Rectangle(
-                X_OFFSET_LEFT, 0, barChartWidth - 1, lineHeight - 1);
+                X_OFFSET_LEFT, TOP_OFFSET, barChartWidth - 1, lineHeight - 1);
 
         graphics.drawRectangle(threadVisualisationArea);
 
@@ -63,14 +65,14 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
         final int barrierXPos = barChartWidth + barrierXOffset;//threadMetaphorWidth / 2;
         // Vertical bar or barrier, respectively
         final int barrierWidth = 3;
-        graphics.fillRect(X_OFFSET_LEFT + barrierXPos, 0, barrierWidth, lineHeight);
+        graphics.fillRect(X_OFFSET_LEFT + barrierXPos, TOP_OFFSET, barrierWidth, lineHeight);
 
         // Subsequent arrow
         final int arrowLength = threadMetaphorWidth / 2;
         final int arrowStartX = X_OFFSET_LEFT + barrierXPos + barrierWidth;
-        graphics.fillRect(arrowStartX, lineHeight / 2, arrowLength, 1);
-        graphics.drawLine(arrowStartX + 3, lineHeight / 2 - 3, arrowStartX, lineHeight / 2);
-        graphics.drawLine(arrowStartX + 3, lineHeight / 2 + 3, arrowStartX, lineHeight / 2);
+        graphics.fillRect(arrowStartX, TOP_OFFSET + lineHeight / 2, arrowLength, 1);
+        graphics.drawLine(arrowStartX + 3, TOP_OFFSET + lineHeight / 2 - 3, arrowStartX, TOP_OFFSET + lineHeight / 2);
+        graphics.drawLine(arrowStartX + 3, TOP_OFFSET + lineHeight / 2 + 3, arrowStartX, TOP_OFFSET + lineHeight / 2);
 
         // Draw the clusters
         final int threadSquareEdgeLength = 3;//(lineHeight - 6) / threadsPerColumn;
@@ -97,12 +99,12 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
 
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {
-            JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);
+            final JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);
             graphics.setColor(clusterColor);
 
             final long numberOfThreadsOfCluster = threadCluster.stream().filter(clusterThread -> (createDisabledViz || !clusterThread.isFiltered())).count();
 
-            double percent = numberOfThreadsOfCluster / totalNumberOfFilteredThreads;
+            final double percent = numberOfThreadsOfCluster / totalNumberOfFilteredThreads;
 
             int clusterWidth;
             if (percent > 0D)
@@ -113,18 +115,31 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
             {
                 clusterWidth = 0;
             }
-            graphics.fillRect(X_OFFSET_LEFT + barChartWidth - clusterWidth - 2, threadSquareYPos, clusterWidth, threadSquareEdgeLength);
+            graphics.fillRect(X_OFFSET_LEFT + barChartWidth - clusterWidth - 2, TOP_OFFSET + threadSquareYPos, clusterWidth, threadSquareEdgeLength);
 
             if (clusterWidth > 0)
             {
                 // Arrows after barrier
-                graphics.fillRect(X_OFFSET_LEFT + barChartWidth - 2, threadSquareYPos + 1, arrowLength - 1, 1);
+                graphics.fillRect(X_OFFSET_LEFT + barChartWidth - 2, TOP_OFFSET + threadSquareYPos + 1, arrowLength - 1, 1);
             }
             clusterNum += 1;
 
             threadSquareYPos -= threadSquareOffset;
 
         }
+
+        if (threadClusters.size() > 0) // TODO: When ready, change this to 3
+        { // The 'plus' symbol indicating that there are more than three thread clusters!
+            graphics.setColor(VisConstants.BORDER_COLOR);
+//            final int plusSymbolXOffset = X_OFFSET_LEFT + threadMetaphorWidth - 2;
+//            graphics.drawLine(plusSymbolXOffset, 0, plusSymbolXOffset, 4);
+//            graphics.drawLine(plusSymbolXOffset - 2, 2, plusSymbolXOffset + 2, 2);
+            final int plusSymbolXOffset = -1;
+            graphics.drawLine(plusSymbolXOffset, 0, plusSymbolXOffset, 4);
+            graphics.drawLine(plusSymbolXOffset - 2, 2, plusSymbolXOffset + 2, 2);
+        }
+
+
         // Creation of the label
 
         final JLabel jLabel = makeLabel(graphics);

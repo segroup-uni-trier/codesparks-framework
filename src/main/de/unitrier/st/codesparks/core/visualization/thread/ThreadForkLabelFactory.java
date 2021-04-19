@@ -50,7 +50,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final int threadMetaphorWidth = 24;
         final int barChartWidth = 24;
         final int X_OFFSET_RIGHT = 0;
-        final int TOP_OFFSET = 5;
+        final int TOP_OFFSET = 6;
 
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
         final CodeSparksGraphics graphics = getGraphics(X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight + TOP_OFFSET);
@@ -90,7 +90,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final double threadFilteredTotalMetricValueOfArtifact = artifact.getThreadFilteredTotalNumericalMetricValue(primaryMetricIdentifier, createDisabledViz);
 
         final ThreadArtifactClustering threadClusters =
-            artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
 //        final List<ThreadArtifactCluster> threadClusters = artifact.getThreadArtifactClustering(new ApacheKMeans(primaryMetricIdentifier, 3));
 
@@ -179,7 +179,10 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         if (threadClusters.size() > 0) // TODO: When ready, change this to 3
         { // The 'plus' symbol indicating that there are more than three thread clusters!
             graphics.setColor(VisConstants.BORDER_COLOR);
-            final int plusSymbolXOffset = X_OFFSET_LEFT + threadMetaphorWidth - 2;
+//            final int plusSymbolXOffset = X_OFFSET_LEFT + threadMetaphorWidth - 2;
+//            graphics.drawLine(plusSymbolXOffset, 0, plusSymbolXOffset, 4);
+//            graphics.drawLine(plusSymbolXOffset - 2, 2, plusSymbolXOffset + 2, 2);
+            final int plusSymbolXOffset = X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth - 1;
             graphics.drawLine(plusSymbolXOffset, 0, plusSymbolXOffset, 4);
             graphics.drawLine(plusSymbolXOffset - 2, 2, plusSymbolXOffset + 2, 2);
         }
