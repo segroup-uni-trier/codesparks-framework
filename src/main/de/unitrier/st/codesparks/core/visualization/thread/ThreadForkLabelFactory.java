@@ -89,8 +89,12 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         final double threadFilteredTotalMetricValueOfArtifact = artifact.getThreadFilteredTotalNumericalMetricValue(primaryMetricIdentifier, createDisabledViz);
 
+//        final ThreadArtifactClustering threadClusters =
+//                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+
         final ThreadArtifactClustering threadClusters =
-                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+                artifact.getThreadArtifactClustering(new SmileKernelDensityClustering(primaryMetricIdentifier));
+
 
 //        final List<ThreadArtifactCluster> threadClusters = artifact.getThreadArtifactClustering(new ApacheKMeans(primaryMetricIdentifier, 3));
 

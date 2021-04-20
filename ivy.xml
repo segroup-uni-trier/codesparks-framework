@@ -19,6 +19,8 @@
         <dependency org="nz.ac.waikato.cms.weka" name="weka-stable" rev="3.8.5" transitive="false"/>
         <dependency org="nz.ac.waikato.cms.weka.thirdparty" name="bounce" rev="0.18" transitive="false"/>
 
+        <dependency org="com.github.haifengl" name="smile-math" rev="2.6.0" transitive="false"/>
+
         <!--
         <dependency org="org.apache.spark" name="spark-network-common_2.12" rev="3.1.1" transitive="false"/>
         <dependency org="org.apache.hadoop" name="hadoop-common" rev="3.3.0" transitive="false"/>
