@@ -24,10 +24,11 @@ public class SmileKernelDensityClustering extends AThreadArtifactClusteringStrat
         final double[] metricValues = new double[threadArtifacts.size()];
         double maxMetricValue = Double.MIN_VALUE;
         double minMetricValue = Double.MAX_VALUE;
+        final AMetricIdentifier metricIdentifier = getMetricIdentifier();
         int i = 0;
         for (final AThreadArtifact threadArtifact : threadArtifacts)
         {
-            final double metricValue = threadArtifact.getNumericalMetricValue(getMetricIdentifier());
+            final double metricValue = threadArtifact.getNumericalMetricValue(metricIdentifier);
             maxMetricValue = Math.max(maxMetricValue, metricValue);
             minMetricValue = Math.min(minMetricValue, metricValue);
             metricValues[i++] = metricValue;
@@ -39,23 +40,26 @@ public class SmileKernelDensityClustering extends AThreadArtifactClusteringStrat
             threads.add(threadArtifact);
             metricMap.put(metricValue, threads);
         }
-        final double bandwidth = 0.01; // TODO: epsilon dependent of number of threads and max value
+        // TODO: epsilon dependent of number of threads and max value
+        final double bandwidth = 0.01;
 
         final KernelDensity kernelDensity = new KernelDensity(metricValues, bandwidth);
 
-        final double step = (maxMetricValue - minMetricValue) / threadArtifacts.size();
+        // TODO: a step size dependent of the number of threads or the concrete metric values?
+//        final double step = 0.001;
+        final double step = (maxMetricValue - minMetricValue) / (4 * threadArtifacts.size());
 
         double lastM = 0;
         boolean firstRun = true;
         boolean minFound = false;
-        double prevP = 0d;
-        double deltaP;
-        for (double m = minMetricValue; m < maxMetricValue; m += 0.01)
+        double previousProbability = 0d;
+        double delta;
+        for (double m = minMetricValue; m < maxMetricValue; m += step)
         {
-            final double p = kernelDensity.p(m);
-            deltaP = p - prevP;
-            prevP = p;
-            if (deltaP > 0 && !minFound)
+            final double probability = kernelDensity.p(m);
+            delta = probability - previousProbability;
+            previousProbability = probability;
+            if (delta > 0 && !minFound)
             {
                 minFound = true;
                 if (firstRun)
@@ -66,7 +70,7 @@ public class SmileKernelDensityClustering extends AThreadArtifactClusteringStrat
                     final ThreadArtifactCluster cluster = new ThreadArtifactCluster();
                     for (final double metricValue : metricValues)
                     {
-                        if (metricValue > lastM && metricValue <= m)
+                        if (metricValue > lastM && metricValue <= (m - step)) // We make the cut at the value before
                         {
                             final Collection<AThreadArtifact> aThreadArtifacts = metricMap.get(metricValue);
                             cluster.addAll(aThreadArtifacts);
@@ -76,7 +80,7 @@ public class SmileKernelDensityClustering extends AThreadArtifactClusteringStrat
                     threadArtifactClusters.add(cluster);
                     lastM = m;
                 }
-            } else if (deltaP < 0)
+            } else if (delta < 0)
             {
                 minFound = false;
             }
