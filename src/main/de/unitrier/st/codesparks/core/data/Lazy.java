@@ -7,11 +7,11 @@ import static java.util.Objects.requireNonNull;
 
 class Lazy<T> implements Serializable
 {
-    private T value;
+    private volatile T value;
 
     private Supplier<T> supplier;
 
-    Lazy(Supplier<T> supplier)
+    Lazy(final Supplier<T> supplier)
     {
         this.supplier = supplier;
     }

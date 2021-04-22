@@ -74,7 +74,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         this.name = name == null ? "" : name;
         this.identifier = identifier == null ? "" : identifier;
         this.threadArtifactClass = threadArtifactClass;
-        this.metrics = new Lazy<>((Supplier<Map<IMetricIdentifier, Object>> & Serializable) () -> new HashMap<>(4));
+        this.metrics = new Lazy<>((Supplier<Map<IMetricIdentifier, Object>> & Serializable) () -> new HashMap<>(8));
         this.threadMap = new Lazy<>((Supplier<Map<String, AThreadArtifact>> & Serializable) () -> new HashMap<>(8));
         this.predecessors = new Lazy<>((Supplier<Map<Integer, List<ANeighborArtifact>>> & Serializable) () -> new HashMap<>(8));
         this.successors = new Lazy<>((Supplier<Map<Integer, List<ANeighborArtifact>>> & Serializable) () -> new HashMap<>(8));
@@ -248,11 +248,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         {
             val = (Double) metrics.getOrCompute().get(metricIdentifier);
         }
-        if (val == null)
-        {
-            return 0D;
-        }
-        return val;
+        return Objects.requireNonNullElse(val, 0D);
     }
 
     public double getThreadFilteredTotalNumericalMetricValue(final AMetricIdentifier metricIdentifier, final boolean ignoreTheFilteredFlagOfThreads)
@@ -262,6 +258,30 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
                 getThreadArtifacts().stream().filter(threadExecutingArtifact -> ignoreTheFilteredFlagOfThreads || !threadExecutingArtifact.isFiltered())
                         .mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(metricIdentifier)).sum();
         return total;
+    }
+
+    public double setNumericMetricValueInRelationTo(final AMetricIdentifier metricIdentifier, double rel)
+    {
+        if (metricIdentifier == null || !metricIdentifier.isNumerical())
+        {
+            return Double.NaN;
+        }
+        if (rel == 0)
+        {
+            return Double.NaN;
+        }
+        rel = Math.abs(rel);
+        synchronized (metricsLock)
+        {
+            Double val = (Double) metrics.getOrCompute().get(metricIdentifier);
+            if (val == null || val.isNaN())
+            {
+                return Double.NaN;
+            }
+            val = val / rel;
+            metrics.getOrCompute().put(metricIdentifier, val);
+            return val;
+        }
     }
 
     public void setNumericalMetricValue(final AMetricIdentifier metricIdentifier, final double value)
