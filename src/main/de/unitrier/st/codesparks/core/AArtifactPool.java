@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core;
 
 import de.unitrier.st.codesparks.core.data.*;
@@ -7,9 +10,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public abstract class AArtifactPool implements IArtifactPool
 {
     protected AArtifactPool()
@@ -156,11 +156,55 @@ public abstract class AArtifactPool implements IArtifactPool
         }
         synchronized (artifactsLock)
         {
-            Map<String, AArtifact> artifactsOfClassMap = artifacts.computeIfAbsent(artifactClass, k -> new HashMap<>());
-
+            final Map<String, AArtifact> artifactsOfClassMap = artifacts.computeIfAbsent(artifactClass, k -> new HashMap<>());
             //noinspection UnnecessaryLocalVariable
-            AArtifact artifact = artifactsOfClassMap.get(identifier);
+            final AArtifact artifact = artifactsOfClassMap.get(identifier);
+            return artifact;
+        }
+    }
 
+    @Override
+    public final AArtifact getOrCreateArtifact(final Class<? extends AArtifact> artifactClass, final String identifier, final Object... arguments)
+    {
+        if (artifactClass == null || identifier == null)
+        {
+            return null;
+        }
+        synchronized (artifactsLock)
+        {
+            final Map<String, AArtifact> artifactsOfClassMap = artifacts.computeIfAbsent(artifactClass, k -> new HashMap<>());
+            AArtifact artifact = artifactsOfClassMap.get(identifier);
+            if (artifact == null)
+            {
+                final Constructor<? extends AArtifact> declaredConstructor;
+                try
+                {
+                    if (arguments.length == 0)
+                    {
+                        declaredConstructor = artifactClass.getDeclaredConstructor(String.class);
+                        artifact = declaredConstructor.newInstance(identifier);
+                    } else
+                    {
+                        final int len = arguments.length + 1;
+                        Class<?>[] classes = new Class[len];
+                        Object[] objects = new Object[len];
+                        classes[0] = String.class;
+                        objects[0] = identifier;
+                        for (int i = 1; i < len; i++)
+                        {
+                            classes[i] = arguments[i - 1].getClass();
+                            objects[i] = arguments[i - 1];
+                        }
+                        declaredConstructor = artifactClass.getDeclaredConstructor(classes);
+                        artifact = declaredConstructor.newInstance(objects);
+                    }
+                    artifactsOfClassMap.put(identifier, artifact);
+                    artifacts.put(artifactClass, artifactsOfClassMap);
+                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e)
+                {
+                    e.printStackTrace();
+                }
+            }
             return artifact;
         }
     }
@@ -195,12 +239,11 @@ public abstract class AArtifactPool implements IArtifactPool
     }
 
     @Override
-    public final void addArtifact(AArtifact artifact)
+    public final void addArtifact(final AArtifact artifact)
     {
         synchronized (artifactsLock)
         {
-            Map<String, AArtifact> artifactsOfClassMap = artifacts.computeIfAbsent(artifact.getClass(), k -> new HashMap<>());
-
+            final Map<String, AArtifact> artifactsOfClassMap = artifacts.computeIfAbsent(artifact.getClass(), k -> new HashMap<>());
             artifactsOfClassMap.put(artifact.getIdentifier(), artifact);
         }
     }

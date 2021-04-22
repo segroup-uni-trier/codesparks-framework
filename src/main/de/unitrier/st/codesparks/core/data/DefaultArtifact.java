@@ -9,8 +9,8 @@ Is package private on purpose!
  */
 final class DefaultArtifact extends AArtifact
 {
-    DefaultArtifact(final String name, final String identifier)
+    DefaultArtifact(final String identifier, final String name)
     {
-        super(name, identifier, DefaultThreadArtifact.class);
+        super(identifier, name, DefaultThreadArtifact.class);
     }
 }

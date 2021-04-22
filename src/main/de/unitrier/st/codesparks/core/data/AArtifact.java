@@ -64,15 +64,15 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
      * Constructors
      */
 
-    public AArtifact(final String name, final String identifier)
+    public AArtifact(final String identifier, final String name)
     {
-        this(name, identifier, null);
+        this(identifier, name, null);
     }
 
-    public AArtifact(final String name, final String identifier, final Class<? extends AThreadArtifact> threadArtifactClass)
+    public AArtifact(final String identifier, final String name, final Class<? extends AThreadArtifact> threadArtifactClass)
     {
-        this.name = name == null ? "" : name;
         this.identifier = identifier == null ? "" : identifier;
+        this.name = name == null ? "" : name;
         this.threadArtifactClass = threadArtifactClass;
         this.metrics = new Lazy<>((Supplier<Map<IMetricIdentifier, Object>> & Serializable) () -> new HashMap<>(8));
         this.threadMap = new Lazy<>((Supplier<Map<String, AThreadArtifact>> & Serializable) () -> new HashMap<>(8));
@@ -222,13 +222,14 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         }
         synchronized (metricsLock)
         {
-            Double val = (Double) metrics.getOrCompute().get(metricIdentifier);
-            if (val == null)
+            final Map<IMetricIdentifier, Object> map = metrics.getOrCompute();
+            Double val = (Double) map.get(metricIdentifier);
+            if (val == null || val.isNaN())
             {
                 val = 0d;
             }
             val += toIncrease;
-            metrics.getOrCompute().put(metricIdentifier, val);
+            map.put(metricIdentifier, val);
         }
     }
 

@@ -11,13 +11,13 @@ import de.unitrier.st.codesparks.core.CoreUtil;
 public abstract class ANeighborArtifact extends AArtifact
 {
     protected ANeighborArtifact(
-            final String name
-            , final String identifier
+            final String identifier
+            , final String name
             , final Class<? extends AThreadArtifact> threadArtifactClass
             , final int lineNumber
     )
     {
-        super(name, identifier, threadArtifactClass);
+        super(identifier, name, threadArtifactClass);
         this.lineNumber = lineNumber;
     }
 

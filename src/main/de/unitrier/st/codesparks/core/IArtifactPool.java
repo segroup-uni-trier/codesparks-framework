@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
@@ -6,9 +9,6 @@ import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import java.util.List;
 import java.util.Map;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public interface IArtifactPool extends IThreadArtifactFilterable, IArtifactPoolExportable
 {
     void addArtifact(final AArtifact artifact);
@@ -16,6 +16,8 @@ public interface IArtifactPool extends IThreadArtifactFilterable, IArtifactPoolE
     AArtifact getArtifact(final String identifier);
 
     AArtifact getArtifact(final Class<? extends AArtifact> artifactClass, final String identifier);
+
+    AArtifact getOrCreateArtifact(final Class<? extends AArtifact> artifactClass, final String identifier, final Object... arguments);
 
     AArtifact getOrCreateThreadArtifact(final Class<? extends AThreadArtifact> threadArtifactClass, final String threadIdentifier);
 
