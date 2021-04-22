@@ -159,6 +159,19 @@
     </path>
     -->
 
+    <!-- Used in the run-tests task of the build file from codesparks-jpt -->
+    <target name="compile-tests-only" depends="clean-test-classes, def-libs, kotlin-init">
+        <mkdir dir="${test.classes.dir}"/>
+        <javac srcdir="${test.src.dir}" destdir="${test.classes.dir}" includeantruntime="false">
+            <!--<src refid="test-sources"/>-->
+            <classpath>
+                <path refid="libs"/>
+                <pathelement location="${classes.dir}"/>
+            </classpath>
+            <withKotlin/>
+        </javac>
+    </target>
+
     <target name="compile-tests" depends="clean-test-classes, compile">
         <mkdir dir="${test.classes.dir}"/>
         <javac srcdir="${test.src.dir}" destdir="${test.classes.dir}" includeantruntime="false">

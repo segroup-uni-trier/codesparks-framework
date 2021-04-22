@@ -8,7 +8,6 @@ import de.unitrier.st.codesparks.core.properties.PropertiesUtil;
 import de.unitrier.st.codesparks.core.properties.PropertyKey;
 import de.unitrier.st.codesparks.core.settings.CheckBoxComponentWrapper;
 import de.unitrier.st.codesparks.core.settings.CodeSparksSettings;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;

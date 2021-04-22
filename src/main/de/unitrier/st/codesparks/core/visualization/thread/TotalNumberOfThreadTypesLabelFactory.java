@@ -1,22 +1,16 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
-import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public final class TotalNumberOfThreadTypesLabelFactory extends AArtifactVisualizationLabelFactory
 {
 
-    public TotalNumberOfThreadTypesLabelFactory( final int sequence)
+    public TotalNumberOfThreadTypesLabelFactory(final int sequence)
     {
         super(null, sequence);
     }
@@ -54,12 +48,11 @@ public final class TotalNumberOfThreadTypesLabelFactory extends AArtifactVisuali
         final int textHeight = graphics.getFontMetrics().getHeight();
         final int halfLineHeight = (int) Math.ceil(lineHeight / 2D);
         final int halfTextHeight = (int) Math.ceil(textHeight / 2D);
-        final int textYPos = halfLineHeight + halfTextHeight- (int)(Math.floor(halfTextHeight / 2D) - 1);
+        final int textYPos = halfLineHeight + halfTextHeight - (int) (Math.floor(halfTextHeight / 2D) - 1);
 
         final String str = "/" + numberOfSelectedThreadTypes;
         graphics.drawString(str, X_OFFSET_LEFT, textYPos + 1);
         totalWidth += graphics.stringWidth(str);
-
 
 
         return makeLabel(graphics, totalWidth);

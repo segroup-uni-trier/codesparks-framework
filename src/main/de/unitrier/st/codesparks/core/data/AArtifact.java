@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.data;
 
 import com.intellij.pom.Navigatable;
@@ -15,9 +18,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadArtifactFilterable, Serializable
 {
     /*
@@ -154,45 +154,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
      * Metrics
      */
 
-
     private final Object metricsLock = new SerializableLockObject();
-
-    public Collection<Metric> getMetrics()
-    {
-        Set<Map.Entry<IMetricIdentifier, Object>> entries;
-        synchronized (metricsLock)
-        {
-            entries = metrics.getOrCompute().entrySet();
-        }
-        Collection<Metric> ret = new ArrayList<>(entries.size());
-
-        for (final Map.Entry<IMetricIdentifier, Object> entry : entries)
-        {
-            final String name = entry.getKey().getDisplayString();
-            final Object value = entry.getValue();
-            final Metric metric = new Metric(name, value);
-            ret.add(metric);
-        }
-
-        return ret;
-    }
-
-    public Metric getMetric(final AMetricIdentifier metricIdentifier)
-    {
-        if (metricIdentifier == null)
-        {
-            return null;
-        }
-        final String name = metricIdentifier.getDisplayString();
-        Metric m = new Metric(name);
-        Object value;
-        synchronized (metricsLock)
-        {
-            value = metrics.getOrCompute().get(metricIdentifier);
-        }
-        m.setValue(value);
-        return m;
-    }
 
     public Object getMetricValue(final AMetricIdentifier metricIdentifier)
     {
@@ -221,9 +183,6 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         {
             return null;
         }
-//        Object metricValue = metrics.getOrCompute().get(metricIdentifier);
-//        if (metricValue == null)
-//        {
         Object metricValue;
         synchronized (metricsLock)
         {
@@ -240,7 +199,6 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
                 }
             }
         }
-//        }
         return metricValue;
     }
 
