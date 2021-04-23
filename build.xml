@@ -184,6 +184,23 @@
         </javac>
     </target>
 
+    <target name="run-tests-only" depends="def-libs">
+        <junit printsummary="yes" haltonfailure="no">
+            <classpath>
+                <path refid="libs"/>
+                <pathelement location="${test.classes.dir}"/>
+                <pathelement location="${classes.dir}"/>
+            </classpath>
+            <batchtest fork="yes">
+                <fileset dir="${test.classes.dir}">
+                    <include name="de/unitrier/st/codesparks/core/**/*Test*.class"/>
+                    <exclude name="de/unitrier/st/codesparks/core/**/*TestUtil*.class"/>
+                    <exclude name="de/unitrier/st/codesparks/core/**/ThreadClusterSilhouetteTest$1.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
     <target name="run-tests" depends="compile-tests">
         <junit printsummary="yes" haltonfailure="no">
             <classpath>
