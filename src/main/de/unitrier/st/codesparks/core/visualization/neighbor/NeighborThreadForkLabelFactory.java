@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import com.intellij.ui.JBColor;
@@ -14,18 +17,15 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
-public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
+public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
     @SuppressWarnings("unused")
-    public NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
+    public NeighborThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         this(primaryMetricIdentifier, 0);
     }
 
-    public NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, int sequence)
+    public NeighborThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier, int sequence)
     {
         super(primaryMetricIdentifier, sequence);
     }
@@ -35,7 +35,7 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
     /**
      * Computes the visualization for the given line of code with respect to the given artifact.
      *
-     * @param artifact                              The artifact for which to create the visualization, e.g. a class or method.
+     * @param artifact                              The artifact for which to create the visualization, e.g. a class or method etc.
      * @param threadFilteredNeighborArtifactsOfLine The list of neighbor artifacts which are executed by the threads which are currently selected, i.e.
      *                                              for each neighbor artifact n element of the list exists a thread thr executing n where 'thr.isFiltered()'
      *                                              yields false.
@@ -97,7 +97,10 @@ public class NeighborArtifactDiscreteBarChartThreadVisualizationLabelFactory ext
         final double totalThreadFilteredMetricValueOfAllNeighborsOfLine =
                 getTotalThreadFilteredMetricValueOfAllNeighborsOfLine(threadFilteredNeighborArtifactsOfLine);
 
-        List<ThreadArtifactCluster> threadClusters = artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+//        List<ThreadArtifactCluster> threadClusters = artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+
+        final List<ThreadArtifactCluster> threadClusters =
+                artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
         final boolean[] positionsTaken = new boolean[3];

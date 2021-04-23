@@ -9,14 +9,8 @@ import java.util.Set;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public interface IThreadSelectable
+public interface IThreadSelectable extends IThreadSelectionProvider
 {
-    Set<AThreadArtifact> getSelectedThreadArtifacts();
-
-    Set<AThreadArtifact> getFilteredThreadArtifacts();
-
-    Set<AThreadArtifact> getSelectedThreadArtifactsOfCluster(ThreadArtifactCluster cluster);
-
     Set<String> getFilteredThreadArtifactIdentifiers();
 
     Set<String> getSelectedThreadArtifactIdentifiers();

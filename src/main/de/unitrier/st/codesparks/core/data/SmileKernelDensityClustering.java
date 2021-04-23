@@ -10,7 +10,24 @@ import java.util.*;
 
 public class SmileKernelDensityClustering extends AThreadArtifactClusteringStrategy
 {
-    public SmileKernelDensityClustering(final AMetricIdentifier metricIdentifier)
+    private static final Map<AMetricIdentifier, AThreadArtifactClusteringStrategy> instances = new HashMap<>(4);
+
+    public static AThreadArtifactClusteringStrategy getInstance(final AMetricIdentifier metricIdentifier)
+    {
+        AThreadArtifactClusteringStrategy instance;
+        synchronized (instances)
+        {
+            instance = instances.get(metricIdentifier);
+            if (instance == null)
+            {
+                instance = new SmileKernelDensityClustering(metricIdentifier);
+                instances.put(metricIdentifier, instance);
+            }
+        }
+        return instance;
+    }
+
+    private SmileKernelDensityClustering(final AMetricIdentifier metricIdentifier)
     {
         super(metricIdentifier);
     }
@@ -19,9 +36,17 @@ public class SmileKernelDensityClustering extends AThreadArtifactClusteringStrat
     public ThreadArtifactClustering clusterThreadArtifacts(final Collection<AThreadArtifact> threadArtifacts)
     {
         final ThreadArtifactClustering threadArtifactClusters = new ThreadArtifactClustering();
+        final int size = threadArtifacts.size();
+        if (size < 2)
+        {
+            final ThreadArtifactCluster cluster = new ThreadArtifactCluster();
+            cluster.addAll(threadArtifacts);
+            threadArtifactClusters.add(cluster);
+            return threadArtifactClusters;
+        }
 
-        final Map<Double, Collection<AThreadArtifact>> metricMap = new HashMap<>(threadArtifacts.size());
-        final double[] metricValues = new double[threadArtifacts.size()];
+        final Map<Double, Collection<AThreadArtifact>> metricMap = new HashMap<>(size);
+        final double[] metricValues = new double[size];
         double maxMetricValue = Double.MIN_VALUE;
         double minMetricValue = Double.MAX_VALUE;
         final AMetricIdentifier metricIdentifier = getMetricIdentifier();
@@ -47,7 +72,7 @@ public class SmileKernelDensityClustering extends AThreadArtifactClusteringStrat
 
         // TODO: a step size dependent of the number of threads or the concrete metric values?
 //        final double step = 0.001;
-        final double step = (maxMetricValue - minMetricValue) / (4 * threadArtifacts.size());
+        final double step = (maxMetricValue - minMetricValue) / (4 * size);
 
         double lastM = 0;
         boolean firstRun = true;

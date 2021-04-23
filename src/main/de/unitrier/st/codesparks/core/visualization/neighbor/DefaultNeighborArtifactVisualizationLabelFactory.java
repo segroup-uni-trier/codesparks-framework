@@ -1,8 +1,10 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.psi.PsiElement;
-import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
@@ -23,9 +25,6 @@ import java.util.stream.Collectors;
 
 import static com.intellij.ui.JBColor.WHITE;
 
-/*
- * Copyright (c), Oliver Moseler, 2021
- */
 public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
     @SuppressWarnings("unused")
@@ -74,13 +73,13 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
         final CodeSparksGraphics graphics = getGraphics(visualizationArea, lineHeight);
 
         final Color neighborBackgroundColor = VisualizationUtil.getBackgroundMetricColor(metricColor, .25f);
-        int numberOfShadowCalleesToDraw = Math.min(numberOfCalleesInSameLine, 3);
+        final int numberOfShadowCalleesToDraw = Math.min(numberOfCalleesInSameLine, 3);
 
         // Draw the hints of multiple callees in a single line of code
         for (int i = numberOfShadowCalleesToDraw - 1; i > 0; i--)
         {
-            int xOffset = i * 2; // 4, 2, 0
-            int yOffset = 4 - i * 2; // 0, 2, 4
+            final int xOffset = i * 2; // 4, 2, 0
+            final int yOffset = 4 - i * 2; // 0, 2, 4
 
             graphics.setColor(VisConstants.BORDER_COLOR);
             graphics.drawLine(
@@ -96,14 +95,12 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
         }
 
         PsiElement psiElement = null;
-
         double calleeRuntimeSum = 0D;
 
         final Map<String, Double> methodRuntimes = new HashMap<>();
 
         for (final ANeighborArtifact neighborArtifact : threadFilteredNeighborArtifactsOfLine)
         {
-
             double neighborRuntime = 0D;
             final Collection<AThreadArtifact> threadArtifacts = neighborArtifact.getThreadArtifacts();
             for (final AThreadArtifact threadArtifact : threadArtifacts)
@@ -189,7 +186,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (o, o2) -> o, LinkedHashMap::new));
 
             final int lineHeight = VisConstants.getLineHeight();
-            for (Map.Entry<String, Double> entry : collect.entrySet())
+            for (final Map.Entry<String, Double> entry : collect.entrySet())
             {
                 final JTextArea jTextArea = new JTextArea();
                 jTextArea.setEditable(false);
@@ -217,7 +214,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
 
                         final int xOffset = (int) (VisConstants.INVOCATION_WIDTH * finalCalleeMetricSum / totalMetricValue);
                         final Graphics graphics = visualizationLabel.getGraphics();
-                        graphics.setColor(new JBColor(new Color(203, 119, 48), new Color(203, 119, 48)));
+                        graphics.setColor(VisConstants.ORANGE);
                         final int width = (int) (VisConstants.INVOCATION_WIDTH * entry.getValue() / totalMetricValue);
                         graphics.drawRect(VisConstants.CALLEE_X_OFFSET + xOffset, VisConstants.CALLEE_Y_OFFSET, width, lineHeight - 6);
                         graphics.drawRect(VisConstants.CALLEE_X_OFFSET + xOffset + 1, VisConstants.CALLEE_Y_OFFSET + 1, width - 2, lineHeight - 8);

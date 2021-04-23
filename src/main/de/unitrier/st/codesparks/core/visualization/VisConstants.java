@@ -3,6 +3,8 @@ package de.unitrier.st.codesparks.core.visualization;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 
+import java.awt.*;
+
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
@@ -13,6 +15,7 @@ public abstract class VisConstants
     public static final double STRIPES_BRIGHTNESS = .94;
     public static final JBColor BORDER_COLOR = new JBColor(Gray._100, JBColor.decode("#666d75"));//DarculaColors.RED);
     public static final JBColor STANDARD_FONT_COLOR = new JBColor(Gray._60, JBColor.decode("#666d75"));//DarculaColors.RED);
+    public static final JBColor ORANGE = new JBColor(new Color(203, 119, 48), new Color(203, 119, 48));
     public static int LINE_HEIGHT = 18; // the default line height of Intellij source-code editors
     public static final int RECTANGLE_WIDTH = 70;
     public static final int X_OFFSET = 6;

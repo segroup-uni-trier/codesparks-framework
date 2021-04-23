@@ -216,34 +216,42 @@ public class ArtifactOverview
         // TODO: Only for the clex study!
         //threadsPanel.setVisible(false);
 
-        final JBPanel<BorderLayoutPanel> threadFilterWrapper = new JBPanel<>();
-        threadFilterWrapper.setLayout(new BoxLayout(threadFilterWrapper, BoxLayout.X_AXIS));
+        final JBPanel<BorderLayoutPanel> threadFilterPanel = new JBPanel<>();
+        threadFilterPanel.setLayout(new BoxLayout(threadFilterPanel, BoxLayout.X_AXIS));
 
         programArtifactVisualizationPanel = new JBPanel<>();
-        threadFilterWrapper.add(programArtifactVisualizationPanel);
+        threadFilterPanel.add(programArtifactVisualizationPanel);
+        // Horizontal glue has no effect
+//        threadFilterPanel.add(Box.createHorizontalGlue());
 
-        final JButton resetThreadFilterButton = new JButton(
-                LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
+        final JBPanel<BorderLayoutPanel> threadFilterControlsPanel = new JBPanel<>();// new JBPanel(new BorderLayout());
+        threadFilterControlsPanel.setLayout(new BoxLayout(threadFilterControlsPanel, BoxLayout.Y_AXIS));
+
+        final JButton resetThreadFilterButton = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
+        //resetThreadFilterButton.setMaximumSize(new Dimension(50, 30));
         resetThreadFilterButton.addActionListener(e -> {
-
             UserActivityLogger.getInstance().log(UserActivityEnum.OverviewThreadFilterReset);
-
             CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(GlobalResetThreadArtifactFilter
                     .getInstance());
         });
         final JBPanel<BorderLayoutPanel> resetThreadFilterButtonWrapper = new BorderLayoutPanel();// new JBPanel(new BorderLayout());
         resetThreadFilterButtonWrapper.add(resetThreadFilterButton, BorderLayout.CENTER);
-        resetThreadFilterButtonWrapper.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
 
-        threadFilterWrapper.add(resetThreadFilterButtonWrapper);
+
+        threadFilterControlsPanel.add(resetThreadFilterButtonWrapper);
+        threadFilterControlsPanel.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
+
+        threadFilterPanel.add(threadFilterControlsPanel);
+
+
+        // TODO: thread state filters are still disabled
         if (threadStateFilterWrapper == null)
         {
             threadStateFilterWrapper = new BorderLayoutPanel();
         }
+        threadFilterPanel.add(threadStateFilterWrapper);
 
-        threadFilterWrapper.add(threadStateFilterWrapper);
-
-        threadsPanelWrapper.add(threadFilterWrapper);
+        threadsPanelWrapper.add(threadFilterPanel);
 
         threadsPanel.add(threadsPanelWrapper, BorderLayout.CENTER);
         filterPanelWrapper.add(threadsPanel);
@@ -425,7 +433,8 @@ public class ArtifactOverview
         {
             return;
         }
-        final JPanel wrapper = new JPanel(new BottomFlowLayout());
+        final JBPanel<BorderLayoutPanel> wrapper = new JBPanel<>();
+        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
 
         for (final AArtifactVisualizationLabelFactory programArtifactVisualizationLabelFactory :
                 programArtifactVisualizationLabelFactories

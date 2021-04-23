@@ -242,7 +242,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         if (metricIdentifier == null || !metricIdentifier.isNumerical())
         {
-            return Double.NaN;
+            return 0D;
         }
         Double val;
         synchronized (metricsLock)
@@ -391,9 +391,10 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
             return;
         }
         final AThreadArtifact threadArtifact = getOrCreateThreadArtifact(threadIdentifier);
-        threadArtifact.increaseNumericalMetricValue(metricIdentifier, toIncrease);
-//            double threadMetricValue = threadArtifact.getNumericalMetricValue(metricIdentifier);
-//            assertSecondaryMetricValue(threadMetricValue, "thread");
+        if (threadArtifact != null)
+        {
+            threadArtifact.increaseNumericalMetricValue(metricIdentifier, toIncrease);
+        }
     }
 
     public int getNumberOfThreads()

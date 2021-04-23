@@ -21,11 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizationMouseListener
+public class ThreadForkVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
     private final List<IThreadSelectable> threadSelectables;
 
-    DefaultThreadVisualizationMouseListener(
+    ThreadForkVisualizationMouseListener(
             final JComponent component
             , final AArtifact artifact
             , final AMetricIdentifier primaryMetricIdentifier
@@ -48,11 +48,11 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         final JBTabbedPane tabbedPane = new JBTabbedPane();
         final IThreadSelectableIndexProvider indexProvider = tabbedPane::getSelectedIndex;
 
-        final ThreadArtifactClustering threadArtifactClustering =
-                artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
+//        final ThreadArtifactClustering threadArtifactClustering =
+//                artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
-//        final ThreadArtifactClustering sortedDefaultThreadArtifactClustering = artifact
-//                .getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+        final ThreadArtifactClustering threadArtifactClustering = artifact
+                .getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
         final Map<String, List<AThreadArtifact>> map = new HashMap<>();
         int clusterId = 1;
@@ -74,8 +74,18 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         threadTypesTree.setNext(threadClustersTree);
 
         tabbedPane.addTab("Types", new JBScrollPane(threadTypesTree.getComponent()));
-        tabbedPane.setMinimumSize(new Dimension(400, 150));
 
+        /*
+        The thread metric density vis
+         */
+
+        final KernelBasedDensityEstimationPanel kernelBasedDensityEstimationPanel =
+                new KernelBasedDensityEstimationPanel(threadClustersTree, primaryMetricIdentifier, threadArtifactClustering);
+        tabbedPane.addTab("Kernel Based Metric Density Estimation", new JBScrollPane(kernelBasedDensityEstimationPanel));
+
+        final int tabbedPaneWidth = Math.max(400, kernelBasedDensityEstimationPanel.getWidth());
+        final int tabbedPaneHeight = Math.max(150, kernelBasedDensityEstimationPanel.getHeight());
+        tabbedPane.setMinimumSize(new Dimension(tabbedPaneWidth, tabbedPaneHeight));
         centerPanel.add(tabbedPane);
 
         final JBPanel<BorderLayoutPanel> buttonsPanel = new JBPanel<>();
@@ -86,9 +96,9 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
          ************************* At first the cluster buttons
          */
 
+        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
         final JBPanel<BorderLayoutPanel> clusterButtonsPanel = new JBPanel<>();
         clusterButtonsPanel.setLayout(new BoxLayout(clusterButtonsPanel, BoxLayout.X_AXIS));
-
         // Toggle cluster buttons.
         for (final ThreadArtifactCluster cluster : threadArtifactClustering)
         {
@@ -97,7 +107,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
                 continue;
             }
             final VisualThreadClusterProperties properties =
-                    VisualThreadClusterPropertiesManager.getInstance().getProperties(cluster);
+                    clusterPropertiesManager.getProperties(cluster);
             Color foregroundColor;
             if (properties == null)
             {
@@ -196,10 +206,13 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
                 new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.button.apply.thread.filter"));
         applyThreadFilter.addActionListener(e -> {
             popupPanel.cancelPopup();
-            int index = indexProvider.getThreadSelectableIndex();
-            IThreadSelectable iThreadSelectable = threadSelectables.get(index);
-            final IThreadArtifactFilter threadArtifactFilter = new DefaultThreadArtifactFilter(iThreadSelectable);
-            CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(threadArtifactFilter);
+            final int index = indexProvider.getThreadSelectableIndex();
+            if (index < threadSelectables.size())
+            {
+                final IThreadSelectable iThreadSelectable = threadSelectables.get(index);
+                final IThreadArtifactFilter threadArtifactFilter = new DefaultThreadArtifactFilter(iThreadSelectable);
+                CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(threadArtifactFilter);
+            }
         });
         final JBPanel<BorderLayoutPanel> applyThreadFilterButtonWrapper = new JBPanel<>(new BorderLayout());
         applyThreadFilterButtonWrapper.add(applyThreadFilter, BorderLayout.CENTER);
@@ -217,6 +230,11 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         buttonsPanelWrapper.add(buttonsPanel, BorderLayout.CENTER);
         centerPanel.add(buttonsPanelWrapper);
         popupPanel.add(centerPanel, BorderLayout.CENTER);
+
+        for (final IThreadSelectable threadSelectable : threadSelectables)
+        {
+            threadSelectable.registerComponentToRepaintOnSelection(kernelBasedDensityEstimationPanel);
+        }
 
         //popupPanel.add(applyThreadFilter, BorderLayout.SOUTH);
         return popupPanel;

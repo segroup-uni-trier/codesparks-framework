@@ -89,11 +89,11 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         final double threadFilteredTotalMetricValueOfArtifact = artifact.getThreadFilteredTotalNumericalMetricValue(primaryMetricIdentifier, createDisabledViz);
 
-//        final ThreadArtifactClustering threadClusters =
-//                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
-
         final ThreadArtifactClustering threadClusters =
-                artifact.getThreadArtifactClustering(new SmileKernelDensityClustering(primaryMetricIdentifier));
+                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+
+//        final ThreadArtifactClustering threadClusters =
+//                artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
 
 //        final List<ThreadArtifactCluster> threadClusters = artifact.getThreadArtifactClustering(new ApacheKMeans(primaryMetricIdentifier, 3));
@@ -194,7 +194,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         // Creation of the label
         final JLabel jLabel = makeLabel(graphics);
-        jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
+        jLabel.addMouseListener(new ThreadForkVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
         return jLabel;
     }
 

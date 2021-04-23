@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
@@ -17,14 +20,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/*
- * Copyright (c), Oliver Moseler, 2021
- */
 public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 {
     private final IThreadRadarDisplayData radialThreadVisualizationPopupData;
     private final AMetricIdentifier secondaryMetricIdentifier;
 
+    @SuppressWarnings("unused")
     public ThreadRadarLabelFactory(
             final AMetricIdentifier primaryMetricIdentifier
             , final AMetricIdentifier secondaryMetricIdentifier
@@ -55,19 +56,17 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
     }
 
     @Override
-    public JLabel createArtifactLabel(
-            final AArtifact artifact
-    )
+    public JLabel createArtifactLabel(final AArtifact artifact)
     {
-        final Collection<AThreadArtifact> codeSparksThreads = artifact.getThreadArtifacts();
-
-        if (codeSparksThreads.isEmpty())
+        final Collection<AThreadArtifact> threadArtifacts = artifact.getThreadArtifacts();
+        if (threadArtifacts.isEmpty())
         {
             return emptyLabel();
         }
 
-        final List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
-        int startAngle = 90;
+        final List<ThreadArtifactCluster> threadArtifactClusters =
+                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+
         boolean createDisabledViz = false;
 
         long numberOfSelectedArtifactThreads = artifact.getThreadArtifacts().stream().filter(t -> !t.isFiltered()).count();
@@ -81,23 +80,12 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             createDisabledViz = true;
         }
 
-        String completeNumberOfThreadsString = numberOfSelectedArtifactThreads + "";
-
+        final String completeNumberOfThreadsString = numberOfSelectedArtifactThreads + "";
         final int frameSize = ThreadRadarConstants.FRAME + completeNumberOfThreadsString.length() * 5;
         final int labelWidth = 5 + completeNumberOfThreadsString.length() * 5;
 
         final CodeSparksGraphics graphics = getGraphics(frameSize, ThreadRadarConstants.CIRCLE_FRAMESIZE);
 
-//        GraphicsConfiguration defaultConfiguration =
-//                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-//        BufferedImage bi = UIUtil.createImage(defaultConfiguration, frameSize, ThreadRadarConstants.CIRCLE_FRAMESIZE,
-//                BufferedImage.TYPE_INT_ARGB, PaintUtil.RoundingMode.CEIL);
-//
-//        Graphics2D graphics = (Graphics2D) bi.getGraphics();
-//        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//        // Draw the fully transparent background
-//        VisualizationUtil.drawTransparentBackground(graphics, bi);
-        //
         double threadRationFromRunBefore = 0;
         for (int i = 0; i < threadArtifactClusters.size(); i++)
         {
@@ -112,12 +100,12 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             //double filteredRuntimeRatio = properties.calculateFilteredRuntimeRatio(threadArtifactClusters.get(i), createDisabledViz);
             final double filteredRuntimeRatio = properties.calculateAvgFilteredNumericalMetricRatio(threadArtifactClusters.get(i), primaryMetricIdentifier,
                     createDisabledViz);
-
             final double filteredThreadRatio = properties.calculateFilteredThreadRatio(threadArtifactClusters.get(i),
                     (int) numberOfSelectedArtifactThreads, createDisabledViz);
             final double filteredRuntimeRatioSum = properties.calculateFilteredSumNumericalMetricRatio(threadArtifactClusters.get(i), primaryMetricIdentifier,
                     createDisabledViz);
 
+            int startAngle = 90;
             if (i != 0)
             {
                 startAngle -= (int) (threadRationFromRunBefore * 360);
@@ -149,12 +137,12 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 
 
         // draw total number of threads label
-        Font currentFont = graphics.getFont();
-        Font newFont = currentFont.deriveFont(currentFont.getSize() * ThreadRadarConstants.CIRCLESIZE * 0.02f);
+        final Font currentFont = graphics.getFont();
+        final Font newFont = currentFont.deriveFont(currentFont.getSize() * ThreadRadarConstants.CIRCLESIZE * 0.02f);
         graphics.setFont(newFont);
         int labelStartAngle = (int) (ThreadVisualizationUtil.getStartAngle(ThreadRadarConstants.RADIUS,
                 ThreadRadarConstants.LABELRADIUS) * -1);//calcStartAngle() * -1; //-65
-        int arcAngle = 32;
+        final int arcAngle = 32;
         int x1 =
                 (int) ((ThreadRadarConstants.LABELRADIUS) * Math.cos(Math.toRadians(-labelStartAngle - arcAngle))) + ThreadRadarConstants.CIRCLE_FRAMESIZE / 2;
         int y1 =
@@ -204,34 +192,15 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 
         graphics.drawString(numberOfSelectedThreadTypes + "", x1 + 2, y3 + 8);
 
-
-//        ImageIcon imageIcon = new ImageIcon(bi);
-//        JLabel jLabel = new JLabel();
-////        {
-////            @Override
-////            protected void paintComponent(final Graphics g)
-////            {
-//////                g.setColor(getBackground());
-//////                g.fillRect(0, 0, getWidth(), getHeight());
-////                g.drawImage(bi, 0, 0, null);
-////                super.paintComponent(g);
-////            }
-////        };
-//        jLabel.setOpaque(false);
-////        jLabel.getGraphics().drawImage(bi, 0, 0, null);
-//        jLabel.setIcon(imageIcon);
-//        jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
-
         final JLabel jLabel = makeLabel(graphics);
 
-        for (MouseListener mouseListener : jLabel.getMouseListeners())
+        for (final MouseListener mouseListener : jLabel.getMouseListeners())
         {// Is necessary since there is some kind of caching implemented in the jetbrains ide core. Otherwise every listener would
             // trigger each time a click occurs. For each click a new listener will be attached!
             jLabel.removeMouseListener(mouseListener);
         }
         jLabel.addMouseListener(new ThreadRadarMouseListener(jLabel, artifact, radialThreadVisualizationPopupData, primaryMetricIdentifier,
                 secondaryMetricIdentifier));
-
         return jLabel;
     }
 }
