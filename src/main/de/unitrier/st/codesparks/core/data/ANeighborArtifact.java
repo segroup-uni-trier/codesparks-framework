@@ -1,12 +1,12 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.data;
 
 import de.unitrier.st.codesparks.core.CoreUtil;
 
 /**
  * Created by Oliver Moseler on 22.09.2014.
- */
-/*
- * Copyright (c), Oliver Moseler, 2020
  */
 public abstract class ANeighborArtifact extends AArtifact
 {

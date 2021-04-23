@@ -1,19 +1,14 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.data;
 
 import de.unitrier.st.codesparks.core.CoreUtil;
 
-/*
- * Copyright (c), Oliver Moseler, 2021
- */
 public abstract class AThreadArtifact extends AArtifact
 {
     private String callSite;
     private boolean filtered;
-
-//    public AThreadArtifact(final String identifier)
-//    {
-//        this(identifier, null);
-//    }
 
     public AThreadArtifact(final String identifier, final Class<? extends AThreadArtifact> threadArtifactClass)
     {
@@ -43,7 +38,8 @@ public abstract class AThreadArtifact extends AArtifact
 
     /**
      * Euclidean distance
-     * @param thr The thread artifact to get the distance to
+     *
+     * @param thr              The thread artifact to get the distance to
      * @param metricIdentifier The metric identifier. Note, has to be numerical.
      * @return The euclidean distance from this thread artifact to thr
      */
