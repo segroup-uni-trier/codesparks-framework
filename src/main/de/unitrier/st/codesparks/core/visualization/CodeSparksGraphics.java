@@ -4,9 +4,11 @@
 
 package de.unitrier.st.codesparks.core.visualization;
 
+import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.paint.PaintUtil;
 import com.intellij.util.ui.UIUtil;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
@@ -39,6 +41,13 @@ public class CodeSparksGraphics extends Graphics2D
     public BufferedImage getBufferedImage()
     {
         return this.bi;
+    }
+
+    public JBLabel getLabel(final int width)
+    {
+        final BufferedImage subImage = bi.getSubimage(0, 0, width, bi.getHeight());
+        final ImageIcon imageIcon = new ImageIcon(subImage);
+        return new JBLabel(imageIcon);
     }
 
     public void fillRectangle(final Rectangle rectangle)

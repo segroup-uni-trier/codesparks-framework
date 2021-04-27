@@ -99,10 +99,23 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
 //
 //        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(bestSilhouetteKClustering);
 
+        final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+
 
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {
-            final JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);
+            JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);
+
+            final VisualThreadClusterProperties properties = propertiesManager.getProperties(threadCluster);
+            if (properties != null)
+            {
+                final JBColor color = properties.getColor();
+                if (color != null)
+                {
+                    clusterColor = color;
+                }
+            }
+
             graphics.setColor(clusterColor);
 
             final long numberOfThreadsOfCluster = threadCluster.stream().filter(clusterThread -> (createDisabledViz || !clusterThread.isFiltered())).count();

@@ -38,32 +38,68 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
     @Override
     protected PopupPanel createPopupContent(final AArtifact artifact)
     {
-        final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "DefaultThreadVisualizationPopup");
+        final PopupPanel popupPanel = new PopupPanel();//new BorderLayout(), "DefaultThreadVisualizationPopup");
+        popupPanel.setLayout(new BoxLayout(popupPanel, BoxLayout.Y_AXIS));
 
         threadSelectables.clear();
 
-        final JBPanel<BorderLayoutPanel> centerPanel = new JBPanel<>();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+//        final JBPanel<BorderLayoutPanel> centerPanel = new JBPanel<>();
+//        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 
-        final JBTabbedPane tabbedPane = new JBTabbedPane();
-        final IThreadSelectableIndexProvider indexProvider = tabbedPane::getSelectedIndex;
+        final ThreadArtifactClustering threadArtifactClustering =
+                artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
-//        final ThreadArtifactClustering threadArtifactClustering =
-//                artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
+//        final ThreadArtifactClustering threadArtifactClustering = artifact
+//                .getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
-        final ThreadArtifactClustering threadArtifactClustering = artifact
-                .getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+        final int nrOfClusters = threadArtifactClustering.size();
 
+        /*
+         * The zoomed viz tabbed pane
+         */
+        final JBTabbedPane zoomedVizTabbedPane = new JBTabbedPane();
+        if (nrOfClusters <= 6)
+        {
+            final JBPanel<BorderLayoutPanel> zoomedThreadFork = new ZoomedThreadFork(artifact, threadArtifactClustering);
+            //zoomedThreadFork.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
+
+            final Dimension dimension = new Dimension(400, 200);
+            zoomedThreadFork.setMinimumSize(dimension);
+            zoomedThreadFork.setPreferredSize(dimension);
+            zoomedVizTabbedPane.addTab("Zoomed ThreadFork", zoomedThreadFork);
+        }
+
+        // I gonna need the clustersTree for the zoomed viz already
         final Map<String, List<AThreadArtifact>> map = new HashMap<>();
         int clusterId = 1;
         for (final ThreadArtifactCluster threadArtifacts : threadArtifactClustering)
         {
             map.put("Cluster:" + clusterId++, threadArtifacts);
         }
-
         final AThreadSelectable threadClustersTree = new ThreadClusterTree(map, primaryMetricIdentifier);
+
+        /*
+         * The thread metric density vis
+         */
+
+        final KernelBasedDensityEstimationPanel kernelBasedDensityEstimationPanel =
+                new KernelBasedDensityEstimationPanel(threadClustersTree, primaryMetricIdentifier, threadArtifactClustering);
+
+        zoomedVizTabbedPane.addTab("Kernel Based Metric Density Estimation", kernelBasedDensityEstimationPanel);
+
+        final JBPanel<BorderLayoutPanel> zoomedVizTabbedPaneWrapper = new BorderLayoutPanel();
+        zoomedVizTabbedPaneWrapper.add(zoomedVizTabbedPane, BorderLayout.CENTER);
+        popupPanel.add(zoomedVizTabbedPaneWrapper);
+
+        /*
+         * The selectables tabbed pane
+         */
+
+        final JBTabbedPane selectablesTabbedPane = new JBTabbedPane();
+        final IThreadSelectableIndexProvider selectablesIndexProvider = selectablesTabbedPane::getSelectedIndex;
+
         threadSelectables.add(threadClustersTree);
-        tabbedPane.addTab("Clusters", new JBScrollPane(threadClustersTree.getComponent()));
+        selectablesTabbedPane.addTab("Clusters", new JBScrollPane(threadClustersTree.getComponent()));
 
 
         final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
@@ -73,24 +109,20 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
         threadClustersTree.setNext(threadTypesTree);
         threadTypesTree.setNext(threadClustersTree);
 
-        tabbedPane.addTab("Types", new JBScrollPane(threadTypesTree.getComponent()));
+        selectablesTabbedPane.addTab("Types", new JBScrollPane(threadTypesTree.getComponent()));
+
+        final JBPanel<BorderLayoutPanel> selectablesTabbedPaneWrapper = new BorderLayoutPanel();
+        selectablesTabbedPaneWrapper.add(selectablesTabbedPane, BorderLayout.CENTER);
+        selectablesTabbedPaneWrapper.setMinimumSize(new Dimension(400, 150));
+        selectablesTabbedPaneWrapper.setPreferredSize(new Dimension(400, 150));
+        popupPanel.add(selectablesTabbedPaneWrapper);
 
         /*
-        The thread metric density vis
+         * Beginning with the buttons
          */
-
-        final KernelBasedDensityEstimationPanel kernelBasedDensityEstimationPanel =
-                new KernelBasedDensityEstimationPanel(threadClustersTree, primaryMetricIdentifier, threadArtifactClustering);
-        tabbedPane.addTab("Kernel Based Metric Density Estimation", new JBScrollPane(kernelBasedDensityEstimationPanel));
-
-        final int tabbedPaneWidth = Math.max(400, kernelBasedDensityEstimationPanel.getWidth());
-        final int tabbedPaneHeight = Math.max(150, kernelBasedDensityEstimationPanel.getHeight());
-        tabbedPane.setMinimumSize(new Dimension(tabbedPaneWidth, tabbedPaneHeight));
-        centerPanel.add(tabbedPane);
 
         final JBPanel<BorderLayoutPanel> buttonsPanel = new JBPanel<>();
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
-        final JBPanel<BorderLayoutPanel> buttonsPanelWrapper = new JBPanel<>(new BorderLayout());
 
         /*
          ************************* At first the cluster buttons
@@ -206,7 +238,7 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
                 new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.button.apply.thread.filter"));
         applyThreadFilter.addActionListener(e -> {
             popupPanel.cancelPopup();
-            final int index = indexProvider.getThreadSelectableIndex();
+            final int index = selectablesIndexProvider.getThreadSelectableIndex();
             if (index < threadSelectables.size())
             {
                 final IThreadSelectable iThreadSelectable = threadSelectables.get(index);
@@ -227,9 +259,9 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
         controlButtonsPanelWrapper.add(controlButtonsPanel, BorderLayout.CENTER);
         buttonsPanel.add(controlButtonsPanelWrapper);
 
+        final JBPanel<BorderLayoutPanel> buttonsPanelWrapper = new JBPanel<>(new BorderLayout());
         buttonsPanelWrapper.add(buttonsPanel, BorderLayout.CENTER);
-        centerPanel.add(buttonsPanelWrapper);
-        popupPanel.add(centerPanel, BorderLayout.CENTER);
+        popupPanel.add(buttonsPanelWrapper);
 
         for (final IThreadSelectable threadSelectable : threadSelectables)
         {

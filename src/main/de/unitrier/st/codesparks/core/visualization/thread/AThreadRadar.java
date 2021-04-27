@@ -68,9 +68,9 @@ public abstract class AThreadRadar extends JPanel
         {
             panelHeight = Math.max(panelHeight, defaultIcon.getIconHeight());
         }
-        GraphicsConfiguration defaultConfiguration =
+        final GraphicsConfiguration defaultConfiguration =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage bi = UIUtil.createImage(defaultConfiguration, panelWidth, panelHeight, BufferedImage.TYPE_INT_ARGB,
+        final BufferedImage bi = UIUtil.createImage(defaultConfiguration, panelWidth, panelHeight, BufferedImage.TYPE_INT_ARGB,
                 PaintUtil.RoundingMode.CEIL);
 
         g2d = (Graphics2D) bi.getGraphics();
@@ -78,7 +78,7 @@ public abstract class AThreadRadar extends JPanel
 
         VisualizationUtil.drawTransparentBackground(g2d, bi);
 
-        ImageIcon imageIcon = new ImageIcon(bi);
+        final ImageIcon imageIcon = new ImageIcon(bi);
         add(new JLabel(imageIcon));
 
         paintDefault();
