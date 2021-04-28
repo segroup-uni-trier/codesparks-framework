@@ -53,6 +53,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final int TOP_OFFSET = 6;
 
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
+//        System.out.println("ThreadFork: lineHeight=" + lineHeight);
         final CodeSparksGraphics graphics = getGraphics(X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight + TOP_OFFSET);
 
         // Thread metaphor

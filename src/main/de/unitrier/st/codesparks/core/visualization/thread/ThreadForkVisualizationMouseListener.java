@@ -7,6 +7,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTabbedPane;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.data.*;
@@ -15,6 +16,7 @@ import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationMouseL
 import de.unitrier.st.codesparks.core.visualization.popup.*;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,15 +60,24 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
          * The zoomed viz tabbed pane
          */
         final JBTabbedPane zoomedVizTabbedPane = new JBTabbedPane();
+        //zoomedVizTabbedPane.getRootPane().setLayout(new BorderLayout());
+
         if (nrOfClusters <= 6)
         {
             final JBPanel<BorderLayoutPanel> zoomedThreadFork = new ZoomedThreadFork(artifact, threadArtifactClustering);
             //zoomedThreadFork.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
-
-            final Dimension dimension = new Dimension(400, 200);
+            //zoomedThreadFork.setBorder(new EmptyBorder(0, 0, 10, 0));
+            final Dimension dimension = new Dimension(400, 150);
             zoomedThreadFork.setMinimumSize(dimension);
             zoomedThreadFork.setPreferredSize(dimension);
-            zoomedVizTabbedPane.addTab("Zoomed ThreadFork", zoomedThreadFork);
+            final JBPanel<BorderLayoutPanel> tabWrapper = new JBPanel<>();
+            tabWrapper.setLayout(new GridBagLayout());
+
+            final JBPanel<BorderLayoutPanel> zoomedThreadForkWrapper = new JBPanel<>(new BorderLayout());
+            zoomedThreadForkWrapper.add(zoomedThreadFork, BorderLayout.CENTER);
+            tabWrapper.add(zoomedThreadForkWrapper);
+            zoomedVizTabbedPane.addTab("Zoomed ThreadFork", tabWrapper);
+
         }
 
         // I gonna need the clustersTree for the zoomed viz already
@@ -87,9 +98,10 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
 
         zoomedVizTabbedPane.addTab("Kernel Based Metric Density Estimation", kernelBasedDensityEstimationPanel);
 
-        final JBPanel<BorderLayoutPanel> zoomedVizTabbedPaneWrapper = new BorderLayoutPanel();
-        zoomedVizTabbedPaneWrapper.add(zoomedVizTabbedPane, BorderLayout.CENTER);
-        popupPanel.add(zoomedVizTabbedPaneWrapper);
+//        final JBPanel<BorderLayoutPanel> zoomedVizTabbedPaneWrapper = new BorderLayoutPanel();
+//        zoomedVizTabbedPaneWrapper.add(zoomedVizTabbedPane, BorderLayout.CENTER);
+//        popupPanel.add(zoomedVizTabbedPaneWrapper);
+        popupPanel.add(zoomedVizTabbedPane);
 
         /*
          * The selectables tabbed pane
@@ -122,51 +134,54 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
          */
 
         final JBPanel<BorderLayoutPanel> buttonsPanel = new JBPanel<>();
+        final Dimension buttonsPanelDimension = new Dimension(400, 70);
+        buttonsPanel.setMinimumSize(buttonsPanelDimension);
+        buttonsPanel.setPreferredSize(buttonsPanelDimension);
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
 
         /*
          ************************* At first the cluster buttons
          */
 
-        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-        final JBPanel<BorderLayoutPanel> clusterButtonsPanel = new JBPanel<>();
-        clusterButtonsPanel.setLayout(new BoxLayout(clusterButtonsPanel, BoxLayout.X_AXIS));
-        // Toggle cluster buttons.
-        for (final ThreadArtifactCluster cluster : threadArtifactClustering)
-        {
-            if (cluster.isEmpty())
-            {
-                continue;
-            }
-            final VisualThreadClusterProperties properties =
-                    clusterPropertiesManager.getProperties(cluster);
-            Color foregroundColor;
-            if (properties == null)
-            {
-                foregroundColor = JBColor.BLACK;
-            } else
-            {
-                foregroundColor = properties.getColor();
-            }
-            final JButton clusterToggle =
-                    new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.threads.togglecluster"));
-            clusterToggle.setForeground(foregroundColor);
-            clusterToggle.addActionListener(e -> {
-                for (final IThreadSelectable threadSelectable : threadSelectables)
-                {
-                    threadSelectable.toggleCluster(cluster);
-                }
-
-            });
-            final JBPanel<BorderLayoutPanel> clusterButtonWrapper = new JBPanel<>(new BorderLayout());
-            clusterButtonWrapper.add(clusterToggle, BorderLayout.CENTER);
-            clusterButtonsPanel.add(clusterButtonWrapper);
-        }
-
-        // Add the cluster buttons panel
-        final JBPanel<BorderLayoutPanel> clusterButtonsPanelWrapper = new JBPanel<>(new BorderLayout());
-        clusterButtonsPanelWrapper.add(clusterButtonsPanel, BorderLayout.CENTER);
-        buttonsPanel.add(clusterButtonsPanelWrapper);
+//        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+//        final JBPanel<BorderLayoutPanel> clusterButtonsPanel = new JBPanel<>();
+//        clusterButtonsPanel.setLayout(new BoxLayout(clusterButtonsPanel, BoxLayout.X_AXIS));
+//        // Toggle cluster buttons.
+//        for (final ThreadArtifactCluster cluster : threadArtifactClustering)
+//        {
+//            if (cluster.isEmpty())
+//            {
+//                continue;
+//            }
+//            final VisualThreadClusterProperties properties =
+//                    clusterPropertiesManager.getProperties(cluster);
+//            Color foregroundColor;
+//            if (properties == null)
+//            {
+//                foregroundColor = JBColor.BLACK;
+//            } else
+//            {
+//                foregroundColor = properties.getColor();
+//            }
+//            final JButton clusterToggle =
+//                    new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.threads.togglecluster"));
+//            clusterToggle.setForeground(foregroundColor);
+//            clusterToggle.addActionListener(e -> {
+//                for (final IThreadSelectable threadSelectable : threadSelectables)
+//                {
+//                    threadSelectable.toggleCluster(cluster);
+//                }
+//
+//            });
+//            final JBPanel<BorderLayoutPanel> clusterButtonWrapper = new JBPanel<>(new BorderLayout());
+//            clusterButtonWrapper.add(clusterToggle, BorderLayout.CENTER);
+//            clusterButtonsPanel.add(clusterButtonWrapper);
+//        }
+//
+//        // Add the cluster buttons panel
+//        final JBPanel<BorderLayoutPanel> clusterButtonsPanelWrapper = new JBPanel<>(new BorderLayout());
+//        clusterButtonsPanelWrapper.add(clusterButtonsPanel, BorderLayout.CENTER);
+//        buttonsPanel.add(clusterButtonsPanelWrapper);
 
         /*
          ***************** The selection buttons
