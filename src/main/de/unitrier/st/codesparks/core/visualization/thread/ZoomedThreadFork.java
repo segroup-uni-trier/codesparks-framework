@@ -11,7 +11,7 @@ import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
-import de.unitrier.st.codesparks.core.visualization.popup.ThreadClusterJBPanel;
+import de.unitrier.st.codesparks.core.visualization.popup.ThreadClusterButton;
 import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import java.awt.*;
@@ -57,8 +57,8 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
 
         final int horizontalMargin = 10;
         final int verticalMargin = 10;
-        System.out.println("ZoomedThreadFork: height=" + height + ", width=" + width + ", vizHeight=" + String.valueOf(height - 2 * verticalMargin) + ", " +
-                "vizWidth=" + String.valueOf(width - 2 * horizontalMargin));
+//        System.out.println("ZoomedThreadFork: height=" + height + ", width=" + width + ", vizHeight=" + String.valueOf(height - 2 * verticalMargin) + ", " +
+//                "vizWidth=" + String.valueOf(width - 2 * horizontalMargin));
 
         final Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -92,81 +92,82 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
          * Calculation of the positions
          */
 
-        final int threadForkSymbolWith = (int) ((width - 2 * horizontalMargin) / 8d); // 1/2 * 1/4
+        final double threadForkSymbolWith = (width - 2 * horizontalMargin) / 8d; // 1/2 * 1/4
 
-        final int barrierWidth = (int) (threadForkSymbolWith * 0.15);
-        final int arrowHeight = (int) (height * 0.03);
+        final double barrierWidth = threadForkSymbolWith * 0.15;
+        final double arrowHeight = height * 0.03;
 
 
         graphics2D.setColor(VisConstants.BORDER_COLOR);
 
         // Arrow left
-        final int leftBarrierXPos = horizontalMargin + threadForkSymbolWith - barrierWidth;
-        final int arrowWidth = leftBarrierXPos - horizontalMargin;
+        final double leftBarrierXPos = horizontalMargin + threadForkSymbolWith - barrierWidth;
+        final double arrowWidth = leftBarrierXPos - horizontalMargin;
         graphics2D.fillRect(LEFT_OFFSET + horizontalMargin
-                , TOP_OFFSET + (height / 2 - arrowHeight / 2)
-                , arrowWidth
-                , arrowHeight);
+                , TOP_OFFSET + (int) (height / 2 - arrowHeight / 2)
+                , (int) arrowWidth
+                , (int) arrowHeight);
         final int leftArrowPartXPos = horizontalMargin + (int) (arrowWidth * 5d / 6);
         graphics2D.setStroke(new BasicStroke((float) arrowHeight));
         graphics2D.drawLine(LEFT_OFFSET + leftArrowPartXPos
                 , TOP_OFFSET + (int) (height / 8d * 3)
-                , LEFT_OFFSET + leftBarrierXPos
-                , TOP_OFFSET + (height / 2 - arrowHeight / 2));
+                , LEFT_OFFSET + (int) leftBarrierXPos
+                , TOP_OFFSET + (int) (height / 2 - arrowHeight / 2));
         graphics2D.drawLine(LEFT_OFFSET + leftArrowPartXPos
                 , TOP_OFFSET + (int) (height / 8d * 5)
-                , LEFT_OFFSET + leftBarrierXPos
-                , TOP_OFFSET + (height / 2 + arrowHeight / 2));
+                , LEFT_OFFSET + (int) leftBarrierXPos
+                , TOP_OFFSET + (int) (height / 2 + arrowHeight / 2));
 
         // Left barrier
-        graphics2D.fillRect(LEFT_OFFSET + leftBarrierXPos
+        graphics2D.fillRect(LEFT_OFFSET + (int) leftBarrierXPos
                 , TOP_OFFSET + verticalMargin
-                , barrierWidth
+                , (int) barrierWidth
                 , height - 2 * verticalMargin);
 
         // Arrow right
-        final int rightBarrierXPos = width - threadForkSymbolWith - horizontalMargin;
-        graphics2D.fillRect(LEFT_OFFSET + (rightBarrierXPos + barrierWidth)
-                , TOP_OFFSET + (height / 2 - arrowHeight / 2)
-                , arrowWidth
-                , arrowHeight);
+        final double rightBarrierXPos = width - threadForkSymbolWith - horizontalMargin;
+        graphics2D.fillRect(LEFT_OFFSET + (int) (rightBarrierXPos + barrierWidth)
+                , TOP_OFFSET + (int) (height / 2 - arrowHeight / 2)
+                , (int) arrowWidth
+                , (int) arrowHeight);
         final int rightArrowPartXPos = width - leftArrowPartXPos;//threadForkSymbolWith * 3 / 4 * 4 / 5;
         graphics2D.setStroke(new BasicStroke((float) arrowHeight));
         graphics2D.drawLine(LEFT_OFFSET + rightArrowPartXPos
                 , TOP_OFFSET + (int) (height / 8d * 3)
-                , LEFT_OFFSET + (rightBarrierXPos + barrierWidth)
-                , TOP_OFFSET + (height / 2 - arrowHeight / 2));
+                , LEFT_OFFSET + (int) (rightBarrierXPos + barrierWidth)
+                , TOP_OFFSET + (int) (height / 2 - arrowHeight / 2));
         graphics2D.drawLine(LEFT_OFFSET + rightArrowPartXPos
                 , TOP_OFFSET + (int) (height / 8d * 5)
-                , LEFT_OFFSET + (rightBarrierXPos + barrierWidth)
-                , TOP_OFFSET + (height / 2 + arrowHeight / 2));
+                , LEFT_OFFSET + (int) (rightBarrierXPos + barrierWidth)
+                , TOP_OFFSET + (int) (height / 2 + arrowHeight / 2));
 
         // Right barrier
-        graphics2D.fillRect(LEFT_OFFSET + rightBarrierXPos
+        graphics2D.fillRect(LEFT_OFFSET + (int) rightBarrierXPos
                 , TOP_OFFSET + verticalMargin
-                , barrierWidth
+                , (int) barrierWidth
                 , height - 2 * verticalMargin);
 
 
         // The cluster visualization area on the left
-        final int threadVizWidth = (int) ((width - 2 * horizontalMargin) * 3d / 8);
-        final int rectVizWidth = (int) (threadVizWidth * 0.8);
-        final int leftThreadRectXPos = leftBarrierXPos + barrierWidth + (int) (threadVizWidth * 0.2);
+        final double threadVizWidth = (width - 2 * horizontalMargin) * 3d / 8;
+        final double rectVizWidth = threadVizWidth * 0.8;
+        final double leftThreadRectXPos = leftBarrierXPos + barrierWidth + threadVizWidth * 0.2;
 
         final int strokeWidth = 2;
-        final int halfStrokeWidth = (int) (strokeWidth / 2d);
+        final double halfStrokeWidth = strokeWidth / 2d;
 
         graphics2D.setStroke(new BasicStroke(strokeWidth));
-        graphics2D.drawRect(LEFT_OFFSET + (leftThreadRectXPos - strokeWidth)
+        graphics2D.drawRect(LEFT_OFFSET + (int) (leftThreadRectXPos - strokeWidth)
                 , TOP_OFFSET + (verticalMargin - strokeWidth)
-                , rectVizWidth + halfStrokeWidth
+                , (int) (rectVizWidth + halfStrokeWidth)
                 , height - 2 * verticalMargin + 2 * strokeWidth);
 
         // The cluster visualization area on the right
-        final int rightThreadRectXPos = width - leftThreadRectXPos - rectVizWidth;//leftBarrierXPos + barrierWidth + (int) (threadVizWidth * 1d / 3);
-        graphics2D.drawRect(LEFT_OFFSET + (rightThreadRectXPos - strokeWidth - halfStrokeWidth)
+        double rightThreadRectXPos = width - leftThreadRectXPos - rectVizWidth;//leftBarrierXPos + barrierWidth + (int) (threadVizWidth * 1d / 3);
+        rightThreadRectXPos = (rightThreadRectXPos - strokeWidth - halfStrokeWidth);
+        graphics2D.drawRect(LEFT_OFFSET + (int) rightThreadRectXPos
                 , TOP_OFFSET + (verticalMargin - strokeWidth)
-                , rectVizWidth + halfStrokeWidth
+                , (int) (rectVizWidth + halfStrokeWidth)
                 , height - 2 * verticalMargin + 2 * strokeWidth);
 
 
@@ -185,16 +186,18 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
         final double clusterDistance = (height - (2 * verticalMargin)) / (double) (4 * nrOfClusters + 1);
         final double clusterHeight = 3 * clusterDistance;
 
-        System.out.println("ZoomedThreadFork: clusterDistance=" + clusterDistance + ", clusterHeight=" + clusterHeight);
+//        System.out.println("ZoomedThreadFork: clusterDistance=" + clusterDistance + ", clusterHeight=" + clusterHeight);
 
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
 
         final double clusterYBase = verticalMargin + clusterDistance;
         double clusterY = clusterYBase;
-        final int clusterX = (int) (leftThreadRectXPos + 0.05 * threadVizWidth);
+        final double leftClusterX = (leftThreadRectXPos + 0.05 * threadVizWidth);
+        final double rightClusterX = rightThreadRectXPos + 0.05 * threadVizWidth;
+        final double clusterButtonWidth = rectVizWidth * 0.9;
 
-        final int clusterConnectionHeight = (int) (clusterHeight / 3d);
-        final int connectionWidth = Math.abs(clusterX - (leftBarrierXPos + barrierWidth));
+        final double clusterConnectionHeight = clusterHeight / 3d;
+        final double connectionWidth = Math.abs(leftClusterX - (leftBarrierXPos + barrierWidth));
 
         int clusterNumber = 0;
         for (final ThreadArtifactCluster cluster : threadArtifactClustering)
@@ -211,48 +214,52 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
 //                clusterPosition = properties.getPosition();
 //            }
 
-            final ThreadClusterJBPanel clusterJBPanel = new ThreadClusterJBPanel(0);
-            clusterJBPanel.setBackground(clusterColor);
-
             double clusterYToDraw = clusterY;
-//            if (clusterPosition > -1)
-//            {
-//                clusterYToDraw = clusterYBase + clusterPosition * (clusterDistance + clusterHeight);
-//            }
+            if (clusterPosition > -1)
+            {
+                clusterYToDraw = clusterYBase + clusterPosition * (clusterDistance + clusterHeight);
+            }
 
-//            clusterJBPanel.setBounds(clusterX, clusterYToDraw, (int) (threadVizWidth * 0.9), clusterHeight);
-//            add(clusterJBPanel);
-//            clusterJBPanel.addMouseMotionListener(new MouseAdapter()
-//            {
-//                @Override
-//                public void mouseEntered(final MouseEvent e)
-//                {
-//                    super.mouseEntered(e);
-//                    clusterJBPanel.setMouseIn(true);
-//                }
-//
-//                @Override
-//                public void mouseExited(final MouseEvent e)
-//                {
-//                    super.mouseExited(e);
-//                    clusterJBPanel.setMouseIn(false);
-//                }
-//            });
+            // Cluster button left
+            final ThreadClusterButton leftClusterButton = new ThreadClusterButton(0);
+            leftClusterButton.setBackground(clusterColor);
+            leftClusterButton.setBounds(LEFT_OFFSET + (int) leftClusterX
+                    , TOP_OFFSET + (int) clusterYToDraw
+                    , (int) clusterButtonWidth
+                    , (int) clusterHeight);
+            add(leftClusterButton);
+            // Cluster button right
+            final ThreadClusterButton rightClusterButton = new ThreadClusterButton(0);
+            rightClusterButton.setBackground(clusterColor);
+            rightClusterButton.setBounds(LEFT_OFFSET + (int) rightClusterX - 2 // The -2 is a correction due to accuracy problems in floating point arithmetics
+                    , TOP_OFFSET + (int) clusterYToDraw
+                    , (int) clusterButtonWidth + 1 // The +1 is a correction due to accuracy problems in floating point arithmetics
+                    , (int) clusterHeight);
+            add(rightClusterButton);
 
+
+            // Connection left
             graphics2D.setColor(clusterColor);
-            graphics2D.fillRect(LEFT_OFFSET + (leftBarrierXPos + barrierWidth)
+            graphics2D.fillRect(LEFT_OFFSET + (int) (leftBarrierXPos + barrierWidth)
                     , TOP_OFFSET + (int) (clusterYToDraw + (clusterHeight / 2 - clusterConnectionHeight / 2))
-                    , connectionWidth
-                    , clusterConnectionHeight);
+                    , (int) connectionWidth
+                    , (int) clusterConnectionHeight);
+            // Connection right
+            final double rightConnectionXPos = rightBarrierXPos - connectionWidth;
+            graphics2D.fillRect(LEFT_OFFSET + (int) (rightConnectionXPos) - 2 // The -2 is a correction due to accuracy problems in floating point arithmetics
+                    , TOP_OFFSET + (int) (clusterYToDraw + (clusterHeight / 2 - clusterConnectionHeight / 2))
+                    , (int) connectionWidth + 2 // The +2 is a correction due to accuracy problems in floating point arithmetics
+                    , (int) clusterConnectionHeight);
+
 
             clusterY += clusterDistance + clusterHeight;
             clusterNumber += 1;
         }
 
         paintChildren(g);
-        for (final Component component : getComponents())
-        {
-            component.repaint();
-        }
+//        for (final Component component : getComponents())
+//        {
+//            component.repaint();
+//        }
     }
 }

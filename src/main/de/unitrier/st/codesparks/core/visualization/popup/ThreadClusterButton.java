@@ -4,19 +4,24 @@
 
 package de.unitrier.st.codesparks.core.visualization.popup;
 
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 
+import javax.swing.*;
 import java.awt.*;
 
-public class ThreadClusterJBPanel extends JBPanel<BorderLayoutPanel>
+public class ThreadClusterButton extends JButton//JBPanel<BorderLayoutPanel>
 {
     private final int maxWidth;
 
-    public ThreadClusterJBPanel(final int maxWidth)
+    public ThreadClusterButton(final int maxWidth)
     {
         this.maxWidth = maxWidth;
+        this.setBorder(null);
+        //this.setBorder(BorderFactory.createLineBorder(VisConstants.ORANGE));
+        //this.setBorderPainted(false);
     }
 
     public void setMouseIn(final boolean mouseIn)
