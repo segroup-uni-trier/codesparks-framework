@@ -96,7 +96,6 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final ThreadArtifactClustering threadClusters =
                 artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
-
 //        final List<ThreadArtifactCluster> threadClusters = artifact.getThreadArtifactClustering(new ApacheKMeans(primaryMetricIdentifier, 3));
 
 //        final BestSilhouetteKClustering bestSilhouetteKClustering = new BestSilhouetteKClustering(new ApacheKMeans(primaryMetricIdentifier), 6);
@@ -114,24 +113,16 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             /*
              * Draw the metric value sum bar
              */
-
             final Color backgroundMetricColor = VisualizationUtil.getBackgroundMetricColor(clusterColor, .35f);
             final JBColor clusterMetricValueSumColor = new JBColor(backgroundMetricColor, backgroundMetricColor);
 
             graphics.setColor(clusterMetricValueSumColor);
 
-            int clusterWidth;
             double percent = getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(threadArtifacts, threadCluster,
                     threadFilteredTotalMetricValueOfArtifact, createDisabledViz);
 
-            if (percent > 0D)
-            {
-                int discrete = (int) (percent * 100 / 10 + 0.9999);
-                clusterWidth = clusterBarMaxWidth / 10 * discrete;
-            } else
-            {
-                clusterWidth = 0;
-            }
+            int clusterWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
+
             graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, TOP_OFFSET + threadSquareYPos, clusterWidth, threadSquareEdgeLength);
 
             if (clusterWidth > 0)
@@ -151,19 +142,11 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             /*
              * Draw the metric value avg bar
              */
-
             graphics.setColor(clusterColor);
             percent = getThreadFilteredArtifactMetricValueAverageOfClusterRelativeToTotal(threadArtifacts, threadCluster,
                     threadFilteredTotalMetricValueOfArtifact, createDisabledViz);
 
-            if (percent > 0D)
-            {
-                int discrete = (int) (percent * 100 / 10 + 0.9999);
-                clusterWidth = clusterBarMaxWidth / 10 * discrete;
-            } else
-            {
-                clusterWidth = 0;
-            }
+            clusterWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
             graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, TOP_OFFSET + threadSquareYPos, clusterWidth, threadSquareEdgeLength);
 
             if (clusterWidth > 0)
@@ -192,13 +175,16 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             graphics.drawLine(plusSymbolXOffset - 2, 2, plusSymbolXOffset + 2, 2);
         }
 
-
         // Creation of the label
         final JLabel jLabel = makeLabel(graphics);
         jLabel.addMouseListener(new ThreadForkVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
         return jLabel;
     }
 
+    /**
+     * @deprecated Use {@link ThreadVisualizationUtil#getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(AMetricIdentifier, Collection, ThreadArtifactCluster, double, boolean)} } instead
+     */
+    @Deprecated
     private double getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(final Collection<AThreadArtifact> threadsOfArtifact,
                                                                                    final ThreadArtifactCluster threadArtifactCluster,
                                                                                    final double total,
@@ -213,6 +199,10 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         return ratio;
     }
 
+    /**
+     * @deprecated Use {@link ThreadVisualizationUtil#getThreadFilteredArtifactMetricValueAverageOfClusterRelativeToTotal(AMetricIdentifier, Collection, ThreadArtifactCluster, double, boolean)} } instead
+     */
+    @Deprecated
     private double getThreadFilteredArtifactMetricValueAverageOfClusterRelativeToTotal(final Collection<AThreadArtifact> threadsOfArtifact,
                                                                                        final ThreadArtifactCluster threadArtifactCluster,
                                                                                        final double total,

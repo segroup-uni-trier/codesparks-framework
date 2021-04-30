@@ -4,9 +4,21 @@
 package de.unitrier.st.codesparks.core.data;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
 {
+    public Set<AThreadArtifact> getAllThreadArtifacts()
+    {
+        Set<AThreadArtifact> threadArtifacts = new HashSet<>();
+        for (final ThreadArtifactCluster aThreadArtifacts : this)
+        {
+            threadArtifacts.addAll(aThreadArtifacts);
+        }
+        return threadArtifacts;
+    }
+
     /**
      * The distance ...
      *
@@ -104,6 +116,7 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
 
     /**
      * This is how it is implemented in the R package.
+     *
      * @param metricIdentifier
      * @return
      */

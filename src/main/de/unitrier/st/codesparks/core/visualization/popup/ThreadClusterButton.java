@@ -7,21 +7,49 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.util.ui.components.BorderLayoutPanel;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
+import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 
-import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.Set;
 
-public class ThreadClusterButton extends JButton//JBPanel<BorderLayoutPanel>
+public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
 {
-    private final int maxWidth;
+    private final AArtifact artifact;
+    private final AMetricIdentifier metricIdentifier;
+    private final Set<Component> componentsToRepaint;
+    private final IThreadSelectable threadSelectable;
+    private final ThreadArtifactCluster cluster;
+    private final JBColor color;
+    private final Rectangle boundsRectangle;
+    private final IThreadClusterButtonFillStrategy fillStrategy;
 
-    public ThreadClusterButton(final int maxWidth)
+    public ThreadClusterButton(final AArtifact artifact
+            , final AMetricIdentifier metricIdentifier
+            , final ThreadArtifactCluster cluster
+            , final IThreadSelectable threadSelectable
+            , final JBColor color
+            , final Rectangle boundsRectangle
+            , final IThreadClusterButtonFillStrategy fillStrategy
+    )
     {
-        this.maxWidth = maxWidth;
-        this.setBorder(null);
-        //this.setBorder(BorderFactory.createLineBorder(VisConstants.ORANGE));
-        //this.setBorderPainted(false);
+        this.artifact = artifact;
+        this.metricIdentifier = metricIdentifier;
+        this.cluster = cluster;
+        this.threadSelectable = threadSelectable;
+        this.color = color;
+        this.boundsRectangle = boundsRectangle;
+        this.fillStrategy = fillStrategy;
+        this.componentsToRepaint = new HashSet<>(4);
+
+        this.addMouseListener(ClusterButtonMouseAdapter.getInstance());
+        this.setBounds(boundsRectangle);
     }
 
     public void setMouseIn(final boolean mouseIn)
@@ -31,15 +59,142 @@ public class ThreadClusterButton extends JButton//JBPanel<BorderLayoutPanel>
 
     private boolean mouseIn = false;
 
-    @Override
-    public void paint(final Graphics g)
+    public void registerComponentToRepaint(final ThreadClusterButton component)
     {
-        super.paint(g);
+        this.componentsToRepaint.add(component);
+    }
+
+    public Set<Component> getComponentsToRepaint()
+    {
+        return componentsToRepaint;
+    }
+
+    private final static BasicStroke dashed = new BasicStroke(1.0f,
+            BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{10.0f}, 0.0f);
+
+    @Override
+    protected void paintComponent(final Graphics g)
+    {
+        super.paintComponent(g);
+
+        final Graphics2D graphics = (Graphics2D) g;
+        graphics.setStroke(dashed);
+        graphics.setColor(color);
+        graphics.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+        if (fillStrategy != null)
+        {
+            fillStrategy.fillThreadClusterButton(this, g);
+        }
         if (mouseIn)
         {
-            final Graphics2D graphics = (Graphics2D) getGraphics();
             graphics.setColor(VisConstants.ORANGE);
-            graphics.drawRect(0, 0, getWidth(), getHeight());
+            final int strokeWidth = 2;
+            graphics.setStroke(new BasicStroke(strokeWidth));
+            graphics.drawRect(1, 1, getWidth() - strokeWidth, getHeight() - strokeWidth);
+        }
+    }
+
+    public AArtifact getArtifact()
+    {
+        return artifact;
+    }
+
+    public IThreadSelectable getThreadSelectable()
+    {
+        return threadSelectable;
+    }
+
+    public ThreadArtifactCluster getCluster()
+    {
+        return cluster;
+    }
+
+    public AMetricIdentifier getMetricIdentifier()
+    {
+        return metricIdentifier;
+    }
+
+    public Rectangle getBoundsRectangle()
+    {
+        return boundsRectangle;
+    }
+
+    public JBColor getColor()
+    {
+        return color;
+    }
+
+    //    @Override
+//    public void paint(final Graphics g)
+//    {
+//        super.paint(g);
+//    }
+
+    private static class ClusterButtonMouseAdapter extends MouseAdapter
+    {
+        private static MouseAdapter instance;
+
+        public static MouseAdapter getInstance()
+        {
+            if (instance == null)
+            {
+                synchronized (ClusterButtonMouseAdapter.class)
+                {
+                    if (instance == null)
+                    {
+                        instance = new ClusterButtonMouseAdapter();
+                    }
+                }
+            }
+            return instance;
+        }
+
+        private ClusterButtonMouseAdapter() {}
+
+        @Override
+        public void mouseEntered(final MouseEvent e)
+        {
+            final ThreadClusterButton source = (ThreadClusterButton) e.getSource();
+            VisualizationUtil.setCursorRecursively(source, Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            source.setMouseIn(true);
+            for (final Component component : source.getComponentsToRepaint())
+            {
+                if (component instanceof ThreadClusterButton)
+                {
+                    ((ThreadClusterButton) component).setMouseIn(true);
+                }
+                component.repaint();
+            }
+            source.repaint();
+        }
+
+        @Override
+        public void mouseExited(final MouseEvent e)
+        {
+            final ThreadClusterButton source = (ThreadClusterButton) e.getSource();
+            VisualizationUtil.setCursorRecursively(source, Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+            source.setMouseIn(false);
+            for (final Component component : source.getComponentsToRepaint())
+            {
+                if (component instanceof ThreadClusterButton)
+                {
+                    ((ThreadClusterButton) component).setMouseIn(false);
+                }
+                component.repaint();
+            }
+            source.repaint();
+        }
+
+        @Override
+        public void mouseClicked(final MouseEvent e)
+        {
+            final ThreadClusterButton source = (ThreadClusterButton) e.getSource();
+            if (source != null)
+            {
+                final IThreadSelectable threadSelectable = source.getThreadSelectable();
+                threadSelectable.toggleCluster(source.getCluster());
+            }
+            System.out.println("ThreadSelectable!");
         }
     }
 }

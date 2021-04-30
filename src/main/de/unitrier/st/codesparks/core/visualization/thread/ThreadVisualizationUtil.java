@@ -1,39 +1,88 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import de.unitrier.st.codesparks.core.data.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public final class ThreadVisualizationUtil
 {
     private ThreadVisualizationUtil() { }
 
-    public static double calculateFilteredAvgNumericalMetricRatio(
-            final ThreadArtifactCluster cluster
-            , final AMetricIdentifier metricIdentifier
-            , final boolean ignoreFilter
+    // Used in ThreadFork and ZoomedThreadFork
+    public static int getDiscreteTenValuedScaleWidth(final double percent, final int maxWidth)
+    {
+        int discreteWidth = 0;
+        if (percent > 0D)
+        {
+            int discrete = (int) (percent * 100 / 10 + 0.9999);
+            discreteWidth = maxWidth / 10 * discrete;
+        }
+        return discreteWidth;
+    }
+
+    // Used in ThreadFork and ZoomedThreadFork
+    public static double getThreadFilteredArtifactMetricValueAverageOfClusterRelativeToTotal(
+            final AMetricIdentifier metricIdentifier,
+            final Collection<AThreadArtifact> threadsOfArtifact,
+            final Collection<AThreadArtifact> threadArtifactsOfCluster,
+            final double total,
+            final boolean createDisabledViz
     )
     {
-        double sum = 0;
-        int threads = 0;
-        for (AThreadArtifact codeSparksThread : cluster)
+        final OptionalDouble average =
+                threadsOfArtifact.stream().filter(threadExecutingArtifact -> (createDisabledViz || !threadExecutingArtifact.isFiltered()) && threadArtifactsOfCluster.stream().anyMatch(
+                        clusterThread -> (createDisabledViz || !clusterThread.isFiltered()) && clusterThread.getIdentifier().equals(threadExecutingArtifact.getIdentifier())
+                )).mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(metricIdentifier)).average();
+        if (average.isPresent())
         {
-            if (codeSparksThread.isFiltered() && !ignoreFilter)
+            //noinspection UnnecessaryLocalVariable
+            final double ratio = average.getAsDouble() / total;
+            return ratio;
+        }
+        return Double.NaN;
+    }
+
+    // Used in ThreadFork and ZoomedThreadFork
+    public static double getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(
+            final AMetricIdentifier metricIdentifier,
+            final Collection<AThreadArtifact> threadsOfArtifact,
+            final Collection<AThreadArtifact> threadArtifactsOfCluster,
+            final double total,
+            final boolean createDisabledViz
+    )
+    {
+        final double sum =
+                threadsOfArtifact.stream().filter(threadExecutingArtifact -> (createDisabledViz || !threadExecutingArtifact.isFiltered()) && threadArtifactsOfCluster.stream().anyMatch(
+                        clusterThread -> (createDisabledViz || !clusterThread.isFiltered()) && clusterThread.getIdentifier().equals(threadExecutingArtifact.getIdentifier())
+                )).mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(metricIdentifier)).sum();
+        //noinspection UnnecessaryLocalVariable
+        final double ratio = sum / total;
+        return ratio;
+    }
+
+
+    // Used in ZoomedThreadRadar
+    public static double calculateFilteredSumNumericalMetricRatioForZoomVisualisation(final ThreadArtifactCluster cluster,
+                                                                                      final AMetricIdentifier metricIdentifier,
+                                                                                      final Set<AThreadArtifact> selectedThreadArtifacts,
+                                                                                      final boolean ignoreFilter)
+    {
+        double sum = 0;
+        for (AThreadArtifact codeSparksThread : selectedThreadArtifacts)
+        {
+            if (!cluster.contains(codeSparksThread) && !ignoreFilter)
                 continue;
 
             sum += codeSparksThread.getNumericalMetricValue(metricIdentifier);
-            threads++;
         }
-        return (threads == 0) ? 0 : sum / threads;
+        return sum;
     }
 
+    // Used in ZoomedThreadRadar
     public static double calculateFilteredAvgNumericalMetricRatioForZoomVisualization(
             final ThreadArtifactCluster cluster
             , final Set<AThreadArtifact> selectedCodeSparksThreads
@@ -59,49 +108,6 @@ public final class ThreadVisualizationUtil
             sum += codeSparksThread.getNumericalMetricValue(metricIdentifier);
         }
         return sum / size;
-    }
-
-    public static double calculateFilteredSumNumericalMetricRatio(
-            final ThreadArtifactCluster cluster
-            , final AMetricIdentifier metricIdentifier
-            , final boolean ignoreFilter
-    )
-    {
-        if (ignoreFilter)
-        {
-            final Optional<Double> reduce = cluster.stream().map(thread -> thread.getNumericalMetricValue(metricIdentifier)).reduce(Double::sum);
-            if (reduce.isPresent())
-            {
-                return reduce.get();
-            }
-            return 0;
-        }
-        double sum = 0;
-        for (AThreadArtifact codeSparksThread : cluster)
-        {
-            if (codeSparksThread.isFiltered())
-            {
-                continue;
-            }
-            sum += codeSparksThread.getNumericalMetricValue(metricIdentifier);
-        }
-        return sum;
-    }
-
-    public static double calculateFilteredSumNumericalMetricRatioForZoomVisualisation(final ThreadArtifactCluster cluster,
-                                                                                      final AMetricIdentifier metricIdentifier,
-                                                                                      final Set<AThreadArtifact> selectedThreadArtifacts,
-                                                                                      final boolean ignoreFilter)
-    {
-        double sum = 0;
-        for (AThreadArtifact codeSparksThread : selectedThreadArtifacts)
-        {
-            if (!cluster.contains(codeSparksThread) && !ignoreFilter)
-                continue;
-
-            sum += codeSparksThread.getNumericalMetricValue(metricIdentifier);
-        }
-        return sum;
     }
 
     public static double getStartAngle(final int radius, final int labelRadius)

@@ -8,31 +8,36 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
-import de.unitrier.st.codesparks.core.visualization.popup.ThreadClusterButton;
-import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
+import de.unitrier.st.codesparks.core.visualization.popup.*;
 
 import java.awt.*;
 
 public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
 {
     private final AArtifact artifact;
+    private final AMetricIdentifier metricIdentifier;
     private final ThreadArtifactClustering threadArtifactClustering;
+    private final IThreadSelectable threadSelectable;
 
     public ZoomedThreadFork(
             final AArtifact artifact
+            , final AMetricIdentifier metricIdentifier
             , final ThreadArtifactClustering threadArtifactClustering
+            , final IThreadSelectable threadSelectable
     )
     {
         this.artifact = artifact;
+        this.metricIdentifier = metricIdentifier;
         this.threadArtifactClustering = threadArtifactClustering;
+        this.threadSelectable = threadSelectable;
         this.setLayout(null);
         final Dimension dimension = new Dimension(maxWidth, maxHeight);
         this.setPreferredSize(dimension);
         this.setMinimumSize(dimension);
-        //this.setMaximumSize(dimension);
     }
 
     private final int maxWidth = 480;
@@ -64,6 +69,7 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         //graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
 
+/*
 //-------------
         graphics2D.setColor(JBColor.RED);
         final int middleStrokeWidth = 4;
@@ -76,16 +82,16 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
         graphics2D.setColor(JBColor.BLUE);
         final int outStrokeWidth = 1;
         graphics2D.setStroke(new BasicStroke(outStrokeWidth));
-        graphics2D.drawLine(LEFT_OFFSET + (int) (width / 8d) /*- (int) Math.max(outStrokeWidth / 2d, 1)*/
+        graphics2D.drawLine(LEFT_OFFSET + (int) (width / 8d)
                 , TOP_OFFSET
-                , LEFT_OFFSET + (int) (width / 8d) /*- (int) Math.max(outStrokeWidth / 2d, 1)*/
+                , LEFT_OFFSET + (int) (width / 8d)
                 , TOP_OFFSET + height);
         graphics2D.drawLine(LEFT_OFFSET + (int) (width / 8d * 7) - (int) Math.max(outStrokeWidth / 2d, 1)
                 , TOP_OFFSET
                 , LEFT_OFFSET + (int) (width / 8d * 7) - (int) Math.max(outStrokeWidth / 2d, 1)
                 , TOP_OFFSET + height);
 //-------------
-
+*/
 
 
         /*
@@ -126,7 +132,8 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
 
         // Arrow right
         final double rightBarrierXPos = width - threadForkSymbolWith - horizontalMargin;
-        graphics2D.fillRect(LEFT_OFFSET + (int) (rightBarrierXPos + barrierWidth)
+        graphics2D.fillRect(LEFT_OFFSET + (int) (rightBarrierXPos + barrierWidth) - 1 // The -1 is a correction due to accuracy problems in floating point
+                // arithmetics
                 , TOP_OFFSET + (int) (height / 2 - arrowHeight / 2)
                 , (int) arrowWidth
                 , (int) arrowHeight);
@@ -159,13 +166,14 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
         graphics2D.setStroke(new BasicStroke(strokeWidth));
         graphics2D.drawRect(LEFT_OFFSET + (int) (leftThreadRectXPos - strokeWidth)
                 , TOP_OFFSET + (verticalMargin - strokeWidth)
-                , (int) (rectVizWidth + halfStrokeWidth)
+                , (int) (rectVizWidth + halfStrokeWidth) - 1 // -1 such that the left and right rect will overlap such that visually only one line is there
                 , height - 2 * verticalMargin + 2 * strokeWidth);
 
         // The cluster visualization area on the right
         double rightThreadRectXPos = width - leftThreadRectXPos - rectVizWidth;//leftBarrierXPos + barrierWidth + (int) (threadVizWidth * 1d / 3);
         rightThreadRectXPos = (rightThreadRectXPos - strokeWidth - halfStrokeWidth);
-        graphics2D.drawRect(LEFT_OFFSET + (int) rightThreadRectXPos
+        graphics2D.drawRect(LEFT_OFFSET + (int) rightThreadRectXPos + 1 // +1 such that the left and right rect will overlap such that visually only one line
+                // is there
                 , TOP_OFFSET + (verticalMargin - strokeWidth)
                 , (int) (rectVizWidth + halfStrokeWidth)
                 , height - 2 * verticalMargin + 2 * strokeWidth);
@@ -221,28 +229,48 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
             }
 
             // Cluster button left
-            final ThreadClusterButton leftClusterButton = new ThreadClusterButton(0);
-            leftClusterButton.setBackground(clusterColor);
-            leftClusterButton.setBounds(LEFT_OFFSET + (int) leftClusterX
+            final Rectangle leftClusterButtonBoundsRectangle = new Rectangle(
+                    LEFT_OFFSET + (int) leftClusterX
                     , TOP_OFFSET + (int) clusterYToDraw
                     , (int) clusterButtonWidth
                     , (int) clusterHeight);
+            final ThreadClusterButton leftClusterButton = new ThreadClusterButton(
+                    artifact
+                    , metricIdentifier
+                    , cluster
+                    , threadSelectable
+                    , clusterColor
+                    , leftClusterButtonBoundsRectangle
+                    , SumAvgClusterButtonFillStrategy.getInstance()
+            );
             add(leftClusterButton);
             // Cluster button right
-            final ThreadClusterButton rightClusterButton = new ThreadClusterButton(0);
-            rightClusterButton.setBackground(clusterColor);
-            rightClusterButton.setBounds(LEFT_OFFSET + (int) rightClusterX - 2 // The -2 is a correction due to accuracy problems in floating point arithmetics
+            final Rectangle rightClusterButtonBoundsRectangle = new Rectangle(
+                    LEFT_OFFSET + (int) rightClusterX - 2 // The -2 is a correction due to accuracy problems in floating point arithmetics
                     , TOP_OFFSET + (int) clusterYToDraw
                     , (int) clusterButtonWidth + 1 // The +1 is a correction due to accuracy problems in floating point arithmetics
                     , (int) clusterHeight);
+            final ThreadClusterButton rightClusterButton = new ThreadClusterButton(
+                    artifact
+                    , metricIdentifier
+                    , cluster
+                    , threadSelectable
+                    , clusterColor
+                    , rightClusterButtonBoundsRectangle
+                    , TotalNumberOfThreadsButtonFillStrategy.getInstance()
+            );
             add(rightClusterButton);
 
+            // Register the buttons to each other such that they sync whenever a mouse enter event occurs
+            leftClusterButton.registerComponentToRepaint(rightClusterButton);
+            rightClusterButton.registerComponentToRepaint(leftClusterButton);
 
             // Connection left
             graphics2D.setColor(clusterColor);
-            graphics2D.fillRect(LEFT_OFFSET + (int) (leftBarrierXPos + barrierWidth)
+            graphics2D.fillRect(LEFT_OFFSET + (int) (leftBarrierXPos + barrierWidth) - 1 //The -1 is a correction due to accuracy problems in floating point
+                    // arithmetics
                     , TOP_OFFSET + (int) (clusterYToDraw + (clusterHeight / 2 - clusterConnectionHeight / 2))
-                    , (int) connectionWidth
+                    , (int) connectionWidth + 1 //The +1 is a correction due to accuracy problems in floating point arithmetics
                     , (int) clusterConnectionHeight);
             // Connection right
             final double rightConnectionXPos = rightBarrierXPos - connectionWidth;

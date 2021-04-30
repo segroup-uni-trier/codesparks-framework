@@ -3,11 +3,9 @@
  */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTabbedPane;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.data.*;
@@ -16,7 +14,6 @@ import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationMouseL
 import de.unitrier.st.codesparks.core.visualization.popup.*;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,40 +42,11 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
 
         threadSelectables.clear();
 
-//        final JBPanel<BorderLayoutPanel> centerPanel = new JBPanel<>();
-//        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-
         final ThreadArtifactClustering threadArtifactClustering =
                 artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
 //        final ThreadArtifactClustering threadArtifactClustering = artifact
 //                .getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
-
-        final int nrOfClusters = threadArtifactClustering.size();
-
-        /*
-         * The zoomed viz tabbed pane
-         */
-        final JBTabbedPane zoomedVizTabbedPane = new JBTabbedPane();
-        //zoomedVizTabbedPane.getRootPane().setLayout(new BorderLayout());
-
-        if (nrOfClusters <= 6)
-        {
-            final JBPanel<BorderLayoutPanel> zoomedThreadFork = new ZoomedThreadFork(artifact, threadArtifactClustering);
-            //zoomedThreadFork.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
-            //zoomedThreadFork.setBorder(new EmptyBorder(0, 0, 10, 0));
-            final Dimension dimension = new Dimension(400, 150);
-            zoomedThreadFork.setMinimumSize(dimension);
-            zoomedThreadFork.setPreferredSize(dimension);
-            final JBPanel<BorderLayoutPanel> tabWrapper = new JBPanel<>();
-            tabWrapper.setLayout(new GridBagLayout());
-
-            final JBPanel<BorderLayoutPanel> zoomedThreadForkWrapper = new JBPanel<>(new BorderLayout());
-            zoomedThreadForkWrapper.add(zoomedThreadFork, BorderLayout.CENTER);
-            tabWrapper.add(zoomedThreadForkWrapper);
-            zoomedVizTabbedPane.addTab("Zoomed ThreadFork", tabWrapper);
-
-        }
 
         // I gonna need the clustersTree for the zoomed viz already
         final Map<String, List<AThreadArtifact>> map = new HashMap<>();
@@ -88,6 +56,36 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
             map.put("Cluster:" + clusterId++, threadArtifacts);
         }
         final AThreadSelectable threadClustersTree = new ThreadClusterTree(map, primaryMetricIdentifier);
+
+//        final JBPanel<BorderLayoutPanel> centerPanel = new JBPanel<>();
+//        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+
+
+        final int nrOfClusters = threadArtifactClustering.size();
+
+        /*
+         * The zoomed viz tabbed pane
+         */
+        final JBTabbedPane zoomedVizTabbedPane = new JBTabbedPane();
+        JBPanel<BorderLayoutPanel> zoomedThreadFork = null;
+        //zoomedVizTabbedPane.getRootPane().setLayout(new BorderLayout());
+        if (nrOfClusters <= 6)
+        {
+            zoomedThreadFork = new ZoomedThreadFork(
+                    artifact
+                    , primaryMetricIdentifier
+                    , threadArtifactClustering
+                    , threadClustersTree
+            );
+
+            final JBPanel<BorderLayoutPanel> tabWrapper = new JBPanel<>();
+            tabWrapper.setLayout(new GridBagLayout());
+
+            final JBPanel<BorderLayoutPanel> zoomedThreadForkWrapper = new JBPanel<>(new BorderLayout());
+            zoomedThreadForkWrapper.add(zoomedThreadFork, BorderLayout.CENTER);
+            tabWrapper.add(zoomedThreadForkWrapper);
+            zoomedVizTabbedPane.addTab("Zoomed ThreadFork", tabWrapper);
+        }
 
         /*
          * The thread metric density vis
@@ -281,6 +279,10 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
         for (final IThreadSelectable threadSelectable : threadSelectables)
         {
             threadSelectable.registerComponentToRepaintOnSelection(kernelBasedDensityEstimationPanel);
+            if (zoomedThreadFork != null)
+            {
+                threadSelectable.registerComponentToRepaintOnSelection(zoomedThreadFork);
+            }
         }
 
         //popupPanel.add(applyThreadFilter, BorderLayout.SOUTH);

@@ -1,14 +1,13 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 
 import javax.swing.*;
 import java.util.Set;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public interface IThreadSelectable extends IThreadSelectionProvider
 {
     Set<String> getFilteredThreadArtifactIdentifiers();
