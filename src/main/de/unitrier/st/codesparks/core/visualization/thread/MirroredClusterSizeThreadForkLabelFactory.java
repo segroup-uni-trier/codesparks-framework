@@ -101,7 +101,6 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
 
         final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
 
-
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {
             JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);
@@ -116,21 +115,13 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
                 }
             }
 
-            graphics.setColor(clusterColor);
-
             final long numberOfThreadsOfCluster = threadCluster.stream().filter(clusterThread -> (createDisabledViz || !clusterThread.isFiltered())).count();
 
             final double percent = numberOfThreadsOfCluster / totalNumberOfFilteredThreads;
 
-            int clusterWidth;
-            if (percent > 0D)
-            {
-                int discrete = (int) (percent * 100 / 10 + 0.9999);
-                clusterWidth = clusterBarMaxWidth / 10 * discrete;
-            } else
-            {
-                clusterWidth = 0;
-            }
+            final int clusterWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
+
+            graphics.setColor(clusterColor);
             graphics.fillRect(X_OFFSET_LEFT + barChartWidth - clusterWidth - 2, TOP_OFFSET + threadSquareYPos, clusterWidth, threadSquareEdgeLength);
 
             if (clusterWidth > 0)
@@ -141,7 +132,6 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
             clusterNum += 1;
 
             threadSquareYPos -= threadSquareOffset;
-
         }
 
         if (threadClusters.size() > 0) // TODO: When ready, change this to 3
@@ -155,9 +145,7 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
             graphics.drawLine(plusSymbolXOffset - 2, 2, plusSymbolXOffset + 2, 2);
         }
 
-
         // Creation of the label
-
         final JLabel jLabel = makeLabel(graphics);
         jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
         return jLabel;

@@ -44,28 +44,32 @@ public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFill
         final IThreadSelectable threadSelectable = threadClusterButton.getThreadSelectable();
         if (threadSelectable != null)
         {
-
             final ThreadArtifactCluster cluster = threadClusterButton.getCluster();
             final Set<AThreadArtifact> selectedThreadArtifactsOfCluster = threadSelectable.getSelectedThreadArtifactsOfCluster(cluster);
             final Set<AThreadArtifact> selectedThreadArtifacts = threadSelectable.getSelectedThreadArtifacts();
-            boolean createDisabledViz = false;
+            final AArtifact artifact = threadClusterButton.getArtifact();
+            boolean createDisabledViz = artifact.getThreadArtifacts().stream().allMatch(AThreadArtifact::isFiltered);
 
             final AMetricIdentifier metricIdentifier = threadClusterButton.getMetricIdentifier();
 
-            final AArtifact artifact = threadClusterButton.getArtifact();
-            final double threadFilteredTotalMetricValueOfArtifact = artifact.getThreadFilteredTotalNumericalMetricValue(metricIdentifier, createDisabledViz);
+            //final double threadFilteredTotalMetricValueOfArtifact = artifact.getThreadFilteredTotalNumericalMetricValue(metricIdentifier, createDisabledViz);
+
+            final double totalOfSelected =
+                    selectedThreadArtifacts.stream().filter(threadExecutingArtifact -> createDisabledViz || !threadExecutingArtifact.isFiltered())
+                            .mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(metricIdentifier)).sum();
 
             double percent = ThreadVisualizationUtil.getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(
                     metricIdentifier
                     , selectedThreadArtifacts
                     , selectedThreadArtifactsOfCluster
-                    , threadFilteredTotalMetricValueOfArtifact
+                    , totalOfSelected
                     , createDisabledViz
             );
 
             final Rectangle boundsRectangle = threadClusterButton.getBoundsRectangle();
 
-            final int sumWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, boundsRectangle.width);
+            final int sumWidth = (int) (boundsRectangle.width * percent);//ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, boundsRectangle
+            // .width);
 
             final JBColor color = threadClusterButton.getColor();
 
@@ -77,11 +81,12 @@ public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFill
                     metricIdentifier
                     , selectedThreadArtifacts
                     , selectedThreadArtifactsOfCluster
-                    , threadFilteredTotalMetricValueOfArtifact
+                    , totalOfSelected
                     , createDisabledViz
             );
 
-            final int avgWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, boundsRectangle.width);
+            final int avgWidth = (int) (boundsRectangle.width * percent);//ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, boundsRectangle
+            // .width);
 
             graphics.setColor(color);
             graphics.fillRect(0, 0, avgWidth, boundsRectangle.height);
