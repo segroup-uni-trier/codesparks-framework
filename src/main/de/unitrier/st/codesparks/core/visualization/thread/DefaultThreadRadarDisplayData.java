@@ -32,7 +32,7 @@ public class DefaultThreadRadarDisplayData implements IThreadRadarDisplayData
         codeSparksThreadDisplayData.setMetricValueSum(sum);
         codeSparksThreadDisplayData.setMetricValueAvg(sum / selectedCodeSparksThreads.size());
         codeSparksThreadDisplayData.setNumberOfThreads(selectedCodeSparksThreads.size());
-        codeSparksThreadDisplayData.setNumberOfThreadTypes(ThreadVisualizationUtil.getNumberOfSelectedThreadTypes(artifact,
+        codeSparksThreadDisplayData.setNumberOfThreadTypes(ThreadVisualizationUtil.getNumberOfFilteredThreadTypesInSelection(artifact,
                 selectedCodeSparksThreads));
 
         return codeSparksThreadDisplayData;
@@ -52,7 +52,7 @@ public class DefaultThreadRadarDisplayData implements IThreadRadarDisplayData
         codeSparksThreadDisplayData.setMetricValueSum(sum);
         codeSparksThreadDisplayData.setMetricValueAvg(sum / hoveredCodeSparksThreads.size());
         codeSparksThreadDisplayData.setNumberOfThreads(hoveredCodeSparksThreads.size());
-        codeSparksThreadDisplayData.setNumberOfThreadTypes(ThreadVisualizationUtil.getNumberOfSelectedThreadTypes(artifact,
+        codeSparksThreadDisplayData.setNumberOfThreadTypes(ThreadVisualizationUtil.getNumberOfFilteredThreadTypesInSelection(artifact,
                 hoveredCodeSparksThreads));
 
         return codeSparksThreadDisplayData;

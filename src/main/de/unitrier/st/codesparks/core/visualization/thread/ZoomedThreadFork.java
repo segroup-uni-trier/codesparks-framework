@@ -15,25 +15,26 @@ import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
 
 import java.awt.*;
+import java.util.List;
 
 public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
 {
     private final AArtifact artifact;
     private final AMetricIdentifier metricIdentifier;
     private final ThreadArtifactClustering threadArtifactClustering;
-    private final IThreadSelectable threadSelectable;
+    private final List<IThreadSelectable> threadSelectables;
 
     public ZoomedThreadFork(
             final AArtifact artifact
             , final AMetricIdentifier metricIdentifier
             , final ThreadArtifactClustering threadArtifactClustering
-            , final IThreadSelectable threadSelectable
+            , final List<IThreadSelectable> threadSelectables
     )
     {
         this.artifact = artifact;
         this.metricIdentifier = metricIdentifier;
         this.threadArtifactClustering = threadArtifactClustering;
-        this.threadSelectable = threadSelectable;
+        this.threadSelectables = threadSelectables;
         this.setLayout(null);
         final Dimension dimension = new Dimension(maxWidth, maxHeight);
         this.setPreferredSize(dimension);
@@ -236,9 +237,10 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
                     , (int) clusterHeight);
             final ThreadClusterButton leftClusterButton = new ThreadClusterButton(
                     artifact
+                    , threadArtifactClustering
                     , metricIdentifier
                     , cluster
-                    , threadSelectable
+                    , threadSelectables
                     , clusterColor
                     , leftClusterButtonBoundsRectangle
                     , SumAvgClusterButtonFillStrategy.getInstance()
@@ -252,12 +254,13 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
                     , (int) clusterHeight);
             final ThreadClusterButton rightClusterButton = new ThreadClusterButton(
                     artifact
+                    , threadArtifactClustering
                     , metricIdentifier
                     , cluster
-                    , threadSelectable
+                    , threadSelectables
                     , clusterColor
                     , rightClusterButtonBoundsRectangle
-                    , TotalNumberOfThreadsButtonFillStrategy.getInstance()
+                    , TotalNumberOfThreadsAndThreadTypesButtonFillStrategy.getInstance()
             );
             add(rightClusterButton);
 

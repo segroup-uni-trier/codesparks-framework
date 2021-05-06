@@ -139,48 +139,42 @@ public final class ThreadVisualizationUtil
         return discreteMetric;
     }
 
-    public static int getNumberOfThreadTypesInSet(final AArtifact artifact, Set<AThreadArtifact> codeSparksThreadArtifactsSet)
+    public static int getNumberOfThreadTypesInSet(final AArtifact artifact, Set<AThreadArtifact> threadArtifactsSet)
     {
-        if (codeSparksThreadArtifactsSet == null)
+        if (threadArtifactsSet == null)
         {
-            return 0;
+            return -1;
         }
         Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
         if (threadTypeLists == null)
         {
-            return 0;
+            return -1;
         }
         Set<String> collect = threadTypeLists.entrySet()
                 .stream()
                 .filter(stringListEntry -> stringListEntry.getValue()
                         .stream()
-                        .anyMatch(codeSparksThreadArtifactsSet::contains)).map(Map.Entry::getKey).collect(Collectors.toSet());
+                        .anyMatch(threadArtifactsSet::contains)).map(Map.Entry::getKey).collect(Collectors.toSet());
         return collect.size();
     }
 
-    public static int getNumberOfFilteredThreadTypes(final AArtifact artifact, Set<AThreadArtifact> filteredCodeSparksThreads)
+    public static int getNumberOfFilteredThreadTypesInSelection(final AArtifact artifact, Set<AThreadArtifact> selectedThreadArtifacts)
     {
-        if (filteredCodeSparksThreads == null)
+        if (selectedThreadArtifacts == null)
         {
-            filteredCodeSparksThreads =
-                    artifact.getThreadArtifacts()
-                            .stream()
-                            .filter(AThreadArtifact::isFiltered)
-                            .collect(Collectors.toSet());
-        }
-        return getNumberOfThreadTypesInSet(artifact, filteredCodeSparksThreads);
-    }
-
-    public static int getNumberOfSelectedThreadTypes(final AArtifact artifact, Set<AThreadArtifact> selectedCodeSparksThreads)
-    {
-        if (selectedCodeSparksThreads == null)
-        {
-            selectedCodeSparksThreads =
+            selectedThreadArtifacts =
                     artifact.getThreadArtifacts()
                             .stream()
                             .filter(threadArtifact -> !threadArtifact.isFiltered())
                             .collect(Collectors.toSet());
         }
-        return getNumberOfThreadTypesInSet(artifact, selectedCodeSparksThreads);
+        return getNumberOfThreadTypesInSet(artifact, selectedThreadArtifacts);
+    }
+
+    public static int getNumberOfFilteredThreadTypesOfCluster(final AArtifact artifact, ThreadArtifactCluster threadArtifactCluster)
+    {
+        final Set<AThreadArtifact> threadArtifactSet = threadArtifactCluster.stream().filter(threadArtifact -> !threadArtifact.isFiltered())
+                .collect(Collectors.toSet());
+        return getNumberOfThreadTypesInSet(artifact, threadArtifactSet);
     }
 }

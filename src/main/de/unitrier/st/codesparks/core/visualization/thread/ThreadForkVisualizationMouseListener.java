@@ -75,7 +75,7 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
                     artifact
                     , primaryMetricIdentifier
                     , threadArtifactClustering
-                    , threadClustersTree
+                    , threadSelectables
             );
 
             final JBPanel<BorderLayoutPanel> tabWrapper = new JBPanel<>();

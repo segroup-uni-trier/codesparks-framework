@@ -7,15 +7,15 @@ import de.unitrier.st.codesparks.core.visualization.VisConstants;
 
 import javax.swing.*;
 
-public final class TotalNumberOfThreadTypesLabelFactory extends AArtifactVisualizationLabelFactory
+public final class TextualTotalNumberOfThreadTypesLabelFactory extends AArtifactVisualizationLabelFactory
 {
 
-    public TotalNumberOfThreadTypesLabelFactory(final int sequence)
+    public TextualTotalNumberOfThreadTypesLabelFactory(final int sequence)
     {
         super(null, sequence);
     }
 
-    public TotalNumberOfThreadTypesLabelFactory(final int sequence, final int xOffsetLeft)
+    public TextualTotalNumberOfThreadTypesLabelFactory(final int sequence, final int xOffsetLeft)
     {
         super(null, sequence, xOffsetLeft);
     }
@@ -23,7 +23,7 @@ public final class TotalNumberOfThreadTypesLabelFactory extends AArtifactVisuali
     @Override
     public JLabel createArtifactLabel(final AArtifact artifact)
     {
-        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfSelectedThreadTypes(artifact, null);
+        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesInSelection(artifact, null);
         if (numberOfSelectedThreadTypes == 0)
         {
             numberOfSelectedThreadTypes = artifact.getThreadTypeLists().size();

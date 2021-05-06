@@ -10,6 +10,7 @@ import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 
@@ -18,31 +19,35 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 
 public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
 {
     private final AArtifact artifact;
+    private final ThreadArtifactClustering clustering;
     private final AMetricIdentifier metricIdentifier;
     private final Set<Component> componentsToRepaint;
-    private final IThreadSelectable threadSelectable;
+    private final List<IThreadSelectable> threadSelectables;
     private final ThreadArtifactCluster cluster;
     private final JBColor color;
     private final Rectangle boundsRectangle;
     private final IThreadClusterButtonFillStrategy fillStrategy;
 
     public ThreadClusterButton(final AArtifact artifact
+            , final ThreadArtifactClustering clustering
             , final AMetricIdentifier metricIdentifier
             , final ThreadArtifactCluster cluster
-            , final IThreadSelectable threadSelectable
+            , final List<IThreadSelectable> threadSelectables
             , final JBColor color
             , final Rectangle boundsRectangle
             , final IThreadClusterButtonFillStrategy fillStrategy
     )
     {
         this.artifact = artifact;
+        this.clustering = clustering;
         this.metricIdentifier = metricIdentifier;
         this.cluster = cluster;
-        this.threadSelectable = threadSelectable;
+        this.threadSelectables = threadSelectables;
         this.color = color;
         this.boundsRectangle = boundsRectangle;
         this.fillStrategy = fillStrategy;
@@ -70,7 +75,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
     }
 
     private final static BasicStroke dashed = new BasicStroke(1.0f,
-            BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{10.0f}, 0.0f);
+            BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{5.0f}, 0.0f);
 
     @Override
     protected void paintComponent(final Graphics g)
@@ -83,7 +88,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
         graphics.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
         if (fillStrategy != null)
         {
-            fillStrategy.fillThreadClusterButton(this, g);
+            fillStrategy.fillThreadClusterButton(this, clustering, g);
         }
         if (mouseIn)
         {
@@ -99,9 +104,9 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
         return artifact;
     }
 
-    public IThreadSelectable getThreadSelectable()
+    public List<IThreadSelectable> getThreadSelectables()
     {
-        return threadSelectable;
+        return threadSelectables;
     }
 
     public ThreadArtifactCluster getCluster()
@@ -191,8 +196,11 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
             final ThreadClusterButton source = (ThreadClusterButton) e.getSource();
             if (source != null)
             {
-                final IThreadSelectable threadSelectable = source.getThreadSelectable();
-                threadSelectable.toggleCluster(source.getCluster());
+                final List<IThreadSelectable> threadSelectables = source.getThreadSelectables();
+                for (final IThreadSelectable threadSelectable : threadSelectables)
+                {
+                    threadSelectable.toggleCluster(source.getCluster());
+                }
             }
             System.out.println("ThreadSelectable!");
         }

@@ -17,15 +17,15 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
+public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory extends AArtifactVisualizationLabelFactory
 {
     @SuppressWarnings("unused")
-    public MirroredClusterSizeThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
+    public MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
     }
 
-    public MirroredClusterSizeThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
+    public MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(primaryMetricIdentifier, sequence);
     }
@@ -117,14 +117,25 @@ public final class MirroredClusterSizeThreadForkLabelFactory extends AArtifactVi
 
             final long numberOfThreadsOfCluster = threadCluster.stream().filter(clusterThread -> (createDisabledViz || !clusterThread.isFiltered())).count();
 
-            final double percent = numberOfThreadsOfCluster / totalNumberOfFilteredThreads;
+            double percent = numberOfThreadsOfCluster / totalNumberOfFilteredThreads;
 
-            final int clusterWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
+            final int totalNumberOfThreadsWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
 
+            final Color backgroundMetricColor = VisualizationUtil.getBackgroundMetricColor(clusterColor, .35f);
+            graphics.setColor(backgroundMetricColor);
+            graphics.fillRect(X_OFFSET_LEFT + barChartWidth - totalNumberOfThreadsWidth - 2, TOP_OFFSET + threadSquareYPos, totalNumberOfThreadsWidth,
+                    threadSquareEdgeLength);
+
+            // The thread-types bar
+            final int numberOfFilteredThreadTypesOfCluster = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesOfCluster(artifact, threadCluster);
+            percent = numberOfFilteredThreadTypesOfCluster / totalNumberOfFilteredThreads;
+
+            final int totalNumberOfThreadTypesWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
             graphics.setColor(clusterColor);
-            graphics.fillRect(X_OFFSET_LEFT + barChartWidth - clusterWidth - 2, TOP_OFFSET + threadSquareYPos, clusterWidth, threadSquareEdgeLength);
+            graphics.fillRect(X_OFFSET_LEFT + barChartWidth - totalNumberOfThreadTypesWidth - 2, TOP_OFFSET + threadSquareYPos
+                    , totalNumberOfThreadTypesWidth, threadSquareEdgeLength);
 
-            if (clusterWidth > 0)
+            if (totalNumberOfThreadsWidth > 0)
             {
                 // Arrows after barrier
                 graphics.fillRect(X_OFFSET_LEFT + barChartWidth - 2, TOP_OFFSET + threadSquareYPos + 1, arrowLength - 1, 1);

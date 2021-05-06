@@ -4,9 +4,11 @@
 
 package de.unitrier.st.codesparks.core.visualization.popup;
 
+import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
+
 import java.awt.*;
 
 public interface IThreadClusterButtonFillStrategy
 {
-    void fillThreadClusterButton(final ThreadClusterButton threadClusterButton, final Graphics g);
+    void fillThreadClusterButton(final ThreadClusterButton threadClusterButton, final ThreadArtifactClustering clustering, final Graphics g);
 }

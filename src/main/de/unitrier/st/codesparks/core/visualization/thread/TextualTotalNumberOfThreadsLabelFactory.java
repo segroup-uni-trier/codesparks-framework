@@ -13,19 +13,19 @@ import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import javax.swing.*;
 import java.awt.*;
 
-public final class TotalNumberOfThreadsLabelFactory extends AArtifactVisualizationLabelFactory
+public final class TextualTotalNumberOfThreadsLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    public TotalNumberOfThreadsLabelFactory()
+    public TextualTotalNumberOfThreadsLabelFactory()
     {
         super(null);
     }
 
-    public TotalNumberOfThreadsLabelFactory(final int sequence)
+    public TextualTotalNumberOfThreadsLabelFactory(final int sequence)
     {
         super(null, sequence);
     }
 
-    public TotalNumberOfThreadsLabelFactory(final int sequence, final int xOffsetLeft)
+    public TextualTotalNumberOfThreadsLabelFactory(final int sequence, final int xOffsetLeft)
     {
         super(null, sequence, xOffsetLeft);
     }
