@@ -51,7 +51,7 @@
 
     <!-- Libs -->
 
-    <property name="idea.version.windows" value="2021.1"/>
+    <property name="idea.version.windows" value="2021.1.1"/>
     <property name="idea.version.linux" value="211.6693.111"/>
     <!--    <property name="jdk.home.intellij_idea" value=""/>-->
 
@@ -70,7 +70,7 @@
         <path id="libs">
             <fileset dir="${lib.dir}" includes="*.jar"/>
             <fileset dir="${jdk.home.intellij_idea}/lib" includes="**/*.jar"
-                     excludes="kotlin-stdlib-jdk8.jar,ant/lib/ant.jar"/>
+                     excludes="kotlin-stdlib-jdk8.jar,kotlin-reflect-*,ant/lib/ant.jar"/>
             <fileset dir="${jdk.home.intellij_idea}/plugins/java"
                      includes="**/*.jar"/> <!-- Although it compiles without these dependencies, it is required for, e.g. the class 'PsiClass' which is contained in the IntelliJ Plugin Development's internal 'Java Plugin'. So don't remove it!!! -->
         </path>
@@ -114,7 +114,7 @@
 
     <!-- Kotlin -->
 
-    <property name="kotlin-compiler.version" value="1.4.32"/>
+    <property name="kotlin-compiler.version" value="1.5.0"/>
     <property name="kotlin-compiler.file" value="${lib.dir}/kotlin-compiler-${kotlin-compiler.version}.zip"/>
 
     <target name="kotlin-compiler-available">
