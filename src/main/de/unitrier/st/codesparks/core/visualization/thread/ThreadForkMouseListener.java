@@ -83,8 +83,70 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
             final JBPanel<BorderLayoutPanel> zoomedThreadForkWrapper = new JBPanel<>(new BorderLayout());
             zoomedThreadForkWrapper.add(zoomedThreadFork, BorderLayout.CENTER);
-            tabWrapper.add(zoomedThreadForkWrapper);
+
+
+
+
+            final JPanel centerPanel = new JPanel(new BorderLayout());
+
+            final JBPanel<BorderLayoutPanel> leftPanel = new BorderLayoutPanel();
+            leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+
+            final JBPanel<BorderLayoutPanel> leftSelectedThreadsPanel = new BorderLayoutPanel();
+            leftSelectedThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                    "Selected threads"));
+
+            leftSelectedThreadsPanel.add(new Label("left selected Test"));
+
+            final JBPanel<BorderLayoutPanel> leftHoveredThreadsPanel = new BorderLayoutPanel();
+            leftHoveredThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                    "Hovered threads"));
+
+            leftHoveredThreadsPanel.add(new Label("left hovered Test"));
+
+            leftPanel.add(leftSelectedThreadsPanel);
+            leftPanel.add(leftHoveredThreadsPanel);
+
+            final JBPanel<BorderLayoutPanel> rightPanel = new BorderLayoutPanel();
+            rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+
+            final JBPanel<BorderLayoutPanel> rightSelectedThreadsPanel = new BorderLayoutPanel();
+            rightSelectedThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                    "Selected threads"));
+
+            rightSelectedThreadsPanel.add(new Label("right selected Test"));
+
+            final JBPanel<BorderLayoutPanel> rightHoveredThreadsPanel = new BorderLayoutPanel();
+            rightHoveredThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                    "Hovered cluster"));
+
+            rightHoveredThreadsPanel.add(new Label("right hovered Test"));
+
+            rightPanel.add(rightSelectedThreadsPanel);
+            rightPanel.add(rightHoveredThreadsPanel);
+
+            centerPanel.add(leftPanel, BorderLayout.WEST);
+            centerPanel.add(rightPanel, BorderLayout.EAST);
+            centerPanel.add(zoomedThreadForkWrapper, BorderLayout.CENTER);
+
+
+
+
+
+
+
+
+
+            tabWrapper.add(centerPanel);
             zoomedVizTabbedPane.addTab("Zoomed ThreadFork", tabWrapper);
+
+            for (final IThreadSelectable threadSelectable : threadSelectables)
+            {
+                threadSelectable.registerComponentToRepaintOnSelection(leftSelectedThreadsPanel);
+                threadSelectable.registerComponentToRepaintOnSelection(leftHoveredThreadsPanel);
+                threadSelectable.registerComponentToRepaintOnSelection(rightSelectedThreadsPanel);
+                threadSelectable.registerComponentToRepaintOnSelection(rightHoveredThreadsPanel);
+            }
         }
 
         /*

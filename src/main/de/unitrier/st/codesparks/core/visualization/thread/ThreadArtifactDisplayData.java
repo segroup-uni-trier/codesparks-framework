@@ -1,9 +1,9 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
-public class CodeSparksThreadDisplayData
+public class ThreadArtifactDisplayData
 {
     private double metricValueSum;
     private double metricValueAvg;
@@ -15,7 +15,7 @@ public class CodeSparksThreadDisplayData
         return metricValueSum;
     }
 
-    void setMetricValueSum(double metricValueSum)
+    void setMetricValueSum(final double metricValueSum)
     {
         this.metricValueSum = metricValueSum;
     }
@@ -25,7 +25,7 @@ public class CodeSparksThreadDisplayData
         return numberOfThreads;
     }
 
-    void setNumberOfThreads(int numberOfThreads)
+    void setNumberOfThreads(final int numberOfThreads)
     {
         this.numberOfThreads = numberOfThreads;
     }
@@ -35,7 +35,7 @@ public class CodeSparksThreadDisplayData
         return metricValueAvg;
     }
 
-    void setMetricValueAvg(double metricValueAvg)
+    void setMetricValueAvg(final double metricValueAvg)
     {
         this.metricValueAvg = metricValueAvg;
     }
@@ -45,7 +45,7 @@ public class CodeSparksThreadDisplayData
         return numberOfThreadTypes;
     }
 
-    public void setNumberOfThreadTypes(int numberOfThreadTypes)
+    public void setNumberOfThreadTypes(final int numberOfThreadTypes)
     {
         this.numberOfThreadTypes = numberOfThreadTypes;
     }

@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
@@ -9,9 +12,6 @@ import java.awt.*;
 import java.util.List;
 import java.util.Set;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ZoomedThreadRadar extends AThreadRadar
 {
     private final List<IThreadSelectable> threadSelectables;
@@ -46,14 +46,14 @@ public class ZoomedThreadRadar extends AThreadRadar
         {
             return;
         }
-
         VisualizationUtil.clearAndDrawTransparentBackground(g2d, getWidth(), getHeight());
 
         //VisualizationUtil.drawTransparentBackground(g2d, getWidth(), getHeight(), AlphaComposite.CLEAR);
 
-        List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(metricIdentifier);
+        final List<ThreadArtifactCluster> threadArtifactClusters =
+                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(metricIdentifier);
         int startAngle = 90; //set start angle to 90 for starting at 12 o'clock
-        JBColor[] colors = {new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), new JBColor(Color.decode("#B25283"),
+        final JBColor[] colors = {new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), new JBColor(Color.decode("#B25283"),
                 Color.decode("#B25283")), new JBColor(Color.decode("#3E877F"), Color.decode("#3E877F"))};
         //drawRectangleBackground();
 

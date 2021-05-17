@@ -27,14 +27,14 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 {
     private ZoomedThreadRadar zoomedThreadRadar;
     private final List<IThreadSelectable> threadSelectables;
-    private final IThreadRadarDisplayData radialThreadVisualizationPopupData;
+    private final IThreadArtifactsDisplayData threadArtifactsDisplayData;
     private final JLabel[] hoverLabels;
     private final AMetricIdentifier secondaryMetricIdentifier;
 
     public ThreadRadarMouseListener(
             final JComponent component
             , final AArtifact artifact
-            , final IThreadRadarDisplayData radialThreadVisualizationPopupData
+            , final IThreadArtifactsDisplayData threadArtifactsDisplayData
             , final AMetricIdentifier primaryMetricIdentifier
             , final AMetricIdentifier secondaryMetricIdentifier
     )
@@ -43,7 +43,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         this.component = component;
         this.hoverLabels = new JLabel[4];
         this.threadSelectables = new ArrayList<>();
-        this.radialThreadVisualizationPopupData = radialThreadVisualizationPopupData;
+        this.threadArtifactsDisplayData = threadArtifactsDisplayData;
         this.secondaryMetricIdentifier = secondaryMetricIdentifier;
         component.addMouseMotionListener(this);
     }
@@ -51,28 +51,28 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
     @Override
     protected PopupPanel createPopupContent(AArtifact artifact)
     {
-        PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "ThreadRadarPopup");
+        final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "ThreadRadarPopup");
 
         threadSelectables.clear();
         final JBTabbedPane tabbedPane = new JBTabbedPane();
 
-        ThreadArtifactClustering sortedDefaultThreadArtifactClustering =
+        final ThreadArtifactClustering sortedDefaultThreadArtifactClustering =
                 artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
-        Map<String, List<AThreadArtifact>> map = new HashMap<>();
+        final Map<String, List<AThreadArtifact>> map = new HashMap<>();
         int clusterId = 1;
-        for (ThreadArtifactCluster threadArtifacts : sortedDefaultThreadArtifactClustering)
+        for (final ThreadArtifactCluster threadArtifacts : sortedDefaultThreadArtifactClustering)
         {
             map.put("Cluster:" + clusterId++, threadArtifacts);
         }
 
-        AThreadSelectable threadClustersTree = new ThreadClusterTree(map, primaryMetricIdentifier);
+        final AThreadSelectable threadClustersTree = new ThreadClusterTree(map, primaryMetricIdentifier);
         threadSelectables.add(threadClustersTree);
         tabbedPane.addTab("Clusters", new JBScrollPane(threadClustersTree.getComponent()));
 
         // -------------
 
         final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
-        AThreadSelectable threadTypesTree = new ThreadTypeTree(threadTypeLists, primaryMetricIdentifier,
+        final AThreadSelectable threadTypesTree = new ThreadTypeTree(threadTypeLists, primaryMetricIdentifier,
                 sortedDefaultThreadArtifactClustering);
         threadSelectables.add(threadTypesTree);
         tabbedPane.addTab("Types", new JBScrollPane(threadTypesTree.getComponent()));
@@ -102,60 +102,60 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
 
         // ControlButtonsPanel!
-        JPanel controlButtonsWrapper = new JPanel(new BorderLayout());
-        JPanel controlButtonsBox = new JPanel();
+        final JPanel controlButtonsWrapper = new JPanel(new BorderLayout());
+        final JPanel controlButtonsBox = new JPanel();
         controlButtonsBox.setLayout(new BoxLayout(controlButtonsBox, BoxLayout.X_AXIS));
-        JButton selectAll = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.selectallbutton"));
+        final JButton selectAll = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.selectallbutton"));
         selectAll.addActionListener(e -> {
 
             UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewSelectAllButtonClicked);
 
-            for (IThreadSelectable threadSelectable : this.threadSelectables)
+            for (final IThreadSelectable threadSelectable : this.threadSelectables)
             {
                 threadSelectable.selectAll();
             }
         });
-        JButton deselectAll = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.deselectallbutton"));
+        final JButton deselectAll = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.deselectallbutton"));
         deselectAll.addActionListener(e -> {
 
             UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewDeselectAllButtonClicked);
 
-            for (IThreadSelectable threadSelectable : this.threadSelectables)
+            for (final IThreadSelectable threadSelectable : this.threadSelectables)
             {
                 threadSelectable.deselectAll();
             }
         });
 
-        JButton invert = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.invertallbutton"));
+        final JButton invert = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.invertallbutton"));
         invert.addActionListener(e -> {
 
             UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewInvertSelectionButtonClicked);
 
-            for (IThreadSelectable threadSelectable : this.threadSelectables)
+            for (final IThreadSelectable threadSelectable : this.threadSelectables)
             {
                 threadSelectable.invertAll();
             }
         });
 
-        JButton reset = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
+        final JButton reset = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
         reset.addActionListener(e -> {
 
             UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewResetThreadFilterButtonClicked);
 
             popupPanel.cancelPopup();
             threadSelectables.forEach(IThreadSelectable::selectAll);
-            ACodeSparksFlow currentProfilingFlow = CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow();
-            currentProfilingFlow.applyThreadArtifactFilter(GlobalResetThreadArtifactFilter.getInstance());
+            final ACodeSparksFlow currentCodeSparksFlow = CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow();
+            currentCodeSparksFlow.applyThreadArtifactFilter(GlobalResetThreadArtifactFilter.getInstance());
         });
 
-        JButton apply = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.button.apply.thread.filter"));
+        final JButton apply = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.button.apply.thread.filter"));
         apply.addActionListener(e -> {
 
             UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewApplyThreadFilterButtonClicked);
 
             popupPanel.cancelPopup();
-            int index = indexProvider.getThreadSelectableIndex();
-            IThreadSelectable iThreadSelectable = threadSelectables.get(index);
+            final int index = indexProvider.getThreadSelectableIndex();
+            final IThreadSelectable iThreadSelectable = threadSelectables.get(index);
             final IThreadArtifactFilter iThreadArtifactFilter = new DefaultThreadArtifactFilter(iThreadSelectable);
             CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(iThreadArtifactFilter);
         });
@@ -171,29 +171,29 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         // buildPopup(popupPanel); // Inlined this method!
 
         final float labelFontSize = 14.0f;
-        JPanel northWrapper = new JPanel(new BorderLayout());
-        JPanel northBox = new JPanel();
+        final JPanel northWrapper = new JPanel(new BorderLayout());
+        final JPanel northBox = new JPanel();
         northBox.setLayout(new BoxLayout(northBox, BoxLayout.X_AXIS));
-        JPanel northLeftWrapper = new JPanel(new BorderLayout());
-        JPanel northLeftBox = new JPanel();
+        final JPanel northLeftWrapper = new JPanel(new BorderLayout());
+        final JPanel northLeftBox = new JPanel();
         northLeftBox.setLayout(new BoxLayout(northLeftBox, BoxLayout.Y_AXIS));
         northLeftBox.setPreferredSize(new Dimension(150, 160));
-        JPanel radialVisualizationWrapper = new JPanel(new BorderLayout());
-        JPanel radialVisualizationBox = new JPanel();
+        final JPanel radialVisualizationWrapper = new JPanel(new BorderLayout());
+        final JPanel radialVisualizationBox = new JPanel();
         radialVisualizationBox.setLayout(new BoxLayout(radialVisualizationBox, BoxLayout.Y_AXIS));
-        JPanel radialVisualizationButtonsWrapper = new JPanel(new BorderLayout());
-        JPanel radialVisualizationButtonsBox = new JPanel();
+        final JPanel radialVisualizationButtonsWrapper = new JPanel(new BorderLayout());
+        final JPanel radialVisualizationButtonsBox = new JPanel();
         radialVisualizationButtonsBox.setLayout(new BoxLayout(radialVisualizationButtonsBox, BoxLayout.X_AXIS));
-        JPanel northRightWrapper = new JPanel(new BorderLayout());
-        JPanel northRightBox = new JPanel();
+        final JPanel northRightWrapper = new JPanel(new BorderLayout());
+        final JPanel northRightBox = new JPanel();
         northRightBox.setLayout(new BoxLayout(northRightBox, BoxLayout.Y_AXIS));
         northRightBox.setPreferredSize(new Dimension(170, 200));
-        JPanel selectedDataDisplayWrapper = new JPanel(new BorderLayout());
-        JPanel selectedDataDisplayBox = new JPanel();
+        final JPanel selectedDataDisplayWrapper = new JPanel(new BorderLayout());
+        final JPanel selectedDataDisplayBox = new JPanel();
         selectedDataDisplayBox.setLayout(new BoxLayout(selectedDataDisplayBox, BoxLayout.Y_AXIS));
         selectedDataDisplayBox.setPreferredSize(new Dimension(170, 50));
-        JPanel hoveredDataDisplayWrapper = new JPanel(new BorderLayout());
-        JPanel hoveredDataDisplayBox = new JPanel();
+        final JPanel hoveredDataDisplayWrapper = new JPanel(new BorderLayout());
+        final JPanel hoveredDataDisplayBox = new JPanel();
         hoveredDataDisplayBox.setLayout(new BoxLayout(hoveredDataDisplayBox, BoxLayout.Y_AXIS));
         hoveredDataDisplayBox.setPreferredSize(new Dimension(170, 50));
 
@@ -263,11 +263,11 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         }
 
         // ---------------------------------------------
-        CodeSparksThreadDisplayData selectedData =
-                radialThreadVisualizationPopupData.getSelectedThreadData(artifact, threadClustersTree.getSelectedThreadArtifacts());
+        ThreadArtifactDisplayData selectedData =
+                threadArtifactsDisplayData.getDisplayDataOfSelectedThreads(artifact, threadClustersTree.getSelectedThreadArtifacts());
         if (selectedData == null)
         {
-            selectedData = new CodeSparksThreadDisplayData();
+            selectedData = new ThreadArtifactDisplayData();
         }
         //final ThreadArtifactDisplayData finalSelectedData = selectedData;
 
@@ -279,8 +279,8 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
             {
                 int index = indexProvider.getThreadSelectableIndex();
                 IThreadSelectable iThreadSelectable = threadSelectables.get(index);
-                CodeSparksThreadDisplayData selectedThreadData =
-                        radialThreadVisualizationPopupData.getSelectedThreadData(artifact, iThreadSelectable.getSelectedThreadArtifacts());
+                ThreadArtifactDisplayData selectedThreadData =
+                        threadArtifactsDisplayData.getDisplayDataOfSelectedThreads(artifact, iThreadSelectable.getSelectedThreadArtifacts());
                 setText(metricString + " : " + CoreUtil.formatPercentage(selectedThreadData.getMetricValueSum()));
                 super.repaint();
             }
@@ -291,15 +291,15 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         // -------------------------------
 
         final String numberOfThreadTypesString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberoftypes");
-        JLabel selectedNumberOfThreadTypesLabel = new JLabel(numberOfThreadTypesString + " : " + selectedData.getNumberOfThreadTypes())
+        final JLabel selectedNumberOfThreadTypesLabel = new JLabel(numberOfThreadTypesString + " : " + selectedData.getNumberOfThreadTypes())
         {
             @Override
             public void repaint()
             {
                 int index = indexProvider.getThreadSelectableIndex();
                 IThreadSelectable iThreadSelectable = threadSelectables.get(index);
-                CodeSparksThreadDisplayData selectedThreadData =
-                        radialThreadVisualizationPopupData.getSelectedThreadData(artifact, iThreadSelectable.getSelectedThreadArtifacts());
+                ThreadArtifactDisplayData selectedThreadData =
+                        threadArtifactsDisplayData.getDisplayDataOfSelectedThreads(artifact, iThreadSelectable.getSelectedThreadArtifacts());
                 setText(numberOfThreadTypesString + " : " + selectedThreadData.getNumberOfThreadTypes());
                 super.repaint();
             }
@@ -317,8 +317,8 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
             {
                 int index = indexProvider.getThreadSelectableIndex();
                 IThreadSelectable iThreadSelectable = threadSelectables.get(index);
-                CodeSparksThreadDisplayData selectedThreadData =
-                        radialThreadVisualizationPopupData.getSelectedThreadData(artifact, iThreadSelectable.getSelectedThreadArtifacts());
+                ThreadArtifactDisplayData selectedThreadData =
+                        threadArtifactsDisplayData.getDisplayDataOfSelectedThreads(artifact, iThreadSelectable.getSelectedThreadArtifacts());
                 setText(numberOfThreadsString + " : " + selectedThreadData.getNumberOfThreads());
                 super.repaint();
             }
@@ -368,7 +368,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
          *
          */
 
-        for (IThreadSelectable threadSelectable : threadSelectables)
+        for (final IThreadSelectable threadSelectable : threadSelectables)
         {
             threadSelectable.registerComponentToRepaintOnSelection(zoomedThreadRadar);
             threadSelectable.registerComponentToRepaintOnSelection(selectedMetricLabel);
@@ -434,12 +434,12 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         {
             return;
         }
-        CodeSparksThreadDisplayData hoveredThreadData =
-                radialThreadVisualizationPopupData.getHoveredThreadData(artifact,
+        ThreadArtifactDisplayData hoveredThreadData =
+                threadArtifactsDisplayData.getDisplayDataOfHoveredThreads(artifact,
                         threadSelectables.get(0).getSelectedThreadArtifactsOfCluster(cluster));
         if (hoveredThreadData == null)
         {
-            hoveredThreadData = new CodeSparksThreadDisplayData();
+            hoveredThreadData = new ThreadArtifactDisplayData();
         }
 //        hoverLabels[0].setText("Metric (sum): " + formatter.format(hoveredThreadData.getMetricValueSum() * 100.0f) + "%");
 //        hoverLabels[1].setText("Metric (avg): " + formatter.format(hoveredThreadData.getMetricValueAvg() * 100.0f) + "%");

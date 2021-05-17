@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    private final IThreadRadarDisplayData radialThreadVisualizationPopupData;
+    private final IThreadArtifactsDisplayData threadArtifactsDisplayData;
     private final AMetricIdentifier secondaryMetricIdentifier;
 
     @SuppressWarnings("unused")
@@ -31,7 +31,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             , final AMetricIdentifier secondaryMetricIdentifier
     )
     {
-        this(primaryMetricIdentifier, secondaryMetricIdentifier, 0, new DefaultThreadRadarDisplayData(primaryMetricIdentifier));
+        this(primaryMetricIdentifier, secondaryMetricIdentifier, 0, new DefaultThreadArtifactsDisplayData(primaryMetricIdentifier));
     }
 
     public ThreadRadarLabelFactory(
@@ -40,19 +40,19 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             , final int sequence
     )
     {
-        this(primaryMetricIdentifier, secondaryMetricIdentifier, sequence, new DefaultThreadRadarDisplayData(primaryMetricIdentifier));
+        this(primaryMetricIdentifier, secondaryMetricIdentifier, sequence, new DefaultThreadArtifactsDisplayData(primaryMetricIdentifier));
     }
 
     public ThreadRadarLabelFactory(
             final AMetricIdentifier primaryMetricIdentifier
             , final AMetricIdentifier secondaryMetricIdentifier
             , final int sequence
-            , final IThreadRadarDisplayData radialThreadVisualizationPopupData
+            , final IThreadArtifactsDisplayData threadArtifactsDisplayData
     )
     {
         super(primaryMetricIdentifier, sequence);
         this.secondaryMetricIdentifier = secondaryMetricIdentifier;
-        this.radialThreadVisualizationPopupData = radialThreadVisualizationPopupData;
+        this.threadArtifactsDisplayData = threadArtifactsDisplayData;
     }
 
     @Override
@@ -201,7 +201,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             // trigger each time a click occurs. For each click a new listener will be attached!
             jLabel.removeMouseListener(mouseListener);
         }
-        jLabel.addMouseListener(new ThreadRadarMouseListener(jLabel, artifact, radialThreadVisualizationPopupData, primaryMetricIdentifier,
+        jLabel.addMouseListener(new ThreadRadarMouseListener(jLabel, artifact, threadArtifactsDisplayData, primaryMetricIdentifier,
                 secondaryMetricIdentifier));
         return jLabel;
     }
