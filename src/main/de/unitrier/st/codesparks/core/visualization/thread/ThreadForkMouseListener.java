@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ThreadForkVisualizationMouseListener extends AArtifactVisualizationMouseListener
+public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 {
     private final List<IThreadSelectable> threadSelectables;
 
-    ThreadForkVisualizationMouseListener(
+    ThreadForkMouseListener(
             final JComponent component
             , final AArtifact artifact
             , final AMetricIdentifier primaryMetricIdentifier
@@ -94,7 +94,7 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
         final KernelBasedDensityEstimationPanel kernelBasedDensityEstimationPanel =
                 new KernelBasedDensityEstimationPanel(threadClustersTree, primaryMetricIdentifier, threadArtifactClustering);
 
-        zoomedVizTabbedPane.addTab("Kernel Based Metric Density Estimation", kernelBasedDensityEstimationPanel);
+        zoomedVizTabbedPane.addTab("Histogram", kernelBasedDensityEstimationPanel);
 
 //        final JBPanel<BorderLayoutPanel> zoomedVizTabbedPaneWrapper = new BorderLayoutPanel();
 //        zoomedVizTabbedPaneWrapper.add(zoomedVizTabbedPane, BorderLayout.CENTER);
@@ -111,8 +111,7 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
         threadSelectables.add(threadClustersTree);
         selectablesTabbedPane.addTab("Clusters", new JBScrollPane(threadClustersTree.getComponent()));
 
-
-        final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
+        final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeListsOfThreadsWithNumericMetricValue(primaryMetricIdentifier);
         final AThreadSelectable threadTypesTree = new ThreadTypeTree(threadTypeLists, primaryMetricIdentifier, threadArtifactClustering);
         threadSelectables.add(threadTypesTree);
         // Register the observers -> they observe each other, i.e. a selection in one will be adopted to all other in the list
@@ -292,8 +291,8 @@ public class ThreadForkVisualizationMouseListener extends AArtifactVisualization
     @Override
     protected String createPopupTitle(final AArtifact artifact)
     {
-        final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
-        return "Total number of threads: " + artifact.getNumberOfThreads() +
+        final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeListsOfThreadsWithNumericMetricValue(primaryMetricIdentifier);
+        return "Total number of threads: " + artifact.getNumberOfThreadsWithNumericMetricValue(primaryMetricIdentifier) +
                 " | Different thread types: " + (threadTypeLists == null ? 0 : threadTypeLists.size());
     }
 }

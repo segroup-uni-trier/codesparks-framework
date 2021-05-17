@@ -5,6 +5,7 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
@@ -15,25 +16,26 @@ import java.awt.*;
 
 public final class TextualTotalNumberOfThreadsLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    public TextualTotalNumberOfThreadsLabelFactory()
+    public TextualTotalNumberOfThreadsLabelFactory(final AMetricIdentifier metricIdentifier)
     {
-        super(null);
+        super(metricIdentifier);
     }
 
-    public TextualTotalNumberOfThreadsLabelFactory(final int sequence)
+    public TextualTotalNumberOfThreadsLabelFactory(final AMetricIdentifier metricIdentifier, final int sequence)
     {
-        super(null, sequence);
+        super(metricIdentifier, sequence);
     }
 
-    public TextualTotalNumberOfThreadsLabelFactory(final int sequence, final int xOffsetLeft)
+    public TextualTotalNumberOfThreadsLabelFactory(final AMetricIdentifier metricIdentifier, final int sequence, final int xOffsetLeft)
     {
-        super(null, sequence, xOffsetLeft);
+        super(metricIdentifier, sequence, xOffsetLeft);
     }
 
     @Override
     public JLabel createArtifactLabel(final AArtifact artifact)
     {
-        long numberOfSelectedArtifactThreads = artifact.getThreadArtifacts().stream().filter(t -> !t.isFiltered()).count();
+        long numberOfSelectedArtifactThreads =
+                artifact.getThreadArtifacts().stream().filter(t -> t.getNumericalMetricValue(primaryMetricIdentifier) > 0 && !t.isFiltered()).count();
         if (numberOfSelectedArtifactThreads == 0)
         { // In case any thread is deselected, i.e. where for all threads thr the method call thr.isFiltered() yields true
             numberOfSelectedArtifactThreads = artifact.getNumberOfThreads();

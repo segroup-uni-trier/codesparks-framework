@@ -158,6 +158,29 @@ public final class ThreadVisualizationUtil
         return collect.size();
     }
 
+    public static int getNumberOfThreadTypesWithNumericMetricValueInSet(
+            final AArtifact artifact
+            , final AMetricIdentifier metricIdentifier
+            , Set<AThreadArtifact> threadArtifactsSet
+    )
+    {
+        if (threadArtifactsSet == null)
+        {
+            return -1;
+        }
+        Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
+        if (threadTypeLists == null)
+        {
+            return -1;
+        }
+        Set<String> collect = threadTypeLists.entrySet()
+                .stream()
+                .filter(stringListEntry -> stringListEntry.getValue().stream()
+                        .anyMatch(threadArtifact -> threadArtifactsSet.contains(threadArtifact)
+                                && threadArtifact.getNumericalMetricValue(metricIdentifier) > 0)).map(Map.Entry::getKey).collect(Collectors.toSet());
+        return collect.size();
+    }
+
     public static int getNumberOfFilteredThreadTypesInSelection(final AArtifact artifact, Set<AThreadArtifact> selectedThreadArtifacts)
     {
         if (selectedThreadArtifacts == null)
@@ -165,16 +188,54 @@ public final class ThreadVisualizationUtil
             selectedThreadArtifacts =
                     artifact.getThreadArtifacts()
                             .stream()
-                            .filter(threadArtifact -> !threadArtifact.isFiltered())
+                            .filter(AThreadArtifact::isFiltered)
                             .collect(Collectors.toSet());
         }
         return getNumberOfThreadTypesInSet(artifact, selectedThreadArtifacts);
     }
 
-    public static int getNumberOfFilteredThreadTypesOfCluster(final AArtifact artifact, ThreadArtifactCluster threadArtifactCluster)
+    public static int getNumberOfFilteredThreadTypesInSelection(final AArtifact artifact)
+    {
+        return getNumberOfFilteredThreadTypesInSelection(artifact, null);
+    }
+
+    public static int getNumberOfFilteredThreadTypesWithNumericMetricValueInSelection(
+            final AArtifact artifact
+            , final AMetricIdentifier metricIdentifier
+            , Set<AThreadArtifact> selectedThreadArtifacts
+    )
+    {
+        if (selectedThreadArtifacts == null)
+        {
+            selectedThreadArtifacts =
+                    artifact.getThreadArtifacts()
+                            .stream()
+                            .filter(threadArtifact -> threadArtifact.getNumericalMetricValue(metricIdentifier) > 0 && !threadArtifact.isFiltered())
+                            .collect(Collectors.toSet());
+        }
+        return getNumberOfThreadTypesWithNumericMetricValueInSet(artifact, metricIdentifier, selectedThreadArtifacts);
+    }
+
+    public static int getNumberOfFilteredThreadTypesWithNumericMetricValueInSelection(final AArtifact artifact, final AMetricIdentifier metricIdentifier)
+    {
+        return getNumberOfFilteredThreadTypesWithNumericMetricValueInSelection(artifact, metricIdentifier, null);
+    }
+
+    public static int getNumberOfFilteredThreadTypesOfCluster(final AArtifact artifact, final ThreadArtifactCluster threadArtifactCluster)
     {
         final Set<AThreadArtifact> threadArtifactSet = threadArtifactCluster.stream().filter(threadArtifact -> !threadArtifact.isFiltered())
                 .collect(Collectors.toSet());
         return getNumberOfThreadTypesInSet(artifact, threadArtifactSet);
+    }
+
+    public static int getNumberOfFilteredThreadTypesWithNumericMetricValueOfCluster(
+            final AArtifact artifact
+            , final AMetricIdentifier metricIdentifier
+            , final ThreadArtifactCluster threadArtifactCluster
+    )
+    {
+        final Set<AThreadArtifact> threadArtifactSet = threadArtifactCluster.stream().filter(threadArtifact -> !threadArtifact.isFiltered())
+                .collect(Collectors.toSet());
+        return getNumberOfThreadTypesWithNumericMetricValueInSet(artifact, metricIdentifier, threadArtifactSet);
     }
 }

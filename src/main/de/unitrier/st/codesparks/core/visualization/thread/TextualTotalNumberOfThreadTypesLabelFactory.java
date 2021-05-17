@@ -1,6 +1,7 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
@@ -9,21 +10,26 @@ import javax.swing.*;
 
 public final class TextualTotalNumberOfThreadTypesLabelFactory extends AArtifactVisualizationLabelFactory
 {
-
-    public TextualTotalNumberOfThreadTypesLabelFactory(final int sequence)
+    public TextualTotalNumberOfThreadTypesLabelFactory(final AMetricIdentifier metricIdentifier)
     {
-        super(null, sequence);
+        super(metricIdentifier);
     }
 
-    public TextualTotalNumberOfThreadTypesLabelFactory(final int sequence, final int xOffsetLeft)
+    public TextualTotalNumberOfThreadTypesLabelFactory(final AMetricIdentifier metricIdentifier, final int sequence)
     {
-        super(null, sequence, xOffsetLeft);
+        super(metricIdentifier, sequence);
+    }
+
+    public TextualTotalNumberOfThreadTypesLabelFactory(final AMetricIdentifier metricIdentifier, final int sequence, final int xOffsetLeft)
+    {
+        super(metricIdentifier, sequence, xOffsetLeft);
     }
 
     @Override
     public JLabel createArtifactLabel(final AArtifact artifact)
     {
-        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesInSelection(artifact, null);
+        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.
+                getNumberOfFilteredThreadTypesWithNumericMetricValueInSelection(artifact, primaryMetricIdentifier);
         if (numberOfSelectedThreadTypes == 0)
         {
             numberOfSelectedThreadTypes = artifact.getThreadTypeLists().size();

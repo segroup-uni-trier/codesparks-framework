@@ -48,8 +48,8 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         final int width = this.getWidth();
         final int height = this.getHeight();
 
-        final int topOffset = 20;
-        final int horizontalMargin = 2;
+        final int topOffset = 30;
+        final int horizontalMargin = 20;
         final int verticalMargin = 1;
         final Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setStroke(new BasicStroke(2));
@@ -144,7 +144,7 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
                 int yValue = (int) (normalizedPj * vizHeight);
                 graphics2D.fillRect(horizontalMargin + (int) xValue - dotWithProbability / 2, height - yValue, dotWithProbability, dotWithProbability);
             }
-            infoString += "kernel=gaussian, bandwidth=" + bandWidth + ", ";
+            infoString += /*"Kernel Based Density Estimation: */"kernel=gaussian, bandwidth=" + bandWidth + ", ";
         }
 
         infoString += "max metric value=" + CoreUtil.formatPercentage(maxMetricValue) + "(x axis)";

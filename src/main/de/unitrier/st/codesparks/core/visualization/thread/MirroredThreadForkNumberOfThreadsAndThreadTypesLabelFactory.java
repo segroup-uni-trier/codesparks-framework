@@ -33,7 +33,7 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
     @Override
     public JLabel createArtifactLabel(final AArtifact artifact)
     {
-        final List<AThreadArtifact> threadArtifacts = new ArrayList<>(artifact.getThreadArtifacts());
+        final List<AThreadArtifact> threadArtifacts = new ArrayList<>(artifact.getThreadArtifactsWithNumericMetricValue(primaryMetricIdentifier));
 
         if (threadArtifacts.isEmpty())
         {

@@ -1,10 +1,10 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.data;
 
 import java.io.Serializable;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 interface IMetricIdentifier extends Serializable
 {
     String getIdentifier();

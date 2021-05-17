@@ -306,6 +306,11 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return !getThreadArtifacts().isEmpty();
     }
 
+    public boolean hasThreadsWithNumericMetricValue(final AMetricIdentifier metricIdentifier)
+    {
+        return !getThreadArtifactsWithNumericMetricValue(metricIdentifier).isEmpty();
+    }
+
     private final Object threadMapLock = new SerializableLockObject();
 
     public Collection<AThreadArtifact> getThreadArtifacts()
@@ -316,9 +321,17 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         }
     }
 
+    public Collection<AThreadArtifact> getThreadArtifactsWithNumericMetricValue(final AMetricIdentifier metricIdentifier)
+    {
+        synchronized (threadMapLock)
+        {
+            return threadMap.getOrCompute().values().stream().filter(t -> t.getNumericalMetricValue(metricIdentifier) > 0).collect(Collectors.toList());
+        }
+    }
+
     public Map<String, List<AThreadArtifact>> getThreadTypeLists()
     {
-        return getThreadTypeLists(s -> {
+        return getThreadTypeLists(getThreadArtifacts(), s -> {
             int index = s.indexOf(":");
             //noinspection UnnecessaryLocalVariable
             String substring = s.substring(0, index);
@@ -326,16 +339,27 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         });
     }
 
-    public Map<String, List<AThreadArtifact>> getThreadTypeLists(final Function<String, String> threadIdentifierProcessor)
+    public Map<String, List<AThreadArtifact>> getThreadTypeListsOfThreadsWithNumericMetricValue(final AMetricIdentifier metricIdentifier)
     {
-        final Collection<AThreadArtifact> threadArtifacts = getThreadArtifacts();
+        final Collection<AThreadArtifact> threadArtifacts = getThreadArtifactsWithNumericMetricValue(metricIdentifier);
+        return getThreadTypeLists(threadArtifacts, s -> {
+            int index = s.indexOf(":");
+            //noinspection UnnecessaryLocalVariable
+            String substring = s.substring(0, index);
+            return substring;
+        });
+    }
+
+    public Map<String, List<AThreadArtifact>> getThreadTypeLists(final Collection<AThreadArtifact> threadArtifacts,
+                                                                 final Function<String, String> threadIdentifierUsedAsKeyProcessor)
+    {
         final Map<String, List<AThreadArtifact>> threadTypeLists = new ConcurrentHashMap<>();
-        for (AThreadArtifact codeSparksThread : threadArtifacts)
+        for (final AThreadArtifact threadArtifact : threadArtifacts)
         {
-            final String identifier = codeSparksThread.getIdentifier();
-            final String processed = threadIdentifierProcessor.apply(identifier);
+            final String identifier = threadArtifact.getIdentifier();
+            final String processed = threadIdentifierUsedAsKeyProcessor.apply(identifier);
             final List<AThreadArtifact> threadArtifactList = threadTypeLists.getOrDefault(processed, new ArrayList<>());
-            threadArtifactList.add(codeSparksThread);
+            threadArtifactList.add(threadArtifact);
             threadTypeLists.put(processed, threadArtifactList);
         }
         return threadTypeLists;
@@ -402,6 +426,14 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         synchronized (threadMapLock)
         {
             return threadMap.getOrCompute().size();
+        }
+    }
+
+    public int getNumberOfThreadsWithNumericMetricValue(final AMetricIdentifier metricIdentifier)
+    {
+        synchronized (threadMapLock)
+        {
+            return (int) threadMap.getOrCompute().values().stream().filter(t -> t.getNumericalMetricValue(metricIdentifier) > 0).count();
         }
     }
 

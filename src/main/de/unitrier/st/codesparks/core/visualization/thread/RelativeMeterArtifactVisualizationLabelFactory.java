@@ -11,6 +11,7 @@ import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.net.URL;
 import java.util.Collection;
 
 public class RelativeMeterArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
@@ -32,12 +33,18 @@ public class RelativeMeterArtifactVisualizationLabelFactory extends AArtifactVis
     @Override
     public JLabel createArtifactLabel(@NotNull final AArtifact artifact)
     {
-        final Collection<AThreadArtifact> threadArtifacts = artifact.getThreadArtifacts();
+        final Collection<AThreadArtifact> threadArtifacts = artifact.getThreadArtifactsWithNumericMetricValue(primaryMetricIdentifier);
         if (threadArtifacts.isEmpty())
         {
             return emptyLabel();
         }
-        final ImageIcon imageIconFromFile = new ImageIcon(getClass().getResource("/icons/relative-meter.png"));
+        final Class<? extends RelativeMeterArtifactVisualizationLabelFactory> theClass = getClass();
+        final URL resource = theClass.getResource("/icons/relative-meter.png");
+        if (resource == null)
+        {
+            return emptyLabel();
+        }
+        final ImageIcon imageIconFromFile = new ImageIcon(resource);
         final int X_OFFSET_LEFT = this.X_OFFSET_LEFT + 1;
 //        final GraphicsConfiguration defaultConfiguration =
 //                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();

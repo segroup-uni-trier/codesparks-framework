@@ -64,9 +64,9 @@ public class ZoomedThreadRadar extends AThreadRadar
 
         int index = indexProvider.getThreadSelectableIndex();
 
-        final Set<AThreadArtifact> filteredCodeSparksThreads = threadSelectables.get(index).getFilteredThreadArtifacts();
-        final Set<AThreadArtifact> selectedCodeSparksThreads = threadSelectables.get(index).getSelectedThreadArtifacts();
-        final int numberOfSelectedArtifactThreads = selectedCodeSparksThreads.size();
+        final Set<AThreadArtifact> filteredThreadArtifacts = threadSelectables.get(index).getFilteredThreadArtifacts();
+        final Set<AThreadArtifact> selectedThreadArtifacts = threadSelectables.get(index).getSelectedThreadArtifacts();
+        final int numberOfSelectedArtifactThreads = selectedThreadArtifacts.size();
 
         String completeNumberOfThreadsString = numberOfSelectedArtifactThreads + "";
         int labelWidth;
@@ -83,16 +83,16 @@ public class ZoomedThreadRadar extends AThreadRadar
 
             double filteredRuntimeRatio =
                     ThreadVisualizationUtil.calculateFilteredAvgNumericalMetricRatioForZoomVisualization(threadArtifactClusters.get(i),
-                            selectedCodeSparksThreads, metricIdentifier, false);
+                            selectedThreadArtifacts, metricIdentifier, false);
             double filteredRuntimeRatioSum =
                     ThreadVisualizationUtil.calculateFilteredSumNumericalMetricRatioForZoomVisualisation(threadArtifactClusters.get(i),
-                            metricIdentifier, selectedCodeSparksThreads, false);
+                            metricIdentifier, selectedThreadArtifacts, false);
 
             final ThreadArtifactCluster clusterArtifacts = (ThreadArtifactCluster) threadArtifactClusters.get(i).clone();
-            clusterArtifacts.removeAll(filteredCodeSparksThreads);
+            clusterArtifacts.removeAll(filteredThreadArtifacts);
             double filteredThreadRatio = clusterArtifacts.size() / (double) numberOfSelectedArtifactThreads;
             double completeFilteredRuntimeDurationOfCluster = getFilteredMetricSumOfCluster(threadArtifactClusters.get(i), metricIdentifier,
-                    filteredCodeSparksThreads);
+                    filteredThreadArtifacts);
 
             properties.setNumericalMetricRatio(filteredRuntimeRatio);
             properties.setThreadRatio(filteredThreadRatio);
@@ -138,7 +138,7 @@ public class ZoomedThreadRadar extends AThreadRadar
         // Draw number of threads pedestal at the bottom
         drawPedestal(labelWidth, false, fontSize, numberOfSelectedArtifactThreads, yOffsetForTotalThreadsText);
         // Draw number of different thread types pedestal at the top
-        final int numberOfDifferentThreadTypes = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesInSelection(artifact, selectedCodeSparksThreads);
+        final int numberOfDifferentThreadTypes = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesInSelection(artifact, selectedThreadArtifacts);
         drawPedestal(labelWidth, true, fontSize, numberOfDifferentThreadTypes, yOffsetForDifferentClassesText);
 //        drawNumberOfDifferentThreadTypesLabel(labelWidth, fontSize, numberOfDifferentThreadTypes, yOffsetForDifferentClassesText);
     }

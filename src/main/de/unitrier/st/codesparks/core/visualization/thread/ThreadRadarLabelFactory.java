@@ -69,8 +69,10 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 
         boolean createDisabledViz = false;
 
-        long numberOfSelectedArtifactThreads = artifact.getThreadArtifacts().stream().filter(t -> !t.isFiltered()).count();
-        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesInSelection(artifact, null);
+        long numberOfSelectedArtifactThreads =
+                artifact.getThreadArtifacts().stream().filter(t -> t.getNumericalMetricValue(primaryMetricIdentifier) > 0 && !t.isFiltered()).count();
+        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesWithNumericMetricValueInSelection(artifact,
+                primaryMetricIdentifier);
 
         if (numberOfSelectedArtifactThreads == 0)
         { // In case any thread is deselected, i.e. where for all threads thr the method call thr.isFiltered() yields true

@@ -177,7 +177,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         // Creation of the label
         final JLabel jLabel = makeLabel(graphics);
-        jLabel.addMouseListener(new ThreadForkVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
+        jLabel.addMouseListener(new ThreadForkMouseListener(jLabel, artifact, primaryMetricIdentifier));
         return jLabel;
     }
 

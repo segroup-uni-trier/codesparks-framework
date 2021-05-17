@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -21,9 +24,6 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ThreadTree extends AThreadSelectable
 {
     protected final List<ThreadTreeLeafNode> leafNodes;
@@ -65,8 +65,8 @@ public class ThreadTree extends AThreadSelectable
 
         final List<Map.Entry<String, List<AThreadArtifact>>> entries = new ArrayList<>(threadTreeContent.entrySet());
         entries.sort(Map.Entry.comparingByValue((o1, o2) -> {
-                    double sum1 = o1.stream().mapToDouble((codeSparksThread) -> codeSparksThread.getNumericalMetricValue(metricIdentifier)).sum();
-                    double sum2 = o2.stream().mapToDouble((codeSparksThread) -> codeSparksThread.getNumericalMetricValue(metricIdentifier)).sum();
+                    double sum1 = o1.stream().mapToDouble((threadArtifact) -> threadArtifact.getNumericalMetricValue(metricIdentifier)).sum();
+                    double sum2 = o2.stream().mapToDouble((threadArtifact) -> threadArtifact.getNumericalMetricValue(metricIdentifier)).sum();
                     return Double.compare(sum2, sum1);
 //                    if (sum1 > sum2) return -1;
 //                    if (sum1 < sum2) return 1;
@@ -77,7 +77,8 @@ public class ThreadTree extends AThreadSelectable
         for (final Map.Entry<String, List<AThreadArtifact>> entry : entries)
         {
             final List<AThreadArtifact> threadArtifacts = entry.getValue();
-            if (threadArtifacts.isEmpty() || !threadArtifacts.stream().allMatch(thread -> thread.getNumericalMetricValue(metricIdentifier) > 0))
+//            if (threadArtifacts.isEmpty() || !threadArtifacts.stream().allMatch(thread -> thread.getNumericalMetricValue(metricIdentifier) > 0))
+            if (threadArtifacts.isEmpty())
             {
                 continue;
             }

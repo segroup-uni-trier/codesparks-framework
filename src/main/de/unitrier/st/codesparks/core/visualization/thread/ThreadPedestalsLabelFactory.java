@@ -5,6 +5,7 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
@@ -19,19 +20,19 @@ import java.util.Map;
 
 public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    public ThreadPedestalsLabelFactory()
+    public ThreadPedestalsLabelFactory(final AMetricIdentifier metricIdentifier)
     {
-        super(null);
+        super(metricIdentifier);
     }
 
-    public ThreadPedestalsLabelFactory(final int sequence)
+    public ThreadPedestalsLabelFactory(final AMetricIdentifier metricIdentifier, final int sequence)
     {
-        super(null, sequence);
+        super(metricIdentifier, sequence);
     }
 
-    public ThreadPedestalsLabelFactory(final int sequence, final int xOffsetLeft)
+    public ThreadPedestalsLabelFactory(final AMetricIdentifier metricIdentifier, final int sequence, final int xOffsetLeft)
     {
-        super(null, sequence, xOffsetLeft);
+        super(metricIdentifier, sequence, xOffsetLeft);
     }
 
     @Override
@@ -44,9 +45,10 @@ public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLab
             return emptyLabel();
         }
 
-
-        long numberOfSelectedArtifactThreads = artifact.getThreadArtifacts().stream().filter(t -> !t.isFiltered()).count();
-        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesInSelection(artifact, null);
+        long numberOfSelectedArtifactThreads =
+                artifact.getThreadArtifacts().stream().filter(t -> t.getNumericalMetricValue(primaryMetricIdentifier) > 0 && !t.isFiltered()).count();
+        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesWithNumericMetricValueInSelection(artifact,
+                primaryMetricIdentifier);
 
         if (numberOfSelectedArtifactThreads == 0)
         { // In case any thread is deselected, i.e. where for all threads thr the method call thr.isFiltered() yields true
