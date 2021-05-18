@@ -23,15 +23,18 @@ import java.util.Map;
 public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 {
     private final List<IThreadSelectable> threadSelectables;
+    private final IThreadArtifactsDisplayData threadArtifactsDisplayData;
 
     ThreadForkMouseListener(
             final JComponent component
             , final AArtifact artifact
             , final AMetricIdentifier primaryMetricIdentifier
+            , final IThreadArtifactsDisplayData threadArtifactsDisplayData
     )
     {
-        super(component, new Dimension(520, 170), artifact, primaryMetricIdentifier);
+        super(component, new Dimension(740, 170), artifact, primaryMetricIdentifier);
         this.threadSelectables = new ArrayList<>();
+        this.threadArtifactsDisplayData = threadArtifactsDisplayData;
     }
 
     @Override
@@ -84,9 +87,6 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             final JBPanel<BorderLayoutPanel> zoomedThreadForkWrapper = new JBPanel<>(new BorderLayout());
             zoomedThreadForkWrapper.add(zoomedThreadFork, BorderLayout.CENTER);
 
-
-
-
             final JPanel centerPanel = new JPanel(new BorderLayout());
 
             final JBPanel<BorderLayoutPanel> leftPanel = new BorderLayoutPanel();
@@ -96,7 +96,20 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             leftSelectedThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                     "Selected threads"));
 
+            // ---------------------------------------------
+            ThreadArtifactDisplayData selectedData =
+                    threadArtifactsDisplayData.getDisplayDataOfSelectedThreads(artifact, threadClustersTree.getSelectedThreadArtifacts());
+            if (selectedData == null)
+            {
+                selectedData = new ThreadArtifactDisplayData();
+            }
+
+
             leftSelectedThreadsPanel.add(new Label("left selected Test"));
+
+
+
+
 
             final JBPanel<BorderLayoutPanel> leftHoveredThreadsPanel = new BorderLayoutPanel();
             leftHoveredThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
@@ -150,7 +163,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         }
 
         /*
-         * The thread metric density vis
+         * The thread metric density estimation / histogram
          */
 
         final KernelBasedDensityEstimationPanel kernelBasedDensityEstimationPanel =

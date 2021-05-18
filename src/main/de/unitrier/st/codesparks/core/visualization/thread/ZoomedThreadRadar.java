@@ -138,8 +138,10 @@ public class ZoomedThreadRadar extends AThreadRadar
         // Draw number of threads pedestal at the bottom
         drawPedestal(labelWidth, false, fontSize, numberOfSelectedArtifactThreads, yOffsetForTotalThreadsText);
         // Draw number of different thread types pedestal at the top
-        final int numberOfDifferentThreadTypes = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesInSelection(artifact, selectedThreadArtifacts);
-        drawPedestal(labelWidth, true, fontSize, numberOfDifferentThreadTypes, yOffsetForDifferentClassesText);
+        final int numberOfSelectedThreadTypesWithNumericMetricValueInSelection =
+                ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact, metricIdentifier, selectedThreadArtifacts);
+//        final int numberOfDifferentThreadTypes = ThreadVisualizationUtil.getNumberOfSelectedThreadTypesInSelection(artifact, selectedThreadArtifacts);
+        drawPedestal(labelWidth, true, fontSize, numberOfSelectedThreadTypesWithNumericMetricValueInSelection, yOffsetForDifferentClassesText);
 //        drawNumberOfDifferentThreadTypesLabel(labelWidth, fontSize, numberOfDifferentThreadTypes, yOffsetForDifferentClassesText);
     }
 

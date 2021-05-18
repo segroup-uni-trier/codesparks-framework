@@ -15,7 +15,9 @@ import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory extends AArtifactVisualizationLabelFactory
 {
@@ -34,8 +36,8 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
     public JLabel createArtifactLabel(final AArtifact artifact)
     {
         final List<AThreadArtifact> threadArtifacts = new ArrayList<>(artifact.getThreadArtifactsWithNumericMetricValue(primaryMetricIdentifier));
-
-        if (threadArtifacts.isEmpty())
+        final int totalNumberOfThreads = threadArtifacts.size();
+        if (totalNumberOfThreads < 1)
         {
             return emptyLabel();
         }
@@ -81,11 +83,13 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
         final int threadSquareOffset = threadSquareEdgeLength + 1;
 
         int clusterNum = 0;
-        boolean createDisabledViz = threadArtifacts.stream().allMatch(AThreadArtifact::isFiltered);
 
-        final double totalNumberOfFilteredThreads =
-                (double) artifact.getThreadArtifacts().stream().filter(threadExecutingArtifact -> (createDisabledViz || !threadExecutingArtifact.isFiltered()))
-                        .count();
+        double totalNumberOfSelectedThreads = (double) threadArtifacts.stream().filter(AThreadArtifact::isSelected).count();
+        final boolean createDisabledViz = totalNumberOfSelectedThreads == 0;
+        if (createDisabledViz)
+        {
+            totalNumberOfSelectedThreads = totalNumberOfThreads;
+        }
 
 //        final List<ThreadArtifactCluster> threadClusters =
 //                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
@@ -99,15 +103,16 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
 //
 //        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(bestSilhouetteKClustering);
 
-        final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+        final Map<ThreadArtifactCluster, Boolean> clusterPropertiesPresent = new HashMap<>(threadClusters.size());
 
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {
             JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);
-
-            final VisualThreadClusterProperties properties = propertiesManager.getProperties(threadCluster);
+            final VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(threadCluster);
             if (properties != null)
             {
+                clusterPropertiesPresent.put(threadCluster, true);
                 final JBColor color = properties.getColor();
                 if (color != null)
                 {
@@ -115,9 +120,9 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
                 }
             }
 
-            final long numberOfThreadsOfCluster = threadCluster.stream().filter(clusterThread -> (createDisabledViz || !clusterThread.isFiltered())).count();
+            final long numberOfThreadsOfCluster = threadCluster.stream().filter(clusterThread -> (createDisabledViz || clusterThread.isSelected())).count();
 
-            double percent = numberOfThreadsOfCluster / totalNumberOfFilteredThreads;
+            double percent = numberOfThreadsOfCluster / totalNumberOfSelectedThreads;
 
             final int totalNumberOfThreadsWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
 
@@ -127,8 +132,9 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
                     threadSquareEdgeLength);
 
             // The thread-types bar
-            final int numberOfFilteredThreadTypesOfCluster = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesOfCluster(artifact, threadCluster);
-            percent = numberOfFilteredThreadTypesOfCluster / totalNumberOfFilteredThreads;
+            final int numberOfSelectedThreadTypesOfCluster = ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInCluster(
+                    artifact, primaryMetricIdentifier, threadCluster, createDisabledViz);
+            percent = numberOfSelectedThreadTypesOfCluster / totalNumberOfSelectedThreads;
 
             final int totalNumberOfThreadTypesWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
             graphics.setColor(clusterColor);
@@ -140,6 +146,20 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
                 // Arrows after barrier
                 graphics.fillRect(X_OFFSET_LEFT + barChartWidth - 2, TOP_OFFSET + threadSquareYPos + 1, arrowLength - 1, 1);
             }
+
+            // Save the position and color to the properties such that they can be reused in the neighbor artifact visualization
+            if (!clusterPropertiesPresent.getOrDefault(threadCluster, false))
+            {
+                final VisualThreadClusterProperties visualThreadClusterProperties =
+                        new VisualThreadClusterPropertiesBuilder(threadCluster)
+                                .setColor(clusterColor)
+                                .setPosition(clusterNum)
+                                .get();
+                clusterPropertiesManager.registerProperties(visualThreadClusterProperties);
+            }
+
+            //------------------
+
             clusterNum += 1;
 
             threadSquareYPos -= threadSquareOffset;

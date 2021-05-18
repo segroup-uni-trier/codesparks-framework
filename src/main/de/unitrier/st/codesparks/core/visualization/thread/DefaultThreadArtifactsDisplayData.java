@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
@@ -6,9 +9,6 @@ import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 
 import java.util.Set;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class DefaultThreadArtifactsDisplayData implements IThreadArtifactsDisplayData
 {
     private final AMetricIdentifier metricIdentifier;
@@ -19,41 +19,43 @@ public class DefaultThreadArtifactsDisplayData implements IThreadArtifactsDispla
     }
 
     @Override
-    public ThreadArtifactDisplayData getDisplayDataOfSelectedThreads(AArtifact artifact, Set<AThreadArtifact> selectedCodeSparksThreads)
+    public ThreadArtifactDisplayData getDisplayDataOfSelectedThreads(final AArtifact artifact, final Set<AThreadArtifact> selectedThreadArtifacts)
     {
         final ThreadArtifactDisplayData threadArtifactDisplayData = new ThreadArtifactDisplayData();
 
         double sum = 0;
-        for (AThreadArtifact selectedCodeSparksThread : selectedCodeSparksThreads)
+        for (final AThreadArtifact threadArtifact : selectedThreadArtifacts)
         {
-            sum += selectedCodeSparksThread.getNumericalMetricValue(metricIdentifier);
+            sum += threadArtifact.getNumericalMetricValue(metricIdentifier);
         }
 
         threadArtifactDisplayData.setMetricValueSum(sum);
-        threadArtifactDisplayData.setMetricValueAvg(sum / selectedCodeSparksThreads.size());
-        threadArtifactDisplayData.setNumberOfThreads(selectedCodeSparksThreads.size());
-        threadArtifactDisplayData.setNumberOfThreadTypes(ThreadVisualizationUtil.getNumberOfFilteredThreadTypesInSelection(artifact,
-                selectedCodeSparksThreads));
+        threadArtifactDisplayData.setMetricValueAvg(sum / selectedThreadArtifacts.size());
+        threadArtifactDisplayData.setNumberOfThreads(selectedThreadArtifacts.size());
+        final int numberOfSelectedThreadTypesWithNumericMetricValueInSelection =
+                ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact, metricIdentifier, selectedThreadArtifacts);
+        threadArtifactDisplayData.setNumberOfThreadTypes(numberOfSelectedThreadTypesWithNumericMetricValueInSelection);
 
         return threadArtifactDisplayData;
     }
 
     @Override
-    public ThreadArtifactDisplayData getDisplayDataOfHoveredThreads(AArtifact artifact, Set<AThreadArtifact> hoveredCodeSparksThreads)
+    public ThreadArtifactDisplayData getDisplayDataOfHoveredThreads(final AArtifact artifact, final Set<AThreadArtifact> hoveredThreadArtifacts)
     {
         final ThreadArtifactDisplayData threadArtifactDisplayData = new ThreadArtifactDisplayData();
 
         double sum = 0;
-        for (AThreadArtifact selectedCodeSparksThread : hoveredCodeSparksThreads)
+        for (final AThreadArtifact threadArtifact : hoveredThreadArtifacts)
         {
-            sum += selectedCodeSparksThread.getNumericalMetricValue(metricIdentifier);
+            sum += threadArtifact.getNumericalMetricValue(metricIdentifier);
         }
 
         threadArtifactDisplayData.setMetricValueSum(sum);
-        threadArtifactDisplayData.setMetricValueAvg(sum / hoveredCodeSparksThreads.size());
-        threadArtifactDisplayData.setNumberOfThreads(hoveredCodeSparksThreads.size());
-        threadArtifactDisplayData.setNumberOfThreadTypes(ThreadVisualizationUtil.getNumberOfFilteredThreadTypesInSelection(artifact,
-                hoveredCodeSparksThreads));
+        threadArtifactDisplayData.setMetricValueAvg(sum / hoveredThreadArtifacts.size());
+        threadArtifactDisplayData.setNumberOfThreads(hoveredThreadArtifacts.size());
+        final int numberOfSelectedThreadTypesWithNumericMetricValueInSelection =
+                ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact, metricIdentifier, hoveredThreadArtifacts);
+        threadArtifactDisplayData.setNumberOfThreadTypes(numberOfSelectedThreadTypesWithNumericMetricValueInSelection);
 
         return threadArtifactDisplayData;
     }

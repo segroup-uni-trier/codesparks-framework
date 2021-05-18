@@ -29,7 +29,7 @@ public final class TextualTotalNumberOfThreadTypesLabelFactory extends AArtifact
     public JLabel createArtifactLabel(final AArtifact artifact)
     {
         int numberOfSelectedThreadTypes = ThreadVisualizationUtil.
-                getNumberOfFilteredThreadTypesWithNumericMetricValueInSelection(artifact, primaryMetricIdentifier);
+                getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact, primaryMetricIdentifier);
         if (numberOfSelectedThreadTypes == 0)
         {
             numberOfSelectedThreadTypes = artifact.getThreadTypeLists().size();

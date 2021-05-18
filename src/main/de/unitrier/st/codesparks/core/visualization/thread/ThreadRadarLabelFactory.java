@@ -25,13 +25,14 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
     private final IThreadArtifactsDisplayData threadArtifactsDisplayData;
     private final AMetricIdentifier secondaryMetricIdentifier;
 
-    @SuppressWarnings("unused")
     public ThreadRadarLabelFactory(
             final AMetricIdentifier primaryMetricIdentifier
             , final AMetricIdentifier secondaryMetricIdentifier
     )
     {
-        this(primaryMetricIdentifier, secondaryMetricIdentifier, 0, new DefaultThreadArtifactsDisplayData(primaryMetricIdentifier));
+        super(primaryMetricIdentifier, 0);
+        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
+        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayData(primaryMetricIdentifier);
     }
 
     public ThreadRadarLabelFactory(
@@ -40,7 +41,9 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             , final int sequence
     )
     {
-        this(primaryMetricIdentifier, secondaryMetricIdentifier, sequence, new DefaultThreadArtifactsDisplayData(primaryMetricIdentifier));
+        super(primaryMetricIdentifier, sequence);
+        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
+        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayData(primaryMetricIdentifier);
     }
 
     public ThreadRadarLabelFactory(
@@ -58,8 +61,9 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
     @Override
     public JLabel createArtifactLabel(final AArtifact artifact)
     {
-        final Collection<AThreadArtifact> threadArtifacts = artifact.getThreadArtifacts();
-        if (threadArtifacts.isEmpty())
+        final Collection<AThreadArtifact> threadArtifacts = artifact.getThreadArtifactsWithNumericMetricValue(primaryMetricIdentifier);
+        final int totalNumberOfThreads = threadArtifacts.size();
+        if (totalNumberOfThreads < 1)
         {
             return emptyLabel();
         }
@@ -68,15 +72,14 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
                 artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
         boolean createDisabledViz = false;
+        long numberOfSelectedArtifactThreads = threadArtifacts.stream().filter(t -> !t.isFiltered()).count();
 
-        long numberOfSelectedArtifactThreads =
-                artifact.getThreadArtifacts().stream().filter(t -> t.getNumericalMetricValue(primaryMetricIdentifier) > 0 && !t.isFiltered()).count();
-        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesWithNumericMetricValueInSelection(artifact,
-                primaryMetricIdentifier);
+        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(
+                artifact, primaryMetricIdentifier);
 
         if (numberOfSelectedArtifactThreads == 0)
         { // In case any thread is deselected, i.e. where for all threads thr the method call thr.isFiltered() yields true
-            numberOfSelectedArtifactThreads = artifact.getNumberOfThreads();
+            numberOfSelectedArtifactThreads = totalNumberOfThreads;
             Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
             numberOfSelectedThreadTypes = threadTypeLists == null ? 0 : threadTypeLists.size();
             createDisabledViz = true;

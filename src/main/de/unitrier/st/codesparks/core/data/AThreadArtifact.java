@@ -36,6 +36,13 @@ public abstract class AThreadArtifact extends AArtifact
         this.filtered = filtered;
     }
 
+    public boolean isSelected() {return !filtered;}
+
+    public void setSelected(final boolean selected)
+    {
+        this.filtered = !selected;
+    }
+
     /**
      * Euclidean distance
      *

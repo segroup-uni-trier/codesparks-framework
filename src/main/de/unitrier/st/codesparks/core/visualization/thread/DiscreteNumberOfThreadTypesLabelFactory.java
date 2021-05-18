@@ -39,7 +39,9 @@ public class DiscreteNumberOfThreadTypesLabelFactory extends AArtifactVisualizat
         graphics.drawImage(firstThread.getImage(), X_OFFSET_LEFT, 2, null);
         totalWidth += firstThread.getIconWidth();
 
-        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesInSelection(artifact);
+        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact,
+                primaryMetricIdentifier);
+        //getNumberOfSelectedThreadTypesInSelection(artifact);
         if (numberOfSelectedThreadTypes == 0)
         {
             numberOfSelectedThreadTypes = artifact.getThreadTypeLists().size();

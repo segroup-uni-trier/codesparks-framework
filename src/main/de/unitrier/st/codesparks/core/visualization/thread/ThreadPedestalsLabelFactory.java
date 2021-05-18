@@ -47,7 +47,7 @@ public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLab
 
         long numberOfSelectedArtifactThreads =
                 artifact.getThreadArtifacts().stream().filter(t -> t.getNumericalMetricValue(primaryMetricIdentifier) > 0 && !t.isFiltered()).count();
-        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesWithNumericMetricValueInSelection(artifact,
+        int numberOfSelectedThreadTypes = ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact,
                 primaryMetricIdentifier);
 
         if (numberOfSelectedArtifactThreads == 0)

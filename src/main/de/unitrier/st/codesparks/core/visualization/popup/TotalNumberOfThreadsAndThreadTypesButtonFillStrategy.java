@@ -53,10 +53,10 @@ public class TotalNumberOfThreadsAndThreadTypesButtonFillStrategy implements ITh
             boolean createDisabledViz = artifact.getThreadArtifacts().stream().allMatch(AThreadArtifact::isFiltered);
 
             final long numberOfFilteredThreadsOfCluster =
-                    selectedThreadArtifactsOfCluster.stream().filter(clusterThread -> (createDisabledViz || !clusterThread.isFiltered())).count();
+                    selectedThreadArtifactsOfCluster.stream().filter(clusterThread -> (createDisabledViz || clusterThread.isSelected())).count();
 
             final double totalNumberOfFilteredThreads =
-                    (double) selectedThreadArtifacts.stream().filter(threadExecutingArtifact -> (createDisabledViz || !threadExecutingArtifact.isFiltered()))
+                    (double) selectedThreadArtifacts.stream().filter(threadExecutingArtifact -> (createDisabledViz || threadExecutingArtifact.isSelected()))
                             .count();
 
             double percent = numberOfFilteredThreadsOfCluster / totalNumberOfFilteredThreads;
@@ -76,11 +76,10 @@ public class TotalNumberOfThreadsAndThreadTypesButtonFillStrategy implements ITh
             // TODO: Number of types analogous to sum/avg approach, i.e. #threads low saturated and #types fully saturated because it always holds #threads
             //  >= #types
 
+            final int numberOfSelectedThreadTypesInCluster = ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact,
+                    threadClusterButton.getMetricIdentifier(), selectedThreadArtifactsOfCluster);
 
-            final int numberOfFilteredThreadTypesInCluster = ThreadVisualizationUtil.getNumberOfFilteredThreadTypesInSelection(artifact,
-                    selectedThreadArtifactsOfCluster);
-            //getNumberOfFilteredThreadTypesOfCluster(artifact, cluster);
-            percent = numberOfFilteredThreadTypesInCluster / totalNumberOfFilteredThreads;
+            percent = numberOfSelectedThreadTypesInCluster / totalNumberOfFilteredThreads;
 
             final int numberOfThreadTypesWidth = (int) (boundsRectangle.width * percent);
             graphics.setColor(color);

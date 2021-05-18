@@ -73,7 +73,7 @@ public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFill
 //            final double totalOfSelected = maxClusterSum;
 
 
-            double percent = ThreadVisualizationUtil.getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(
+            double percent = ThreadVisualizationUtil.getMetricValueSumOfSelectedThreadsOfTheClusterRelativeToTotal(
                     metricIdentifier
                     , selectedThreadArtifacts
                     , selectedThreadArtifactsOfCluster
@@ -102,7 +102,7 @@ public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFill
 //            graphics.fillRect(0, 0, lnScaledSumWidth, boundsRectangle.height);
 //            graphics.fillRect(0, 0, sqrtScaledSumWidth, boundsRectangle.height);
 
-            percent = ThreadVisualizationUtil.getThreadFilteredArtifactMetricValueAverageOfClusterRelativeToTotal(
+            percent = ThreadVisualizationUtil.getMetricValueAverageOfSelectedThreadsOfTheClusterRelativeToTotal(
                     metricIdentifier
                     , selectedThreadArtifacts
                     , selectedThreadArtifactsOfCluster

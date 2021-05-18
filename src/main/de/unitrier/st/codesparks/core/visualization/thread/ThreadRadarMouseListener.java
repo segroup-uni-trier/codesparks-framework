@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
@@ -20,9 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable
 {
     private ZoomedThreadRadar zoomedThreadRadar;
@@ -71,9 +71,8 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
         // -------------
 
-        final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
-        final AThreadSelectable threadTypesTree = new ThreadTypeTree(threadTypeLists, primaryMetricIdentifier,
-                sortedDefaultThreadArtifactClustering);
+        final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeListsOfThreadsWithNumericMetricValue(primaryMetricIdentifier);
+        final AThreadSelectable threadTypesTree = new ThreadTypeTree(threadTypeLists, primaryMetricIdentifier, sortedDefaultThreadArtifactClustering);
         threadSelectables.add(threadTypesTree);
         tabbedPane.addTab("Types", new JBScrollPane(threadTypesTree.getComponent()));
         tabbedPane.setMinimumSize(new Dimension(400, 150));
@@ -199,11 +198,9 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
         //Radial Visualization
 
-        zoomedThreadRadar = new ZoomedThreadRadar(artifact,
-                indexProvider,
-                threadSelectables, primaryMetricIdentifier);
+        zoomedThreadRadar = new ZoomedThreadRadar(artifact, indexProvider, threadSelectables, primaryMetricIdentifier);
         zoomedThreadRadar.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
-        ZoomedThreadRadarMouseAdapter mouseAdapter =
+        final ZoomedThreadRadarMouseAdapter mouseAdapter =
                 new ZoomedThreadRadarMouseAdapter(zoomedThreadRadar, artifact, primaryMetricIdentifier, this, northLeftWrapper);
         zoomedThreadRadar.addMouseMotionListener(mouseAdapter);
         zoomedThreadRadar.addMouseListener(mouseAdapter);
@@ -213,12 +210,12 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
         // Cluster selection buttons
 
-        JButton[] threadClusterSelectionButtons =
+        final JButton[] threadClusterSelectionButtons =
                 {
                         new JButton("C1"), new JButton("C2"), new JButton("C3")
                 };
 
-        VisualThreadClusterPropertiesManager manager = VisualThreadClusterPropertiesManager.getInstance();
+        final VisualThreadClusterPropertiesManager manager = VisualThreadClusterPropertiesManager.getInstance();
 
         for (int i = 0; i < threadClusterSelectionButtons.length; i++)
         {
@@ -235,15 +232,15 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
             if (i < numberOfClusters)
             {
-                ThreadArtifactCluster cluster = sortedDefaultThreadArtifactClustering.get(i);
+                final ThreadArtifactCluster cluster = sortedDefaultThreadArtifactClustering.get(i);
 
                 if (cluster.size() < 1)
                 {
                     threadClusterSelectionButtons[i].setEnabled(false);
                     continue;
                 }
-                VisualThreadClusterProperties properties = manager.getProperties(cluster);
-                JBColor color = properties.getColor();
+                final VisualThreadClusterProperties properties = manager.getProperties(cluster);
+                final JBColor color = properties.getColor();
                 threadClusterSelectionButtons[i].setForeground(color);
             } else
             {
@@ -251,7 +248,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
             }
         }
 
-        JLabel radialButtonsToggleLabel =
+        final JLabel radialButtonsToggleLabel =
                 new JLabel(LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.threads.togglecluster"));
         radialButtonsToggleLabel.setFont(radialButtonsToggleLabel.getFont().deriveFont(12.0f));
         radialButtonsToggleLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -272,7 +269,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         //final ThreadArtifactDisplayData finalSelectedData = selectedData;
 
         final String metricString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.metric");
-        JLabel selectedMetricLabel = new JLabel(metricString + " : " + CoreUtil.formatPercentage(selectedData.getMetricValueSum()))
+        final JLabel selectedMetricLabel = new JLabel(metricString + " : " + CoreUtil.formatPercentage(selectedData.getMetricValueSum()))
         {
             @Override
             public void repaint()
@@ -310,7 +307,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         // -------------------------------
 
         final String numberOfThreadsString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberofthreads");
-        JLabel selectedNumberOfThreadsLabel = new JLabel(numberOfThreadsString + " : " + selectedData.getNumberOfThreads())
+        final JLabel selectedNumberOfThreadsLabel = new JLabel(numberOfThreadsString + " : " + selectedData.getNumberOfThreads())
         {
             @Override
             public void repaint()
@@ -336,7 +333,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
         for (int i = 0; i < 4; i++)
         {
-            JLabel label = new JLabel("");
+            final JLabel label = new JLabel("");
             label.setFont(label.getFont().deriveFont(labelFontSize));
             hoverLabels[i] = label;
             hoveredDataDisplayBox.add(label);
@@ -441,8 +438,6 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         {
             hoveredThreadData = new ThreadArtifactDisplayData();
         }
-//        hoverLabels[0].setText("Metric (sum): " + formatter.format(hoveredThreadData.getMetricValueSum() * 100.0f) + "%");
-//        hoverLabels[1].setText("Metric (avg): " + formatter.format(hoveredThreadData.getMetricValueAvg() * 100.0f) + "%");
 
         hoverLabels[0].setText("Metric (sum): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueSum()));
         hoverLabels[1].setText("Metric (avg): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueAvg()));

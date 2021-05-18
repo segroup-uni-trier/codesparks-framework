@@ -25,7 +25,7 @@ public final class ThreadVisualizationUtil
     }
 
     // Used in ThreadFork and ZoomedThreadFork
-    public static double getThreadFilteredArtifactMetricValueAverageOfClusterRelativeToTotal(
+    public static double getMetricValueAverageOfSelectedThreadsOfTheClusterRelativeToTotal(
             final AMetricIdentifier metricIdentifier,
             final Collection<AThreadArtifact> threadsOfArtifact,
             final Collection<AThreadArtifact> threadArtifactsOfCluster,
@@ -34,8 +34,8 @@ public final class ThreadVisualizationUtil
     )
     {
         final OptionalDouble average =
-                threadsOfArtifact.stream().filter(threadExecutingArtifact -> (createDisabledViz || !threadExecutingArtifact.isFiltered()) && threadArtifactsOfCluster.stream().anyMatch(
-                        clusterThread -> (createDisabledViz || !clusterThread.isFiltered()) && clusterThread.getIdentifier().equals(threadExecutingArtifact.getIdentifier())
+                threadsOfArtifact.stream().filter(threadExecutingArtifact -> (createDisabledViz || threadExecutingArtifact.isSelected()) && threadArtifactsOfCluster.stream().anyMatch(
+                        clusterThread -> (createDisabledViz || clusterThread.isSelected()) && clusterThread.getIdentifier().equals(threadExecutingArtifact.getIdentifier())
                 )).mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(metricIdentifier)).average();
         if (average.isPresent())
         {
@@ -47,7 +47,7 @@ public final class ThreadVisualizationUtil
     }
 
     // Used in ThreadFork and ZoomedThreadFork
-    public static double getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(
+    public static double getMetricValueSumOfSelectedThreadsOfTheClusterRelativeToTotal(
             final AMetricIdentifier metricIdentifier,
             final Collection<AThreadArtifact> threadsOfArtifact,
             final Collection<AThreadArtifact> threadArtifactsOfCluster,
@@ -56,14 +56,13 @@ public final class ThreadVisualizationUtil
     )
     {
         final double sum =
-                threadsOfArtifact.stream().filter(threadExecutingArtifact -> (createDisabledViz || !threadExecutingArtifact.isFiltered()) && threadArtifactsOfCluster.stream().anyMatch(
-                        clusterThread -> (createDisabledViz || !clusterThread.isFiltered()) && clusterThread.getIdentifier().equals(threadExecutingArtifact.getIdentifier())
+                threadsOfArtifact.stream().filter(threadExecutingArtifact -> (createDisabledViz || threadExecutingArtifact.isSelected()) && threadArtifactsOfCluster.stream().anyMatch(
+                        clusterThread -> (createDisabledViz || clusterThread.isSelected()) && clusterThread.getIdentifier().equals(threadExecutingArtifact.getIdentifier())
                 )).mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(metricIdentifier)).sum();
         //noinspection UnnecessaryLocalVariable
         final double ratio = sum / total;
         return ratio;
     }
-
 
     // Used in ZoomedThreadRadar
     public static double calculateFilteredSumNumericalMetricRatioForZoomVisualisation(final ThreadArtifactCluster cluster,
@@ -139,67 +138,41 @@ public final class ThreadVisualizationUtil
         return discreteMetric;
     }
 
-    public static int getNumberOfThreadTypesInSet(final AArtifact artifact, Set<AThreadArtifact> threadArtifactsSet)
-    {
-        if (threadArtifactsSet == null)
-        {
-            return -1;
-        }
-        Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
-        if (threadTypeLists == null)
-        {
-            return -1;
-        }
-        Set<String> collect = threadTypeLists.entrySet()
-                .stream()
-                .filter(stringListEntry -> stringListEntry.getValue()
-                        .stream()
-                        .anyMatch(threadArtifactsSet::contains)).map(Map.Entry::getKey).collect(Collectors.toSet());
-        return collect.size();
-    }
+    /*
+     * Thread types
+     */
 
-    public static int getNumberOfThreadTypesWithNumericMetricValueInSet(
+    private static int getNumberOfSelectedThreadTypesWithNumericMetricValueInSet(
             final AArtifact artifact
             , final AMetricIdentifier metricIdentifier
-            , Set<AThreadArtifact> threadArtifactsSet
+            , final Set<AThreadArtifact> threadArtifactsSet
+            , final boolean ignoreFilteredFlagOfThreads
     )
     {
         if (threadArtifactsSet == null)
         {
-            return -1;
+            return 0;
         }
-        Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
+        Map<String, List<AThreadArtifact>> threadTypeLists;
+        if (ignoreFilteredFlagOfThreads)
+        {
+            threadTypeLists = artifact.getThreadTypeListsOfThreadsWithNumericMetricValue(metricIdentifier);
+        } else
+        {
+            threadTypeLists = artifact.getThreadTypeListsOfSelectedThreadsWithNumericMetricValue(metricIdentifier);
+        }
         if (threadTypeLists == null)
         {
-            return -1;
+            return 0;
         }
-        Set<String> collect = threadTypeLists.entrySet()
+        final Set<String> collect = threadTypeLists.entrySet()
                 .stream()
-                .filter(stringListEntry -> stringListEntry.getValue().stream()
-                        .anyMatch(threadArtifact -> threadArtifactsSet.contains(threadArtifact)
-                                && threadArtifact.getNumericalMetricValue(metricIdentifier) > 0)).map(Map.Entry::getKey).collect(Collectors.toSet());
+                .filter(entry -> entry.getValue().stream()
+                        .anyMatch(threadArtifactsSet::contains)).map(Map.Entry::getKey).collect(Collectors.toSet());
         return collect.size();
     }
 
-    public static int getNumberOfFilteredThreadTypesInSelection(final AArtifact artifact, Set<AThreadArtifact> selectedThreadArtifacts)
-    {
-        if (selectedThreadArtifacts == null)
-        {
-            selectedThreadArtifacts =
-                    artifact.getThreadArtifacts()
-                            .stream()
-                            .filter(AThreadArtifact::isFiltered)
-                            .collect(Collectors.toSet());
-        }
-        return getNumberOfThreadTypesInSet(artifact, selectedThreadArtifacts);
-    }
-
-    public static int getNumberOfFilteredThreadTypesInSelection(final AArtifact artifact)
-    {
-        return getNumberOfFilteredThreadTypesInSelection(artifact, null);
-    }
-
-    public static int getNumberOfFilteredThreadTypesWithNumericMetricValueInSelection(
+    public static int getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(
             final AArtifact artifact
             , final AMetricIdentifier metricIdentifier
             , Set<AThreadArtifact> selectedThreadArtifacts
@@ -207,35 +180,51 @@ public final class ThreadVisualizationUtil
     {
         if (selectedThreadArtifacts == null)
         {
-            selectedThreadArtifacts =
-                    artifact.getThreadArtifacts()
-                            .stream()
-                            .filter(threadArtifact -> threadArtifact.getNumericalMetricValue(metricIdentifier) > 0 && !threadArtifact.isFiltered())
-                            .collect(Collectors.toSet());
+            selectedThreadArtifacts = new HashSet<>(artifact.getSelectedThreadArtifactsWithNumericMetricValue(metricIdentifier));
         }
-        return getNumberOfThreadTypesWithNumericMetricValueInSet(artifact, metricIdentifier, selectedThreadArtifacts);
+        return getNumberOfSelectedThreadTypesWithNumericMetricValueInSet(artifact, metricIdentifier, selectedThreadArtifacts, false);
     }
 
-    public static int getNumberOfFilteredThreadTypesWithNumericMetricValueInSelection(final AArtifact artifact, final AMetricIdentifier metricIdentifier)
+    public static int getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(
+            final AArtifact artifact
+            , final AMetricIdentifier metricIdentifier
+            , Set<AThreadArtifact> selectedThreadArtifacts
+            , final boolean ignoreFilteredFlagOfThreads
+    )
     {
-        return getNumberOfFilteredThreadTypesWithNumericMetricValueInSelection(artifact, metricIdentifier, null);
+        if (selectedThreadArtifacts == null)
+        {
+            selectedThreadArtifacts = new HashSet<>(artifact.getSelectedThreadArtifactsWithNumericMetricValue(metricIdentifier));
+        }
+        return getNumberOfSelectedThreadTypesWithNumericMetricValueInSet(artifact, metricIdentifier, selectedThreadArtifacts, ignoreFilteredFlagOfThreads);
     }
 
-    public static int getNumberOfFilteredThreadTypesOfCluster(final AArtifact artifact, final ThreadArtifactCluster threadArtifactCluster)
+    public static int getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(
+            final AArtifact artifact
+            , final AMetricIdentifier metricIdentifier
+    )
     {
-        final Set<AThreadArtifact> threadArtifactSet = threadArtifactCluster.stream().filter(threadArtifact -> !threadArtifact.isFiltered())
-                .collect(Collectors.toSet());
-        return getNumberOfThreadTypesInSet(artifact, threadArtifactSet);
+        return getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact, metricIdentifier, null, false);
     }
 
-    public static int getNumberOfFilteredThreadTypesWithNumericMetricValueOfCluster(
+    public static int getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(
+            final AArtifact artifact
+            , final AMetricIdentifier metricIdentifier
+            , final boolean ignoreFilteredFlagOfThreads
+    )
+    {
+        return getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact, metricIdentifier, null, ignoreFilteredFlagOfThreads);
+    }
+
+    public static int getNumberOfSelectedThreadTypesWithNumericMetricValueInCluster(
             final AArtifact artifact
             , final AMetricIdentifier metricIdentifier
             , final ThreadArtifactCluster threadArtifactCluster
+            , final boolean ignoreTheFilteredFlagOfThreads
     )
     {
-        final Set<AThreadArtifact> threadArtifactSet = threadArtifactCluster.stream().filter(threadArtifact -> !threadArtifact.isFiltered())
+        final Set<AThreadArtifact> threadArtifactSet = threadArtifactCluster.stream().filter(t -> ignoreTheFilteredFlagOfThreads || t.isSelected())
                 .collect(Collectors.toSet());
-        return getNumberOfThreadTypesWithNumericMetricValueInSet(artifact, metricIdentifier, threadArtifactSet);
+        return getNumberOfSelectedThreadTypesWithNumericMetricValueInSet(artifact, metricIdentifier, threadArtifactSet, ignoreTheFilteredFlagOfThreads);
     }
 }
