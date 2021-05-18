@@ -11,24 +11,24 @@ public class VisualThreadClusterPropertiesBuilder
 {
     private final VisualThreadClusterProperties properties;
 
-    VisualThreadClusterPropertiesBuilder(final ThreadArtifactCluster cluster)
+    public VisualThreadClusterPropertiesBuilder(final ThreadArtifactCluster cluster)
     {
         properties = new VisualThreadClusterProperties(cluster);
     }
 
-    VisualThreadClusterPropertiesBuilder setColor(final JBColor color)
+    public VisualThreadClusterPropertiesBuilder setColor(final JBColor color)
     {
         properties.setColor(color);
         return this;
     }
 
-    VisualThreadClusterPropertiesBuilder setPosition(final int position)
+    public VisualThreadClusterPropertiesBuilder setPosition(final int position)
     {
         properties.setPosition(position);
         return this;
     }
 
-    VisualThreadClusterProperties get()
+    public VisualThreadClusterProperties get()
     {
         return properties;
     }

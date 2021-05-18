@@ -24,6 +24,17 @@ public final class ThreadVisualizationUtil
         return discreteWidth;
     }
 
+    // Used in ThreadFork
+    public static double getMetricValueSumOfSelectedThreads(final AArtifact artifact, final AMetricIdentifier metricIdentifier,
+                                                            final boolean ignoreTheFilteredFlagOfThreads)
+    {
+        //noinspection UnnecessaryLocalVariable
+        final double sum =
+                artifact.getThreadArtifacts().stream().filter(threadArtifact -> ignoreTheFilteredFlagOfThreads || threadArtifact.isSelected())
+                        .mapToDouble(threadArtifact -> threadArtifact.getNumericalMetricValue(metricIdentifier)).sum();
+        return sum;
+    }
+
     // Used in ThreadFork and ZoomedThreadFork
     public static double getMetricValueAverageOfSelectedThreadsOfTheClusterRelativeToTotal(
             final AMetricIdentifier metricIdentifier,

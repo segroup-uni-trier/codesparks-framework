@@ -211,17 +211,23 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
         int clusterNumber = 0;
         for (final ThreadArtifactCluster cluster : threadArtifactClustering)
         {
-            if (cluster.isEmpty()) continue;
+            if (cluster.isEmpty())
+            {
+                continue;
+            }
 
             int clusterPosition = -1;
             JBColor clusterColor = ThreadColor.getNextColor(clusterNumber);
-//            final VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(cluster);
-//            if (properties != null)
-//            {
-//                final JBColor color = properties.getColor();
-//                if (color != null) clusterColor = color;
-//                clusterPosition = properties.getPosition();
-//            }
+            final VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(cluster);
+            if (properties != null)
+            {
+                final JBColor color = properties.getColor();
+                if (color != null)
+                {
+                    clusterColor = color;
+                }
+                clusterPosition = properties.getPosition();
+            }
 
             double clusterYToDraw = clusterY;
             if (clusterPosition > -1)

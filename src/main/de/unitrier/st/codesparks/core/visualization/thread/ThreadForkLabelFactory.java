@@ -72,7 +72,6 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, TOP_OFFSET + lineHeight / 2 - 3, X_OFFSET_LEFT + barrierXPos - 1, TOP_OFFSET + lineHeight / 2);
         graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, TOP_OFFSET + lineHeight / 2 + 3, X_OFFSET_LEFT + barrierXPos - 1, TOP_OFFSET + lineHeight / 2);
 
-
         // Vertical bar or barrier, respectively
         final int barrierWidth = 3;
         graphics.fillRect(X_OFFSET_LEFT + barrierXPos, TOP_OFFSET, barrierWidth, lineHeight);
@@ -90,7 +89,8 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         // If there is no thread which is selected, i.e. all threads executing this artifact are filtered
         boolean createDisabledViz = threadArtifacts.stream().allMatch(AThreadArtifact::isFiltered);
 
-        final double threadFilteredTotalMetricValueOfArtifact = artifact.getNumericalMetricValueSumOfSelectedThreads(primaryMetricIdentifier, createDisabledViz);
+        final double threadFilteredTotalMetricValueOfArtifact = ThreadVisualizationUtil.getMetricValueSumOfSelectedThreads(artifact,
+                primaryMetricIdentifier, createDisabledViz);
 
 //        final ThreadArtifactClustering threadClusters =
 //                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
@@ -134,8 +134,6 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
             graphics.setColor(clusterMetricValueSumColor);
 
-//            double percent = getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(threadArtifacts, threadCluster,
-//                    threadFilteredTotalMetricValueOfArtifact, createDisabledViz);
             double percent = ThreadVisualizationUtil.getMetricValueSumOfSelectedThreadsOfTheClusterRelativeToTotal(
                     primaryMetricIdentifier
                     , threadArtifacts
@@ -159,8 +157,6 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             graphics.setColor(clusterColor);
             percent = ThreadVisualizationUtil.getMetricValueAverageOfSelectedThreadsOfTheClusterRelativeToTotal(primaryMetricIdentifier, threadArtifacts,
                     threadCluster, threadFilteredTotalMetricValueOfArtifact, createDisabledViz);
-//            percent = getThreadFilteredArtifactMetricValueAverageOfClusterRelativeToTotal(threadArtifacts, threadCluster,
-//                    threadFilteredTotalMetricValueOfArtifact, createDisabledViz);
 
             clusterWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
             graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, TOP_OFFSET + threadSquareYPos, clusterWidth, threadSquareEdgeLength);
@@ -207,42 +203,4 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         jLabel.addMouseListener(new ThreadForkMouseListener(jLabel, artifact, primaryMetricIdentifier, threadArtifactsDisplayData));
         return jLabel;
     }
-
-//    @Deprecated
-//    private double getThreadFilteredArtifactMetricValueSumOfClusterRelativeToTotal(final Collection<AThreadArtifact> threadsOfArtifact,
-//                                                                                   final ThreadArtifactCluster threadArtifactCluster,
-//                                                                                   final double total,
-//                                                                                   final boolean createDisabledViz)
-//    {
-//        final double sum =
-//                threadsOfArtifact.stream().filter(threadExecutingArtifact -> (createDisabledViz || !threadExecutingArtifact.isFiltered()) &&
-//                threadArtifactCluster.stream().anyMatch(
-//                        clusterThread -> (createDisabledViz || !clusterThread.isFiltered()) && clusterThread.getIdentifier().equals(threadExecutingArtifact
-//                        .getIdentifier())
-//                )).mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(primaryMetricIdentifier)).sum();
-//        //noinspection UnnecessaryLocalVariable
-//        final double ratio = sum / total;
-//        return ratio;
-//    }
-
-//    @Deprecated
-//    private double getThreadFilteredArtifactMetricValueAverageOfClusterRelativeToTotal(final Collection<AThreadArtifact> threadsOfArtifact,
-//                                                                                       final ThreadArtifactCluster threadArtifactCluster,
-//                                                                                       final double total,
-//                                                                                       final boolean createDisabledViz)
-//    {
-//        final OptionalDouble average =
-//                threadsOfArtifact.stream().filter(threadExecutingArtifact -> (createDisabledViz || !threadExecutingArtifact.isFiltered()) &&
-//                threadArtifactCluster.stream().anyMatch(
-//                        clusterThread -> (createDisabledViz || !clusterThread.isFiltered()) && clusterThread.getIdentifier().equals(threadExecutingArtifact
-//                        .getIdentifier())
-//                )).mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(primaryMetricIdentifier)).average();
-//        if (average.isPresent())
-//        {
-//            //noinspection UnnecessaryLocalVariable
-//            final double ratio = average.getAsDouble() / total;
-//            return ratio;
-//        }
-//        return Double.NaN;
-//    }
 }

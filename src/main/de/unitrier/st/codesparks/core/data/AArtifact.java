@@ -252,15 +252,6 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return Objects.requireNonNullElse(val, 0D);
     }
 
-    public double getNumericalMetricValueSumOfSelectedThreads(final AMetricIdentifier metricIdentifier, final boolean ignoreTheFilteredFlagOfThreads)
-    {
-        //noinspection UnnecessaryLocalVariable
-        final double sum =
-                getThreadArtifacts().stream().filter(threadArtifact -> ignoreTheFilteredFlagOfThreads || threadArtifact.isSelected())
-                        .mapToDouble(threadArtifact -> threadArtifact.getNumericalMetricValue(metricIdentifier)).sum();
-        return sum;
-    }
-
     public double setNumericMetricValueInRelationTo(final AMetricIdentifier metricIdentifier, double rel)
     {
         if (metricIdentifier == null || !metricIdentifier.isNumerical())

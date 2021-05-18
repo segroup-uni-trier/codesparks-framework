@@ -106,29 +106,29 @@ public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizati
         final boolean[] positionsTaken = new boolean[3];
         int clusterNum = 0;
 
-        for (ThreadArtifactCluster threadCluster : threadClusters)
+        for (final ThreadArtifactCluster threadCluster : threadClusters)
         {
             /*
              * Will be set in the respective thread clustering visualization for
              * the artifact, e.g. ThreadRadarLabelFactory or ThreadForkLabelFactory
              */
             VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(threadCluster);
-            int position = -1;
+            int clusterPosition = -1;
             JBColor color;
             if (properties != null)
             {
                 color = properties.getColor();
-                position = properties.getPosition();
+                clusterPosition = properties.getPosition();
             } else
             {
-                color = ThreadColor.getNextColor(clusterNum++);
+                color = ThreadColor.getNextColor(clusterNum);
             }
 
-            final int positionIndex = findPositionToDraw(positionsTaken, position, clusterNum);
+            final int positionIndex = findPositionToDraw(positionsTaken, clusterPosition, clusterNum);
             clusterNum = clusterNum + 1;
 
             if (positionIndex < 0)
-            { // No more position to draw available. Only happens when the number of clusters is set up to be greater than k=3
+            { // No more clusterPosition to draw available. Only happens when the number of clusters is set up to be greater than k=3
                 break;
             }
 
