@@ -26,7 +26,6 @@ import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.AVisualizationSequence;
-import de.unitrier.st.codesparks.core.visualization.BottomFlowLayout;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTable;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTableCellRenderer;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTableMouseMotionAdapter;
@@ -168,50 +167,52 @@ public class ArtifactOverview
         final JBPanel<BorderLayoutPanel> threadsPanelWrapper = new JBPanel<>();
         threadsPanelWrapper.setLayout(new BoxLayout(threadsPanelWrapper, BoxLayout.Y_AXIS));
 
-        final JBPanel<BorderLayoutPanel> threadClusterPanel = new JBPanel<>();
-        threadClusterPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
-        threadClusterPanel.setLayout(new BoxLayout(threadClusterPanel, BoxLayout.Y_AXIS));
+//        final JBPanel<BorderLayoutPanel> threadClusterPanel = new JBPanel<>();
+//        threadClusterPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
+//        threadClusterPanel.setLayout(new BoxLayout(threadClusterPanel, BoxLayout.Y_AXIS));
 
         // Number of clusters panel
-        final JBPanel<BorderLayoutPanel> numberOfClustersPanel = new JBPanel<>();
-        numberOfClustersPanel.setLayout(new BoxLayout(numberOfClustersPanel, BoxLayout.X_AXIS));
+//        final JBPanel<BorderLayoutPanel> numberOfClustersPanel = new JBPanel<>();
+//        numberOfClustersPanel.setLayout(new BoxLayout(numberOfClustersPanel, BoxLayout.X_AXIS));
 
-        final JBLabel jbLabel = new JBLabel("Compute a maximum number of (k) clusters: ");
-        numberOfClustersPanel.add(jbLabel);
+//        final JBLabel jbLabel = new JBLabel("Compute a maximum number of (k) clusters: ");
+//        numberOfClustersPanel.add(jbLabel);
 
-        final ComboBox<Integer> numberOfClustersComboBox = new ComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6});
-        numberOfClustersComboBox.setSelectedIndex(2);
-        numberOfClustersPanel.add(numberOfClustersComboBox);
+//        final ComboBox<Integer> numberOfClustersComboBox = new ComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6});
+//        numberOfClustersComboBox.setSelectedIndex(2);
+//        numberOfClustersPanel.add(numberOfClustersComboBox);
 
-        threadClusterPanel.add(numberOfClustersPanel);
+//        threadClusterPanel.add(numberOfClustersPanel);
 
         // Cluster selection strategy for in-situ visualization
-        final JBPanel<BorderLayoutPanel> clusterSelectionPanel = new JBPanel<>();
-        clusterSelectionPanel.setLayout(new BoxLayout(clusterSelectionPanel, BoxLayout.X_AXIS));
+//        final JBPanel<BorderLayoutPanel> clusterSelectionPanel = new JBPanel<>();
+//        clusterSelectionPanel.setLayout(new BoxLayout(clusterSelectionPanel, BoxLayout.X_AXIS));
 
-        final JBLabel jbLabel1 = new JBLabel("In-situ visualization cluster selection: ");
-        clusterSelectionPanel.add(jbLabel1);
+//        final JBLabel jbLabel1 = new JBLabel("In-situ visualization cluster selection: ");
+//        clusterSelectionPanel.add(jbLabel1);
 
-        final ComboBox<String> clusterSelectionComboBox = new ComboBox<>(new String[]{"TODO-1", "TODO-2", "TODO-3"});
-        clusterSelectionComboBox.setEnabled(false);
-        clusterSelectionPanel.add(clusterSelectionComboBox);
+//        final ComboBox<String> clusterSelectionComboBox = new ComboBox<>(new String[]{"TODO-1", "TODO-2", "TODO-3"});
+//        clusterSelectionComboBox.setEnabled(false);
+//        clusterSelectionPanel.add(clusterSelectionComboBox);
 
-        threadClusterPanel.add(clusterSelectionPanel);
+//        threadClusterPanel.add(clusterSelectionPanel);
+
+        //        numberOfClustersComboBox.addItemListener(e -> {
+//            final int stateChange = e.getStateChange();
+//            final Integer item = (Integer) e.getItem();
+//            if (stateChange == ItemEvent.SELECTED)
+//            {
+//                clusterSelectionComboBox.setEnabled(item > 3);
+//            }
+//        });
+
+        // Add the cluster panel
+//        threadsPanelWrapper.add(threadClusterPanel);
 
         /*
 
          */
-        numberOfClustersComboBox.addItemListener(e -> {
-            final int stateChange = e.getStateChange();
-            final Integer item = (Integer) e.getItem();
-            if (stateChange == ItemEvent.SELECTED)
-            {
-                clusterSelectionComboBox.setEnabled(item > 3);
-            }
-        });
 
-        // Add the thread complete cluster panel
-        threadsPanelWrapper.add(threadClusterPanel);
 
         // TODO: Only for the clex study!
         //threadsPanel.setVisible(false);

@@ -3,6 +3,8 @@
  */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
+import com.intellij.openapi.ui.ComboBox;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTabbedPane;
@@ -15,6 +17,8 @@ import de.unitrier.st.codesparks.core.visualization.popup.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,49 +41,60 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         this.threadArtifactsDisplayData = threadArtifactsDisplayData;
     }
 
+    private static class ComboBoxItem
+    {
+        private final int k;
+        private final String text;
+
+        ComboBoxItem(final int k, final String text)
+        {
+            this.k = k;
+            this.text = text;
+        }
+
+        @Override
+        public String toString()
+        {
+            return text;
+        }
+    }
+
     @Override
     protected PopupPanel createPopupContent(final AArtifact artifact)
     {
-        final PopupPanel popupPanel = new PopupPanel();//new BorderLayout(), "DefaultThreadVisualizationPopup");
+        final PopupPanel popupPanel = new PopupPanel();
         popupPanel.setLayout(new BoxLayout(popupPanel, BoxLayout.Y_AXIS));
 
         threadSelectables.clear();
 
-        final ThreadArtifactClustering threadArtifactClustering =
+        ThreadArtifactClustering threadArtifactClustering =
                 artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
-//        final ThreadArtifactClustering threadArtifactClustering = artifact
-//                .getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
-
-        // I gonna need the clustersTree for the zoomed viz already
-        final Map<String, List<AThreadArtifact>> map = new HashMap<>();
-        int clusterId = 1;
-        for (final ThreadArtifactCluster threadArtifacts : threadArtifactClustering)
-        {
-            map.put("Cluster:" + clusterId++, threadArtifacts);
-        }
-        final AThreadSelectable threadClustersTree = new ThreadClusterTree(map, primaryMetricIdentifier);
-
-//        final JBPanel<BorderLayoutPanel> centerPanel = new JBPanel<>();
-//        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-
-
-        final int nrOfClusters = threadArtifactClustering.size();
+        final int actualNumberOfClustersOfTheDensityEstimation = threadArtifactClustering.size();
 
         /*
          * The zoomed viz tabbed pane
          */
         final JBTabbedPane zoomedVizTabbedPane = new JBTabbedPane();
-        JBPanel<BorderLayoutPanel> zoomedThreadFork = null;
-        //zoomedVizTabbedPane.getRootPane().setLayout(new BorderLayout());
-        if (nrOfClusters <= 6)
-        {
-            zoomedThreadFork = new ZoomedThreadFork(
+        KernelBasedDensityEstimationPanel kernelBasedDensityEstimationPanel = null;
+        ZoomedThreadFork zoomedThreadFork = null;
+
+        if (actualNumberOfClustersOfTheDensityEstimation <= 6)
+        { // Only show a fork when there are up to six thread classifications.
+            if (actualNumberOfClustersOfTheDensityEstimation > 3)
+            { // Because the in-situ viz has changed to a k=3 clustering in that case, this will be the clustering we show first.
+                threadArtifactClustering = artifact.getThreadArtifactClustering(ApacheKMeans.getInstance(primaryMetricIdentifier, 3));
+            }
+            final ZoomedThreadFork finalZoomedThreadFork = new ZoomedThreadFork(
                     artifact
                     , primaryMetricIdentifier
                     , threadArtifactClustering
                     , threadSelectables
             );
+            zoomedThreadFork = finalZoomedThreadFork;
+            final KernelBasedDensityEstimationPanel finalKernelBasedDensityEstimationPanel = new KernelBasedDensityEstimationPanel(
+                    threadSelectables, primaryMetricIdentifier, threadArtifactClustering);
+            kernelBasedDensityEstimationPanel = finalKernelBasedDensityEstimationPanel;
 
             final JBPanel<BorderLayoutPanel> tabWrapper = new JBPanel<>();
             tabWrapper.setLayout(new GridBagLayout());
@@ -89,6 +104,51 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
             final JPanel centerPanel = new JPanel(new BorderLayout());
 
+            if (actualNumberOfClustersOfTheDensityEstimation > 3)
+            {
+                final ComboBox<ComboBoxItem> numberOfClustersComboBox = new ComboBox<>();
+                for (int i = 1; i < actualNumberOfClustersOfTheDensityEstimation; i++)
+                {
+                    numberOfClustersComboBox.addItem(new ComboBoxItem(i, String.valueOf(i)));
+                }
+                numberOfClustersComboBox.addItem(new ComboBoxItem(0, "Kernel Based Density Estimation"));
+                numberOfClustersComboBox.setSelectedIndex(2); // At the index 2 there is the value 3
+                final JBPanel<BorderLayoutPanel> numberOfClustersPanel = new JBPanel<>();
+                numberOfClustersPanel.setLayout(new BoxLayout(numberOfClustersPanel, BoxLayout.X_AXIS));
+
+                final JBLabel jbLabel = new JBLabel("Select the number of clusters k = ");
+                numberOfClustersPanel.add(jbLabel);
+                numberOfClustersPanel.add(numberOfClustersComboBox);
+
+                //noinspection Convert2Lambda
+                numberOfClustersComboBox.addItemListener(new ItemListener()
+                {
+                    @Override
+                    public void itemStateChanged(final ItemEvent e)
+                    {
+                        final int stateChange = e.getStateChange();
+                        if (stateChange == ItemEvent.SELECTED)
+                        {
+                            final ComboBoxItem item = (ComboBoxItem) e.getItem();
+                            final int k = item.k;
+                            AThreadArtifactClusteringStrategy strategy;
+                            ThreadArtifactClustering clustering;
+                            if (k > 0)
+                            {
+                                strategy = ApacheKMeans.getInstance(primaryMetricIdentifier, k);
+                            } else
+                            {
+                                strategy = SmileKernelDensityClustering.getInstance(primaryMetricIdentifier);
+                            }
+                            clustering = artifact.getThreadArtifactClustering(strategy);
+                            finalZoomedThreadFork.setThreadArtifactClustering(clustering);
+                            finalKernelBasedDensityEstimationPanel.setThreadArtifactClustering(clustering);
+                        }
+                    }
+                });
+
+                centerPanel.add(numberOfClustersPanel, BorderLayout.SOUTH);
+            }
             final JBPanel<BorderLayoutPanel> leftPanel = new BorderLayoutPanel();
             leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 
@@ -97,18 +157,17 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                     "Selected threads"));
 
             // ---------------------------------------------
-            ThreadArtifactDisplayData selectedData =
-                    threadArtifactsDisplayData.getDisplayDataOfSelectedThreads(artifact, threadClustersTree.getSelectedThreadArtifacts());
-            if (selectedData == null)
-            {
-                selectedData = new ThreadArtifactDisplayData();
-            }
+
+
+//            ThreadArtifactDisplayData selectedData =
+//                    threadArtifactsDisplayData.getDisplayDataOfSelectedThreads(artifact, threadClustersTree.getSelectedThreadArtifacts());
+//            if (selectedData == null)
+//            {
+//                selectedData = new ThreadArtifactDisplayData();
+//            }
 
 
             leftSelectedThreadsPanel.add(new Label("left selected Test"));
-
-
-
 
 
             final JBPanel<BorderLayoutPanel> leftHoveredThreadsPanel = new BorderLayoutPanel();
@@ -143,15 +202,8 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             centerPanel.add(zoomedThreadForkWrapper, BorderLayout.CENTER);
 
 
-
-
-
-
-
-
-
             tabWrapper.add(centerPanel);
-            zoomedVizTabbedPane.addTab("Zoomed ThreadFork", tabWrapper);
+            zoomedVizTabbedPane.addTab("ThreadFork", tabWrapper);
 
             for (final IThreadSelectable threadSelectable : threadSelectables)
             {
@@ -166,8 +218,21 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
          * The thread metric density estimation / histogram
          */
 
-        final KernelBasedDensityEstimationPanel kernelBasedDensityEstimationPanel =
-                new KernelBasedDensityEstimationPanel(threadClustersTree, primaryMetricIdentifier, threadArtifactClustering);
+        // I gonna need the clustersTree of any threadSelectionProvider for the density estimation panel
+        final Map<String, List<AThreadArtifact>> map = new HashMap<>();
+        int clusterId = 1;
+        for (final ThreadArtifactCluster threadArtifacts : threadArtifactClustering)
+        {
+            map.put("Cluster:" + clusterId++, threadArtifacts);
+        }
+        final AThreadSelectable threadClustersTree = new ThreadClusterTree(map, primaryMetricIdentifier);
+        //------------------------
+
+        if (kernelBasedDensityEstimationPanel == null)
+        {
+            kernelBasedDensityEstimationPanel = new KernelBasedDensityEstimationPanel(
+                    threadSelectables, primaryMetricIdentifier, threadArtifactClustering);
+        }
 
         zoomedVizTabbedPane.addTab("Histogram", kernelBasedDensityEstimationPanel);
 

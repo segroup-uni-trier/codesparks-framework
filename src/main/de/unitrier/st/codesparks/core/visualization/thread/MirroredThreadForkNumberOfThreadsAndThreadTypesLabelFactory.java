@@ -91,17 +91,16 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
             totalNumberOfSelectedThreads = totalNumberOfThreads;
         }
 
-//        final List<ThreadArtifactCluster> threadClusters =
-//                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
-
-        final ThreadArtifactClustering threadClusters =
+        // At first, get the thread classification grounded on the kernel based density estimation
+        ThreadArtifactClustering threadClusters =
                 artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
-//        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(new ApacheKMeans(primaryMetricIdentifier, 3));
-
-//        final BestSilhouetteKClustering bestSilhouetteKClustering = new BestSilhouetteKClustering(new ApacheKMeans(primaryMetricIdentifier), 6);
-//
-//        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(bestSilhouetteKClustering);
+        final int numberOfThreadClusters = threadClusters.size();
+        if (numberOfThreadClusters > 3)
+        {
+            final KThreadArtifactClusteringStrategy apacheKMeans = ApacheKMeans.getInstance(primaryMetricIdentifier, 3);
+            threadClusters = artifact.getThreadArtifactClustering(apacheKMeans);
+        }
 
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
         final Map<ThreadArtifactCluster, Boolean> clusterPropertiesPresent = new HashMap<>(threadClusters.size());
@@ -165,7 +164,7 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
             threadSquareYPos -= threadSquareOffset;
         }
 
-        if (threadClusters.size() > 0) // TODO: When ready, change this to 3
+        if (numberOfThreadClusters > 3) // TODO: When ready, change this to 3
         { // The 'plus' symbol indicating that there are more than three thread clusters!
             graphics.setColor(VisConstants.BORDER_COLOR);
 //            final int plusSymbolXOffset = X_OFFSET_LEFT + threadMetaphorWidth - 2;

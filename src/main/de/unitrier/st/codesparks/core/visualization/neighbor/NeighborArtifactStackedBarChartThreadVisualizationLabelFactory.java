@@ -47,7 +47,7 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
 
         final double totalThreadFilteredCalleeTime = summedThreadMetricValuesOfNeighbors(threadFilteredNeighborArtifactsOfLine);
 
-        Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterComparator.getInstance(primaryMetricIdentifier);
+        Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterNumericalMetricSumComparator.getInstance(primaryMetricIdentifier);
 
 
         List<ThreadArtifactCluster> threadClusters =

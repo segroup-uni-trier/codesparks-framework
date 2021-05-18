@@ -7,20 +7,32 @@ package de.unitrier.st.codesparks.core.data;
 import org.apache.commons.math3.ml.clustering.*;
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class ApacheKMeans extends KThreadArtifactClusteringStrategy
 {
-    public ApacheKMeans(final AMetricIdentifier metricIdentifier, final int k)
+    private static final Map<AMetricIdentifier, Map<Integer, KThreadArtifactClusteringStrategy>> instances = new HashMap<>(4);
+
+    public static KThreadArtifactClusteringStrategy getInstance(final AMetricIdentifier metricIdentifier, final int k)
     {
-        super(metricIdentifier, k);
+        KThreadArtifactClusteringStrategy ret;
+        synchronized (instances)
+        {
+            Map<Integer, KThreadArtifactClusteringStrategy> strategyMap = instances.computeIfAbsent(metricIdentifier, k1 -> new HashMap<>(4));
+            KThreadArtifactClusteringStrategy strategy = strategyMap.get(k);
+            if (strategy == null)
+            {
+                strategy = new ApacheKMeans(metricIdentifier, k);
+                strategyMap.put(k, strategy);
+            }
+            ret = strategy;
+        }
+        return ret;
     }
 
-    public ApacheKMeans(final AMetricIdentifier metricIdentifier)
+    private ApacheKMeans(final AMetricIdentifier metricIdentifier, final int k)
     {
-        super(metricIdentifier, 3);
+        super(metricIdentifier, k);
     }
 
     private static class ThreadPoint implements Clusterable

@@ -15,13 +15,15 @@ import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
 {
     private final AArtifact artifact;
     private final AMetricIdentifier metricIdentifier;
-    private final ThreadArtifactClustering threadArtifactClustering;
+    private ThreadArtifactClustering threadArtifactClustering;
     private final List<IThreadSelectable> threadSelectables;
 
     public ZoomedThreadFork(
@@ -43,6 +45,30 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
 
     private final int maxWidth = 480;
     private final int maxHeight = 150;
+
+    public void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering)
+    {
+        this.threadArtifactClustering = threadArtifactClustering;
+        new Thread(this::doubleRepaint).start();
+    }
+
+    private final Object doubleRepaintLock = new Object();
+
+    private void doubleRepaint()
+    {
+        repaint();
+        synchronized (doubleRepaintLock)
+        {
+            try
+            {
+                doubleRepaintLock.wait();
+            } catch (InterruptedException e)
+            {
+                // ignored
+            }
+            repaint();
+        }
+    }
 
     @Override
     public void paint(final Graphics g)
@@ -173,7 +199,8 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
         // The cluster visualization area on the right
         double rightThreadRectXPos = width - leftThreadRectXPos - rectVizWidth;//leftBarrierXPos + barrierWidth + (int) (threadVizWidth * 1d / 3);
         rightThreadRectXPos = (rightThreadRectXPos - strokeWidth - halfStrokeWidth);
-        graphics2D.drawRect(LEFT_OFFSET + (int) rightThreadRectXPos + 1 // +1 such that the left and right rect will overlap such that visually only one line
+        graphics2D.drawRect(LEFT_OFFSET + (int) rightThreadRectXPos + 1 // +1 such that the left and right rect will overlap such that visually only one
+                // line
                 // is there
                 , TOP_OFFSET + (verticalMargin - strokeWidth)
                 , (int) (rectVizWidth + halfStrokeWidth)
@@ -198,8 +225,11 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
 //        System.out.println("ZoomedThreadFork: clusterDistance=" + clusterDistance + ", clusterHeight=" + clusterHeight);
 
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+        final Map<ThreadArtifactCluster, Boolean> clusterPropertiesPresent = new HashMap<>(threadArtifactClustering.size()); // Do not replace
+        // threadClusters
+        // .size()
 
-        final double clusterYBase = verticalMargin + clusterDistance;
+        final double clusterYBase = height - verticalMargin - clusterDistance - clusterHeight;
         double clusterY = clusterYBase;
         final double leftClusterX = (leftThreadRectXPos + 0.05 * threadVizWidth);
         final double rightClusterX = rightThreadRectXPos + 0.05 * threadVizWidth;
@@ -208,19 +238,20 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
         final double clusterConnectionHeight = clusterHeight / 3d;
         final double connectionWidth = Math.abs(leftClusterX - (leftBarrierXPos + barrierWidth));
 
-        int clusterNumber = 0;
-        for (final ThreadArtifactCluster cluster : threadArtifactClustering)
+        int clusterNum = 0;
+        for (final ThreadArtifactCluster threadCluster : threadArtifactClustering)
         {
-            if (cluster.isEmpty())
+            if (threadCluster.isEmpty())
             {
                 continue;
             }
 
             int clusterPosition = -1;
-            JBColor clusterColor = ThreadColor.getNextColor(clusterNumber);
-            final VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(cluster);
+            JBColor clusterColor = ThreadColor.getNextColor(clusterNum);
+            final VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(threadCluster);
             if (properties != null)
             {
+                clusterPropertiesPresent.put(threadCluster, true);
                 final JBColor color = properties.getColor();
                 if (color != null)
                 {
@@ -232,7 +263,7 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
             double clusterYToDraw = clusterY;
             if (clusterPosition > -1)
             {
-                clusterYToDraw = clusterYBase + clusterPosition * (clusterDistance + clusterHeight);
+                clusterYToDraw = clusterYBase - clusterPosition * (clusterDistance + clusterHeight);
             }
 
             // Cluster button left
@@ -245,7 +276,7 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
                     artifact
                     , threadArtifactClustering
                     , metricIdentifier
-                    , cluster
+                    , threadCluster
                     , threadSelectables
                     , clusterColor
                     , leftClusterButtonBoundsRectangle
@@ -262,7 +293,7 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
                     artifact
                     , threadArtifactClustering
                     , metricIdentifier
-                    , cluster
+                    , threadCluster
                     , threadSelectables
                     , clusterColor
                     , rightClusterButtonBoundsRectangle
@@ -283,14 +314,24 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
                     , (int) clusterConnectionHeight);
             // Connection right
             final double rightConnectionXPos = rightBarrierXPos - connectionWidth;
-            graphics2D.fillRect(LEFT_OFFSET + (int) (rightConnectionXPos) - 2 // The -2 is a correction due to accuracy problems in floating point arithmetics
+            graphics2D.fillRect(LEFT_OFFSET + (int) (rightConnectionXPos) - 2 // The -2 is a correction due to accuracy problems in floating point
+                    // arithmetics
                     , TOP_OFFSET + (int) (clusterYToDraw + (clusterHeight / 2 - clusterConnectionHeight / 2))
                     , (int) connectionWidth + 2 // The +2 is a correction due to accuracy problems in floating point arithmetics
                     , (int) clusterConnectionHeight);
 
+            if (!clusterPropertiesPresent.getOrDefault(threadCluster, false))
+            {
+                final VisualThreadClusterProperties visualThreadClusterProperties =
+                        new VisualThreadClusterPropertiesBuilder(threadCluster)
+                                .setColor(clusterColor)
+                                .setPosition(clusterNum)
+                                .get();
+                clusterPropertiesManager.registerProperties(visualThreadClusterProperties);
+            }
 
-            clusterY += clusterDistance + clusterHeight;
-            clusterNumber += 1;
+            clusterY -= clusterDistance + clusterHeight;
+            clusterNum += 1;
         }
 
         paintChildren(g);
@@ -298,5 +339,9 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
 //        {
 //            component.repaint();
 //        }
+        synchronized (doubleRepaintLock)
+        {
+            doubleRepaintLock.notifyAll();
+        }
     }
 }

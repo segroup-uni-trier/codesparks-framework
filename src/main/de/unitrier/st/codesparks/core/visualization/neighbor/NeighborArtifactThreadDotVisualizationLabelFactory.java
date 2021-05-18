@@ -47,7 +47,7 @@ public class NeighborArtifactThreadDotVisualizationLabelFactory extends ANeighbo
             return emptyLabel();
         }
 
-        Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterComparator.getInstance(primaryMetricIdentifier);
+        Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterNumericalMetricSumComparator.getInstance(primaryMetricIdentifier);
         List<ThreadArtifactCluster> threadClusters =
                 artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier)
                         .stream()

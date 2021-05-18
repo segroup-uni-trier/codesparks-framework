@@ -4,6 +4,7 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 
 import javax.swing.*;
 import java.util.Set;
@@ -23,6 +24,8 @@ public interface IThreadSelectable extends IThreadSelectionProvider
     void invertAll();
 
     void toggleCluster(ThreadArtifactCluster cluster);
+
+//    void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering);
 
     //boolean hasFocus();
 }

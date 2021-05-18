@@ -8,18 +8,18 @@ import java.util.function.ToDoubleFunction;
 /*
  * Copyright (c), Oliver Moseler, 2020
  */
-public class ThreadArtifactClusterComparator implements Comparator<ThreadArtifactCluster>
+public class ThreadArtifactClusterNumericalMetricSumComparator implements Comparator<ThreadArtifactCluster>
 {
     private final static Map<AMetricIdentifier, Comparator<ThreadArtifactCluster>> comparators = new HashMap<>();
 
     public static Comparator<ThreadArtifactCluster> getInstance(final AMetricIdentifier metricIdentifier)
     {
-        synchronized (ThreadArtifactClusterComparator.class)
+        synchronized (ThreadArtifactClusterNumericalMetricSumComparator.class)
         {
             Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = comparators.get(metricIdentifier);
             if (codeSparksThreadClusterComparator == null)
             {
-                codeSparksThreadClusterComparator = new ThreadArtifactClusterComparator(metricIdentifier);
+                codeSparksThreadClusterComparator = new ThreadArtifactClusterNumericalMetricSumComparator(metricIdentifier);
                 comparators.put(metricIdentifier, codeSparksThreadClusterComparator);
             }
             return codeSparksThreadClusterComparator;
@@ -28,7 +28,7 @@ public class ThreadArtifactClusterComparator implements Comparator<ThreadArtifac
 
     private final AMetricIdentifier metricIdentifier;
 
-    private ThreadArtifactClusterComparator(final AMetricIdentifier metricIdentifier)
+    private ThreadArtifactClusterNumericalMetricSumComparator(final AMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }

@@ -18,31 +18,45 @@ import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPr
 import smile.stat.distribution.KernelDensity;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.List;
 
 public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel>
 {
-    private final IThreadSelectionProvider threadSelectionProvider;
+    private final List<IThreadSelectable> threadSelectionProvider;
     private final AMetricIdentifier primaryMetricIdentifier;
-    private final ThreadArtifactClustering clustering;
+    private ThreadArtifactClustering threadArtifactClustering;
 
     public KernelBasedDensityEstimationPanel(
-            final IThreadSelectionProvider threadSelectionProvider
+            final List<IThreadSelectable> threadSelectionProvider
             , final AMetricIdentifier primaryMetricIdentifier
-            , final ThreadArtifactClustering clustering
+            , final ThreadArtifactClustering threadArtifactClustering
     )
     {
         this.threadSelectionProvider = threadSelectionProvider;
         this.primaryMetricIdentifier = primaryMetricIdentifier;
-        this.clustering = clustering;
+        this.threadArtifactClustering = threadArtifactClustering;
+    }
+
+    public void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering)
+    {
+        this.threadArtifactClustering = threadArtifactClustering;
+        repaint();
     }
 
     @Override
     public void paint(final Graphics g)
     {
         super.paint(g);
+        final Optional<IThreadSelectable> any = threadSelectionProvider.stream().findAny();
+        if (any.isEmpty())
+        {
+            return;
+        }
+        final IThreadSelectable threadSelectable = any.get();
+        final Set<AThreadArtifact> threadArtifacts = threadSelectable.getSelectedThreadArtifacts();
+
+
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
 
         final int width = this.getWidth();
@@ -60,7 +74,6 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         // Draw the y axis, leave an offset to the top
         graphics2D.drawLine(horizontalMargin, topOffset, horizontalMargin, height - verticalMargin);
 
-        final Set<AThreadArtifact> threadArtifacts = threadSelectionProvider.getSelectedThreadArtifacts();
 
         final int size = threadArtifacts.size();
         final Map<Double, Integer> valueOccurrences = new HashMap<>(size);
@@ -90,7 +103,7 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         final int vizWith = width - 2 * horizontalMargin;
         final int dotWithMetricValues = 4;
 
-        for (final ThreadArtifactCluster cluster : clustering)
+        for (final ThreadArtifactCluster cluster : threadArtifactClustering)
         {
             final VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(cluster);
             JBColor color = VisConstants.ORANGE;
@@ -104,7 +117,7 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
             }
             graphics2D.setColor(color);
 
-            final Set<AThreadArtifact> threadArtifactsOfCluster = threadSelectionProvider.getSelectedThreadArtifactsOfCluster(cluster);
+            final Set<AThreadArtifact> threadArtifactsOfCluster = threadSelectable.getSelectedThreadArtifactsOfCluster(cluster);
 
             for (final AThreadArtifact threadArtifact : threadArtifactsOfCluster)
             {

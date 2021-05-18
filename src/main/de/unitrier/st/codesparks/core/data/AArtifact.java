@@ -513,24 +513,21 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         synchronized (clusterings)
         {
-            ThreadArtifactClustering threadArtifactClusters = clusterings.get(clusteringStrategy);
-            if (threadArtifactClusters == null)
+            ThreadArtifactClustering clustering = clusterings.get(clusteringStrategy);
+            if (clustering == null)
             {
                 final Collection<AThreadArtifact> threadArtifacts =
-                        getThreadArtifacts()
-                                .stream()
-                                .filter(thread -> thread.getNumericalMetricValue(clusteringStrategy.getMetricIdentifier()) > 0)
-                                .collect(Collectors.toList());
-                threadArtifactClusters = clusteringStrategy.clusterThreadArtifacts(threadArtifacts);
-                clusterings.put(clusteringStrategy, threadArtifactClusters);
+                        getThreadArtifactsWithNumericMetricValue(clusteringStrategy.getMetricIdentifier());
+                clustering = clusteringStrategy.clusterThreadArtifacts(threadArtifacts);
+                clusterings.put(clusteringStrategy, clustering);
             }
-            return threadArtifactClusters;
+            return clustering;
         }
     }
 
     public ThreadArtifactClustering getThreadArtifactClustering(final AThreadArtifactClusteringStrategy clusteringStrategy)
     {
-        return lookupClustering(clusteringStrategy);//clusteringStrategy.clusterThreadArtifacts(getThreadArtifacts());
+        return lookupClustering(clusteringStrategy);
     }
 
     public ThreadArtifactClustering getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
@@ -542,8 +539,9 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         final ThreadArtifactClustering defaultThreadArtifactClusters =
                 lookupClustering(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
-        final Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterComparator.getInstance(metricIdentifier);
-        defaultThreadArtifactClusters.sort(codeSparksThreadClusterComparator);
+        final Comparator<ThreadArtifactCluster> threadArtifactClusterComparator =
+                ThreadArtifactClusterNumericalMetricSumComparator.getInstance(metricIdentifier);
+        defaultThreadArtifactClusters.sort(threadArtifactClusterComparator);
         return defaultThreadArtifactClusters;
     }
 

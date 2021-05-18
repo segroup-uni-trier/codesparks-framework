@@ -3,9 +3,7 @@
  */
 package de.unitrier.st.codesparks.core.data;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
 {

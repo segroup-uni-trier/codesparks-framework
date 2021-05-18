@@ -14,9 +14,7 @@ import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
 {
@@ -95,7 +93,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 //        final ThreadArtifactClustering threadClusters =
 //                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
-        final ThreadArtifactClustering threadClusters =
+        ThreadArtifactClustering threadClusters =
                 artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
 //        final List<ThreadArtifactCluster> threadClusters = artifact.getThreadArtifactClustering(new ApacheKMeans(primaryMetricIdentifier, 3));
@@ -107,10 +105,16 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
 //        final ThreadArtifactClustering threadClusters =
 //                artifact.getThreadArtifactClustering(new KernelDensityThreadClusteringStrategy(primaryMetricIdentifier));
+        final int numberOfThreadClusters = threadClusters.size();
+        if (numberOfThreadClusters > 3)
+        {
+            final KThreadArtifactClusteringStrategy apacheKMeans = ApacheKMeans.getInstance(primaryMetricIdentifier, 3);
+            threadClusters = artifact.getThreadArtifactClustering(apacheKMeans);
+        }
 
         int clusterNum = 0;
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-        final Map<ThreadArtifactCluster, Boolean> clusterPropertiesPresent = new HashMap<>(threadClusters.size());
+        final Map<ThreadArtifactCluster, Boolean> clusterPropertiesPresent = new HashMap<>(threadClusters.size()); // Do not replace threadClusters.size()
 
         for (final ThreadArtifactCluster threadCluster : threadClusters)
         {
@@ -187,7 +191,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             threadSquareYPos -= threadSquareOffset;
         }
 
-        if (threadClusters.size() > 0) // TODO: When ready, change this to 3
+        if (numberOfThreadClusters > 3) // TODO: When ready, change this to 3
         { // The 'plus' symbol indicating that there are more than three thread clusters!
             graphics.setColor(VisConstants.BORDER_COLOR);
 //            final int plusSymbolXOffset = X_OFFSET_LEFT + threadMetaphorWidth - 2;
