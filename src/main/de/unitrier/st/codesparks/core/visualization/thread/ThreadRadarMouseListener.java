@@ -27,14 +27,14 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 {
     private ZoomedThreadRadar zoomedThreadRadar;
     private final List<IThreadSelectable> threadSelectables;
-    private final IThreadArtifactsDisplayData threadArtifactsDisplayData;
+    private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayData;
     private final JLabel[] hoverLabels;
     private final AMetricIdentifier secondaryMetricIdentifier;
 
     public ThreadRadarMouseListener(
             final JComponent component
             , final AArtifact artifact
-            , final IThreadArtifactsDisplayData threadArtifactsDisplayData
+            , final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayData
             , final AMetricIdentifier primaryMetricIdentifier
             , final AMetricIdentifier secondaryMetricIdentifier
     )

@@ -42,21 +42,11 @@ public class ThreadTree extends AThreadSelectable
             public void repaint()
             {
                 super.repaint();
-//                if (innerNodes != null)
-//                {
                 innerNodes.values().forEach(innerNode -> {
                     innerNode.setState(retrieveInnerNodeState(innerNode));
                     innerNode.setUserObject(innerNode.getFullDisplayString());
                 });
-//                }
-                if (componentsToRepaintOnSelection == null)
-                {
-                    return;
-                }
-                for (Component component : componentsToRepaintOnSelection)
-                {
-                    component.repaint();
-                }
+                updateAndRepaintRegisteredComponents();
             }
         };
         component = tree;

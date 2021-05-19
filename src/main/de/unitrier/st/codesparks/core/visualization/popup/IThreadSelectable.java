@@ -17,6 +17,8 @@ public interface IThreadSelectable extends IThreadSelectionProvider
 
     void registerComponentToRepaintOnSelection(JComponent componentToRepaintOnSelection);
 
+    void updateAndRepaintRegisteredComponents();
+
     void deselectAll();
 
     void selectAll();

@@ -9,11 +9,11 @@ import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 
 import java.util.Set;
 
-public class DefaultThreadArtifactsDisplayData implements IThreadArtifactsDisplayData
+public class DefaultThreadArtifactsDisplayDataProvider implements IThreadArtifactsDisplayDataProvider
 {
     private final AMetricIdentifier metricIdentifier;
 
-    public DefaultThreadArtifactsDisplayData(final AMetricIdentifier metricIdentifier)
+    public DefaultThreadArtifactsDisplayDataProvider(final AMetricIdentifier metricIdentifier)
     {
         this.metricIdentifier = metricIdentifier;
     }

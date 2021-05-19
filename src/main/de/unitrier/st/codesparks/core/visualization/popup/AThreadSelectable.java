@@ -63,7 +63,21 @@ public abstract class AThreadSelectable implements IThreadSelectable
     @Override
     public void registerComponentToRepaintOnSelection(JComponent componentToRepaintOnSelection)
     {
+//        componentToRepaintOnSelection.setIgnoreRepaint(false);
+//        componentToRepaintOnSelection.setDoubleBuffered(true);
         componentsToRepaintOnSelection.add(componentToRepaintOnSelection);
+    }
+
+    @Override
+    public void updateAndRepaintRegisteredComponents()
+    {
+        for (final JComponent jComponent : componentsToRepaintOnSelection)
+        {
+//            jComponent.updateUI();
+            jComponent.repaint();
+//            jComponent.validate();
+//            jComponent.revalidate();
+        }
     }
 
     @Override

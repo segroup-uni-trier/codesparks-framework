@@ -24,18 +24,21 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
     private final AArtifact artifact;
     private final AMetricIdentifier metricIdentifier;
     private ThreadArtifactClustering threadArtifactClustering;
+    private final IThreadSelectableIndexProvider selectableIndexProvider;
     private final List<IThreadSelectable> threadSelectables;
 
     public ZoomedThreadFork(
             final AArtifact artifact
             , final AMetricIdentifier metricIdentifier
             , final ThreadArtifactClustering threadArtifactClustering
+            , final IThreadSelectableIndexProvider selectableIndexProvider
             , final List<IThreadSelectable> threadSelectables
     )
     {
         this.artifact = artifact;
         this.metricIdentifier = metricIdentifier;
         this.threadArtifactClustering = threadArtifactClustering;
+        this.selectableIndexProvider = selectableIndexProvider;
         this.threadSelectables = threadSelectables;
         this.setLayout(null);
         final Dimension dimension = new Dimension(maxWidth, maxHeight);
@@ -277,6 +280,7 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
                     , threadArtifactClustering
                     , metricIdentifier
                     , threadCluster
+                    , selectableIndexProvider
                     , threadSelectables
                     , clusterColor
                     , leftClusterButtonBoundsRectangle
@@ -294,6 +298,7 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
                     , threadArtifactClustering
                     , metricIdentifier
                     , threadCluster
+                    , selectableIndexProvider
                     , threadSelectables
                     , clusterColor
                     , rightClusterButtonBoundsRectangle

@@ -13,6 +13,7 @@ import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
+import de.unitrier.st.codesparks.core.visualization.thread.IThreadSelectableIndexProvider;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 import smile.stat.distribution.KernelDensity;
@@ -23,17 +24,20 @@ import java.util.List;
 
 public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel>
 {
-    private final List<IThreadSelectable> threadSelectionProvider;
+    private final IThreadSelectableIndexProvider selectableIndexProvider;
+    private final List<IThreadSelectable> threadSelectables;
     private final AMetricIdentifier primaryMetricIdentifier;
     private ThreadArtifactClustering threadArtifactClustering;
 
     public KernelBasedDensityEstimationPanel(
-            final List<IThreadSelectable> threadSelectionProvider
+            final IThreadSelectableIndexProvider selectableIndexProvider
+            , final List<IThreadSelectable> threadSelectables
             , final AMetricIdentifier primaryMetricIdentifier
             , final ThreadArtifactClustering threadArtifactClustering
     )
     {
-        this.threadSelectionProvider = threadSelectionProvider;
+        this.selectableIndexProvider = selectableIndexProvider;
+        this.threadSelectables = threadSelectables;
         this.primaryMetricIdentifier = primaryMetricIdentifier;
         this.threadArtifactClustering = threadArtifactClustering;
     }
@@ -48,12 +52,13 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
     public void paint(final Graphics g)
     {
         super.paint(g);
-        final Optional<IThreadSelectable> any = threadSelectionProvider.stream().findAny();
-        if (any.isEmpty())
+        final int index = selectableIndexProvider.getThreadSelectableIndex();
+        if (index < 0)
         {
             return;
         }
-        final IThreadSelectable threadSelectable = any.get();
+        
+        final IThreadSelectable threadSelectable = threadSelectables.get(index);
         final Set<AThreadArtifact> threadArtifacts = threadSelectable.getSelectedThreadArtifacts();
 
 

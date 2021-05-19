@@ -5,13 +5,15 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
+import de.unitrier.st.codesparks.core.visualization.thread.IThreadSelectableIndexProvider;
 import de.unitrier.st.codesparks.core.visualization.thread.ThreadVisualizationUtil;
 
 import java.awt.*;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFillStrategy
@@ -38,11 +40,11 @@ public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFill
     @Override
     public void fillThreadClusterButton(final ThreadClusterButton threadClusterButton, final ThreadArtifactClustering clustering, final Graphics g)
     {
-        final List<IThreadSelectable> threadSelectables = threadClusterButton.getThreadSelectables();
-        final Optional<IThreadSelectable> any = threadSelectables.stream().findAny();
-        if (any.isPresent())
+        final IThreadSelectableIndexProvider selectableIndexProvider = threadClusterButton.getSelectableIndexProvider();
+        final int index = selectableIndexProvider.getThreadSelectableIndex();
+        if (index >= 0)
         {
-            final IThreadSelectable threadSelectable = any.get();
+            final IThreadSelectable threadSelectable = threadClusterButton.getThreadSelectables().get(index);
             final ThreadArtifactCluster cluster = threadClusterButton.getCluster();
             final Set<AThreadArtifact> selectedThreadArtifactsOfCluster = threadSelectable.getSelectedThreadArtifactsOfCluster(cluster);
             final Set<AThreadArtifact> selectedThreadArtifacts = threadSelectable.getSelectedThreadArtifacts();

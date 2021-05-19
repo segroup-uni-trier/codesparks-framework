@@ -8,7 +8,7 @@ import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 
 import java.util.Set;
 
-public interface IThreadArtifactsDisplayData
+public interface IThreadArtifactsDisplayDataProvider
 {
     ThreadArtifactDisplayData getDisplayDataOfSelectedThreads(final AArtifact artifact, final Set<AThreadArtifact> selectedThreadArtifacts);
 

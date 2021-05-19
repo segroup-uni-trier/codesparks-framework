@@ -18,24 +18,24 @@ import java.util.*;
 
 public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    private final IThreadArtifactsDisplayData threadArtifactsDisplayData;
+    private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayData;
 
     public ThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier, 0);
-        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayData(primaryMetricIdentifier);
+        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayDataProvider(primaryMetricIdentifier);
     }
 
     public ThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(primaryMetricIdentifier, sequence);
-        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayData(primaryMetricIdentifier);
+        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayDataProvider(primaryMetricIdentifier);
     }
 
     public ThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence, final int xOffsetLeft)
     {
         super(primaryMetricIdentifier, sequence, xOffsetLeft);
-        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayData(primaryMetricIdentifier);
+        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayDataProvider(primaryMetricIdentifier);
     }
 
     @Override

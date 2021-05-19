@@ -10,6 +10,7 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
+import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationMouseListener;
@@ -19,26 +20,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 {
     private final List<IThreadSelectable> threadSelectables;
-    private final IThreadArtifactsDisplayData threadArtifactsDisplayData;
+    private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayDataProvider;
 
     ThreadForkMouseListener(
             final JComponent component
             , final AArtifact artifact
             , final AMetricIdentifier primaryMetricIdentifier
-            , final IThreadArtifactsDisplayData threadArtifactsDisplayData
+            , final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayDataProvider
     )
     {
         super(component, new Dimension(740, 170), artifact, primaryMetricIdentifier);
         this.threadSelectables = new ArrayList<>();
-        this.threadArtifactsDisplayData = threadArtifactsDisplayData;
+        this.threadArtifactsDisplayDataProvider = threadArtifactsDisplayDataProvider;
     }
 
     private static class ComboBoxItem
@@ -66,11 +65,16 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         popupPanel.setLayout(new BoxLayout(popupPanel, BoxLayout.Y_AXIS));
 
         threadSelectables.clear();
+        final Collection<JComponent> componentsToRegisterToTheThreadSelectables = new ArrayList<>();
 
         ThreadArtifactClustering threadArtifactClustering =
                 artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
         final int actualNumberOfClustersOfTheDensityEstimation = threadArtifactClustering.size();
+
+        // Objects that need to be declared already because they will be used in inner classes.
+        final JBTabbedPane selectablesTabbedPane = new JBTabbedPane();
+        final IThreadSelectableIndexProvider selectableIndexProvider = selectablesTabbedPane::getSelectedIndex;
 
         /*
          * The zoomed viz tabbed pane
@@ -89,14 +93,15 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                     artifact
                     , primaryMetricIdentifier
                     , threadArtifactClustering
+                    , selectableIndexProvider
                     , threadSelectables
             );
             zoomedThreadFork = finalZoomedThreadFork;
             final KernelBasedDensityEstimationPanel finalKernelBasedDensityEstimationPanel = new KernelBasedDensityEstimationPanel(
-                    threadSelectables, primaryMetricIdentifier, threadArtifactClustering);
+                    selectableIndexProvider, threadSelectables, primaryMetricIdentifier, threadArtifactClustering);
             kernelBasedDensityEstimationPanel = finalKernelBasedDensityEstimationPanel;
 
-            final JBPanel<BorderLayoutPanel> tabWrapper = new JBPanel<>();
+            final JPanel tabWrapper = new JPanel();
             tabWrapper.setLayout(new GridBagLayout());
 
             final JBPanel<BorderLayoutPanel> zoomedThreadForkWrapper = new JBPanel<>(new BorderLayout());
@@ -149,7 +154,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
                 centerPanel.add(numberOfClustersPanel, BorderLayout.NORTH);
             }
-            final JBPanel<BorderLayoutPanel> leftPanel = new BorderLayoutPanel();
+            final JBPanel<BorderLayoutPanel> leftPanel = new JBPanel<>();
             leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 
             final JBPanel<BorderLayoutPanel> leftSelectedThreadsPanel = new BorderLayoutPanel();
@@ -158,67 +163,128 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
             // ---------------------------------------------
 
-
-//            ThreadArtifactDisplayData selectedData =
-//                    threadArtifactsDisplayData.getDisplayDataOfSelectedThreads(artifact, threadClustersTree.getSelectedThreadArtifacts());
-//            if (selectedData == null)
-//            {
-//                selectedData = new ThreadArtifactDisplayData();
-//            }
-
-
-            leftSelectedThreadsPanel.add(new Label("left selected Test"));
-
+            final String metricString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.metric");
+            final JBLabel leftSelectedMetricLabel = new JBLabel()
+            {
+                @Override
+                public void paintComponent(final Graphics g)
+                {
+                    super.paintComponent(g);
+                    final int index = selectableIndexProvider.getThreadSelectableIndex();
+                    if (index >= 0)
+                    {
+                        final IThreadSelectable selectable = threadSelectables.get(index);
+                        final ThreadArtifactDisplayData selectedThreadData =
+                                threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, selectable.getSelectedThreadArtifacts());
+                        final double metricValueSum = selectedThreadData.getMetricValueSum();
+                        final String percentage = CoreUtil.formatPercentage(metricValueSum);
+                        setText(metricString + ": " + percentage);
+                    }
+                }
+            };
+            leftSelectedThreadsPanel.add(leftSelectedMetricLabel);
+            componentsToRegisterToTheThreadSelectables.add(leftSelectedMetricLabel);
 
             final JBPanel<BorderLayoutPanel> leftHoveredThreadsPanel = new BorderLayoutPanel();
             leftHoveredThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                     "Hovered threads"));
 
+            // TODO
             leftHoveredThreadsPanel.add(new Label("left hovered Test"));
 
             leftPanel.add(leftSelectedThreadsPanel);
             leftPanel.add(leftHoveredThreadsPanel);
 
-            final JBPanel<BorderLayoutPanel> rightPanel = new BorderLayoutPanel();
+            final JPanel rightPanel = new JPanel();
             rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
 
-            final JBPanel<BorderLayoutPanel> rightSelectedThreadsPanel = new BorderLayoutPanel();
+            final JPanel rightSelectedThreadsPanelWrapper = new JPanel(new BorderLayout());
+            final JPanel rightSelectedThreadsPanel = new JPanel();
+            rightSelectedThreadsPanel.setLayout(new BoxLayout(rightSelectedThreadsPanel, BoxLayout.Y_AXIS));
             rightSelectedThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                     "Selected threads"));
 
-            rightSelectedThreadsPanel.add(new Label("right selected Test"));
+            final String numberOfThreadTypesString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberoftypes");
+            final JLabel rightSelectedTypesLabel = new JLabel()
+            {
+                @Override
+                public void paintComponent(final Graphics g)
+                {
+                    super.paintComponent(g);
+                    final int index = selectableIndexProvider.getThreadSelectableIndex();
+                    if (index >= 0)
+                    {
+                        final IThreadSelectable selectable = threadSelectables.get(index);
+                        final ThreadArtifactDisplayData selectedThreadData =
+                                threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, selectable.getSelectedThreadArtifacts());
+                        setText(numberOfThreadTypesString + ": " + selectedThreadData.getNumberOfThreadTypes());
+                    }
+                }
+            };
+            final String numberOfThreadsString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberofthreads");
+            final JLabel rightSelectedNumberOfThreadsLabel = new JLabel()
+            {
+                @Override
+                public void paintComponent(final Graphics g)
+                {
+                    super.paintComponent(g);
+                    final int index = selectableIndexProvider.getThreadSelectableIndex();
+                    if (index >= 0)
+                    {
+                        final IThreadSelectable selectable = threadSelectables.get(index);
+                        final ThreadArtifactDisplayData selectedThreadData =
+                                threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, selectable.getSelectedThreadArtifacts());
+                        setText(numberOfThreadsString + ": " + selectedThreadData.getNumberOfThreads());
+                    }
+                }
+            };
+
+            final JPanel typeLabelWrapper = new JPanel(new BorderLayout());
+            typeLabelWrapper.add(rightSelectedTypesLabel);
+            rightSelectedThreadsPanel.add(typeLabelWrapper);
+            componentsToRegisterToTheThreadSelectables.add(rightSelectedTypesLabel);
+            final JPanel nrLabelWrapper = new JPanel(new BorderLayout());
+            nrLabelWrapper.add(rightSelectedNumberOfThreadsLabel);
+            rightSelectedThreadsPanel.add(nrLabelWrapper);
+            componentsToRegisterToTheThreadSelectables.add(rightSelectedNumberOfThreadsLabel);
 
             final JBPanel<BorderLayoutPanel> rightHoveredThreadsPanel = new BorderLayoutPanel();
             rightHoveredThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                     "Hovered cluster"));
 
             rightHoveredThreadsPanel.add(new Label("right hovered Test"));
+            //TODO
 
-            rightPanel.add(rightSelectedThreadsPanel);
+
+//            rightPanel.add(rightSelectedThreadsPanel);
+            rightSelectedThreadsPanelWrapper.add(rightSelectedThreadsPanel, BorderLayout.CENTER);
+            rightPanel.add(rightSelectedThreadsPanelWrapper);
+
             rightPanel.add(rightHoveredThreadsPanel);
 
             centerPanel.add(leftPanel, BorderLayout.WEST);
             centerPanel.add(rightPanel, BorderLayout.EAST);
             centerPanel.add(zoomedThreadForkWrapper, BorderLayout.CENTER);
 
-
             tabWrapper.add(centerPanel);
             zoomedVizTabbedPane.addTab("ThreadFork", tabWrapper);
-
-            for (final IThreadSelectable threadSelectable : threadSelectables)
-            {
-                threadSelectable.registerComponentToRepaintOnSelection(leftSelectedThreadsPanel);
-                threadSelectable.registerComponentToRepaintOnSelection(leftHoveredThreadsPanel);
-                threadSelectable.registerComponentToRepaintOnSelection(rightSelectedThreadsPanel);
-                threadSelectable.registerComponentToRepaintOnSelection(rightHoveredThreadsPanel);
-            }
         }
 
         /*
          * The thread metric density estimation / histogram
          */
+        if (kernelBasedDensityEstimationPanel == null)
+        {
+            kernelBasedDensityEstimationPanel = new KernelBasedDensityEstimationPanel(
+                    selectableIndexProvider, threadSelectables, primaryMetricIdentifier, threadArtifactClustering);
+        }
 
-        // I gonna need the clustersTree of any threadSelectionProvider for the density estimation panel
+        zoomedVizTabbedPane.addTab("Histogram", kernelBasedDensityEstimationPanel);
+        popupPanel.add(zoomedVizTabbedPane);
+
+        /*
+         * The selectables tabbed pane
+         */
         final Map<String, List<AThreadArtifact>> map = new HashMap<>();
         int clusterId = 1;
         for (final ThreadArtifactCluster threadArtifacts : threadArtifactClustering)
@@ -226,29 +292,8 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             map.put("Cluster:" + clusterId++, threadArtifacts);
         }
         final AThreadSelectable threadClustersTree = new ThreadClusterTree(map, primaryMetricIdentifier);
-        //------------------------
-
-        if (kernelBasedDensityEstimationPanel == null)
-        {
-            kernelBasedDensityEstimationPanel = new KernelBasedDensityEstimationPanel(
-                    threadSelectables, primaryMetricIdentifier, threadArtifactClustering);
-        }
-
-        zoomedVizTabbedPane.addTab("Histogram", kernelBasedDensityEstimationPanel);
-
-//        final JBPanel<BorderLayoutPanel> zoomedVizTabbedPaneWrapper = new BorderLayoutPanel();
-//        zoomedVizTabbedPaneWrapper.add(zoomedVizTabbedPane, BorderLayout.CENTER);
-//        popupPanel.add(zoomedVizTabbedPaneWrapper);
-        popupPanel.add(zoomedVizTabbedPane);
-
-        /*
-         * The selectables tabbed pane
-         */
-
-        final JBTabbedPane selectablesTabbedPane = new JBTabbedPane();
-        final IThreadSelectableIndexProvider selectablesIndexProvider = selectablesTabbedPane::getSelectedIndex;
-
         threadSelectables.add(threadClustersTree);
+
         selectablesTabbedPane.addTab("Clusters", new JBScrollPane(threadClustersTree.getComponent()));
 
         final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeListsOfThreadsWithNumericMetricValue(primaryMetricIdentifier);
@@ -275,50 +320,6 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         buttonsPanel.setMinimumSize(buttonsPanelDimension);
         buttonsPanel.setPreferredSize(buttonsPanelDimension);
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
-
-        /*
-         ************************* At first the cluster buttons
-         */
-
-//        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-//        final JBPanel<BorderLayoutPanel> clusterButtonsPanel = new JBPanel<>();
-//        clusterButtonsPanel.setLayout(new BoxLayout(clusterButtonsPanel, BoxLayout.X_AXIS));
-//        // Toggle cluster buttons.
-//        for (final ThreadArtifactCluster cluster : threadArtifactClustering)
-//        {
-//            if (cluster.isEmpty())
-//            {
-//                continue;
-//            }
-//            final VisualThreadClusterProperties properties =
-//                    clusterPropertiesManager.getProperties(cluster);
-//            Color foregroundColor;
-//            if (properties == null)
-//            {
-//                foregroundColor = JBColor.BLACK;
-//            } else
-//            {
-//                foregroundColor = properties.getColor();
-//            }
-//            final JButton clusterToggle =
-//                    new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.threads.togglecluster"));
-//            clusterToggle.setForeground(foregroundColor);
-//            clusterToggle.addActionListener(e -> {
-//                for (final IThreadSelectable threadSelectable : threadSelectables)
-//                {
-//                    threadSelectable.toggleCluster(cluster);
-//                }
-//
-//            });
-//            final JBPanel<BorderLayoutPanel> clusterButtonWrapper = new JBPanel<>(new BorderLayout());
-//            clusterButtonWrapper.add(clusterToggle, BorderLayout.CENTER);
-//            clusterButtonsPanel.add(clusterButtonWrapper);
-//        }
-//
-//        // Add the cluster buttons panel
-//        final JBPanel<BorderLayoutPanel> clusterButtonsPanelWrapper = new JBPanel<>(new BorderLayout());
-//        clusterButtonsPanelWrapper.add(clusterButtonsPanel, BorderLayout.CENTER);
-//        buttonsPanel.add(clusterButtonsPanelWrapper);
 
         /*
          ***************** The selection buttons
@@ -390,7 +391,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                 new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.button.apply.thread.filter"));
         applyThreadFilter.addActionListener(e -> {
             popupPanel.cancelPopup();
-            final int index = selectablesIndexProvider.getThreadSelectableIndex();
+            final int index = selectableIndexProvider.getThreadSelectableIndex();
             if (index < threadSelectables.size())
             {
                 final IThreadSelectable iThreadSelectable = threadSelectables.get(index);
@@ -421,6 +422,10 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             if (zoomedThreadFork != null)
             {
                 threadSelectable.registerComponentToRepaintOnSelection(zoomedThreadFork);
+            }
+            for (final JComponent component : componentsToRegisterToTheThreadSelectables)
+            {
+                threadSelectable.registerComponentToRepaintOnSelection(component);
             }
         }
 

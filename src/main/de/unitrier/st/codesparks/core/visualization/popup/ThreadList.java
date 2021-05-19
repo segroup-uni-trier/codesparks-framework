@@ -42,14 +42,7 @@ public class ThreadList extends AThreadSelectable
             public void repaint()
             {
                 super.repaint();
-                if (componentsToRepaintOnSelection == null)
-                {
-                    return;
-                }
-                for (Component component : componentsToRepaintOnSelection)
-                {
-                    component.repaint();
-                }
+                updateAndRepaintRegisteredComponents();
             }
         };
         component = list;

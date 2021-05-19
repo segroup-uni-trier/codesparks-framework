@@ -13,6 +13,7 @@ import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
+import de.unitrier.st.codesparks.core.visualization.thread.IThreadSelectableIndexProvider;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -27,6 +28,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
     private final ThreadArtifactClustering clustering;
     private final AMetricIdentifier metricIdentifier;
     private final Set<Component> componentsToRepaint;
+    private final IThreadSelectableIndexProvider selectableIndexProvider;
     private final List<IThreadSelectable> threadSelectables;
     private final ThreadArtifactCluster cluster;
     private final JBColor color;
@@ -37,6 +39,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
             , final ThreadArtifactClustering clustering
             , final AMetricIdentifier metricIdentifier
             , final ThreadArtifactCluster cluster
+            , final IThreadSelectableIndexProvider selectableIndexProvider
             , final List<IThreadSelectable> threadSelectables
             , final JBColor color
             , final Rectangle boundsRectangle
@@ -47,6 +50,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
         this.clustering = clustering;
         this.metricIdentifier = metricIdentifier;
         this.cluster = cluster;
+        this.selectableIndexProvider = selectableIndexProvider;
         this.threadSelectables = threadSelectables;
         this.color = color;
         this.boundsRectangle = boundsRectangle;
@@ -107,6 +111,11 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
     public List<IThreadSelectable> getThreadSelectables()
     {
         return threadSelectables;
+    }
+
+    public IThreadSelectableIndexProvider getSelectableIndexProvider()
+    {
+        return selectableIndexProvider;
     }
 
     public ThreadArtifactCluster getCluster()

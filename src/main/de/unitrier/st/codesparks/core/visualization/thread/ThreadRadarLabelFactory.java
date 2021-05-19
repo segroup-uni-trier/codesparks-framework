@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    private final IThreadArtifactsDisplayData threadArtifactsDisplayData;
+    private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayData;
     private final AMetricIdentifier secondaryMetricIdentifier;
 
     public ThreadRadarLabelFactory(
@@ -32,7 +32,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
     {
         super(primaryMetricIdentifier, 0);
         this.secondaryMetricIdentifier = secondaryMetricIdentifier;
-        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayData(primaryMetricIdentifier);
+        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayDataProvider(primaryMetricIdentifier);
     }
 
     public ThreadRadarLabelFactory(
@@ -43,14 +43,14 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
     {
         super(primaryMetricIdentifier, sequence);
         this.secondaryMetricIdentifier = secondaryMetricIdentifier;
-        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayData(primaryMetricIdentifier);
+        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayDataProvider(primaryMetricIdentifier);
     }
 
     public ThreadRadarLabelFactory(
             final AMetricIdentifier primaryMetricIdentifier
             , final AMetricIdentifier secondaryMetricIdentifier
             , final int sequence
-            , final IThreadArtifactsDisplayData threadArtifactsDisplayData
+            , final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayData
     )
     {
         super(primaryMetricIdentifier, sequence);
