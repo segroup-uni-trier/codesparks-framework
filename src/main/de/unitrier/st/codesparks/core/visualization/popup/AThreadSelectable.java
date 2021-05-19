@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
@@ -9,9 +12,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public abstract class AThreadSelectable implements IThreadSelectable
 {
     AThreadSelectable()
@@ -63,8 +63,6 @@ public abstract class AThreadSelectable implements IThreadSelectable
     @Override
     public void registerComponentToRepaintOnSelection(JComponent componentToRepaintOnSelection)
     {
-//        componentToRepaintOnSelection.setIgnoreRepaint(false);
-//        componentToRepaintOnSelection.setDoubleBuffered(true);
         componentsToRepaintOnSelection.add(componentToRepaintOnSelection);
     }
 
@@ -73,10 +71,7 @@ public abstract class AThreadSelectable implements IThreadSelectable
     {
         for (final JComponent jComponent : componentsToRepaintOnSelection)
         {
-//            jComponent.updateUI();
             jComponent.repaint();
-//            jComponent.validate();
-//            jComponent.revalidate();
         }
     }
 

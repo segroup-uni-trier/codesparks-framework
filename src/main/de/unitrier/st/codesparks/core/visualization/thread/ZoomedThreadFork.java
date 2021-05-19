@@ -26,6 +26,7 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
     private ThreadArtifactClustering threadArtifactClustering;
     private final IThreadSelectableIndexProvider selectableIndexProvider;
     private final List<IThreadSelectable> threadSelectables;
+    private final IClusterHoverable clusterHoverable;
 
     public ZoomedThreadFork(
             final AArtifact artifact
@@ -33,6 +34,7 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
             , final ThreadArtifactClustering threadArtifactClustering
             , final IThreadSelectableIndexProvider selectableIndexProvider
             , final List<IThreadSelectable> threadSelectables
+            , final IClusterHoverable clusterHoverable
     )
     {
         this.artifact = artifact;
@@ -40,6 +42,7 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
         this.threadArtifactClustering = threadArtifactClustering;
         this.selectableIndexProvider = selectableIndexProvider;
         this.threadSelectables = threadSelectables;
+        this.clusterHoverable = clusterHoverable;
         this.setLayout(null);
         final Dimension dimension = new Dimension(maxWidth, maxHeight);
         this.setPreferredSize(dimension);
@@ -285,6 +288,7 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
                     , clusterColor
                     , leftClusterButtonBoundsRectangle
                     , SumAvgClusterButtonFillStrategy.getInstance()
+                    , clusterHoverable
             );
             add(leftClusterButton);
             // Cluster button right
@@ -303,6 +307,7 @@ public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
                     , clusterColor
                     , rightClusterButtonBoundsRectangle
                     , TotalNumberOfThreadsAndThreadTypesButtonFillStrategy.getInstance()
+                    , clusterHoverable
             );
             add(rightClusterButton);
 

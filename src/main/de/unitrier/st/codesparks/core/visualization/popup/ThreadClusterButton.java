@@ -13,6 +13,7 @@ import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
+import de.unitrier.st.codesparks.core.visualization.thread.IClusterHoverable;
 import de.unitrier.st.codesparks.core.visualization.thread.IThreadSelectableIndexProvider;
 
 import java.awt.*;
@@ -34,6 +35,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
     private final JBColor color;
     private final Rectangle boundsRectangle;
     private final IThreadClusterButtonFillStrategy fillStrategy;
+    private final IClusterHoverable clusterHoverable;
 
     public ThreadClusterButton(final AArtifact artifact
             , final ThreadArtifactClustering clustering
@@ -44,6 +46,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
             , final JBColor color
             , final Rectangle boundsRectangle
             , final IThreadClusterButtonFillStrategy fillStrategy
+            , final IClusterHoverable clusterHoverable
     )
     {
         this.artifact = artifact;
@@ -55,6 +58,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
         this.color = color;
         this.boundsRectangle = boundsRectangle;
         this.fillStrategy = fillStrategy;
+        this.clusterHoverable = clusterHoverable;
         this.componentsToRepaint = new HashSet<>(4);
 
         this.addMouseListener(ClusterButtonMouseAdapter.getInstance());
@@ -138,6 +142,11 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
         return color;
     }
 
+    public IClusterHoverable getClusterHoverable()
+    {
+        return clusterHoverable;
+    }
+
     //    @Override
 //    public void paint(final Graphics g)
 //    {
@@ -180,6 +189,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
                 component.repaint();
             }
             source.repaint();
+            source.getClusterHoverable().onHover(source.getCluster());
         }
 
         @Override
@@ -197,6 +207,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
                 component.repaint();
             }
             source.repaint();
+            source.getClusterHoverable().onExit();
         }
 
         @Override
@@ -210,8 +221,22 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
                 {
                     threadSelectable.toggleCluster(source.getCluster());
                 }
+                source.getClusterHoverable().onExit();
             }
-            //System.out.println("ThreadSelectable!");
+
+            new Thread(() -> {
+                try
+                {
+                    Thread.sleep(100);
+                    final Robot robot = new Robot();
+                    final int x = e.getLocationOnScreen().x;
+                    final int y = e.getLocationOnScreen().y;
+                    robot.mouseMove(x + 1, y);
+                } catch (AWTException | InterruptedException awtException)
+                {
+                    awtException.printStackTrace();
+                }
+            }).start();
         }
     }
 }

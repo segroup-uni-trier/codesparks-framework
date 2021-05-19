@@ -26,15 +26,16 @@ import java.util.Map;
 public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable
 {
     private ZoomedThreadRadar zoomedThreadRadar;
+    private IThreadSelectableIndexProvider selectableIndexProvider;
     private final List<IThreadSelectable> threadSelectables;
-    private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayData;
+    private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayDataProvider;
     private final JLabel[] hoverLabels;
     private final AMetricIdentifier secondaryMetricIdentifier;
 
     public ThreadRadarMouseListener(
             final JComponent component
             , final AArtifact artifact
-            , final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayData
+            , final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayDataProvider
             , final AMetricIdentifier primaryMetricIdentifier
             , final AMetricIdentifier secondaryMetricIdentifier
     )
@@ -43,7 +44,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         this.component = component;
         this.hoverLabels = new JLabel[4];
         this.threadSelectables = new ArrayList<>();
-        this.threadArtifactsDisplayData = threadArtifactsDisplayData;
+        this.threadArtifactsDisplayDataProvider = threadArtifactsDisplayDataProvider;
         this.secondaryMetricIdentifier = secondaryMetricIdentifier;
         component.addMouseMotionListener(this);
     }
@@ -80,7 +81,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         threadClustersTree.setNext(threadTypesTree);
         threadTypesTree.setNext(threadClustersTree);
 
-        final IThreadSelectableIndexProvider indexProvider = tabbedPane::getSelectedIndex;
+        selectableIndexProvider = tabbedPane::getSelectedIndex;
 
         // -------------------------
 
@@ -89,7 +90,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         // User activity logging
         tabbedPane.addChangeListener(e -> {
 
-            int threadSelectableIndex = indexProvider.getThreadSelectableIndex();
+            int threadSelectableIndex = selectableIndexProvider.getThreadSelectableIndex();
             if (threadSelectableIndex == 0)
             {
                 UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarPopupClustersTabEntered);
@@ -153,7 +154,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
             UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewApplyThreadFilterButtonClicked);
 
             popupPanel.cancelPopup();
-            final int index = indexProvider.getThreadSelectableIndex();
+            final int index = selectableIndexProvider.getThreadSelectableIndex();
             final IThreadSelectable iThreadSelectable = threadSelectables.get(index);
             final IThreadArtifactFilter iThreadArtifactFilter = new DefaultThreadArtifactFilter(iThreadSelectable);
             CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(iThreadArtifactFilter);
@@ -198,7 +199,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
         //Radial Visualization
 
-        zoomedThreadRadar = new ZoomedThreadRadar(artifact, indexProvider, threadSelectables, primaryMetricIdentifier);
+        zoomedThreadRadar = new ZoomedThreadRadar(artifact, selectableIndexProvider, threadSelectables, primaryMetricIdentifier);
         zoomedThreadRadar.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
         final ZoomedThreadRadarMouseAdapter mouseAdapter =
                 new ZoomedThreadRadarMouseAdapter(zoomedThreadRadar, artifact, primaryMetricIdentifier, this, northLeftWrapper);
@@ -261,7 +262,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
         // ---------------------------------------------
         ThreadArtifactDisplayData selectedData =
-                threadArtifactsDisplayData.getDisplayDataOfSelectedThreads(artifact, threadClustersTree.getSelectedThreadArtifacts());
+                threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, threadClustersTree.getSelectedThreadArtifacts());
         if (selectedData == null)
         {
             selectedData = new ThreadArtifactDisplayData();
@@ -274,10 +275,10 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
             @Override
             public void repaint()
             {
-                int index = indexProvider.getThreadSelectableIndex();
+                int index = selectableIndexProvider.getThreadSelectableIndex();
                 IThreadSelectable iThreadSelectable = threadSelectables.get(index);
                 ThreadArtifactDisplayData selectedThreadData =
-                        threadArtifactsDisplayData.getDisplayDataOfSelectedThreads(artifact, iThreadSelectable.getSelectedThreadArtifacts());
+                        threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, iThreadSelectable.getSelectedThreadArtifacts());
                 setText(metricString + " : " + CoreUtil.formatPercentage(selectedThreadData.getMetricValueSum()));
                 super.repaint();
             }
@@ -293,10 +294,10 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
             @Override
             public void repaint()
             {
-                int index = indexProvider.getThreadSelectableIndex();
+                int index = selectableIndexProvider.getThreadSelectableIndex();
                 IThreadSelectable iThreadSelectable = threadSelectables.get(index);
                 ThreadArtifactDisplayData selectedThreadData =
-                        threadArtifactsDisplayData.getDisplayDataOfSelectedThreads(artifact, iThreadSelectable.getSelectedThreadArtifacts());
+                        threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, iThreadSelectable.getSelectedThreadArtifacts());
                 setText(numberOfThreadTypesString + " : " + selectedThreadData.getNumberOfThreadTypes());
                 super.repaint();
             }
@@ -312,10 +313,10 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
             @Override
             public void repaint()
             {
-                int index = indexProvider.getThreadSelectableIndex();
+                int index = selectableIndexProvider.getThreadSelectableIndex();
                 IThreadSelectable iThreadSelectable = threadSelectables.get(index);
                 ThreadArtifactDisplayData selectedThreadData =
-                        threadArtifactsDisplayData.getDisplayDataOfSelectedThreads(artifact, iThreadSelectable.getSelectedThreadArtifacts());
+                        threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, iThreadSelectable.getSelectedThreadArtifacts());
                 setText(numberOfThreadsString + " : " + selectedThreadData.getNumberOfThreads());
                 super.repaint();
             }
@@ -427,20 +428,27 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
     private void updateHoverLabels(ThreadArtifactCluster cluster)
     {
-        if (threadSelectables.size() < 1)
+//        if (threadSelectables.size() < 1)
+//        {
+//            return;
+//        }
+        final int index = selectableIndexProvider.getThreadSelectableIndex();
+        if (index < 0)
         {
             return;
         }
+
         ThreadArtifactDisplayData hoveredThreadData =
-                threadArtifactsDisplayData.getDisplayDataOfHoveredThreads(artifact,
-                        threadSelectables.get(0).getSelectedThreadArtifactsOfCluster(cluster));
+                threadArtifactsDisplayDataProvider.getDisplayDataOfHoveredThreads(artifact,
+                        threadSelectables.get(index).getSelectedThreadArtifactsOfCluster(cluster));
         if (hoveredThreadData == null)
         {
             hoveredThreadData = new ThreadArtifactDisplayData();
         }
 
-        hoverLabels[0].setText("Metric (sum): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueSum()));
-        hoverLabels[1].setText("Metric (avg): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueAvg()));
+        final String metricString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.metric");
+        hoverLabels[0].setText(metricString + " (sum): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueSum()));
+        hoverLabels[1].setText(metricString + " (avg): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueAvg()));
 
         String numberOfThreadsString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberofthreads");
         String numberOfClassesString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberoftypes");

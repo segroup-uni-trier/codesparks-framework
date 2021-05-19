@@ -14,19 +14,24 @@ import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationMouseListener;
+import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.*;
 
-public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
+public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable
 {
+    private IThreadSelectableIndexProvider selectableIndexProvider;
     private final List<IThreadSelectable> threadSelectables;
     private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayDataProvider;
+    private final JLabel[] leftHoverLabels;
+    private final JLabel[] rightHoverLabels;
 
     ThreadForkMouseListener(
             final JComponent component
@@ -35,9 +40,11 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             , final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayDataProvider
     )
     {
-        super(component, new Dimension(740, 170), artifact, primaryMetricIdentifier);
-        this.threadSelectables = new ArrayList<>();
+        super(component, new Dimension(760, 170), artifact, primaryMetricIdentifier);
+        this.threadSelectables = new ArrayList<>(2);
         this.threadArtifactsDisplayDataProvider = threadArtifactsDisplayDataProvider;
+        this.leftHoverLabels = new JLabel[2];
+        this.rightHoverLabels = new JLabel[2];
     }
 
     private static class ComboBoxItem
@@ -74,7 +81,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
         // Objects that need to be declared already because they will be used in inner classes.
         final JBTabbedPane selectablesTabbedPane = new JBTabbedPane();
-        final IThreadSelectableIndexProvider selectableIndexProvider = selectablesTabbedPane::getSelectedIndex;
+        selectableIndexProvider = selectablesTabbedPane::getSelectedIndex;
 
         /*
          * The zoomed viz tabbed pane
@@ -95,6 +102,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                     , threadArtifactClustering
                     , selectableIndexProvider
                     , threadSelectables
+                    , this
             );
             zoomedThreadFork = finalZoomedThreadFork;
             final KernelBasedDensityEstimationPanel finalKernelBasedDensityEstimationPanel = new KernelBasedDensityEstimationPanel(
@@ -154,10 +162,10 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
                 centerPanel.add(numberOfClustersPanel, BorderLayout.NORTH);
             }
-            final JBPanel<BorderLayoutPanel> leftPanel = new JBPanel<>();
+            final JPanel leftPanel = new JPanel();
             leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 
-            final JBPanel<BorderLayoutPanel> leftSelectedThreadsPanel = new BorderLayoutPanel();
+            final JPanel leftSelectedThreadsPanel = new JPanel(new BorderLayout());
             leftSelectedThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                     "Selected threads"));
 
@@ -185,15 +193,39 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             leftSelectedThreadsPanel.add(leftSelectedMetricLabel);
             componentsToRegisterToTheThreadSelectables.add(leftSelectedMetricLabel);
 
-            final JBPanel<BorderLayoutPanel> leftHoveredThreadsPanel = new BorderLayoutPanel();
-            leftHoveredThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                    "Hovered threads"));
+            final JPanel leftHoveredClusterPanelWrapper = new JPanel(new BorderLayout());
+            final JPanel leftHoveredClusterPanel = new JPanel();
+            leftHoveredClusterPanel.setLayout(new BoxLayout(leftHoveredClusterPanel, BoxLayout.Y_AXIS));
+            leftHoveredClusterPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                    "Hovered cluster"));
+            final Dimension leftHoverClusterPanelDimension = new Dimension(170, 50);
+            //leftHoveredClusterPanel.setMinimumSize(leftHoverClusterPanelDimension);
+            leftHoveredClusterPanel.setPreferredSize(leftHoverClusterPanelDimension);
+            
+
+
+            final JLabel leftMetricSumLabel = new JLabel();
+//            leftMetricSumLabel.setPreferredSize(preferredSizeDimension);
+            final JPanel leftMetricSumLabelWrapper = new JPanel(new BorderLayout());
+            leftMetricSumLabelWrapper.add(leftMetricSumLabel);
+            leftHoveredClusterPanel.add(leftMetricSumLabelWrapper);
+
+            final JLabel leftMetricAvgLabel = new JLabel();
+//            leftMetricAvgLabel.setPreferredSize(preferredSizeDimension);
+            final JPanel leftMetricAvgLabelWrapper = new JPanel(new BorderLayout());
+            leftMetricAvgLabelWrapper.add(leftMetricAvgLabel);
+            leftHoveredClusterPanel.add(leftMetricAvgLabelWrapper);
+
+            leftHoverLabels[0] = leftMetricSumLabel;
+            leftHoverLabels[0].setText("Hover over a cluster\nfor more information!");
+            leftHoverLabels[1] = leftMetricAvgLabel;
 
             // TODO
-            leftHoveredThreadsPanel.add(new Label("left hovered Test"));
+            //leftHoveredClusterPanel.add(new Label("left hovered Test"));
 
             leftPanel.add(leftSelectedThreadsPanel);
-            leftPanel.add(leftHoveredThreadsPanel);
+            leftHoveredClusterPanelWrapper.add(leftHoveredClusterPanel, BorderLayout.CENTER);
+            leftPanel.add(leftHoveredClusterPanelWrapper);
 
             final JPanel rightPanel = new JPanel();
             rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
@@ -243,6 +275,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             typeLabelWrapper.add(rightSelectedTypesLabel);
             rightSelectedThreadsPanel.add(typeLabelWrapper);
             componentsToRegisterToTheThreadSelectables.add(rightSelectedTypesLabel);
+
             final JPanel nrLabelWrapper = new JPanel(new BorderLayout());
             nrLabelWrapper.add(rightSelectedNumberOfThreadsLabel);
             rightSelectedThreadsPanel.add(nrLabelWrapper);
@@ -440,4 +473,40 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         return "Total number of threads: " + artifact.getNumberOfThreadsWithNumericMetricValue(primaryMetricIdentifier) +
                 " | Different thread types: " + (threadTypeLists == null ? 0 : threadTypeLists.size());
     }
+
+    @Override
+    public void onHover(final ThreadArtifactCluster cluster)
+    {
+        final int index = selectableIndexProvider.getThreadSelectableIndex();
+        if (index < 0)
+        {
+            return;
+        }
+
+        ThreadArtifactDisplayData hoveredThreadData =
+                threadArtifactsDisplayDataProvider.getDisplayDataOfHoveredThreads(artifact,
+                        threadSelectables.get(index).getSelectedThreadArtifactsOfCluster(cluster));
+
+        if (hoveredThreadData == null)
+        {
+            hoveredThreadData = new ThreadArtifactDisplayData();
+        }
+        final String metricString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.metric");
+        leftHoverLabels[0].setText(metricString + " (sum): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueSum()));
+        leftHoverLabels[0].setForeground(VisConstants.ORANGE);
+        leftHoverLabels[1].setText(metricString + " (avg): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueAvg()));
+        leftHoverLabels[1].setForeground(VisConstants.ORANGE);
+    }
+
+    @Override
+    public void onExit()
+    {
+        for (final JLabel hoverLabel : leftHoverLabels)
+        {
+            hoverLabel.setText("");
+        }
+        leftHoverLabels[0].setText("Hover over a cluster\nfor more information!");
+
+    }
+
 }
