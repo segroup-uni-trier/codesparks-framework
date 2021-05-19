@@ -5,10 +5,7 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.thread.ThreadVisualizationUtil;
 
@@ -49,17 +46,17 @@ public class TotalNumberOfThreadsAndThreadTypesButtonFillStrategy implements ITh
             final ThreadArtifactCluster cluster = threadClusterButton.getCluster();
             final Set<AThreadArtifact> selectedThreadArtifactsOfCluster = threadSelectable.getSelectedThreadArtifactsOfCluster(cluster);
             final Set<AThreadArtifact> selectedThreadArtifacts = threadSelectable.getSelectedThreadArtifacts();
-            final AArtifact artifact = threadClusterButton.getArtifact();
-            boolean createDisabledViz = artifact.getThreadArtifacts().stream().allMatch(AThreadArtifact::isFiltered);
+//            boolean createDisabledViz = selectedThreadArtifacts.stream().allMatch(AThreadArtifact::isFiltered);
+            boolean createDisabledViz = selectedThreadArtifactsOfCluster.stream().allMatch(AThreadArtifact::isFiltered);
 
-            final long numberOfFilteredThreadsOfCluster =
+            final long numberOfSelectedThreadsOfCluster =
                     selectedThreadArtifactsOfCluster.stream().filter(clusterThread -> (createDisabledViz || clusterThread.isSelected())).count();
 
-            final double totalNumberOfFilteredThreads =
+            final double totalNumberOfSelectedThreads =
                     (double) selectedThreadArtifacts.stream().filter(threadExecutingArtifact -> (createDisabledViz || threadExecutingArtifact.isSelected()))
                             .count();
 
-            double percent = numberOfFilteredThreadsOfCluster / totalNumberOfFilteredThreads;
+            double percent = numberOfSelectedThreadsOfCluster / totalNumberOfSelectedThreads;
 
             final Rectangle boundsRectangle = threadClusterButton.getBoundsRectangle();
             final int numberOfThreadsWidth = (int) (boundsRectangle.width * percent);//ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent,
@@ -76,10 +73,12 @@ public class TotalNumberOfThreadsAndThreadTypesButtonFillStrategy implements ITh
             // TODO: Number of types analogous to sum/avg approach, i.e. #threads low saturated and #types fully saturated because it always holds #threads
             //  >= #types
 
+            final AArtifact artifact = threadClusterButton.getArtifact();
+            final AMetricIdentifier metricIdentifier = threadClusterButton.getMetricIdentifier();
             final int numberOfSelectedThreadTypesInCluster = ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact,
-                    threadClusterButton.getMetricIdentifier(), selectedThreadArtifactsOfCluster);
+                    metricIdentifier, selectedThreadArtifactsOfCluster, createDisabledViz);
 
-            percent = numberOfSelectedThreadTypesInCluster / totalNumberOfFilteredThreads;
+            percent = numberOfSelectedThreadTypesInCluster / totalNumberOfSelectedThreads;
 
             final int numberOfThreadTypesWidth = (int) (boundsRectangle.width * percent);
             graphics.setColor(color);

@@ -38,8 +38,6 @@ public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFill
     @Override
     public void fillThreadClusterButton(final ThreadClusterButton threadClusterButton, final ThreadArtifactClustering clustering, final Graphics g)
     {
-
-
         final List<IThreadSelectable> threadSelectables = threadClusterButton.getThreadSelectables();
         final Optional<IThreadSelectable> any = threadSelectables.stream().findAny();
         if (any.isPresent())
@@ -48,15 +46,15 @@ public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFill
             final ThreadArtifactCluster cluster = threadClusterButton.getCluster();
             final Set<AThreadArtifact> selectedThreadArtifactsOfCluster = threadSelectable.getSelectedThreadArtifactsOfCluster(cluster);
             final Set<AThreadArtifact> selectedThreadArtifacts = threadSelectable.getSelectedThreadArtifacts();
-            final AArtifact artifact = threadClusterButton.getArtifact();
-            boolean createDisabledViz = artifact.getThreadArtifacts().stream().allMatch(AThreadArtifact::isFiltered);
+            //final AArtifact artifact = threadClusterButton.getArtifact();
+            boolean createDisabledViz = selectedThreadArtifacts.stream().allMatch(AThreadArtifact::isFiltered);
 
             final AMetricIdentifier metricIdentifier = threadClusterButton.getMetricIdentifier();
 
             //final double threadFilteredTotalMetricValueOfArtifact = artifact.getThreadFilteredTotalNumericalMetricValue(metricIdentifier, createDisabledViz);
 
             final double totalOfSelected =
-                    selectedThreadArtifacts.stream().filter(threadExecutingArtifact -> createDisabledViz || !threadExecutingArtifact.isFiltered())
+                    selectedThreadArtifacts.stream().filter(threadExecutingArtifact -> createDisabledViz || threadExecutingArtifact.isSelected())
                             .mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(metricIdentifier)).sum();
 
             /*

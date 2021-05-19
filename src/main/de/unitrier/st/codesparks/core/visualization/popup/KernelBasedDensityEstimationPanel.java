@@ -101,7 +101,7 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         final Map<Double, Integer> yValues = new HashMap<>();
 
         final int vizWith = width - 2 * horizontalMargin;
-        final int dotWithMetricValues = 4;
+        final int dotWithMetricValues = 6;
 
         for (final ThreadArtifactCluster cluster : threadArtifactClustering)
         {

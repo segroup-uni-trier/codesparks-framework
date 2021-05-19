@@ -147,7 +147,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                     }
                 });
 
-                centerPanel.add(numberOfClustersPanel, BorderLayout.SOUTH);
+                centerPanel.add(numberOfClustersPanel, BorderLayout.NORTH);
             }
             final JBPanel<BorderLayoutPanel> leftPanel = new BorderLayoutPanel();
             leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));

@@ -202,7 +202,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
                     threadSelectable.toggleCluster(source.getCluster());
                 }
             }
-            System.out.println("ThreadSelectable!");
+            //System.out.println("ThreadSelectable!");
         }
     }
 }
