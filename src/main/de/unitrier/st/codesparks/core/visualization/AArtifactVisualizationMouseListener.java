@@ -116,6 +116,7 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
                 }).setTitle(popupTitle);
         final JBPopup popup = componentPopupBuilder.createPopup();
         popup.setSize(dimension);
+        popup.setMinimumSize(dimension);
         popup.pack(false, true);
         popup.canClose();
         popup.showUnderneathOf((Component) source);

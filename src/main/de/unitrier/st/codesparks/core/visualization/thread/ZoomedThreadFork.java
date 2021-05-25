@@ -14,12 +14,13 @@ import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ZoomedThreadFork extends JBPanel<BorderLayoutPanel>
+public class ZoomedThreadFork extends JPanel
 {
     private final AArtifact artifact;
     private final AMetricIdentifier metricIdentifier;

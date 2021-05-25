@@ -224,19 +224,19 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
                 source.getClusterHoverable().onExit();
             }
 
-            new Thread(() -> {
-                try
-                {
-                    Thread.sleep(100);
-                    final Robot robot = new Robot();
-                    final int x = e.getLocationOnScreen().x;
-                    final int y = e.getLocationOnScreen().y;
-                    robot.mouseMove(x + 1, y);
-                } catch (AWTException | InterruptedException awtException)
-                {
-                    awtException.printStackTrace();
-                }
-            }).start();
+//            new Thread(() -> {
+//                try
+//                {
+//                    Thread.sleep(100);
+//                    final Robot robot = new Robot();
+//                    final int x = e.getLocationOnScreen().x;
+//                    final int y = e.getLocationOnScreen().y;
+//                    robot.mouseMove(x + 1, y);
+//                } catch (AWTException | InterruptedException awtException)
+//                {
+//                    awtException.printStackTrace();
+//                }
+//            }).start();
         }
     }
 }
