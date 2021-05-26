@@ -7,7 +7,26 @@ import java.util.*;
 
 public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
 {
-    public Set<AThreadArtifact> getAllThreadArtifacts()
+    private static long idCounter = 0;
+
+    private static synchronized long getNextId()
+    {
+        return idCounter++;
+    }
+
+    private final long id;
+
+    public ThreadArtifactClustering()
+    {
+        this.id = getNextId();
+    }
+
+    public final long getId()
+    {
+        return id;
+    }
+
+    public Set<AThreadArtifact> getThreadArtifactsSet()
     {
         Set<AThreadArtifact> threadArtifacts = new HashSet<>();
         for (final ThreadArtifactCluster aThreadArtifacts : this)

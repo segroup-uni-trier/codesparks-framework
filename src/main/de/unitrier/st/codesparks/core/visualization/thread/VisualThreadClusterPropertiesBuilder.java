@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2021. Oliver Moseler
  */
-
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
@@ -18,13 +17,13 @@ public class VisualThreadClusterPropertiesBuilder
 
     public VisualThreadClusterPropertiesBuilder setColor(final JBColor color)
     {
-        properties.getOrSetColor(color);//setColor(color);
+        properties.setColor(color);
         return this;
     }
 
     public VisualThreadClusterPropertiesBuilder setPosition(final int position)
     {
-        properties.getOrSetPosition(position);//setPosition(position);
+        properties.setPosition(position);
         return this;
     }
 

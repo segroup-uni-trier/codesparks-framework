@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import com.intellij.ui.JBColor;
@@ -5,7 +8,6 @@ import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
-import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 
@@ -13,9 +15,6 @@ import javax.swing.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 @SuppressWarnings("unused")
 public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
@@ -52,11 +51,6 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
 
         final ThreadArtifactClustering clustering =
                 artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier), true);
-//                artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
-//                        .stream()
-//                        .sorted(threadArtifactClusterComparator)
-//                        .filter(cluster -> !cluster.isEmpty())
-//                        .collect(Collectors.toList());
 
         final SortedMap<ThreadArtifactCluster, Set<String>> artifactClusterSets =
                 new TreeMap<>(threadArtifactClusterComparator);
@@ -103,21 +97,17 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
 
         int yPos = lineHeight;
 
-        int clusterCnt = 0;
+        int clusterNum = 0;
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
         for (final Map.Entry<ThreadArtifactCluster, Set<AThreadArtifact>> threadArtifactClusterSetEntry : neighborClusterSets.entrySet())
         {
             final ThreadArtifactCluster cluster = threadArtifactClusterSetEntry.getKey();
-            final VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(cluster);
-            JBColor color = ThreadColor.getNextColor(clusterCnt++);
-            if (properties != null)
-            {
-                color = properties.getOrSetColor(color);
-            }
+            final VisualThreadClusterProperties clusterProperties = clusterPropertiesManager.getOrDefault(cluster, clusterNum);
+            final JBColor clusterColor = clusterProperties.getColor();
 
             double clusterThreadArtifactMetric = summedThreadMetricValues(threadArtifactClusterSetEntry.getValue());
 
-            graphics.setColor(color);
+            graphics.setColor(clusterColor);
 
             int clusterHeight = (int) (Math.ceil(clusterThreadArtifactMetric / totalThreadFilteredCalleeTime * lineHeight));
 

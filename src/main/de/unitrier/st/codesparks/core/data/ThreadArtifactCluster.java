@@ -7,21 +7,21 @@ import java.util.ArrayList;
 
 public class ThreadArtifactCluster extends ArrayList<AThreadArtifact>
 {
-    private static int clusterId = 0;
+    private static long clusterId = 0;
 
-    private static synchronized int getNextId()
+    private static synchronized long getNextId()
     {
         return clusterId++;
     }
 
-    private final int id;
+    private final long id;
 
     ThreadArtifactCluster()
     {
         id = getNextId();
     }
 
-    public final int getId()
+    public final long getId()
     {
         return id;
     }

@@ -27,18 +27,14 @@ public class ThreadClusterTree extends ThreadTree
         super.setThreadArtifactClustering(threadArtifactClustering);
         // Do the coloring of the entries
         final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(threadArtifactClustering);
+        int clusterNum = 0;
         for (final Map.Entry<List<AThreadArtifact>, ThreadTreeInnerNode> entry : innerNodes.entrySet())
         {
             final ThreadArtifactCluster cluster = (ThreadArtifactCluster) entry.getKey();
-            final VisualThreadClusterProperties properties = propertiesManager.getProperties(cluster);
-            if (properties != null)
-            {
-                final JBColor color = properties.getOrSetColor(null);
-                if (color != null)
-                {
-                    entry.getValue().setColor(color);
-                }
-            }
+            final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(cluster, clusterNum);
+            final JBColor color = properties.getColor();
+            entry.getValue().setColor(color);
+            clusterNum += 1;
         }
     }
 

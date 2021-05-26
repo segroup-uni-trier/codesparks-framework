@@ -56,12 +56,10 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final int TOP_OFFSET = 6;
 
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
-//        System.out.println("ThreadFork: lineHeight=" + lineHeight);
         final CodeSparksGraphics graphics = getGraphics(X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight + TOP_OFFSET);
 
         // Thread metaphor
         graphics.setDefaultColor();
-        //graphics.setColor(VisConstants.BORDER_COLOR);
 
         final int barrierXPos = threadMetaphorWidth / 2;
 
@@ -90,21 +88,9 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final double threadFilteredTotalMetricValueOfArtifact = ThreadVisualizationUtil.getMetricValueSumOfSelectedThreads(artifact,
                 primaryMetricIdentifier, createDisabledViz);
 
-//        final ThreadArtifactClustering clustering =
-//                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
-
         ThreadArtifactClustering clustering =
                 artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
-//        final List<ThreadArtifactCluster> clustering = artifact.getThreadArtifactClustering(new ApacheKMeansPlusPlus(primaryMetricIdentifier, 3));
-
-//        final BestSilhouetteKClustering bestSilhouetteKClustering = new BestSilhouetteKClustering(new ApacheKMeansPlusPlus(primaryMetricIdentifier), 6);
-//        final ThreadArtifactClustering clustering = artifact.getThreadArtifactClustering(bestSilhouetteKClustering);
-
-//        final ThreadArtifactClustering clustering = artifact.getThreadArtifactClustering(new WekaKMeans(primaryMetricIdentifier, 3));
-
-//        final ThreadArtifactClustering clustering =
-//                artifact.getThreadArtifactClustering(new KernelDensityThreadClusteringStrategy(primaryMetricIdentifier));
         final int numberOfThreadClusters = clustering.size();
         if (numberOfThreadClusters > 3)
         {
@@ -112,19 +98,17 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             clustering = artifact.clusterThreadArtifacts(apacheKMeansPlusPlus);
         }
 
-        int clusterNum = 0;
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
-        final Map<ThreadArtifactCluster, Boolean> clusterPropertiesPresent = new HashMap<>(clustering.size()); // Do not replace clustering.size()
-
+        
+        int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : clustering)
         {
-            JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);
-            final VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(threadCluster);
-            if (properties != null)
-            {
-                clusterPropertiesPresent.put(threadCluster, true);
-                clusterColor = properties.getOrSetColor(clusterColor);
-            }
+            final VisualThreadClusterProperties clusterProperties = clusterPropertiesManager.getOrDefault(threadCluster, clusterNum);
+            JBColor clusterColor = clusterProperties.getColor();
+
+            final VisualThreadClusterProperties properties =
+                    new VisualThreadClusterPropertiesBuilder(threadCluster).setColor(clusterColor).setPosition(clusterNum).get();
+            clusterPropertiesManager.registerProperties(properties); // The threadFork is usually the first visualization to be drawn
 
             /*
              * Draw the metric value sum bar
@@ -167,17 +151,6 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
                 graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, TOP_OFFSET + threadSquareYPos + 1, barrierXPos - 1, 1);
             }
 
-            // Save the position and color to the properties such that they can be reused in the neighbor artifact visualization
-            if (!clusterPropertiesPresent.getOrDefault(threadCluster, false))
-            {
-                final VisualThreadClusterProperties visualThreadClusterProperties =
-                        new VisualThreadClusterPropertiesBuilder(threadCluster)
-                                .setColor(clusterColor)
-                                .setPosition(clusterNum)
-                                .get();
-                clusterPropertiesManager.registerProperties(visualThreadClusterProperties);
-            }
-
             /*
              * -------------------------------------------
              */
@@ -187,7 +160,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             threadSquareYPos -= threadSquareOffset;
         }
 
-        if (numberOfThreadClusters > 3) // TODO: When ready, change this to 3
+        if (numberOfThreadClusters > 3)
         { // The 'plus' symbol indicating that there are more than three thread clusters!
             graphics.setColor(VisConstants.BORDER_COLOR);
 //            final int plusSymbolXOffset = X_OFFSET_LEFT + threadMetaphorWidth - 2;

@@ -8,7 +8,6 @@ import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
-import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 
@@ -97,29 +96,26 @@ public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizati
         final double totalThreadFilteredMetricValueOfAllNeighborsOfLine =
                 getTotalThreadFilteredMetricValueOfAllNeighborsOfLine(threadFilteredNeighborArtifactsOfLine);
 
-//        ThreadArtifactClustering clustering = artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
-
-        final ThreadArtifactClustering clustering =
+        ThreadArtifactClustering clustering =
                 artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
+        if (clustering.size() > 3)
+        {
+            clustering = artifact.clusterThreadArtifacts(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));
+        }
 
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
         final boolean[] positionsTaken = new boolean[3];
-        int clusterNum = 0;
 
+        int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : clustering)
         {
             /*
              * Will be set in the respective thread clustering visualization for
              * the artifact, e.g. ThreadRadarLabelFactory or ThreadForkLabelFactory
              */
-            VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(threadCluster);
-            int clusterPosition = -1;
-            JBColor color = ThreadColor.getNextColor(clusterNum);
-            if (properties != null)
-            {
-                color = properties.getOrSetColor(color);
-                clusterPosition = properties.getOrSetPosition(clusterNum);
-            }
+            VisualThreadClusterProperties properties = clusterPropertiesManager.getOrDefault(threadCluster, clusterNum);
+            final int clusterPosition = properties.getPosition();
+            final JBColor clusterColor = properties.getColor();
 
             final int positionIndex = findPositionToDraw(positionsTaken, clusterPosition, clusterNum);
             clusterNum = clusterNum + 1;
@@ -129,7 +125,7 @@ public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizati
                 break;
             }
 
-            graphics.setColor(color);
+            graphics.setColor(clusterColor);
 
             int clusterWidth;
 

@@ -57,7 +57,6 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
         final ThreadArtifactClustering clustering =
                 artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier), true);
-//                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
         final AThreadSelectable threadClustersTree = new ThreadClusterTree(clustering, primaryMetricIdentifier);
         threadSelectables.add(threadClustersTree);
@@ -91,7 +90,6 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
                 UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarPopupTypesTabEntered);
             }
         });
-
 
         // ControlButtonsPanel!
         final JPanel controlButtonsWrapper = new JPanel(new BorderLayout());
@@ -231,16 +229,9 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
                     threadClusterSelectionButtons[i].setEnabled(false);
                     continue;
                 }
-                final VisualThreadClusterProperties properties = manager.getProperties(cluster);
-                JBColor color = null;
-                if (properties != null)
-                {
-                    color = properties.getOrSetColor(null);
-                }
-                if (color != null)
-                {
-                    threadClusterSelectionButtons[i].setForeground(color);
-                }
+                final VisualThreadClusterProperties properties = manager.getOrDefault(cluster, i);
+                final JBColor color = properties.getColor();
+                threadClusterSelectionButtons[i].setForeground(color);
             } else
             {
                 threadClusterSelectionButtons[i].setEnabled(false);
@@ -265,7 +256,6 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         {
             selectedData = new ThreadArtifactDisplayData();
         }
-        //final ThreadArtifactDisplayData finalSelectedData = selectedData;
 
         final String metricString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.metric");
         final JLabel selectedMetricLabel = new JLabel(metricString + " : " + CoreUtil.formatPercentage(selectedData.getMetricValueSum()))
@@ -426,10 +416,6 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
     private void updateHoverLabels(ThreadArtifactCluster cluster)
     {
-//        if (threadSelectables.size() < 1)
-//        {
-//            return;
-//        }
         final int index = selectableIndexProvider.getThreadSelectableIndex();
         if (index < 0)
         {
@@ -439,6 +425,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         ThreadArtifactDisplayData hoveredThreadData =
                 threadArtifactsDisplayDataProvider.getDisplayDataOfHoveredThreads(artifact,
                         threadSelectables.get(index).getSelectedThreadArtifactsOfCluster(cluster));
+
         if (hoveredThreadData == null)
         {
             hoveredThreadData = new ThreadArtifactDisplayData();

@@ -36,15 +36,11 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
         VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
 
         int colArrayIndex = 0;
-
+        int clusterNum = 0;
         for (final ThreadArtifactCluster threadArtifactCluster : clustering)
         {
-            VisualThreadClusterProperties properties = propertiesManager.getProperties(threadArtifactCluster);
-            JBColor color = JBColor.BLACK;
-            if (properties != null)
-            {
-                color = properties.getOrSetColor(color);
-            }
+            final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(threadArtifactCluster, clusterNum);
+            final JBColor color = properties.getColor();
             for (final AThreadArtifact threadArtifact : threadArtifactCluster)
             {
                 boolean filtered = threadArtifact.isFiltered();
@@ -54,6 +50,7 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
                 threadIdIndex.put(threadArtifact.getIdentifier(), colArrayIndex);
                 colArrayIndex += 1;
             }
+            clusterNum += 1;
         }
     }
 

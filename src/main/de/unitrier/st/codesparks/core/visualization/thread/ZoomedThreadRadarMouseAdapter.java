@@ -71,7 +71,8 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
 
     private boolean isPointInArc(int x, int y, final ThreadArtifactCluster cluster)
     {
-        final VisualThreadClusterProperties visualThreadClusterProperties = VisualThreadClusterPropertiesManager.getInstance(clustering).getProperties(cluster);
+        final VisualThreadClusterProperties visualThreadClusterProperties = VisualThreadClusterPropertiesManager.getInstance(clustering).getOrDefault(cluster
+                , -1);
         final RadialVisualThreadClusterProperties radialVisualThreadClusterProperties = (RadialVisualThreadClusterProperties) visualThreadClusterProperties;
 
         final double arcAngle = radialVisualThreadClusterProperties.getArcAngle();

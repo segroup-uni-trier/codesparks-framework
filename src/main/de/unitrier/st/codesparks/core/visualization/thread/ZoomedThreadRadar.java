@@ -16,7 +16,7 @@ public class ZoomedThreadRadar extends AThreadRadar
 {
     private final List<IThreadSelectable> threadSelectables;
     private final IThreadSelectableIndexProvider indexProvider;
-    private int hoveredCluster = -1;
+    private long hoveredCluster = -1;
     private final AMetricIdentifier metricIdentifier;
 
     ZoomedThreadRadar(
@@ -146,7 +146,7 @@ public class ZoomedThreadRadar extends AThreadRadar
 //        drawNumberOfDifferentThreadTypesLabel(labelWidth, fontSize, numberOfDifferentThreadTypes, yOffsetForDifferentClassesText);
     }
 
-    void onHoverCluster(final int clusterId)
+    void onHoverCluster(final long clusterId)
     {
         hoveredCluster = clusterId;
         repaint();

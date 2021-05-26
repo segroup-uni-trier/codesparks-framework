@@ -51,17 +51,13 @@ public class ThreadTypeTree extends ThreadTree
         {
             final AThreadArtifact threadArtifact = leafNode.getThreadArtifact();
             final Optional<ThreadArtifactCluster> first =
-                    threadArtifactClustering.parallelStream().filter(threadArtifacts -> threadArtifacts.contains(threadArtifact)).findFirst();
+                    threadArtifactClustering.stream().filter(threadArtifacts -> threadArtifacts.contains(threadArtifact)).findFirst();
             if (first.isEmpty())
             {
                 continue;
             }
-            final VisualThreadClusterProperties properties = propertiesManager.getProperties(first.get());
-            if (properties == null)
-            {
-                continue;
-            }
-            final JBColor color = properties.getOrSetColor(leafNode.getColor());
+            final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(first.get(), -1);
+            final JBColor color = properties.getColor();
             leafNode.setColor(color);
         }
     }

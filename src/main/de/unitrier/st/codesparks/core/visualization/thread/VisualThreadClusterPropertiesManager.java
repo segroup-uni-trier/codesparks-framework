@@ -13,32 +13,34 @@ import java.util.Map;
 
 public class VisualThreadClusterPropertiesManager
 {
-    private static final Map<ThreadArtifactClustering, VisualThreadClusterPropertiesManager> instances = new HashMap<>(8);
+    private final ThreadArtifactClustering clustering;
+
+    private static final Map<Long, VisualThreadClusterPropertiesManager> instances = new HashMap<>(8);
 
     public static VisualThreadClusterPropertiesManager getInstance(final ThreadArtifactClustering clustering)
     {
         synchronized (instances)
         {
-            VisualThreadClusterPropertiesManager clusterPropertiesManager = instances.get(clustering);
+            final long id = clustering.getId();
+            VisualThreadClusterPropertiesManager clusterPropertiesManager = instances.get(id);
             if (clusterPropertiesManager == null)
             {
                 clusterPropertiesManager = new VisualThreadClusterPropertiesManager(clustering);
-                instances.put(clustering, clusterPropertiesManager);
+                instances.put(id, clusterPropertiesManager);
             }
             return clusterPropertiesManager;
         }
     }
 
-    private final ThreadArtifactClustering clustering;
-    private final Map<Integer, VisualThreadClusterProperties> propertiesMap;
-
     private VisualThreadClusterPropertiesManager(final ThreadArtifactClustering clustering)
     {
-        propertiesMap = new HashMap<>();
         this.clustering = clustering;
+        propertiesMap = new HashMap<>();
     }
 
-    public void registerProperties(VisualThreadClusterProperties properties)
+    private final Map<Long, VisualThreadClusterProperties> propertiesMap;
+
+    public void registerProperties(final VisualThreadClusterProperties properties)
     {
         synchronized (propertiesMap)
         {
@@ -46,13 +48,13 @@ public class VisualThreadClusterPropertiesManager
         }
     }
 
-    public VisualThreadClusterProperties getProperties(ThreadArtifactCluster cluster)
-    {
-        synchronized (propertiesMap)
-        {
-            return propertiesMap.get(cluster.getId());
-        }
-    }
+//    public VisualThreadClusterProperties getProperties(final ThreadArtifactCluster cluster)
+//    {
+//        synchronized (propertiesMap)
+//        {
+//            return propertiesMap.get(cluster.getId());
+//        }
+//    }
 
     public void clearProperties()
     {
@@ -62,21 +64,17 @@ public class VisualThreadClusterPropertiesManager
         }
     }
 
-    void buildProperties()
+    void buildDefaultProperties()
     {
         synchronized (propertiesMap)
         {
             int clusterNum = 0;
             for (final ThreadArtifactCluster cluster : clustering)
             {
-                VisualThreadClusterProperties properties = propertiesMap.get(cluster.getId());
-                if (properties == null)
-                {
-                    final JBColor color = ThreadColor.getNextColor(clusterNum);
-                    final VisualThreadClusterProperties clusterProperties =
-                            new VisualThreadClusterPropertiesBuilder(cluster).setColor(color).setPosition(clusterNum).get();
-                    propertiesMap.put(cluster.getId(), clusterProperties);
-                }
+                final JBColor color = ThreadColor.getNextColor(clusterNum);
+                final VisualThreadClusterProperties clusterProperties =
+                        new VisualThreadClusterPropertiesBuilder(cluster).setColor(color).setPosition(clusterNum).get();
+                propertiesMap.put(cluster.getId(), clusterProperties);
                 clusterNum += 1;
             }
         }
@@ -91,6 +89,23 @@ public class VisualThreadClusterPropertiesManager
                 value.clearProperties();
             }
             instances.clear();
+        }
+    }
+
+    public VisualThreadClusterProperties getOrDefault(final ThreadArtifactCluster cluster, final int clusterNum)
+    {
+        synchronized (propertiesMap)
+        {
+            final long id = cluster.getId();
+            VisualThreadClusterProperties visualThreadClusterProperties = propertiesMap.get(id);
+            if (visualThreadClusterProperties == null)
+            {
+                final JBColor color = ThreadColor.getNextColor(clusterNum);
+                visualThreadClusterProperties =
+                        new VisualThreadClusterPropertiesBuilder(cluster).setColor(color).setPosition(clusterNum).get();
+                propertiesMap.put(id, visualThreadClusterProperties);
+            }
+            return visualThreadClusterProperties;
         }
     }
 }

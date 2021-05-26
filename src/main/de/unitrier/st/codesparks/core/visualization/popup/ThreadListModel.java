@@ -15,18 +15,17 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
 {
     private final int totalSize;
     private final String[] threadStrings;
-    private final List<AThreadArtifact> codeSparksThreads;
+    private final List<AThreadArtifact> threadArtifacts;
 
     public ThreadListModel(final AArtifact artifact, final AMetricIdentifier metricIdentifier)
     {
         totalSize = artifact.getNumberOfThreads();
         threadStrings = new String[totalSize];
-        codeSparksThreads = new ArrayList<>(totalSize);
+        threadArtifacts = new ArrayList<>(totalSize);
         int artifactCnt = 0;
 
         final ThreadArtifactClustering clustering =
                 artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier), true);
-//                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(metricIdentifier);
 
         final Comparator<AThreadArtifact> threadArtifactComparator = ThreadArtifactComparator.getInstance(metricIdentifier);
 
@@ -36,9 +35,7 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
             for (final AThreadArtifact threadArtifact : threadArtifactCluster)
             {
                 final String threadArtifactToString = threadArtifact.getDisplayString(metricIdentifier);
-
-                codeSparksThreads.add(threadArtifact);
-                //threadArtifacts.set(artifactCnt, threadArtifact);
+                threadArtifacts.add(threadArtifact);
                 threadStrings[artifactCnt] = threadArtifactToString;
                 artifactCnt++;
             }
@@ -52,19 +49,19 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
     }
 
     @Override
-    public JBCheckBox getElementAt(int index)
+    public JBCheckBox getElementAt(final int index)
     {
-        JBCheckBox jbCheckBox = new JBCheckBox(threadStrings[index]);
+        final JBCheckBox jbCheckBox = new JBCheckBox(threadStrings[index]);
         jbCheckBox.setFont(new JBCheckBox().getFont());
         return jbCheckBox;
     }
 
-    public AThreadArtifact getThreadArtifactAt(int index)
+    public AThreadArtifact getThreadArtifactAt(final int index)
     {
-        if (index < 0 || index > codeSparksThreads.size() - 1)
+        if (index < 0 || index > threadArtifacts.size() - 1)
         {
             return null;
         }
-        return codeSparksThreads.get(index);
+        return threadArtifacts.get(index);
     }
 }

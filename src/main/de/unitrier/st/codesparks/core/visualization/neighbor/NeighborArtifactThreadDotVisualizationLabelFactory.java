@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import com.intellij.ui.JBColor;
@@ -5,7 +8,6 @@ import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
-import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 
@@ -15,9 +17,6 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 @SuppressWarnings("unused")
 public class NeighborArtifactThreadDotVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
@@ -114,17 +113,14 @@ public class NeighborArtifactThreadDotVisualizationLabelFactory extends ANeighbo
 
         graphics.drawRectangle(threadVisualisationArea, VisConstants.BORDER_COLOR);
 
+        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
+
         int clusterNum = 0;
-        VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
         for (final Map.Entry<ThreadArtifactCluster, Set<AThreadArtifact>> threadArtifactClusterSetEntry : neighborClusterSets.entrySet())
         {
             final ThreadArtifactCluster cluster = threadArtifactClusterSetEntry.getKey();
-            final VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(cluster);
-            JBColor color = ThreadColor.getNextColor(clusterNum++);
-            if (properties != null)
-            {
-                color = properties.getOrSetColor(color);
-            }
+            final VisualThreadClusterProperties properties = clusterPropertiesManager.getOrDefault(cluster, clusterNum);
+            final JBColor color = properties.getColor();
 
             if (threadArtifactClusterSetEntry.getValue().size() > 0)
             {

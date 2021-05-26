@@ -47,12 +47,12 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         final JBTabbedPane tabbedPane = new JBTabbedPane();
         final IThreadSelectableIndexProvider indexProvider = tabbedPane::getSelectedIndex;
 
-        final ThreadArtifactClustering clustering =
+        ThreadArtifactClustering clustering =
                 artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
-
-//        final ThreadArtifactClustering sortedDefaultThreadArtifactClustering = artifact
-//                .getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
-
+        if (clustering.size() > 3)
+        {
+            clustering = artifact.clusterThreadArtifacts(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));
+        }
 
         final AThreadSelectable threadClustersTree = new ThreadClusterTree(clustering, primaryMetricIdentifier);
         threadSelectables.add(threadClustersTree);
@@ -85,18 +85,15 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
 
         // Toggle cluster buttons.
+        int clusterNum = 0;
         for (final ThreadArtifactCluster cluster : clustering)
         {
             if (cluster.isEmpty())
             {
                 continue;
             }
-            final VisualThreadClusterProperties properties = propertiesManager.getProperties(cluster);
-            JBColor foregroundColor = JBColor.BLACK;
-            if (properties != null)
-            {
-                foregroundColor = properties.getOrSetColor(foregroundColor);
-            }
+            final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(cluster, clusterNum);
+            final JBColor foregroundColor = properties.getColor();
             final JButton clusterToggle =
                     new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.threads.togglecluster"));
             clusterToggle.setForeground(foregroundColor);
@@ -105,11 +102,11 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
                 {
                     threadSelectable.toggleCluster(cluster);
                 }
-
             });
             final JBPanel<BorderLayoutPanel> clusterButtonWrapper = new JBPanel<>(new BorderLayout());
             clusterButtonWrapper.add(clusterToggle, BorderLayout.CENTER);
             clusterButtonsPanel.add(clusterButtonWrapper);
+            clusterNum += 1;
         }
 
         // Add the cluster buttons panel

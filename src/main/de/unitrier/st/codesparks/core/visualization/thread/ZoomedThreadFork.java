@@ -230,9 +230,6 @@ public class ZoomedThreadFork extends JPanel
 //        System.out.println("ZoomedThreadFork: clusterDistance=" + clusterDistance + ", clusterHeight=" + clusterHeight);
 
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(threadArtifactClustering);
-        final Map<ThreadArtifactCluster, Boolean> clusterPropertiesPresent = new HashMap<>(threadArtifactClustering.size()); // Do not replace
-        // threadClusters
-        // .size()
 
         final double clusterYBase = height - verticalMargin - clusterDistance - clusterHeight;
         double clusterY = clusterYBase;
@@ -250,16 +247,9 @@ public class ZoomedThreadFork extends JPanel
             {
                 continue;
             }
-
-            int clusterPosition = -1;
-            JBColor clusterColor = ThreadColor.getNextColor(clusterNum);
-            final VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(threadCluster);
-            if (properties != null)
-            {
-                clusterPropertiesPresent.put(threadCluster, true);
-                clusterColor = properties.getOrSetColor(clusterColor);
-                clusterPosition = properties.getOrSetPosition(clusterNum);
-            }
+            final VisualThreadClusterProperties clusterProperties = clusterPropertiesManager.getOrDefault(threadCluster, clusterNum);
+            final int clusterPosition = clusterProperties.getPosition();
+            final JBColor clusterColor = clusterProperties.getColor();
 
             double clusterYToDraw = clusterY;
             if (clusterPosition > -1)
@@ -324,16 +314,6 @@ public class ZoomedThreadFork extends JPanel
                     , TOP_OFFSET + (int) (clusterYToDraw + (clusterHeight / 2 - clusterConnectionHeight / 2))
                     , (int) connectionWidth + 2 // The +2 is a correction due to accuracy problems in floating point arithmetics
                     , (int) clusterConnectionHeight);
-
-            if (!clusterPropertiesPresent.getOrDefault(threadCluster, false))
-            {
-                final VisualThreadClusterProperties visualThreadClusterProperties =
-                        new VisualThreadClusterPropertiesBuilder(threadCluster)
-                                .setColor(clusterColor)
-                                .setPosition(clusterNum)
-                                .get();
-                clusterPropertiesManager.registerProperties(visualThreadClusterProperties);
-            }
 
             clusterY -= clusterDistance + clusterHeight;
             clusterNum += 1;

@@ -159,7 +159,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                             clustering = artifact.clusterThreadArtifacts(strategy);
 
                             final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
-                            propertiesManager.buildProperties();
+                            propertiesManager.buildDefaultProperties();
 
                             finalZoomedThreadFork.setThreadArtifactClustering(clustering);
                             finalKernelBasedDensityEstimationPanel.setThreadArtifactClustering(clustering);

@@ -24,47 +24,23 @@ public class VisualThreadClusterProperties
         return cluster;
     }
 
-    private final Object colorLock = new Object();
-
     void setColor(final JBColor color)
     {
-        synchronized (colorLock)
-        {
-            this.color = color;
-        }
+        this.color = color;
     }
 
-    public JBColor getOrSetColor(final JBColor color)
+    public JBColor getColor()
     {
-        synchronized (colorLock)
-        {
-            if (this.color == null)
-            {
-                this.color = color;
-            }
-            return this.color;
-        }
+        return this.color;
     }
-
-    private final Object posLock = new Object();
 
     void setPosition(final int position)
     {
-        synchronized (posLock)
-        {
-            this.position = position;
-        }
+        this.position = position;
     }
 
-    public int getOrSetPosition(final int position)
+    public int getPosition()
     {
-        synchronized (posLock)
-        {
-            if (this.position < 0)
-            {
-                this.position = position;
-            }
-            return this.position;
-        }
+        return this.position;
     }
 }
