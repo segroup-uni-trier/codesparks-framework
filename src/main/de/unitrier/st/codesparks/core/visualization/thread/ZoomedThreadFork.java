@@ -5,8 +5,6 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import com.intellij.ui.components.JBPanel;
-import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
@@ -231,7 +229,7 @@ public class ZoomedThreadFork extends JPanel
 
 //        System.out.println("ZoomedThreadFork: clusterDistance=" + clusterDistance + ", clusterHeight=" + clusterHeight);
 
-        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(threadArtifactClustering);
         final Map<ThreadArtifactCluster, Boolean> clusterPropertiesPresent = new HashMap<>(threadArtifactClustering.size()); // Do not replace
         // threadClusters
         // .size()
@@ -259,12 +257,8 @@ public class ZoomedThreadFork extends JPanel
             if (properties != null)
             {
                 clusterPropertiesPresent.put(threadCluster, true);
-                final JBColor color = properties.getColor();
-                if (color != null)
-                {
-                    clusterColor = color;
-                }
-                clusterPosition = properties.getPosition();
+                clusterColor = properties.getOrSetColor(clusterColor);
+                clusterPosition = properties.getOrSetPosition(clusterNum);
             }
 
             double clusterYToDraw = clusterY;

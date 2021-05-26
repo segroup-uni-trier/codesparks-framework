@@ -525,25 +525,37 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         }
     }
 
-    public ThreadArtifactClustering getThreadArtifactClustering(final AThreadArtifactClusteringStrategy clusteringStrategy)
+    public ThreadArtifactClustering clusterThreadArtifacts(final AThreadArtifactClusteringStrategy clusteringStrategy)
     {
         return lookupClustering(clusteringStrategy);
     }
 
-    public ThreadArtifactClustering getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
+    public ThreadArtifactClustering clusterThreadArtifacts(final AThreadArtifactClusteringStrategy clusteringStrategy, final boolean sorted)
     {
-        return lookupClustering(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
+        final ThreadArtifactClustering clustering = lookupClustering(clusteringStrategy);
+        if (sorted)
+        {
+            final Comparator<ThreadArtifactCluster> threadArtifactClusterComparator =
+                    ThreadArtifactClusterNumericalMetricSumComparator.getInstance(clusteringStrategy.getMetricIdentifier());
+            clustering.sort(threadArtifactClusterComparator);
+        }
+        return clustering;
     }
 
-    public ThreadArtifactClustering getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
-    {
-        final ThreadArtifactClustering defaultThreadArtifactClusters =
-                lookupClustering(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
-        final Comparator<ThreadArtifactCluster> threadArtifactClusterComparator =
-                ThreadArtifactClusterNumericalMetricSumComparator.getInstance(metricIdentifier);
-        defaultThreadArtifactClusters.sort(threadArtifactClusterComparator);
-        return defaultThreadArtifactClusters;
-    }
+//    public ThreadArtifactClustering getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
+//    {
+//        return lookupClustering(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
+//    }
+//
+//    public ThreadArtifactClustering getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
+//    {
+//        final ThreadArtifactClustering constraintKMeansClustering =
+//                lookupClustering(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
+//        final Comparator<ThreadArtifactCluster> threadArtifactClusterComparator =
+//                ThreadArtifactClusterNumericalMetricSumComparator.getInstance(metricIdentifier);
+//        constraintKMeansClustering.sort(threadArtifactClusterComparator);
+//        return constraintKMeansClustering;
+//    }
 
 //    public void initDefaultThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
 //    {

@@ -13,14 +13,18 @@ import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationMouseListener;
+import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
 
 public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable
 {
@@ -28,6 +32,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
     private final List<IThreadSelectable> threadSelectables;
     private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayDataProvider;
     private final JLabel[] leftHoverLabels;
+    private final List<JPanel> hoverPanels;
     private final JLabel[] rightHoverLabels;
 
     ThreadForkMouseListener(
@@ -42,6 +47,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         this.threadArtifactsDisplayDataProvider = threadArtifactsDisplayDataProvider;
         this.leftHoverLabels = new JLabel[2];
         this.rightHoverLabels = new JLabel[2];
+        hoverPanels = new ArrayList<>(2);
     }
 
     private static class ComboBoxItem
@@ -72,7 +78,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         final Collection<JComponent> componentsToRegisterToTheThreadSelectables = new ArrayList<>();
 
         ThreadArtifactClustering threadArtifactClustering =
-                artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
+                artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
         final int actualNumberOfClustersOfTheDensityEstimation = threadArtifactClustering.size();
 
@@ -91,7 +97,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         { // Only show a fork when there are up to six thread classifications.
             if (actualNumberOfClustersOfTheDensityEstimation > 3)
             { // Because the in-situ viz has changed to a k=3 clustering in that case, this will be the clustering we show first.
-                threadArtifactClustering = artifact.getThreadArtifactClustering(ApacheKMeans.getInstance(primaryMetricIdentifier, 3));
+                threadArtifactClustering = artifact.clusterThreadArtifacts(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));
             }
 
             final ZoomedThreadFork finalZoomedThreadFork = new ZoomedThreadFork(
@@ -145,14 +151,22 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                             ThreadArtifactClustering clustering;
                             if (k > 0)
                             {
-                                strategy = ApacheKMeans.getInstance(primaryMetricIdentifier, k);
+                                strategy = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, k);
                             } else
                             {
                                 strategy = SmileKernelDensityClustering.getInstance(primaryMetricIdentifier);
                             }
-                            clustering = artifact.getThreadArtifactClustering(strategy);
+                            clustering = artifact.clusterThreadArtifacts(strategy);
+
+                            final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
+                            propertiesManager.buildProperties();
+
                             finalZoomedThreadFork.setThreadArtifactClustering(clustering);
                             finalKernelBasedDensityEstimationPanel.setThreadArtifactClustering(clustering);
+                            for (final IThreadSelectable threadSelectable : threadSelectables)
+                            {
+                                threadSelectable.setThreadArtifactClustering(clustering);
+                            }
                         }
                     }
                 });
@@ -199,8 +213,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
             final JPanel leftHoveredClusterPanel = new JPanel();
             leftHoveredClusterPanel.setLayout(new BoxLayout(leftHoveredClusterPanel, BoxLayout.Y_AXIS));
-            leftHoveredClusterPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                    "Hovered cluster"));
+            leftHoveredClusterPanel.setBorder(titledHoverBorder);
 
             final JLabel leftMetricSumLabel = new JLabel();
             final JPanel leftMetricSumLabelWrapper = new JPanel(new BorderLayout());
@@ -219,6 +232,8 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
             leftPanel.add(leftSelectedThreadsPanel);
             leftPanel.add(leftHoveredClusterPanel);
+
+            hoverPanels.add(leftHoveredClusterPanel);
 
             // TODO
 
@@ -280,8 +295,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
             final JPanel rightHoveredClusterPanel = new JPanel();
             rightHoveredClusterPanel.setLayout(new BoxLayout(rightHoveredClusterPanel, BoxLayout.Y_AXIS));
-            rightHoveredClusterPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                    "Hovered cluster"));
+            rightHoveredClusterPanel.setBorder(titledHoverBorder);
 
             final JLabel rightHoverThreadsLabel = new JLabel();
             final JPanel rightHoverThreadsLabelWrapper = new JPanel(new BorderLayout());
@@ -294,13 +308,15 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             rightHoveredClusterPanel.add(rightHoverTypesLabelWrapper);
 
 
-            rightHoverLabels[0] = rightHoverTypesLabel;
-            rightHoverLabels[0].setText("#Types : n/a");
-            rightHoverLabels[1] = rightHoverThreadsLabel;
-            rightHoverLabels[1].setText("#Threads: n/a");
+            rightHoverLabels[0] = rightHoverThreadsLabel;
+            rightHoverLabels[0].setText("#Threads : n/a");
+            rightHoverLabels[1] = rightHoverTypesLabel;
+            rightHoverLabels[1].setText("#Types: n/a");
 
             rightPanel.add(rightSelectedThreadsPanel);
             rightPanel.add(rightHoveredClusterPanel);
+
+            hoverPanels.add(rightHoveredClusterPanel);
 
             // From left to right
             centerPanel.add(leftPanel, BorderLayout.WEST);
@@ -325,19 +341,11 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         /*
          * The selectables tabbed pane
          */
-        final Map<String, List<AThreadArtifact>> map = new HashMap<>();
-        int clusterId = 1;
-        for (final ThreadArtifactCluster threadArtifacts : threadArtifactClustering)
-        {
-            map.put("Cluster:" + clusterId++, threadArtifacts);
-        }
-        final AThreadSelectable threadClustersTree = new ThreadClusterTree(map, primaryMetricIdentifier);
+        final AThreadSelectable threadClustersTree = new ThreadClusterTree(threadArtifactClustering, primaryMetricIdentifier);
         threadSelectables.add(threadClustersTree);
-
         selectablesTabbedPane.addTab("Clusters", new JBScrollPane(threadClustersTree.getComponent()));
 
-        final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeListsOfThreadsWithNumericMetricValue(primaryMetricIdentifier);
-        final AThreadSelectable threadTypesTree = new ThreadTypeTree(threadTypeLists, primaryMetricIdentifier, threadArtifactClustering);
+        final AThreadSelectable threadTypesTree = new ThreadTypeTree(artifact, threadArtifactClustering, primaryMetricIdentifier);
         threadSelectables.add(threadTypesTree);
         // Register the observers -> they observe each other, i.e. a selection in one will be adopted to all other in the list
         threadClustersTree.setNext(threadTypesTree);
@@ -468,8 +476,6 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                 threadSelectable.registerComponentToRepaintOnSelection(component);
             }
         }
-
-        //popupPanel.add(applyThreadFilter, BorderLayout.SOUTH);
         return popupPanel;
     }
 
@@ -489,11 +495,9 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         {
             return;
         }
-
         ThreadArtifactDisplayData hoveredThreadData =
                 threadArtifactsDisplayDataProvider.getDisplayDataOfHoveredThreads(artifact,
                         threadSelectables.get(index).getSelectedThreadArtifactsOfCluster(cluster));
-
         if (hoveredThreadData == null)
         {
             hoveredThreadData = new ThreadArtifactDisplayData();
@@ -502,36 +506,33 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         if (leftHoverLabels[0] != null)
         {
             leftHoverLabels[0].setText(metricString + " (sum): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueSum()));
-//            leftHoverLabels[0].setForeground(VisConstants.ORANGE);
         }
         if (leftHoverLabels[1] != null)
         {
             leftHoverLabels[1].setText(metricString + " (avg): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueAvg()));
-//            leftHoverLabels[1].setForeground(VisConstants.ORANGE);
         }
-
         if (rightHoverLabels[0] != null)
         {
-            rightHoverLabels[0].setText("#Types: " + hoveredThreadData.getNumberOfThreadTypes());
+            rightHoverLabels[0].setText("#Threads: " + hoveredThreadData.getNumberOfThreads());
         }
-
         if (rightHoverLabels[1] != null)
         {
-            rightHoverLabels[1].setText("#Threads: " + hoveredThreadData.getNumberOfThreads());
+            rightHoverLabels[1].setText("#Types: " + hoveredThreadData.getNumberOfThreadTypes());
         }
-
+        for (final JPanel hoverPanel : hoverPanels)
+        {
+            hoverPanel.setBorder(coloredTitledHoverBorder);
+        }
     }
+
+    private static final String hoverBorderTitle = "Hovered cluster";
+    private static final Border coloredEtchedBorder = BorderFactory.createEtchedBorder(VisConstants.ORANGE, VisConstants.ORANGE);
+    private static final Border coloredTitledHoverBorder = BorderFactory.createTitledBorder(coloredEtchedBorder, hoverBorderTitle);
+    private static final Border titledHoverBorder = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), hoverBorderTitle);
 
     @Override
     public void onExit()
     {
-//        for (final JLabel hoverLabel : leftHoverLabels)
-//        {
-//            if (hoverLabel != null)
-//            {
-//                hoverLabel.setText("");
-//            }
-//        }
         final String metricString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.metric");
         if (leftHoverLabels[0] != null)
         {
@@ -543,13 +544,15 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         }
         if (rightHoverLabels[0] != null)
         {
-            rightHoverLabels[0].setText("#Types: n/a");
+            rightHoverLabels[0].setText("#Threads: n/a");
         }
         if (rightHoverLabels[1] != null)
         {
-            rightHoverLabels[1].setText("#Threads: n/a");
+            rightHoverLabels[1].setText("#Types: n/a");
         }
-
+        for (final JPanel hoverPanel : hoverPanels)
+        {
+            hoverPanel.setBorder(titledHoverBorder);
+        }
     }
-
 }

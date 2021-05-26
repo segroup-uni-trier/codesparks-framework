@@ -1,38 +1,42 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
+import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
+import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class VisualThreadClusterPropertiesManager
 {
-    private VisualThreadClusterPropertiesManager()
+    private static final Map<ThreadArtifactClustering, VisualThreadClusterPropertiesManager> instances = new HashMap<>(8);
+
+    public static VisualThreadClusterPropertiesManager getInstance(final ThreadArtifactClustering clustering)
+    {
+        synchronized (instances)
+        {
+            VisualThreadClusterPropertiesManager clusterPropertiesManager = instances.get(clustering);
+            if (clusterPropertiesManager == null)
+            {
+                clusterPropertiesManager = new VisualThreadClusterPropertiesManager(clustering);
+                instances.put(clustering, clusterPropertiesManager);
+            }
+            return clusterPropertiesManager;
+        }
+    }
+
+    private final ThreadArtifactClustering clustering;
+    private final Map<Integer, VisualThreadClusterProperties> propertiesMap;
+
+    private VisualThreadClusterPropertiesManager(final ThreadArtifactClustering clustering)
     {
         propertiesMap = new HashMap<>();
+        this.clustering = clustering;
     }
-
-    private static volatile VisualThreadClusterPropertiesManager instance;
-
-    public static VisualThreadClusterPropertiesManager getInstance()
-    {
-        if (instance == null)
-        {
-            synchronized (VisualThreadClusterPropertiesManager.class)
-            {
-                if (instance == null)
-                {
-                    instance = new VisualThreadClusterPropertiesManager();
-                }
-            }
-        }
-        return instance;
-    }
-
-    private final Map<Integer, VisualThreadClusterProperties> propertiesMap;
 
     public void registerProperties(VisualThreadClusterProperties properties)
     {
@@ -58,4 +62,35 @@ public class VisualThreadClusterPropertiesManager
         }
     }
 
+    void buildProperties()
+    {
+        synchronized (propertiesMap)
+        {
+            int clusterNum = 0;
+            for (final ThreadArtifactCluster cluster : clustering)
+            {
+                VisualThreadClusterProperties properties = propertiesMap.get(cluster.getId());
+                if (properties == null)
+                {
+                    final JBColor color = ThreadColor.getNextColor(clusterNum);
+                    final VisualThreadClusterProperties clusterProperties =
+                            new VisualThreadClusterPropertiesBuilder(cluster).setColor(color).setPosition(clusterNum).get();
+                    propertiesMap.put(cluster.getId(), clusterProperties);
+                }
+                clusterNum += 1;
+            }
+        }
+    }
+
+    public static void clearInstances()
+    {
+        synchronized (instances)
+        {
+            for (final VisualThreadClusterPropertiesManager value : instances.values())
+            {
+                value.clearProperties();
+            }
+            instances.clear();
+        }
+    }
 }

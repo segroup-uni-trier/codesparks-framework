@@ -4,29 +4,53 @@
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
-import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ThreadClusterTree extends ThreadTree
 {
-    public ThreadClusterTree(final Map<String, List<AThreadArtifact>> threadTreeContent, final AMetricIdentifier metricIdentifier)
+    public ThreadClusterTree(
+            final ThreadArtifactClustering threadArtifactClustering
+            , final AMetricIdentifier metricIdentifier)
     {
-        super(threadTreeContent, metricIdentifier);
-        final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+        super(null, threadArtifactClustering, metricIdentifier);
+    }
+
+    @Override
+    public void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering)
+    {
+        super.setThreadArtifactClustering(threadArtifactClustering);
+        // Do the coloring of the entries
+        final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(threadArtifactClustering);
         for (final Map.Entry<List<AThreadArtifact>, ThreadTreeInnerNode> entry : innerNodes.entrySet())
         {
-            final VisualThreadClusterProperties properties = propertiesManager.getProperties((ThreadArtifactCluster) entry.getKey());
+            final ThreadArtifactCluster cluster = (ThreadArtifactCluster) entry.getKey();
+            final VisualThreadClusterProperties properties = propertiesManager.getProperties(cluster);
             if (properties != null)
             {
-                final JBColor color = properties.getColor();
-                entry.getValue().setColor(color);
+                final JBColor color = properties.getOrSetColor(null);
+                if (color != null)
+                {
+                    entry.getValue().setColor(color);
+                }
             }
         }
+    }
+
+    @Override
+    public Map<String, List<AThreadArtifact>> transformClusteringToMap(final AArtifact artifact, final ThreadArtifactClustering threadArtifactClustering)
+    {
+        final Map<String, List<AThreadArtifact>> map = new HashMap<>(threadArtifactClustering.size());
+        int clusterId = 1;
+        for (final ThreadArtifactCluster threadArtifacts : threadArtifactClustering)
+        {
+            map.put("Cluster:" + clusterId++, threadArtifacts);
+        }
+        return map;
     }
 }

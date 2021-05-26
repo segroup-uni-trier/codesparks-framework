@@ -97,16 +97,16 @@ public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizati
         final double totalThreadFilteredMetricValueOfAllNeighborsOfLine =
                 getTotalThreadFilteredMetricValueOfAllNeighborsOfLine(threadFilteredNeighborArtifactsOfLine);
 
-//        List<ThreadArtifactCluster> threadClusters = artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+//        ThreadArtifactClustering clustering = artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
-        final List<ThreadArtifactCluster> threadClusters =
-                artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
+        final ThreadArtifactClustering clustering =
+                artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
-        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
         final boolean[] positionsTaken = new boolean[3];
         int clusterNum = 0;
 
-        for (final ThreadArtifactCluster threadCluster : threadClusters)
+        for (final ThreadArtifactCluster threadCluster : clustering)
         {
             /*
              * Will be set in the respective thread clustering visualization for
@@ -114,14 +114,11 @@ public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizati
              */
             VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(threadCluster);
             int clusterPosition = -1;
-            JBColor color;
+            JBColor color = ThreadColor.getNextColor(clusterNum);
             if (properties != null)
             {
-                color = properties.getColor();
-                clusterPosition = properties.getPosition();
-            } else
-            {
-                color = ThreadColor.getNextColor(clusterNum);
+                color = properties.getOrSetColor(color);
+                clusterPosition = properties.getOrSetPosition(clusterNum);
             }
 
             final int positionIndex = findPositionToDraw(positionsTaken, clusterPosition, clusterNum);

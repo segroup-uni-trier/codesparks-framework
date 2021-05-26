@@ -17,7 +17,6 @@ import de.unitrier.st.codesparks.core.visualization.popup.*;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,26 +47,20 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         final JBTabbedPane tabbedPane = new JBTabbedPane();
         final IThreadSelectableIndexProvider indexProvider = tabbedPane::getSelectedIndex;
 
-        final ThreadArtifactClustering threadArtifactClustering =
-                artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
+        final ThreadArtifactClustering clustering =
+                artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
 //        final ThreadArtifactClustering sortedDefaultThreadArtifactClustering = artifact
 //                .getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
-        final Map<String, List<AThreadArtifact>> map = new HashMap<>();
-        int clusterId = 1;
-        for (final ThreadArtifactCluster threadArtifacts : threadArtifactClustering)
-        {
-            map.put("Cluster:" + clusterId++, threadArtifacts);
-        }
 
-        final AThreadSelectable threadClustersTree = new ThreadClusterTree(map, primaryMetricIdentifier);
+        final AThreadSelectable threadClustersTree = new ThreadClusterTree(clustering, primaryMetricIdentifier);
         threadSelectables.add(threadClustersTree);
         tabbedPane.addTab("Clusters", new JBScrollPane(threadClustersTree.getComponent()));
 
 
-        final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
-        final AThreadSelectable threadTypesTree = new ThreadTypeTree(threadTypeLists, primaryMetricIdentifier, threadArtifactClustering);
+        //final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
+        final AThreadSelectable threadTypesTree = new ThreadTypeTree(artifact, clustering, primaryMetricIdentifier);
         threadSelectables.add(threadTypesTree);
         // Register the observers -> they observe each other, i.e. a selection in one will be adopted to all other in the list
         threadClustersTree.setNext(threadTypesTree);
@@ -89,22 +82,20 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         final JBPanel<BorderLayoutPanel> clusterButtonsPanel = new JBPanel<>();
         clusterButtonsPanel.setLayout(new BoxLayout(clusterButtonsPanel, BoxLayout.X_AXIS));
 
+        final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
+
         // Toggle cluster buttons.
-        for (final ThreadArtifactCluster cluster : threadArtifactClustering)
+        for (final ThreadArtifactCluster cluster : clustering)
         {
             if (cluster.isEmpty())
             {
                 continue;
             }
-            final VisualThreadClusterProperties properties =
-                    VisualThreadClusterPropertiesManager.getInstance().getProperties(cluster);
-            Color foregroundColor;
-            if (properties == null)
+            final VisualThreadClusterProperties properties = propertiesManager.getProperties(cluster);
+            JBColor foregroundColor = JBColor.BLACK;
+            if (properties != null)
             {
-                foregroundColor = JBColor.BLACK;
-            } else
-            {
-                foregroundColor = properties.getColor();
+                foregroundColor = properties.getOrSetColor(foregroundColor);
             }
             final JButton clusterToggle =
                     new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.overview.button.threads.togglecluster"));

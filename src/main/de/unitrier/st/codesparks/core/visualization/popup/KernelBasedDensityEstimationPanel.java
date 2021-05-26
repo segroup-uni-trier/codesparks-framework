@@ -62,7 +62,7 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         final Set<AThreadArtifact> threadArtifacts = threadSelectable.getSelectedThreadArtifacts();
 
 
-        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(threadArtifactClustering);
 
         final int width = this.getWidth();
         final int height = this.getHeight();
@@ -114,11 +114,7 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
             JBColor color = VisConstants.ORANGE;
             if (properties != null)
             {
-                final JBColor propertiesColor = properties.getColor();
-                if (propertiesColor != null)
-                {
-                    color = propertiesColor;
-                }
+                color = properties.getOrSetColor(color);
             }
             graphics2D.setColor(color);
 

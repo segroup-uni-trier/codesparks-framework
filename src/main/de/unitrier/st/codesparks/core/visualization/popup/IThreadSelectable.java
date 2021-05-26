@@ -27,7 +27,5 @@ public interface IThreadSelectable extends IThreadSelectionProvider
 
     void toggleCluster(ThreadArtifactCluster cluster);
 
-//    void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering);
-
-    //boolean hasFocus();
+    void setThreadArtifactClustering(ThreadArtifactClustering threadArtifactClustering);
 }

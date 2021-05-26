@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
@@ -12,9 +15,6 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox>
 {
     private final Color[] displayColors;
@@ -30,30 +30,28 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
         this.selected = new boolean[numberOfThreads];
         this.threadIdIndex = new HashMap<>();
 
-        List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(metricIdentifier);
+        ThreadArtifactClustering clustering = artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier), true);
+//                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(metricIdentifier);
 
-        VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
+        VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
 
         int colArrayIndex = 0;
 
-        for (ThreadArtifactCluster threadArtifactCluster : threadArtifactClusters)
+        for (final ThreadArtifactCluster threadArtifactCluster : clustering)
         {
             VisualThreadClusterProperties properties = propertiesManager.getProperties(threadArtifactCluster);
-            JBColor color;
-            if (properties == null)
+            JBColor color = JBColor.BLACK;
+            if (properties != null)
             {
-                color = JBColor.BLACK;
-            } else
-            {
-                color = properties.getColor();
+                color = properties.getOrSetColor(color);
             }
-            for (AThreadArtifact codeSparksThread : threadArtifactCluster)
+            for (final AThreadArtifact threadArtifact : threadArtifactCluster)
             {
-                boolean filtered = codeSparksThread.isFiltered();
+                boolean filtered = threadArtifact.isFiltered();
                 this.displayColors[colArrayIndex] = filtered ? JBColor.GRAY : color;
                 this.selectedColors[colArrayIndex] = color;
                 this.selected[colArrayIndex] = !filtered;
-                threadIdIndex.put(codeSparksThread.getIdentifier(), colArrayIndex);
+                threadIdIndex.put(threadArtifact.getIdentifier(), colArrayIndex);
                 colArrayIndex += 1;
             }
         }

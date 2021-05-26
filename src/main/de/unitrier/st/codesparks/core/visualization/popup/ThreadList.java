@@ -1,3 +1,6 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.ExpandedItemListCellRendererWrapper;
@@ -12,9 +15,6 @@ import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ThreadList extends AThreadSelectable
 {
     private final JBList<JBCheckBox> list;
@@ -26,14 +26,14 @@ public class ThreadList extends AThreadSelectable
             @Override
             public String getToolTipText(MouseEvent event)
             {
-                Point point = event.getPoint();
-                int index = locationToIndex(point);
-                AThreadArtifact codeSparksThreadAt = ((ThreadListModel) getModel()).getThreadArtifactAt(index);
-                if (codeSparksThreadAt == null)
+                final Point point = event.getPoint();
+                final int index = locationToIndex(point);
+                final AThreadArtifact threadArtifactAt = ((ThreadListModel) getModel()).getThreadArtifactAt(index);
+                if (threadArtifactAt == null)
                 {
                     return "";
                 }
-                String identifier = codeSparksThreadAt.getIdentifier();
+                String identifier = threadArtifactAt.getIdentifier();
                 identifier = identifier.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
                 return identifier;
             }
@@ -100,6 +100,12 @@ public class ThreadList extends AThreadSelectable
     }
 
     @Override
+    public void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering)
+    {
+        // I don't think that an implementation is necessary
+    }
+
+    @Override
     public void syncSelection(AThreadSelectable threadSelectable)
     {
         // TODO
@@ -108,20 +114,20 @@ public class ThreadList extends AThreadSelectable
     @Override
     protected Set<AThreadArtifact> getThreadArtifacts(final boolean isSelected)
     {
-        boolean[] selected = getThreadListCellRenderer().getSelected();
-        final Set<AThreadArtifact> codeSparksThreads = new HashSet<>();
-        ThreadListModel model = (ThreadListModel) list.getModel();
+        final boolean[] selected = getThreadListCellRenderer().getSelected();
+        final Set<AThreadArtifact> threadArtifacts = new HashSet<>();
+        final ThreadListModel model = (ThreadListModel) list.getModel();
         for (int i = 0; i < selected.length; i++)
         {
             if (selected[i] == isSelected)
             {
-                AThreadArtifact codeSparksThreadAt = model.getThreadArtifactAt(i);
-                if (codeSparksThreadAt != null)
+                final AThreadArtifact threadArtifactAt = model.getThreadArtifactAt(i);
+                if (threadArtifactAt != null)
                 {
-                    codeSparksThreads.add(codeSparksThreadAt);
+                    threadArtifacts.add(threadArtifactAt);
                 }
             }
         }
-        return codeSparksThreads;
+        return threadArtifacts;
     }
 }

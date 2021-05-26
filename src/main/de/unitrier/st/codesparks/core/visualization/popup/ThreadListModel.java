@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.components.JBCheckBox;
@@ -5,11 +8,9 @@ import de.unitrier.st.codesparks.core.data.*;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public final class ThreadListModel extends DefaultListModel<JBCheckBox>
 {
     private final int totalSize;
@@ -23,16 +24,20 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
         codeSparksThreads = new ArrayList<>(totalSize);
         int artifactCnt = 0;
 
-        List<ThreadArtifactCluster> threadArtifactClusters = artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(metricIdentifier);
+        final ThreadArtifactClustering clustering =
+                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier), true);
+//                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(metricIdentifier);
 
-        for (ThreadArtifactCluster threadArtifactCluster : threadArtifactClusters)
+        final Comparator<AThreadArtifact> threadArtifactComparator = ThreadArtifactComparator.getInstance(metricIdentifier);
+
+        for (final ThreadArtifactCluster threadArtifactCluster : clustering)
         {
-            threadArtifactCluster.sort(new ThreadArtifactComparator(metricIdentifier));
-            for (AThreadArtifact codeSparksThread : threadArtifactCluster)
+            threadArtifactCluster.sort(threadArtifactComparator);
+            for (final AThreadArtifact threadArtifact : threadArtifactCluster)
             {
-                String threadArtifactToString = codeSparksThread.getDisplayString(metricIdentifier);
+                final String threadArtifactToString = threadArtifact.getDisplayString(metricIdentifier);
 
-                codeSparksThreads.add(codeSparksThread);
+                codeSparksThreads.add(threadArtifact);
                 //threadArtifacts.set(artifactCnt, threadArtifact);
                 threadStrings[artifactCnt] = threadArtifactToString;
                 artifactCnt++;

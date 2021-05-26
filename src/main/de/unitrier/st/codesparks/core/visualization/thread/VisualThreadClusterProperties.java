@@ -1,11 +1,11 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class VisualThreadClusterProperties
 {
     private final ThreadArtifactCluster cluster;
@@ -14,27 +14,9 @@ public class VisualThreadClusterProperties
 
     public VisualThreadClusterProperties(final ThreadArtifactCluster cluster)
     {
-//        this(cluster, null, -1);
         this.cluster = cluster;
         this.position = -1;
         this.color = null;
-    }
-
-//    public VisualThreadClusterProperties(final ThreadArtifactCluster cluster,  final JBColor color)
-//    {
-//        this(cluster, color, -1);
-//    }
-//
-//    public VisualThreadClusterProperties(final ThreadArtifactCluster cluster, final JBColor color, final int position)
-//    {
-//        this.cluster = cluster;
-//        this.color = color;
-//        this.position = position;
-//    }
-
-    public JBColor getColor()
-    {
-        return color;
     }
 
     public ThreadArtifactCluster getCluster()
@@ -42,18 +24,47 @@ public class VisualThreadClusterProperties
         return cluster;
     }
 
+    private final Object colorLock = new Object();
+
     void setColor(final JBColor color)
     {
-        this.color = color;
+        synchronized (colorLock)
+        {
+            this.color = color;
+        }
     }
+
+    public JBColor getOrSetColor(final JBColor color)
+    {
+        synchronized (colorLock)
+        {
+            if (this.color == null)
+            {
+                this.color = color;
+            }
+            return this.color;
+        }
+    }
+
+    private final Object posLock = new Object();
 
     void setPosition(final int position)
     {
-        this.position = position;
+        synchronized (posLock)
+        {
+            this.position = position;
+        }
     }
 
-    public int getPosition()
+    public int getOrSetPosition(final int position)
     {
-        return position;
+        synchronized (posLock)
+        {
+            if (this.position < 0)
+            {
+                this.position = position;
+            }
+            return this.position;
+        }
     }
 }

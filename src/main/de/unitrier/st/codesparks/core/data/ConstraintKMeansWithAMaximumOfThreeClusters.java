@@ -121,8 +121,10 @@ public class ConstraintKMeansWithAMaximumOfThreeClusters extends AThreadArtifact
             {
                 cluster.add(point.getThreadArtifact());
             }
-
-            clustering.add(cluster);
+            if (!cluster.isEmpty())
+            {
+                clustering.add(cluster);
+            }
         }
 
         return clustering;

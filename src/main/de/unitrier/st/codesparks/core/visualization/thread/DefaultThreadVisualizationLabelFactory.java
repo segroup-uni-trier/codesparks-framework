@@ -4,10 +4,7 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
@@ -16,9 +13,8 @@ import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
-
+@SuppressWarnings("unused")
 public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
     @SuppressWarnings("unused")
@@ -52,25 +48,27 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
 
         int totalThreadCnt = 0;
 
-        List<ThreadArtifactCluster> threadArtifactClustering =
-                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+        final ThreadArtifactClustering clustering =
+                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier), true);
+//                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
-        for (int i = 0; i < threadArtifactClustering.size(); i++)
+        final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
+
+        for (int i = 0; i < clustering.size(); i++)
         {
-            JBColor color = ThreadColor.getNextColor(i);
-            ThreadArtifactCluster cluster = threadArtifactClustering.get(i);
+            final JBColor color = ThreadColor.getNextColor(i);
+            final ThreadArtifactCluster cluster = clustering.get(i);
 
 //            VisualThreadClusterProperties clusterProperties = new VisualThreadClusterProperties(cluster, color);
             final VisualThreadClusterProperties clusterProperties = new VisualThreadClusterPropertiesBuilder(cluster).setColor(color).get();
-            VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
             propertiesManager.registerProperties(clusterProperties);
 
             graphics.setColor(color);
             //int size = cluster.size();
-            for (AThreadArtifact codeSparksThread : cluster)
+            for (final AThreadArtifact threadArtifact : cluster)
             {
                 //boolean filtered = threadArtifact.isFiltered();
-                if (codeSparksThread.isFiltered())
+                if (threadArtifact.isFiltered())
                 {
                     graphics.setColor(JBColor.GRAY);
                 } else
@@ -85,7 +83,8 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
             }
         }
 
-        Rectangle threadVisualisationArea = new Rectangle(
+        //noinspection ConstantConditions
+        final Rectangle threadVisualisationArea = new Rectangle(
                 threadDotXPos - 2, 0, ((threadSquareOffset)
                 * ((totalThreadCnt - 1) / 3) + 1)
                 + threadSquareOffset + 1, lineHeight - 1);

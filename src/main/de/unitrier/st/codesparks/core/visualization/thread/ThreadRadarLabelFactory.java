@@ -4,10 +4,7 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
@@ -68,8 +65,8 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             return emptyLabel();
         }
 
-        final List<ThreadArtifactCluster> threadArtifactClusters =
-                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+        final ThreadArtifactClustering clustering =
+                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier), true);
 
         boolean createDisabledViz = false;
         long numberOfSelectedArtifactThreads = threadArtifacts.stream().filter(t -> !t.isFiltered()).count();
@@ -90,34 +87,32 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
         final int labelWidth = 5 + completeNumberOfThreadsString.length() * 5;
 
         final CodeSparksGraphics graphics = getGraphics(frameSize, ThreadRadarConstants.CIRCLE_FRAMESIZE);
+        final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
 
-        double threadRationFromRunBefore = 0;
-        for (int i = 0; i < threadArtifactClusters.size(); i++)
+        int startAngle = 90;
+        for (int i = 0; i < clustering.size(); i++)
         {
+            final ThreadArtifactCluster cluster = clustering.get(i);
             final JBColor color = ThreadColor.getNextColor(i, createDisabledViz);
 
-            final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-            final RadialVisualThreadClusterProperties properties =
-                    new RadialVisualThreadClusterProperties(threadArtifactClusters.get(i), color,
-                            artifact.getNumberOfThreads(), primaryMetricIdentifier);
+            final RadialVisualThreadClusterProperties properties = new RadialVisualThreadClusterProperties(cluster, color, artifact.getNumberOfThreads(),
+                    primaryMetricIdentifier);
             propertiesManager.registerProperties(properties);
 
-            //double filteredRuntimeRatio = properties.calculateFilteredRuntimeRatio(threadArtifactClusters.get(i), createDisabledViz);
-            final double filteredRuntimeRatio = properties.calculateAvgFilteredNumericalMetricRatio(threadArtifactClusters.get(i), primaryMetricIdentifier,
-                    createDisabledViz);
-            final double filteredThreadRatio = properties.calculateFilteredThreadRatio(threadArtifactClusters.get(i),
-                    (int) numberOfSelectedArtifactThreads, createDisabledViz);
-            final double filteredRuntimeRatioSum = properties.calculateFilteredSumNumericalMetricRatio(threadArtifactClusters.get(i), primaryMetricIdentifier,
+            final double averageMetricValueOfSelectedThreads = properties.getAverageMetricValueOfSelectedThreads(cluster, primaryMetricIdentifier,
                     createDisabledViz);
 
-            int startAngle = 90;
-            if (i != 0)
-            {
-                startAngle -= (int) (threadRationFromRunBefore * 360);
-            }
-            final int angle = (int) (360 * filteredThreadRatio) * -1;
-            final int radius = ThreadVisualizationUtil.metricToDiscreteMetric(filteredRuntimeRatio, ThreadRadarConstants.CIRCLESIZE);
-            final int radiusSum = ThreadVisualizationUtil.metricToDiscreteMetric(filteredRuntimeRatioSum, ThreadRadarConstants.CIRCLESIZE);
+            final double numberOfSelectedThreadsRatio = properties.getNumberOfSelectedThreadsRatio(cluster,
+                    (int) numberOfSelectedArtifactThreads, createDisabledViz);
+
+            final double sumMetricValueOfSelectedThreads = properties.getSumMetricValueOfSelectedThreads(cluster, primaryMetricIdentifier,
+                    createDisabledViz);
+
+            final int arcRatio = (int) (360 * numberOfSelectedThreadsRatio);
+
+            final int angle = arcRatio * -1;
+            final int radius = ThreadVisualizationUtil.metricToDiscreteMetric(averageMetricValueOfSelectedThreads, ThreadRadarConstants.CIRCLESIZE);
+            final int radiusSum = ThreadVisualizationUtil.metricToDiscreteMetric(sumMetricValueOfSelectedThreads, ThreadRadarConstants.CIRCLESIZE);
 
             graphics.setColor(VisualizationUtil.getBackgroundMetricColor(color, .25f));
             graphics.fillArc(ThreadRadarConstants.MIDDLEPOINT - (radiusSum / 2), ThreadRadarConstants.MIDDLEPOINT - (radiusSum / 2),
@@ -127,12 +122,10 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
                     radius, startAngle, angle);
             graphics.setColor(JBColor.BLACK);
 
-            //if (startAngle < 0)
-            //    properties.setArcStartAngle(360+startAngle);
-            //else
             properties.setArcStartAngle(startAngle);
             properties.setArcAngle(angle);
-            threadRationFromRunBefore = filteredThreadRatio;
+
+            startAngle -= arcRatio; // rotate the startAngle
         }
 
         graphics.setColor(JBColor.DARK_GRAY);

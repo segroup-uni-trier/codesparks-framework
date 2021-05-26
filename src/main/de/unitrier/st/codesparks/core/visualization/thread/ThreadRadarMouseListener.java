@@ -19,9 +19,7 @@ import de.unitrier.st.codesparks.core.visualization.popup.*;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable
 {
@@ -50,30 +48,24 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
     }
 
     @Override
-    protected PopupPanel createPopupContent(AArtifact artifact)
+    protected PopupPanel createPopupContent(final AArtifact artifact)
     {
         final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "ThreadRadarPopup");
 
         threadSelectables.clear();
         final JBTabbedPane tabbedPane = new JBTabbedPane();
 
-        final ThreadArtifactClustering sortedDefaultThreadArtifactClustering =
-                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
-        final Map<String, List<AThreadArtifact>> map = new HashMap<>();
-        int clusterId = 1;
-        for (final ThreadArtifactCluster threadArtifacts : sortedDefaultThreadArtifactClustering)
-        {
-            map.put("Cluster:" + clusterId++, threadArtifacts);
-        }
+        final ThreadArtifactClustering clustering =
+                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier), true);
+//                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
-        final AThreadSelectable threadClustersTree = new ThreadClusterTree(map, primaryMetricIdentifier);
+        final AThreadSelectable threadClustersTree = new ThreadClusterTree(clustering, primaryMetricIdentifier);
         threadSelectables.add(threadClustersTree);
         tabbedPane.addTab("Clusters", new JBScrollPane(threadClustersTree.getComponent()));
 
         // -------------
 
-        final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeListsOfThreadsWithNumericMetricValue(primaryMetricIdentifier);
-        final AThreadSelectable threadTypesTree = new ThreadTypeTree(threadTypeLists, primaryMetricIdentifier, sortedDefaultThreadArtifactClustering);
+        final AThreadSelectable threadTypesTree = new ThreadTypeTree(artifact, clustering, primaryMetricIdentifier);
         threadSelectables.add(threadTypesTree);
         tabbedPane.addTab("Types", new JBScrollPane(threadTypesTree.getComponent()));
         tabbedPane.setMinimumSize(new Dimension(400, 150));
@@ -202,12 +194,12 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         zoomedThreadRadar = new ZoomedThreadRadar(artifact, selectableIndexProvider, threadSelectables, primaryMetricIdentifier);
         zoomedThreadRadar.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
         final ZoomedThreadRadarMouseAdapter mouseAdapter =
-                new ZoomedThreadRadarMouseAdapter(zoomedThreadRadar, artifact, primaryMetricIdentifier, this, northLeftWrapper);
+                new ZoomedThreadRadarMouseAdapter(zoomedThreadRadar, artifact, clustering, primaryMetricIdentifier, this, northLeftWrapper);
         zoomedThreadRadar.addMouseMotionListener(mouseAdapter);
         zoomedThreadRadar.addMouseListener(mouseAdapter);
 
 
-        final int numberOfClusters = sortedDefaultThreadArtifactClustering.size();
+        final int numberOfClusters = clustering.size();
 
         // Cluster selection buttons
 
@@ -216,14 +208,14 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
                         new JButton("C1"), new JButton("C2"), new JButton("C3")
                 };
 
-        final VisualThreadClusterPropertiesManager manager = VisualThreadClusterPropertiesManager.getInstance();
+        final VisualThreadClusterPropertiesManager manager = VisualThreadClusterPropertiesManager.getInstance(clustering);
 
         for (int i = 0; i < threadClusterSelectionButtons.length; i++)
         {
             final int indexToUse = i;
             threadClusterSelectionButtons[i].addActionListener(e ->
                     {
-                        final ThreadArtifactCluster cluster = sortedDefaultThreadArtifactClustering.get(indexToUse);
+                        final ThreadArtifactCluster cluster = clustering.get(indexToUse);
                         threadSelectables.forEach(iThreadSelectable -> iThreadSelectable.toggleCluster(cluster));
                         UserActivityLogger.getInstance().log(UserActivityEnum.ThreadClusterToggleButtonClicked,
                                 "buttonIndex=" + indexToUse, "clusterId=" + cluster.getId(),
@@ -233,16 +225,22 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
             if (i < numberOfClusters)
             {
-                final ThreadArtifactCluster cluster = sortedDefaultThreadArtifactClustering.get(i);
-
+                final ThreadArtifactCluster cluster = clustering.get(i);
                 if (cluster.size() < 1)
                 {
                     threadClusterSelectionButtons[i].setEnabled(false);
                     continue;
                 }
                 final VisualThreadClusterProperties properties = manager.getProperties(cluster);
-                final JBColor color = properties.getColor();
-                threadClusterSelectionButtons[i].setForeground(color);
+                JBColor color = null;
+                if (properties != null)
+                {
+                    color = properties.getOrSetColor(null);
+                }
+                if (color != null)
+                {
+                    threadClusterSelectionButtons[i].setForeground(color);
+                }
             } else
             {
                 threadClusterSelectionButtons[i].setEnabled(false);

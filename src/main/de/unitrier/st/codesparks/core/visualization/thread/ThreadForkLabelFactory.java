@@ -90,44 +90,40 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final double threadFilteredTotalMetricValueOfArtifact = ThreadVisualizationUtil.getMetricValueSumOfSelectedThreads(artifact,
                 primaryMetricIdentifier, createDisabledViz);
 
-//        final ThreadArtifactClustering threadClusters =
+//        final ThreadArtifactClustering clustering =
 //                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
 
-        ThreadArtifactClustering threadClusters =
-                artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
+        ThreadArtifactClustering clustering =
+                artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
-//        final List<ThreadArtifactCluster> threadClusters = artifact.getThreadArtifactClustering(new ApacheKMeans(primaryMetricIdentifier, 3));
+//        final List<ThreadArtifactCluster> clustering = artifact.getThreadArtifactClustering(new ApacheKMeansPlusPlus(primaryMetricIdentifier, 3));
 
-//        final BestSilhouetteKClustering bestSilhouetteKClustering = new BestSilhouetteKClustering(new ApacheKMeans(primaryMetricIdentifier), 6);
-//        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(bestSilhouetteKClustering);
+//        final BestSilhouetteKClustering bestSilhouetteKClustering = new BestSilhouetteKClustering(new ApacheKMeansPlusPlus(primaryMetricIdentifier), 6);
+//        final ThreadArtifactClustering clustering = artifact.getThreadArtifactClustering(bestSilhouetteKClustering);
 
-//        final ThreadArtifactClustering threadClusters = artifact.getThreadArtifactClustering(new WekaKMeans(primaryMetricIdentifier, 3));
+//        final ThreadArtifactClustering clustering = artifact.getThreadArtifactClustering(new WekaKMeans(primaryMetricIdentifier, 3));
 
-//        final ThreadArtifactClustering threadClusters =
+//        final ThreadArtifactClustering clustering =
 //                artifact.getThreadArtifactClustering(new KernelDensityThreadClusteringStrategy(primaryMetricIdentifier));
-        final int numberOfThreadClusters = threadClusters.size();
+        final int numberOfThreadClusters = clustering.size();
         if (numberOfThreadClusters > 3)
         {
-            final KThreadArtifactClusteringStrategy apacheKMeans = ApacheKMeans.getInstance(primaryMetricIdentifier, 3);
-            threadClusters = artifact.getThreadArtifactClustering(apacheKMeans);
+            final KThreadArtifactClusteringStrategy apacheKMeansPlusPlus = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3);
+            clustering = artifact.clusterThreadArtifacts(apacheKMeansPlusPlus);
         }
 
         int clusterNum = 0;
-        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-        final Map<ThreadArtifactCluster, Boolean> clusterPropertiesPresent = new HashMap<>(threadClusters.size()); // Do not replace threadClusters.size()
+        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
+        final Map<ThreadArtifactCluster, Boolean> clusterPropertiesPresent = new HashMap<>(clustering.size()); // Do not replace clustering.size()
 
-        for (final ThreadArtifactCluster threadCluster : threadClusters)
+        for (final ThreadArtifactCluster threadCluster : clustering)
         {
             JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);
             final VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(threadCluster);
             if (properties != null)
             {
                 clusterPropertiesPresent.put(threadCluster, true);
-                final JBColor color = properties.getColor();
-                if (color != null)
-                {
-                    clusterColor = color;
-                }
+                clusterColor = properties.getOrSetColor(clusterColor);
             }
 
             /*

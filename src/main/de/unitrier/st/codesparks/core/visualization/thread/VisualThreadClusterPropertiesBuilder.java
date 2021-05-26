@@ -18,13 +18,13 @@ public class VisualThreadClusterPropertiesBuilder
 
     public VisualThreadClusterPropertiesBuilder setColor(final JBColor color)
     {
-        properties.setColor(color);
+        properties.getOrSetColor(color);//setColor(color);
         return this;
     }
 
     public VisualThreadClusterPropertiesBuilder setPosition(final int position)
     {
-        properties.setPosition(position);
+        properties.getOrSetPosition(position);//setPosition(position);
         return this;
     }
 

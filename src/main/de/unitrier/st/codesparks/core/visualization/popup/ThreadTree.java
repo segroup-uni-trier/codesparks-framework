@@ -5,37 +5,41 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.util.ui.ThreeStateCheckBox;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactComparator;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ThreadTree extends AThreadSelectable
+public abstract class ThreadTree extends AThreadSelectable implements IThreadArtifactClusteringToMapTransformer
 {
+    protected final AArtifact artifact;
+    protected ThreadArtifactClustering threadArtifactClustering;
+    protected final AMetricIdentifier metricIdentifier;
     protected final List<ThreadTreeLeafNode> leafNodes;
     protected final Map<List<AThreadArtifact>, ThreadTreeInnerNode> innerNodes;
+    protected final DefaultMutableTreeNode root;
 
-    public ThreadTree(
-            final Map<String, List<AThreadArtifact>> threadTreeContent
+    protected ThreadTree(
+            final AArtifact artifact
+            , final ThreadArtifactClustering threadArtifactClustering
             , final AMetricIdentifier metricIdentifier
     )
     {
+        this.artifact = artifact;
+        this.threadArtifactClustering = threadArtifactClustering;
+        this.metricIdentifier = metricIdentifier;
         leafNodes = new ArrayList<>();
         innerNodes = new HashMap<>();
+        root = new DefaultMutableTreeNode("Root");
         final JTree tree = new JTree()
         {
             @Override
@@ -51,44 +55,8 @@ public class ThreadTree extends AThreadSelectable
         };
         component = tree;
 
-        final DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
-
-        final List<Map.Entry<String, List<AThreadArtifact>>> entries = new ArrayList<>(threadTreeContent.entrySet());
-        entries.sort(Map.Entry.comparingByValue((o1, o2) -> {
-                    double sum1 = o1.stream().mapToDouble((threadArtifact) -> threadArtifact.getNumericalMetricValue(metricIdentifier)).sum();
-                    double sum2 = o2.stream().mapToDouble((threadArtifact) -> threadArtifact.getNumericalMetricValue(metricIdentifier)).sum();
-                    return Double.compare(sum2, sum1);
-//                    if (sum1 > sum2) return -1;
-//                    if (sum1 < sum2) return 1;
-//                    return 0;
-                }
-        ));
-
-        for (final Map.Entry<String, List<AThreadArtifact>> entry : entries)
-        {
-            final List<AThreadArtifact> threadArtifacts = entry.getValue();
-//            if (threadArtifacts.isEmpty() || !threadArtifacts.stream().allMatch(thread -> thread.getNumericalMetricValue(metricIdentifier) > 0))
-            if (threadArtifacts.isEmpty())
-            {
-                continue;
-            }
-            threadArtifacts.sort(new ThreadArtifactComparator(metricIdentifier));
-            final ThreadTreeInnerNode innerNode = new ThreadTreeInnerNode(entry.getKey(), threadArtifacts, metricIdentifier);
-            boolean isInnerNodeSelected = true;
-            for (final AThreadArtifact threadArtifact : threadArtifacts)
-            {
-                final ThreadTreeLeafNode threadTreeLeafNode = new ThreadTreeLeafNode(threadArtifact, metricIdentifier);
-                final boolean filtered = threadArtifact.isFiltered();
-                final ThreeStateCheckBox.State state = filtered ? ThreeStateCheckBox.State.NOT_SELECTED : ThreeStateCheckBox.State.SELECTED;
-                threadTreeLeafNode.setState(state);
-                isInnerNodeSelected = isInnerNodeSelected && !filtered;
-                leafNodes.add(threadTreeLeafNode);
-                innerNode.add(threadTreeLeafNode);
-            }
-            innerNode.setState(retrieveInnerNodeState(innerNode));
-            innerNodes.put(threadArtifacts, innerNode);
-            root.add(innerNode);
-        }
+        // root has to be set before setting up the clustering
+        setThreadArtifactClustering(threadArtifactClustering);
 
         tree.setModel(new DefaultTreeModel(root));
         tree.setToggleClickCount(Integer.MAX_VALUE);
@@ -115,16 +83,12 @@ public class ThreadTree extends AThreadSelectable
                 {
                     return;
                 }
-                ColoredSelectableTreeNode lastPathComponent = (ColoredSelectableTreeNode) pathForLocation.getLastPathComponent();
+                final ColoredSelectableTreeNode lastPathComponent = (ColoredSelectableTreeNode) pathForLocation.getLastPathComponent();
                 if (lastPathComponent == null)
                 {
                     return;
                 }
                 lastPathComponent.toggleSelected();
-//                ApplicationManager.getApplication().invokeLater(() -> {
-//                    component.repaint();
-//                });
-//                ApplicationManager.getApplication().invokeLater(tree::updateUI);
 
                 final boolean selected = lastPathComponent.isSelected();
                 final String s = !selected ? "disabled" : "enabled";
@@ -141,27 +105,13 @@ public class ThreadTree extends AThreadSelectable
                 propagateSelection();
 
                 ApplicationManager.getApplication().invokeLater(() -> {
+                    // component equals tree
                     component.repaint();
-
-                    tree.updateUI();
+                    component.updateUI();
                 });
-
-                //tree.updateUI();
             }
         });
     }
-
-//    private String retrieveSelectedChildrenString(ThreadTreeInnerNode innerNode/*, String str*/)
-//    {
-//        int childCount = innerNode.getChildCount();
-//        int selectedCount = 0;
-//        for (int i = 0; i < childCount; i++)
-//        {
-//            ColoredSelectableTreeNode childAt = (ColoredSelectableTreeNode) innerNode.getChildAt(i);
-//            if (childAt.isSelected()) selectedCount++;
-//        }
-//        return /*str + */"(" + selectedCount + "/" + childCount + ")";
-//    }
 
     private ThreeStateCheckBox.State retrieveInnerNodeState(ThreadTreeInnerNode innerNode)
     {
@@ -246,4 +196,54 @@ public class ThreadTree extends AThreadSelectable
         threadTreeInnerNode.toggleSelected();
         repaint();
     }
+
+    @Override
+    public void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering)
+    {
+        if (root == null)
+        {
+            return;
+        }
+        root.removeAllChildren();
+        innerNodes.clear();
+        leafNodes.clear();
+
+        final Map<String, List<AThreadArtifact>> threadTreeContent = transformClusteringToMap(artifact, threadArtifactClustering);
+        final List<Map.Entry<String, List<AThreadArtifact>>> entries = new ArrayList<>(threadTreeContent.entrySet());
+        entries.sort(Map.Entry.comparingByValue((o1, o2) -> {
+                    double sum1 = o1.stream().mapToDouble((threadArtifact) -> threadArtifact.getNumericalMetricValue(metricIdentifier)).sum();
+                    double sum2 = o2.stream().mapToDouble((threadArtifact) -> threadArtifact.getNumericalMetricValue(metricIdentifier)).sum();
+                    return Double.compare(sum2, sum1);
+                }
+        ));
+
+        for (final Map.Entry<String, List<AThreadArtifact>> entry : entries)
+        {
+            final List<AThreadArtifact> threadArtifacts = entry.getValue();
+            if (threadArtifacts.isEmpty())
+            {
+                continue;
+            }
+            threadArtifacts.sort(ThreadArtifactComparator.getInstance(metricIdentifier));
+            final ThreadTreeInnerNode innerNode = new ThreadTreeInnerNode(entry.getKey(), threadArtifacts, metricIdentifier);
+            boolean isInnerNodeSelected = true;
+            for (final AThreadArtifact threadArtifact : threadArtifacts)
+            {
+                final ThreadTreeLeafNode threadTreeLeafNode = new ThreadTreeLeafNode(threadArtifact, metricIdentifier);
+                final boolean filtered = threadArtifact.isFiltered();
+                final ThreeStateCheckBox.State state = filtered ? ThreeStateCheckBox.State.NOT_SELECTED : ThreeStateCheckBox.State.SELECTED;
+                threadTreeLeafNode.setState(state);
+                isInnerNodeSelected = isInnerNodeSelected && !filtered;
+                leafNodes.add(threadTreeLeafNode);
+                innerNode.add(threadTreeLeafNode);
+            }
+            innerNode.setState(retrieveInnerNodeState(innerNode));
+            innerNodes.put(threadArtifacts, innerNode);
+            root.add(innerNode);
+        }
+
+        component.updateUI();
+        component.repaint();
+    }
+
 }

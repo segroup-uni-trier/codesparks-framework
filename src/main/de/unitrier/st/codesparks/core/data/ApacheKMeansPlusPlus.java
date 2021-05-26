@@ -9,7 +9,7 @@ import org.apache.commons.math3.ml.distance.EuclideanDistance;
 
 import java.util.*;
 
-public class ApacheKMeans extends KThreadArtifactClusteringStrategy
+public class ApacheKMeansPlusPlus extends KThreadArtifactClusteringStrategy
 {
     private static final Map<AMetricIdentifier, Map<Integer, KThreadArtifactClusteringStrategy>> instances = new HashMap<>(4);
 
@@ -22,7 +22,7 @@ public class ApacheKMeans extends KThreadArtifactClusteringStrategy
             KThreadArtifactClusteringStrategy strategy = strategyMap.get(k);
             if (strategy == null)
             {
-                strategy = new ApacheKMeans(metricIdentifier, k);
+                strategy = new ApacheKMeansPlusPlus(metricIdentifier, k);
                 strategyMap.put(k, strategy);
             }
             ret = strategy;
@@ -30,7 +30,7 @@ public class ApacheKMeans extends KThreadArtifactClusteringStrategy
         return ret;
     }
 
-    private ApacheKMeans(final AMetricIdentifier metricIdentifier, final int k)
+    private ApacheKMeansPlusPlus(final AMetricIdentifier metricIdentifier, final int k)
     {
         super(metricIdentifier, k);
     }

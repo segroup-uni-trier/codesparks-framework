@@ -47,42 +47,43 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
 
         final double totalThreadFilteredCalleeTime = summedThreadMetricValuesOfNeighbors(threadFilteredNeighborArtifactsOfLine);
 
-        Comparator<ThreadArtifactCluster> codeSparksThreadClusterComparator = ThreadArtifactClusterNumericalMetricSumComparator.getInstance(primaryMetricIdentifier);
+        final Comparator<ThreadArtifactCluster> threadArtifactClusterComparator =
+                ThreadArtifactClusterNumericalMetricSumComparator.getInstance(primaryMetricIdentifier);
 
+        final ThreadArtifactClustering clustering =
+                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier), true);
+//                artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+//                        .stream()
+//                        .sorted(threadArtifactClusterComparator)
+//                        .filter(cluster -> !cluster.isEmpty())
+//                        .collect(Collectors.toList());
 
-        List<ThreadArtifactCluster> threadClusters =
-                artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier)
-                        .stream()
-                        .sorted(codeSparksThreadClusterComparator)
-                        .filter(cluster -> !cluster.isEmpty())
-                        .collect(Collectors.toList());
+        final SortedMap<ThreadArtifactCluster, Set<String>> artifactClusterSets =
+                new TreeMap<>(threadArtifactClusterComparator);
+        final SortedMap<ThreadArtifactCluster, Set<AThreadArtifact>> neighborClusterSets =
+                new TreeMap<>(threadArtifactClusterComparator);
 
-        SortedMap<ThreadArtifactCluster, Set<String>> artifactClusterSets =
-                new TreeMap<>(codeSparksThreadClusterComparator);
-        SortedMap<ThreadArtifactCluster, Set<AThreadArtifact>> neighborClusterSets =
-                new TreeMap<>(codeSparksThreadClusterComparator);
-
-        for (ThreadArtifactCluster threadCluster : threadClusters)
+        for (final ThreadArtifactCluster threadCluster : clustering)
         {
             artifactClusterSets.put(threadCluster,
                     new HashSet<>(threadCluster.stream().map(AThreadArtifact::getIdentifier).collect(Collectors.toList())));
             neighborClusterSets.put(threadCluster, new HashSet<>());
         }
 
-        for (ANeighborArtifact neighborArtifact : threadFilteredNeighborArtifactsOfLine)
+        for (final ANeighborArtifact neighborArtifact : threadFilteredNeighborArtifactsOfLine)
         {
-            for (AThreadArtifact neighborCodeSparksThread :
+            for (final AThreadArtifact neighborThreadArtifact :
                     neighborArtifact.getThreadArtifacts()
                             .stream()
                             .filter(threadArtifact -> !threadArtifact.isFiltered())
                             .collect(Collectors.toList()))
             {
-                String threadArtifactIdentifier = neighborCodeSparksThread.getIdentifier();
-                for (Map.Entry<ThreadArtifactCluster, Set<String>> artifactClusterSetEntry : artifactClusterSets.entrySet())
+                final String threadArtifactIdentifier = neighborThreadArtifact.getIdentifier();
+                for (final Map.Entry<ThreadArtifactCluster, Set<String>> artifactClusterSetEntry : artifactClusterSets.entrySet())
                 {
                     if (artifactClusterSetEntry.getValue().contains(threadArtifactIdentifier))
                     {
-                        neighborClusterSets.get(artifactClusterSetEntry.getKey()).add(neighborCodeSparksThread);
+                        neighborClusterSets.get(artifactClusterSetEntry.getKey()).add(neighborThreadArtifact);
                     }
                 }
             }
@@ -103,18 +104,15 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
         int yPos = lineHeight;
 
         int clusterCnt = 0;
-        VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-        for (Map.Entry<ThreadArtifactCluster, Set<AThreadArtifact>> threadArtifactClusterSetEntry : neighborClusterSets.entrySet())
+        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
+        for (final Map.Entry<ThreadArtifactCluster, Set<AThreadArtifact>> threadArtifactClusterSetEntry : neighborClusterSets.entrySet())
         {
-            ThreadArtifactCluster cluster = threadArtifactClusterSetEntry.getKey();
-            VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(cluster);
-            JBColor color;
+            final ThreadArtifactCluster cluster = threadArtifactClusterSetEntry.getKey();
+            final VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(cluster);
+            JBColor color = ThreadColor.getNextColor(clusterCnt++);
             if (properties != null)
             {
-                color = properties.getColor();
-            } else
-            {
-                color = ThreadColor.getNextColor(clusterCnt++);
+                color = properties.getOrSetColor(color);
             }
 
             double clusterThreadArtifactMetric = summedThreadMetricValues(threadArtifactClusterSetEntry.getValue());

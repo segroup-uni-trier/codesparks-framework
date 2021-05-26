@@ -92,31 +92,27 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
         }
 
         // At first, get the thread classification grounded on the kernel based density estimation
-        ThreadArtifactClustering threadClusters =
-                artifact.getThreadArtifactClustering(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
+        ThreadArtifactClustering clustering =
+                artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
-        final int numberOfThreadClusters = threadClusters.size();
+        final int numberOfThreadClusters = clustering.size();
         if (numberOfThreadClusters > 3)
         {
-            final KThreadArtifactClusteringStrategy apacheKMeans = ApacheKMeans.getInstance(primaryMetricIdentifier, 3);
-            threadClusters = artifact.getThreadArtifactClustering(apacheKMeans);
+            final KThreadArtifactClusteringStrategy apacheKMeans = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3);
+            clustering = artifact.clusterThreadArtifacts(apacheKMeans);
         }
 
-        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-        final Map<ThreadArtifactCluster, Boolean> clusterPropertiesPresent = new HashMap<>(threadClusters.size());
+        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
+        final Map<ThreadArtifactCluster, Boolean> clusterPropertiesPresent = new HashMap<>(clustering.size());
 
-        for (final ThreadArtifactCluster threadCluster : threadClusters)
+        for (final ThreadArtifactCluster threadCluster : clustering)
         {
             JBColor clusterColor = ThreadColor.getNextColor(clusterNum, createDisabledViz);
             final VisualThreadClusterProperties properties = clusterPropertiesManager.getProperties(threadCluster);
             if (properties != null)
             {
                 clusterPropertiesPresent.put(threadCluster, true);
-                final JBColor color = properties.getColor();
-                if (color != null)
-                {
-                    clusterColor = color;
-                }
+                clusterColor = properties.getOrSetColor(clusterColor);
             }
 
             final long numberOfThreadsOfCluster = threadCluster.stream().filter(clusterThread -> (createDisabledViz || clusterThread.isSelected())).count();
