@@ -46,14 +46,12 @@ public class TotalNumberOfThreadsAndThreadTypesButtonFillStrategy implements ITh
             final Set<AThreadArtifact> selectedThreadArtifactsOfCluster = threadSelectable.getSelectedThreadArtifactsOfCluster(cluster);
             final Set<AThreadArtifact> selectedThreadArtifacts = threadSelectable.getSelectedThreadArtifacts();
 //            boolean createDisabledViz = selectedThreadArtifacts.stream().allMatch(AThreadArtifact::isFiltered);
-            boolean createDisabledViz = selectedThreadArtifactsOfCluster.stream().allMatch(AThreadArtifact::isFiltered);
+//            boolean createDisabledViz = selectedThreadArtifactsOfCluster.stream().allMatch(AThreadArtifact::isFiltered);
 
-            final long numberOfSelectedThreadsOfCluster =
-                    selectedThreadArtifactsOfCluster.stream().filter(clusterThread -> (createDisabledViz || clusterThread.isSelected())).count();
+            final int numberOfSelectedThreadsOfCluster = selectedThreadArtifactsOfCluster.size();
+            //selectedThreadArtifactsOfCluster.stream().filter(clusterThread -> (createDisabledViz || clusterThread.isSelected())).count();
 
-            final double totalNumberOfSelectedThreads =
-                    (double) selectedThreadArtifacts.stream().filter(threadExecutingArtifact -> (createDisabledViz || threadExecutingArtifact.isSelected()))
-                            .count();
+            final double totalNumberOfSelectedThreads = selectedThreadArtifacts.size();
 
             double percent = numberOfSelectedThreadsOfCluster / totalNumberOfSelectedThreads;
 
@@ -74,8 +72,9 @@ public class TotalNumberOfThreadsAndThreadTypesButtonFillStrategy implements ITh
 
             final AArtifact artifact = threadClusterButton.getArtifact();
             final AMetricIdentifier metricIdentifier = threadClusterButton.getMetricIdentifier();
-            final int numberOfSelectedThreadTypesInCluster = ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact,
-                    metricIdentifier, selectedThreadArtifactsOfCluster, createDisabledViz);
+            final int numberOfSelectedThreadTypesInCluster =
+                    ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact,
+                            metricIdentifier, selectedThreadArtifactsOfCluster, true);
 
             percent = numberOfSelectedThreadTypesInCluster / totalNumberOfSelectedThreads;
 

@@ -102,10 +102,10 @@ public abstract class AThreadSelectable implements IThreadSelectable
     }
 
     @Override
-    public Set<AThreadArtifact> getSelectedThreadArtifactsOfCluster(ThreadArtifactCluster cluster)
+    public Set<AThreadArtifact> getSelectedThreadArtifactsOfCluster(final ThreadArtifactCluster cluster)
     {
-        final Set<AThreadArtifact> selectedCodeSparksThreads = getSelectedThreadArtifacts();
-        return cluster.stream().filter(selectedCodeSparksThreads::contains).collect(Collectors.toSet());
+        final Set<AThreadArtifact> selectedThreadArtifacts = getSelectedThreadArtifacts();
+        return cluster.stream().filter(selectedThreadArtifacts::contains).collect(Collectors.toSet());
     }
 
 }

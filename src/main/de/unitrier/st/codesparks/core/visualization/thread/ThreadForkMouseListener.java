@@ -21,10 +21,8 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable
 {
@@ -145,10 +143,10 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                         final int stateChange = e.getStateChange();
                         if (stateChange == ItemEvent.SELECTED)
                         {
-                            final ComboBoxItem item = (ComboBoxItem) e.getItem();
-                            final int k = item.k;
                             AThreadArtifactClusteringStrategy strategy;
                             ThreadArtifactClustering clustering;
+                            final ComboBoxItem item = (ComboBoxItem) e.getItem();
+                            final int k = item.k;
                             if (k > 0)
                             {
                                 strategy = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, k);
@@ -165,7 +163,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                             finalKernelBasedDensityEstimationPanel.setThreadArtifactClustering(clustering);
                             for (final IThreadSelectable threadSelectable : threadSelectables)
                             {
-                                threadSelectable.setThreadArtifactClustering(clustering);
+                                threadSelectable.setThreadArtifactClustering(clustering, true);
                             }
                         }
                     }
@@ -283,15 +281,15 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                 }
             };
 
-            final JPanel rightSelectedTypesLabelWrapper = new JPanel(new BorderLayout());
-            rightSelectedTypesLabelWrapper.add(rightSelectedTypesLabel);
-            rightSelectedThreadsPanel.add(rightSelectedTypesLabelWrapper);
-            componentsToRegisterToTheThreadSelectables.add(rightSelectedTypesLabel);
-
             final JPanel rightSelectedNumberOfThreadsLabelWrapper = new JPanel(new BorderLayout());
             rightSelectedNumberOfThreadsLabelWrapper.add(rightSelectedNumberOfThreadsLabel);
             rightSelectedThreadsPanel.add(rightSelectedNumberOfThreadsLabelWrapper);
             componentsToRegisterToTheThreadSelectables.add(rightSelectedNumberOfThreadsLabel);
+
+            final JPanel rightSelectedTypesLabelWrapper = new JPanel(new BorderLayout());
+            rightSelectedTypesLabelWrapper.add(rightSelectedTypesLabel);
+            rightSelectedThreadsPanel.add(rightSelectedTypesLabelWrapper);
+            componentsToRegisterToTheThreadSelectables.add(rightSelectedTypesLabel);
 
             final JPanel rightHoveredClusterPanel = new JPanel();
             rightHoveredClusterPanel.setLayout(new BoxLayout(rightHoveredClusterPanel, BoxLayout.Y_AXIS));
@@ -495,9 +493,9 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         {
             return;
         }
+        final Set<AThreadArtifact> selectedThreadArtifactsOfCluster = threadSelectables.get(index).getSelectedThreadArtifactsOfCluster(cluster);
         ThreadArtifactDisplayData hoveredThreadData =
-                threadArtifactsDisplayDataProvider.getDisplayDataOfHoveredThreads(artifact,
-                        threadSelectables.get(index).getSelectedThreadArtifactsOfCluster(cluster));
+                threadArtifactsDisplayDataProvider.getDisplayDataOfHoveredThreads(artifact, selectedThreadArtifactsOfCluster);
         if (hoveredThreadData == null)
         {
             hoveredThreadData = new ThreadArtifactDisplayData();

@@ -122,7 +122,8 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
                     , threadArtifacts
                     , threadCluster
                     , threadFilteredTotalMetricValueOfArtifact
-                    , createDisabledViz);
+                    , createDisabledViz
+            );
 
             int clusterWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
 

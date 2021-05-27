@@ -56,7 +56,7 @@ public abstract class ThreadTree extends AThreadSelectable implements IThreadArt
         component = tree;
 
         // root has to be set before setting up the clustering
-        setThreadArtifactClustering(threadArtifactClustering);
+        setThreadArtifactClustering(threadArtifactClustering, false);
 
         tree.setModel(new DefaultTreeModel(root));
         tree.setToggleClickCount(Integer.MAX_VALUE);
@@ -198,12 +198,14 @@ public abstract class ThreadTree extends AThreadSelectable implements IThreadArt
     }
 
     @Override
-    public void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering)
+    public void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering, final boolean retainCurrentSelection)
     {
         if (root == null)
         {
             return;
         }
+        final Set<AThreadArtifact> currentSelection = getSelectedThreadArtifacts();
+
         root.removeAllChildren();
         innerNodes.clear();
         leafNodes.clear();
@@ -216,6 +218,7 @@ public abstract class ThreadTree extends AThreadSelectable implements IThreadArt
                     return Double.compare(sum2, sum1);
                 }
         ));
+
 
         for (final Map.Entry<String, List<AThreadArtifact>> entry : entries)
         {
@@ -230,10 +233,17 @@ public abstract class ThreadTree extends AThreadSelectable implements IThreadArt
             for (final AThreadArtifact threadArtifact : threadArtifacts)
             {
                 final ThreadTreeLeafNode threadTreeLeafNode = new ThreadTreeLeafNode(threadArtifact, metricIdentifier);
-                final boolean filtered = threadArtifact.isFiltered();
-                final ThreeStateCheckBox.State state = filtered ? ThreeStateCheckBox.State.NOT_SELECTED : ThreeStateCheckBox.State.SELECTED;
+                final boolean selected;
+                if (retainCurrentSelection)
+                {
+                    selected = currentSelection.contains(threadArtifact);
+                } else
+                {
+                    selected = threadArtifact.isSelected();
+                }
+                final ThreeStateCheckBox.State state = selected ? ThreeStateCheckBox.State.SELECTED : ThreeStateCheckBox.State.NOT_SELECTED;
                 threadTreeLeafNode.setState(state);
-                isInnerNodeSelected = isInnerNodeSelected && !filtered;
+                isInnerNodeSelected = isInnerNodeSelected && selected;
                 leafNodes.add(threadTreeLeafNode);
                 innerNode.add(threadTreeLeafNode);
             }

@@ -35,7 +35,7 @@ public final class ThreadVisualizationUtil
         return sum;
     }
 
-    // Used in ThreadFork and ZoomedThreadFork
+    // Used in ThreadFork
     public static double getMetricValueAverageOfSelectedThreadsOfTheClusterRelativeToTotal(
             final AMetricIdentifier metricIdentifier,
             final Collection<AThreadArtifact> threadsOfArtifact,
@@ -57,7 +57,32 @@ public final class ThreadVisualizationUtil
         return Double.NaN;
     }
 
-    // Used in ThreadFork and ZoomedThreadFork
+    // Used in ZoomedThreadFork
+    public static double getMetricValueAverageOfCurrentSelectionOfThreadsOfTheClusterRelativeToTotal(
+            final AMetricIdentifier metricIdentifier,
+            final Collection<AThreadArtifact> threadsOfArtifact,
+            final Collection<AThreadArtifact> threadArtifactsOfCluster,
+            final double total
+            // ,  final boolean createDisabledViz
+    )
+    {
+        final OptionalDouble average =
+                threadsOfArtifact
+                        .stream()
+                        .filter(threadExecutingArtifact -> threadArtifactsOfCluster.stream().anyMatch(
+                                clusterThread -> clusterThread.getIdentifier().equals(threadExecutingArtifact.getIdentifier())
+                        )).mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(metricIdentifier))
+                        .average();
+        if (average.isPresent())
+        {
+            //noinspection UnnecessaryLocalVariable
+            final double ratio = average.getAsDouble() / total;
+            return ratio;
+        }
+        return Double.NaN;
+    }
+
+    // Used in ThreadFork
     public static double getMetricValueSumOfSelectedThreadsOfTheClusterRelativeToTotal(
             final AMetricIdentifier metricIdentifier,
             final Collection<AThreadArtifact> threadsOfArtifact,
@@ -70,6 +95,28 @@ public final class ThreadVisualizationUtil
                 threadsOfArtifact.stream().filter(threadExecutingArtifact -> (createDisabledViz || threadExecutingArtifact.isSelected()) && threadArtifactsOfCluster.stream().anyMatch(
                         clusterThread -> (createDisabledViz || clusterThread.isSelected()) && clusterThread.getIdentifier().equals(threadExecutingArtifact.getIdentifier())
                 )).mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(metricIdentifier)).sum();
+        //noinspection UnnecessaryLocalVariable
+        final double ratio = sum / total;
+        return ratio;
+    }
+
+    // Used in ZoomedThreadFork -> ClusterButtonFillStrategy
+    public static double getMetricValueSumOfCurrentSelectionOfThreadsOfTheClusterRelativeToTotal(
+            final AMetricIdentifier metricIdentifier,
+            final Collection<AThreadArtifact> selectedThreadArtifacts,
+            final Collection<AThreadArtifact> threadArtifactsOfCluster,
+            final double total
+
+            // final boolean createDisabledViz
+    )
+    {
+        final double sum =
+                selectedThreadArtifacts
+                        .stream()
+                        .filter(threadExecutingArtifact -> threadArtifactsOfCluster.stream().anyMatch(
+                                clusterThread -> clusterThread.getIdentifier().equals(threadExecutingArtifact.getIdentifier())
+                        )).mapToDouble(threadExecutingArtifact -> threadExecutingArtifact.getNumericalMetricValue(metricIdentifier))
+                        .sum();
         //noinspection UnnecessaryLocalVariable
         final double ratio = sum / total;
         return ratio;

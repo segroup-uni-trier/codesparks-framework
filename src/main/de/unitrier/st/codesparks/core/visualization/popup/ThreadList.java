@@ -100,7 +100,7 @@ public class ThreadList extends AThreadSelectable
     }
 
     @Override
-    public void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering)
+    public void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering, final boolean retainCurrentSelection)
     {
         // I don't think that an implementation is necessary
     }

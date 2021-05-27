@@ -54,7 +54,12 @@ public class DefaultThreadArtifactsDisplayDataProvider implements IThreadArtifac
         threadArtifactDisplayData.setMetricValueAvg(sum / hoveredThreadArtifacts.size());
         threadArtifactDisplayData.setNumberOfThreads(hoveredThreadArtifacts.size());
         final int numberOfSelectedThreadTypesWithNumericMetricValueInSelection =
-                ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact, metricIdentifier, hoveredThreadArtifacts);
+                ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(
+                        artifact
+                        , metricIdentifier
+                        , hoveredThreadArtifacts
+                        , true
+                );
         threadArtifactDisplayData.setNumberOfThreadTypes(numberOfSelectedThreadTypesWithNumericMetricValueInSelection);
 
         return threadArtifactDisplayData;

@@ -11,6 +11,7 @@ import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPr
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class ThreadTypeTree extends ThreadTree
 {
@@ -42,9 +43,9 @@ public class ThreadTypeTree extends ThreadTree
     }
 
     @Override
-    public void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering)
+    public void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering, final boolean retainCurrentSelection)
     {
-        super.setThreadArtifactClustering(threadArtifactClustering);
+        super.setThreadArtifactClustering(threadArtifactClustering, retainCurrentSelection);
         // Do the coloring of the entries
         final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(threadArtifactClustering);
         for (final ThreadTreeLeafNode leafNode : leafNodes)
