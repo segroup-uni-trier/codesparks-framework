@@ -21,6 +21,8 @@ import smile.stat.distribution.KernelDensity;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel>
 {
@@ -48,6 +50,9 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         repaint();
     }
 
+    private static final int minWidth = 400;
+    private static final int minHeight = 150;
+
     @Override
     public void paint(final Graphics g)
     {
@@ -57,19 +62,23 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         {
             return;
         }
-        
+
         final IThreadSelectable threadSelectable = threadSelectables.get(index);
-        final Set<AThreadArtifact> threadArtifacts = threadSelectable.getSelectedThreadArtifacts();
+        Set<AThreadArtifact> threadArtifactsToShow = threadSelectable.getSelectedThreadArtifacts();
+        int numberOfThreadsToShow = threadArtifactsToShow.size();
+        final boolean createDisabledViz = numberOfThreadsToShow == 0;
+        if (createDisabledViz)
+        {
+            threadArtifactsToShow = threadSelectable.getFilteredThreadArtifacts();
+            numberOfThreadsToShow = threadArtifactsToShow.size();
+        }
 
-
-        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(threadArtifactClustering);
-
-        final int width = this.getWidth();
-        final int height = this.getHeight();
+        final int width = Math.max(minWidth, this.getWidth());
+        final int height = Math.max(minHeight, this.getHeight());
 
         final int topOffset = 30;
-        final int horizontalMargin = 20;
-        final int verticalMargin = 1;
+        final int horizontalMargin = 24;
+        final int verticalMargin = 20;
         final Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setStroke(new BasicStroke(2));
         graphics2D.setColor(VisConstants.BORDER_COLOR);
@@ -77,89 +86,144 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         final int xAxisY = height - verticalMargin;
         graphics2D.drawLine(horizontalMargin, xAxisY, width - horizontalMargin, xAxisY);
         // Draw the y axis, leave an offset to the top
-        graphics2D.drawLine(horizontalMargin, topOffset, horizontalMargin, height - verticalMargin);
+        // graphics2D.drawLine(horizontalMargin, topOffset, horizontalMargin, height - verticalMargin);
 
 
-        final int size = threadArtifacts.size();
-        final Map<Double, Integer> valueOccurrences = new HashMap<>(size);
+        //final int size = threadArtifactsToShow.size();
+        final Map<Double, Integer> valueOccurrences = new HashMap<>(numberOfThreadsToShow);
         int maxOccurrence = Integer.MIN_VALUE;
-        final double[] metricValues = new double[size];
+        final double[] metricValuesOfThreadsToShow = new double[numberOfThreadsToShow];
         int i = 0;
-        for (final AThreadArtifact threadArtifact : threadArtifacts)
+        double maxMetricValueOfThreadsToShow = Double.MIN_VALUE;
+        for (final AThreadArtifact threadArtifact : threadArtifactsToShow)
         {
             final double metricValue = threadArtifact.getNumericalMetricValue(primaryMetricIdentifier);
-            metricValues[i++] = metricValue;
+            metricValuesOfThreadsToShow[i++] = metricValue;
             final int occurrences = valueOccurrences.getOrDefault(metricValue, 0) + 1;
             valueOccurrences.put(metricValue, occurrences);
             maxOccurrence = Math.max(maxOccurrence, occurrences);
+            maxMetricValueOfThreadsToShow = Math.max(maxMetricValueOfThreadsToShow, metricValue);
         }
-        double maxMetricValue = Double.MIN_VALUE;
-        double minMetricValue = Double.MAX_VALUE;
-        for (final double metricValue : metricValues)
+        // ------------
+        final Set<AThreadArtifact> allThreads = Stream.concat(threadSelectable.getFilteredThreadArtifacts().stream(),
+                threadSelectable.getSelectedThreadArtifacts().stream()).collect(Collectors.toSet());
+        double maxMetricValueOfAll = Double.MIN_VALUE;
+        for (final AThreadArtifact threadArtifact : allThreads)//metricValuesOfThreadsToShow)
         {
-            maxMetricValue = Math.max(maxMetricValue, metricValue);
-            minMetricValue = Math.min(minMetricValue, metricValue);
+            final double metricValue = threadArtifact.getNumericalMetricValue(primaryMetricIdentifier);
+            maxMetricValueOfAll = Math.max(maxMetricValueOfAll, metricValue);
         }
-
-        final int vizHeight = height - topOffset;
-        final int yStep = vizHeight / (maxOccurrence + 1);//size;
+        // ------------
+        final int vizHeight = height - topOffset - 2 * verticalMargin;
+        final int yStep = (int) ((double) vizHeight / (maxOccurrence + 1));//size;
         final Map<Double, Integer> yValues = new HashMap<>();
 
         final int vizWith = width - 2 * horizontalMargin;
-        final int dotWithMetricValues = 6;
+        final int dotWidth = 6;
+
+        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(threadArtifactClustering);
 
         int clusterNum = 0;
         for (final ThreadArtifactCluster cluster : threadArtifactClustering)
         {
             final VisualThreadClusterProperties properties = clusterPropertiesManager.getOrDefault(cluster, clusterNum);
-            final JBColor color = properties.getColor();
-            graphics2D.setColor(color);
+            JBColor clusterColor = properties.getColor();
+            if (createDisabledViz)
+            {
+                clusterColor = ThreadColor.getDisabledColor(clusterColor);
+            }
+            graphics2D.setColor(clusterColor);
 
-            final Set<AThreadArtifact> threadArtifactsOfCluster = threadSelectable.getSelectedThreadArtifactsOfCluster(cluster);
+            Set<AThreadArtifact> threadArtifactsOfCluster;
+            if (createDisabledViz)
+            {
+                threadArtifactsOfCluster = Set.copyOf(cluster);
+            } else
+            {
+                threadArtifactsOfCluster = threadSelectable.getSelectedThreadArtifactsOfCluster(cluster);
+            }
 
             for (final AThreadArtifact threadArtifact : threadArtifactsOfCluster)
             {
                 final double metricValue = threadArtifact.getNumericalMetricValue(primaryMetricIdentifier);
-                final double xValue = metricValue / maxMetricValue * vizWith;
+                final double xValue = metricValue / maxMetricValueOfAll * vizWith;
                 final Integer yValue = yValues.getOrDefault(xValue, yStep);
-                graphics2D.fillRect(horizontalMargin + (int) xValue - dotWithMetricValues / 2, height - yValue, dotWithMetricValues,
-                        dotWithMetricValues);
+                //noinspection SuspiciousNameCombination
+                graphics2D.fillRect(horizontalMargin + (int) xValue - dotWidth / 2
+                        , topOffset + verticalMargin + vizHeight - yValue - dotWidth
+                        , dotWidth
+                        , dotWidth
+                );
                 yValues.put(xValue, yValue + yStep);
             }
         }
 
 //                graphics2D.setColor(VisConstants.ORANGE);
-//                for (final double metricValue : metricValues)
+//                for (final double metricValue : metricValuesOfThreadsToShow)
 //                {
 //                    final double xValue = metricValue / maxMetricValue * vizWith;
 //                    final Integer yValue = yValues.getOrDefault(xValue, yStep);
-//                    graphics2D.fillRect(horizontalMargin + (int) xValue - dotWithMetricValues / 2, height - yValue, dotWithMetricValues, dotWithMetricValues);
+//                    graphics2D.fillRect(horizontalMargin + (int) xValue - dotWidth / 2, height - yValue, dotWidth, dotWidth);
 //                    yValues.put(xValue, yValue + yStep);
 //                }
         graphics2D.setColor(VisConstants.BORDER_COLOR);
         String infoString = "";
-        if (size > 1)
+        if (numberOfThreadsToShow > 1)
         { // Cannot compute a density for only one value!
             final double bandWidth = 0.01;
-            final KernelDensity kernelDensity = new KernelDensity(metricValues, bandWidth);
+            final KernelDensity kernelDensity = new KernelDensity(metricValuesOfThreadsToShow, bandWidth);
 
             final int dotsToShow = vizWith / 4; // A dot all four pixels
 
-            final double step = maxMetricValue / dotsToShow;//0.002;//(maxMetricValue - minMetricValue) / (4 * size);
-            final int dotWithProbability = 2;
-            for (double j = 0d; j <= maxMetricValue; j += step)
+            final double step = maxMetricValueOfAll / dotsToShow;//0.002;//(maxMetricValue - minMetricValue) / (4 * size);
+            final int dotWidthProbability = 2;
+            for (double j = 0d; j <= maxMetricValueOfAll; j += step)
             {
                 final double pj = kernelDensity.p(j);
-                final double xValue = j / maxMetricValue * vizWith;
+                final double xValue = j / maxMetricValueOfAll * vizWith;
                 final double normalizedPj = pj / 100d;
                 int yValue = (int) (normalizedPj * vizHeight);
-                graphics2D.fillRect(horizontalMargin + (int) xValue - dotWithProbability / 2, height - yValue, dotWithProbability, dotWithProbability);
+                //noinspection SuspiciousNameCombination
+                graphics2D.fillRect(horizontalMargin + (int) xValue - dotWidthProbability / 2,
+                        //xAxisY - yValue
+                        topOffset + verticalMargin + vizHeight - yValue - 2 // the '-2' is an adjustment to better see the values
+                        , dotWidthProbability
+                        , dotWidthProbability
+                );
             }
-            infoString += /*"Kernel Based Density Estimation: */"kernel=gaussian, bandwidth=" + bandWidth + ", ";
+            infoString += /*"Kernel Based Density Estimation: */"kernel=gaussian, bandwidth=" + bandWidth;
         }
 
-        infoString += "max metric value=" + CoreUtil.formatPercentage(maxMetricValue) + "(x axis)";
-        final int stringWidth = graphics2D.getFontMetrics().stringWidth(infoString);
+        //infoString += "max metric value=" + CoreUtil.formatPercentage(maxMetricValueOfAll) + "(x axis)";
+        final FontMetrics fontMetrics = graphics2D.getFontMetrics();
+        final int stringWidth = fontMetrics.stringWidth(infoString);
         graphics2D.drawString(infoString, width / 2 - stringWidth / 2, topOffset / 2);
+
+        // Labels and tikz on the x-axis
+
+        graphics2D.drawLine(horizontalMargin + vizWith, xAxisY - 1, horizontalMargin + vizWith, xAxisY + 3); // max tik
+        graphics2D.drawLine(horizontalMargin, xAxisY - 1, horizontalMargin, xAxisY + 3); // min tik
+        graphics2D.drawLine(horizontalMargin + vizWith / 2, xAxisY - 1, horizontalMargin + vizWith / 2, xAxisY + 3); // middle tik
+
+        final String xAxisMaxLabel = CoreUtil.formatPercentage(maxMetricValueOfAll);
+        final int stringWidthMaxLabel = fontMetrics.stringWidth(xAxisMaxLabel);
+        graphics2D.drawString(xAxisMaxLabel, horizontalMargin + vizWith - stringWidthMaxLabel / 2
+                //, xAxisY + 3
+                , topOffset + verticalMargin + vizHeight + 16
+        );
+
+        final String xAxisMinLabel = CoreUtil.formatPercentage(0, true);
+        final int stringWidthMinLabel = fontMetrics.stringWidth(xAxisMinLabel);
+        graphics2D.drawString(xAxisMinLabel, horizontalMargin - stringWidthMinLabel / 2
+                //, xAxisY + 3
+                , topOffset + verticalMargin + vizHeight + 16
+        );
+
+        final String xAxisMidLabel = CoreUtil.formatPercentage(maxMetricValueOfAll / 2);
+        final int stringWidthMidLabel = fontMetrics.stringWidth(xAxisMidLabel);
+        graphics2D.drawString(xAxisMidLabel, horizontalMargin + (vizWith / 2) - stringWidthMidLabel / 2
+                //, xAxisY + 3
+                , topOffset + verticalMargin + vizHeight + 16
+        );
     }
 }

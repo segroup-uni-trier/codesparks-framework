@@ -28,10 +28,21 @@ public final class CoreUtil
 
     public static String formatPercentage(final double value)
     {
+        return formatPercentage(value, false);
+    }
+
+    public static String formatPercentage(final double value, final boolean treatZeroAsIs)
+    {
         String percentageText;
         if (Double.isNaN(value) || value < 0.0001)
         {
-            percentageText = "<0.01%";
+            if (treatZeroAsIs)
+            {
+                percentageText = "0%";
+            } else
+            {
+                percentageText = "<0.01%";
+            }
         } else
         {
             synchronized (df)

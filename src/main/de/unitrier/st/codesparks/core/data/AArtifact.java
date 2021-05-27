@@ -263,17 +263,18 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
             return Double.NaN;
         }
         rel = Math.abs(rel);
+        Double val;
         synchronized (metricsLock)
         {
-            Double val = (Double) metrics.getOrCompute().get(metricIdentifier);
+            val = (Double) metrics.getOrCompute().get(metricIdentifier);
             if (val == null || val.isNaN())
             {
                 return Double.NaN;
             }
             val = val / rel;
             metrics.getOrCompute().put(metricIdentifier, val);
-            return val;
         }
+        return val;
     }
 
     public void setNumericalMetricValue(final AMetricIdentifier metricIdentifier, final double value)
@@ -511,9 +512,10 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
 
     private ThreadArtifactClustering lookupClustering(final AThreadArtifactClusteringStrategy clusteringStrategy)
     {
+        ThreadArtifactClustering clustering;
         synchronized (clusterings)
         {
-            ThreadArtifactClustering clustering = clusterings.get(clusteringStrategy);
+            clustering = clusterings.get(clusteringStrategy);
             if (clustering == null)
             {
                 final Collection<AThreadArtifact> threadArtifacts =
@@ -521,8 +523,8 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
                 clustering = clusteringStrategy.clusterThreadArtifacts(threadArtifacts);
                 clusterings.put(clusteringStrategy, clustering);
             }
-            return clustering;
         }
+        return clustering;
     }
 
     public ThreadArtifactClustering clusterThreadArtifacts(final AThreadArtifactClusteringStrategy clusteringStrategy)
@@ -607,9 +609,9 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     {
         synchronized (predecessorsLock)
         {
-            List<ANeighborArtifact> neighborArtifacts = predecessors.getOrCompute().computeIfAbsent(lineNumber,
+            final List<ANeighborArtifact> neighborArtifacts = predecessors.getOrCompute().computeIfAbsent(lineNumber,
                     integer -> new ArrayList<>());
-            ANeighborArtifact neighbor = getOrCreateNeighborByIdentifier(
+            final ANeighborArtifact neighbor = getOrCreateNeighborByIdentifier(
                     neighborArtifacts
                     , neighborArtifactClass
                     , name
