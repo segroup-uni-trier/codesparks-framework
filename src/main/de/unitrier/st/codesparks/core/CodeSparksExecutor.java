@@ -43,10 +43,10 @@ public class CodeSparksExecutor extends Executor
     @NotNull
     public Icon getIcon()
     {
-        if (UIUtil.isUnderDarcula())
-        {
-            return IconLoader.getIcon("/icons/codesparks.png", getClass());
-        }
+//        if (UIUtil.isUnderDarcula())
+//        {
+//            return IconLoader.getIcon("/icons/codesparks.png", getClass());
+//        }
         return IconLoader.getIcon("/icons/codesparks.png", getClass());
     }
 

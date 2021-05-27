@@ -46,7 +46,7 @@ public class DiscreteNumberOfThreadTypesLabelFactory extends AArtifactVisualizat
         {
             numberOfSelectedThreadTypes = artifact.getThreadTypeLists().size();
         }
-        numberOfSelectedThreadTypes = 4;
+        // numberOfSelectedThreadTypes = 4;
 
         if (numberOfSelectedThreadTypes > 1)
         {

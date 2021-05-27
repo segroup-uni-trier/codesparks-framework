@@ -10,13 +10,14 @@ import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
-import de.unitrier.st.codesparks.core.visualization.popup.*;
+import de.unitrier.st.codesparks.core.visualization.popup.IThreadSelectable;
+import de.unitrier.st.codesparks.core.visualization.popup.SumAvgClusterButtonFillStrategy;
+import de.unitrier.st.codesparks.core.visualization.popup.ThreadClusterButton;
+import de.unitrier.st.codesparks.core.visualization.popup.TotalNumberOfThreadsAndThreadTypesButtonFillStrategy;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ZoomedThreadFork extends JPanel
 {

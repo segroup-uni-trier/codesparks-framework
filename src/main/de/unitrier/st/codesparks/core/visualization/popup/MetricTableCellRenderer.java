@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import javax.swing.*;
@@ -11,9 +14,6 @@ import java.util.Set;
 
 /**
  * Created by Oliver Moseler on 16.10.2014.
- */
-/*
- * Copyright (c), Oliver Moseler, 2020
  */
 public class MetricTableCellRenderer extends JTextArea implements TableCellRenderer
 {
@@ -60,9 +60,10 @@ public class MetricTableCellRenderer extends JTextArea implements TableCellRende
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+    public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row,
+                                                   final int column)
     {
-        MetricTable metricTable = (MetricTable) table;
+        final MetricTable metricTable = (MetricTable) table;
         setBackground(null); // Reset the hover background color. See JBTable hover background
         if (row != metricTable.getEnteredRow() || column != metricTable.getEnteredCol())
         {
@@ -79,7 +80,7 @@ public class MetricTableCellRenderer extends JTextArea implements TableCellRende
                 setText("");
             } else
             {
-                String text = value.toString();
+                final String text = value.toString();
                 if (!getText().equals(text))
                 {
                     setText(text);
@@ -103,7 +104,6 @@ public class MetricTableCellRenderer extends JTextArea implements TableCellRende
             }
             setFont(defaultFont);
             setText("");
-            return this;
         } else
         {
             if (value == null)
@@ -151,7 +151,7 @@ public class MetricTableCellRenderer extends JTextArea implements TableCellRende
                     }
                 }
             }
-            return this;
         }
+        return this;
     }
 }

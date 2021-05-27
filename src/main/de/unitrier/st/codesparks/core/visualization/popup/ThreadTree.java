@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public abstract class ThreadTree extends AThreadSelectable implements IThreadArtifactClusteringToMapTransformer
 {
     protected final AArtifact artifact;
-    protected ThreadArtifactClustering threadArtifactClustering;
+    //protected ThreadArtifactClustering threadArtifactClustering;
     protected final AMetricIdentifier metricIdentifier;
     protected final List<ThreadTreeLeafNode> leafNodes;
     protected final Map<List<AThreadArtifact>, ThreadTreeInnerNode> innerNodes;
@@ -35,7 +35,7 @@ public abstract class ThreadTree extends AThreadSelectable implements IThreadArt
     )
     {
         this.artifact = artifact;
-        this.threadArtifactClustering = threadArtifactClustering;
+        //this.threadArtifactClustering = threadArtifactClustering;
         this.metricIdentifier = metricIdentifier;
         leafNodes = new ArrayList<>();
         innerNodes = new HashMap<>();

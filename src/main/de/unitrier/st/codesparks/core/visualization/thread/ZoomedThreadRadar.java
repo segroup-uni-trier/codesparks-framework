@@ -79,8 +79,7 @@ public class ZoomedThreadRadar extends AThreadRadar
         {
             VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
             RadialVisualThreadClusterProperties properties =
-                    new RadialVisualThreadClusterProperties(clustering.get(i), colors[i],
-                            artifact.getNumberOfThreads(), metricIdentifier);
+                    new RadialVisualThreadClusterProperties(clustering.get(i), colors[i], artifact.getNumberOfThreads());
 
             double filteredRuntimeRatio =
                     ThreadVisualizationUtil.calculateFilteredAvgNumericalMetricRatioForZoomVisualization(clustering.get(i),

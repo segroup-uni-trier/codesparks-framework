@@ -95,8 +95,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             final ThreadArtifactCluster cluster = clustering.get(i);
             final JBColor color = ThreadColor.getNextColor(i, createDisabledViz);
 
-            final RadialVisualThreadClusterProperties properties = new RadialVisualThreadClusterProperties(cluster, color, artifact.getNumberOfThreads(),
-                    primaryMetricIdentifier);
+            final RadialVisualThreadClusterProperties properties = new RadialVisualThreadClusterProperties(cluster, color, artifact.getNumberOfThreads());
             propertiesManager.registerProperties(properties);
 
             final double averageMetricValueOfSelectedThreads = properties.getAverageMetricValueOfSelectedThreads(cluster, primaryMetricIdentifier,

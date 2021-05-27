@@ -48,6 +48,7 @@ public final class TextualTotalNumberOfThreadsLabelFactory extends AArtifactVisu
         final String sumAndColonString = "";//"\u2211 \u003a";
 
         final int threadsPerColumn = 3;
+        //noinspection PointlessArithmeticExpression
         final int X_OFFSET_LEFT = this.X_OFFSET_LEFT + 0;
         final int TEXT_START_OFFSET_LEFT = 1;
 

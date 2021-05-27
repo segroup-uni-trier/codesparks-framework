@@ -65,6 +65,7 @@ public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLab
                         + numberOfSelectedArtifactThreads;
 
         final int threadsPerColumn = 3;
+        //noinspection PointlessArithmeticExpression
         final int X_OFFSET_LEFT = this.X_OFFSET_LEFT + 0;
         final int PEDESTAL_START_OFFSET_LEFT = 2;
         final int PEDESTAL_WIDTH_TO_TEXT = 15;

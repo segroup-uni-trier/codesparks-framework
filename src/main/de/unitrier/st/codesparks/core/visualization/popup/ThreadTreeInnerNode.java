@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
@@ -7,25 +10,22 @@ import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 
 import java.util.List;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ThreadTreeInnerNode extends ColoredSelectableTreeNode
 {
-    private final List<AThreadArtifact> codeSparksThreads;
+    private final List<AThreadArtifact> threadArtifacts;
     private final String name;
     private final AMetricIdentifier metricIdentifier;
 
-    public ThreadTreeInnerNode(String name, List<AThreadArtifact> codeSparksThreads, final AMetricIdentifier metricIdentifier)
+    public ThreadTreeInnerNode(final String name, final List<AThreadArtifact> threadArtifacts, final AMetricIdentifier metricIdentifier)
     {
-        this(name, codeSparksThreads, metricIdentifier, null);
+        this(name, threadArtifacts, metricIdentifier, null);
     }
 
-    public ThreadTreeInnerNode(String name, List<AThreadArtifact> codeSparksThreads, final AMetricIdentifier metricIdentifier, JBColor color)
+    public ThreadTreeInnerNode(String name, List<AThreadArtifact> threadArtifacts, final AMetricIdentifier metricIdentifier, JBColor color)
     {
         super(color);
         this.name = name;
-        this.codeSparksThreads = codeSparksThreads;
+        this.threadArtifacts = threadArtifacts;
         this.metricIdentifier = metricIdentifier;
     }
 
@@ -51,7 +51,7 @@ public class ThreadTreeInnerNode extends ColoredSelectableTreeNode
 
     private String getSelectedChildrenString()
     {
-        int childCount = getChildCount();
+        final int childCount = getChildCount();
         int selectedCount = 0;
         for (int i = 0; i < childCount; i++)
         {
@@ -66,6 +66,6 @@ public class ThreadTreeInnerNode extends ColoredSelectableTreeNode
 
     public List<AThreadArtifact> getThreadArtifacts()
     {
-        return codeSparksThreads;
+        return threadArtifacts;
     }
 }

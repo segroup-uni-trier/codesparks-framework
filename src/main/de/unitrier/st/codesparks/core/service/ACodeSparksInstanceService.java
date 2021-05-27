@@ -3,6 +3,7 @@ package de.unitrier.st.codesparks.core.service;
 import com.intellij.openapi.components.ServiceManager;
 
 import javax.swing.*;
+import java.net.URL;
 
 /*
  * Copyright (c), Oliver Moseler, 2020
@@ -23,6 +24,16 @@ public abstract class ACodeSparksInstanceService
 
     public ImageIcon getDefaultPluginImageIcon()
     {
-        return new ImageIcon(getClass().getResource("/icons/codesparks.png"));
+        final Class<? extends ACodeSparksInstanceService> aClass = getClass();
+        if (aClass == null)
+        {
+            return null;
+        }
+        final URL resource = aClass.getResource("/icons/codesparks.png");
+        if (resource == null)
+        {
+            return null;
+        }
+        return new ImageIcon(resource);
     }
 }

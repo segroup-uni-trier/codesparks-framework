@@ -15,7 +15,7 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
     private final int numberOfThreads;
     private double numberOfThreadsInClusterRatio;
     private double avgMetricValue;
-    private double maxMetricValue = Double.MIN_VALUE;
+    //private double maxMetricValue = Double.MIN_VALUE;
     private double sumMetricValue;
     private double arcStartAngle;
     private double arcAngle;
@@ -26,17 +26,18 @@ public class RadialVisualThreadClusterProperties extends VisualThreadClusterProp
             final ThreadArtifactCluster cluster
             , final JBColor color
             , final int totalNumberOfThreadArtifacts
-            , final AMetricIdentifier metricIdentifier)
+            //        , final AMetricIdentifier metricIdentifier
+    )
     {
         super(cluster);
         setColor(color);
         numberOfThreads = cluster.size();
         numberOfThreadsInClusterRatio = cluster.size() / (double) totalNumberOfThreadArtifacts;
-        for (final AThreadArtifact thread : cluster)
-        {
-            final double metricValue = thread.getNumericalMetricValue(metricIdentifier);
-            maxMetricValue = Math.max(maxMetricValue, metricValue);
-        }
+//        for (final AThreadArtifact thread : cluster)
+//        {
+//            final double metricValue = thread.getNumericalMetricValue(metricIdentifier);
+//            maxMetricValue = Math.max(maxMetricValue, metricValue);
+//        }
     }
 
     double getNumberOfSelectedThreadsRatio(final ThreadArtifactCluster cluster, final int totalNumberOfThreadArtifacts, final boolean ignoreFilter)

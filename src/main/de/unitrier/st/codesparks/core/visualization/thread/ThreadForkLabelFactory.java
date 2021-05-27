@@ -10,11 +10,10 @@ import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelF
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
-import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.Collection;
 
 public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
 {
@@ -99,7 +98,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         }
 
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
-        
+
         int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : clustering)
         {
