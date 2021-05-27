@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2021. Oliver Moseler
  */
-
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
@@ -10,6 +9,7 @@ import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelF
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
+import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +19,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 {
     private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayData;
 
+    @SuppressWarnings("unused")
     public ThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier, 0);
@@ -31,6 +32,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayDataProvider(primaryMetricIdentifier);
     }
 
+    @SuppressWarnings("unused")
     public ThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence, final int xOffsetLeft)
     {
         super(primaryMetricIdentifier, sequence, xOffsetLeft);
@@ -91,7 +93,13 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
                 artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
         final int numberOfThreadClusters = clustering.size();
-        if (numberOfThreadClusters > 3)
+
+        final long numberOfNonEmptyThreadClusters = clustering
+                .stream()
+                .filter(cl -> cl.stream()
+                        .anyMatch(AThreadArtifact::isSelected))
+                .count();
+        if ((createDisabledViz && numberOfThreadClusters > 3) || numberOfNonEmptyThreadClusters > 3)
         {
             final KThreadArtifactClusteringStrategy apacheKMeansPlusPlus = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3);
             clustering = artifact.clusterThreadArtifacts(apacheKMeansPlusPlus);
@@ -102,12 +110,18 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : clustering)
         {
+            if (!createDisabledViz && threadCluster.stream().noneMatch(AThreadArtifact::isSelected))
+            { // In case the density based classification approach yields more than 3 clusters but only upt to three of them contain selected threads, skip
+                // the clusters which only contain filtered threads
+                continue;
+            }
+
             final VisualThreadClusterProperties clusterProperties = clusterPropertiesManager.getOrDefault(threadCluster, clusterNum);
             JBColor clusterColor = clusterProperties.getColor();
-
-            final VisualThreadClusterProperties properties =
-                    new VisualThreadClusterPropertiesBuilder(threadCluster).setColor(clusterColor).setPosition(clusterNum).get();
-            clusterPropertiesManager.registerProperties(properties); // The threadFork is usually the first visualization to be drawn
+            if (createDisabledViz)
+            {
+                clusterColor = ThreadColor.getDisabledColor(clusterColor);
+            }
 
             /*
              * Draw the metric value sum bar

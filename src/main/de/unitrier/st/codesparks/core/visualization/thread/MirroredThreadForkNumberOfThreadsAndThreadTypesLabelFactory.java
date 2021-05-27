@@ -9,6 +9,7 @@ import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelF
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
+import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -90,10 +91,16 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
                 artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
 
         final int numberOfThreadClusters = clustering.size();
-        if (numberOfThreadClusters > 3)
+
+        final long numberOfNonEmptyThreadClusters = clustering
+                .stream()
+                .filter(cl -> cl.stream()
+                        .anyMatch(AThreadArtifact::isSelected))
+                .count();
+        if ((createDisabledViz && numberOfThreadClusters > 3) || numberOfNonEmptyThreadClusters > 3)
         {
-            final KThreadArtifactClusteringStrategy apacheKMeans = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3);
-            clustering = artifact.clusterThreadArtifacts(apacheKMeans);
+            final KThreadArtifactClusteringStrategy apacheKMeansPlusPlus = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3);
+            clustering = artifact.clusterThreadArtifacts(apacheKMeansPlusPlus);
         }
 
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
@@ -101,9 +108,18 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
         int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : clustering)
         {
+            if (!createDisabledViz && threadCluster.stream().noneMatch(AThreadArtifact::isSelected))
+            { // In case the density based classification approach yields more than 3 clusters but only upt to three of them contain selected threads, skip
+                // the clusters which only contain filtered threads
+                continue;
+            }
+
             final VisualThreadClusterProperties properties = clusterPropertiesManager.getOrDefault(threadCluster, clusterNum);
             JBColor clusterColor = properties.getColor();
-
+            if (createDisabledViz)
+            {
+                clusterColor = ThreadColor.getDisabledColor(clusterColor);
+            }
 
             final long numberOfThreadsOfCluster = threadCluster.stream().filter(clusterThread -> (createDisabledViz || clusterThread.isSelected())).count();
 

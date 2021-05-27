@@ -303,7 +303,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
     private void clearVisualizations()
     {
-        VisualThreadClusterPropertiesManager.clearInstances();
+//        VisualThreadClusterPropertiesManager.clearInstances(); // TODO: remove since it has an empty method body
 //        final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
 //        propertiesManager.clearProperties();
 
