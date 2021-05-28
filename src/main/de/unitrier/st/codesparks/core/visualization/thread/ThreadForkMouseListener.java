@@ -503,11 +503,11 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         final String metricString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.metric");
         if (leftHoverLabels[0] != null)
         {
-            leftHoverLabels[0].setText(metricString + " (sum): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueSum()));
+            leftHoverLabels[0].setText(metricString + " (sum): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueSum(), true));
         }
         if (leftHoverLabels[1] != null)
         {
-            leftHoverLabels[1].setText(metricString + " (avg): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueAvg()));
+            leftHoverLabels[1].setText(metricString + " (avg): " + CoreUtil.formatPercentage(hoveredThreadData.getMetricValueAvg(), true));
         }
         if (rightHoverLabels[0] != null)
         {

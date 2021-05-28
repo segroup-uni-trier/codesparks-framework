@@ -17,6 +17,8 @@ import de.unitrier.st.codesparks.core.visualization.popup.TotalNumberOfThreadsAn
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Line2D;
+import java.awt.geom.RoundRectangle2D;
 import java.util.List;
 
 public class ZoomedThreadFork extends JPanel
@@ -142,36 +144,53 @@ public class ZoomedThreadFork extends JPanel
         // Arrow left
         final double leftBarrierXPos = horizontalMargin + threadForkSymbolWith - barrierWidth;
         final double arrowWidth = leftBarrierXPos - horizontalMargin;
-        graphics2D.fillRect(LEFT_OFFSET + horizontalMargin
+        final RoundRectangle2D leftArrowStroke = new RoundRectangle2D.Float(
+                LEFT_OFFSET + horizontalMargin
                 , TOP_OFFSET + (int) (height / 2 - arrowHeight / 2)
-                , (int) arrowWidth
-                , (int) arrowHeight);
-        final int leftArrowPartXPos = horizontalMargin + (int) (arrowWidth * 5d / 6);
-        graphics2D.setStroke(new BasicStroke((float) arrowHeight));
+                , (float) arrowWidth
+                , (float) arrowHeight
+                , 5
+                , 5
+        );
+        graphics2D.fill(leftArrowStroke);
+
+        final int leftArrowPartXPos = horizontalMargin + (int) (arrowWidth * 7d / 10);
+        graphics2D.setStroke(new BasicStroke((float) arrowHeight, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
         graphics2D.drawLine(LEFT_OFFSET + leftArrowPartXPos
                 , TOP_OFFSET + (int) (height / 8d * 3)
                 , LEFT_OFFSET + (int) leftBarrierXPos
                 , TOP_OFFSET + (int) (height / 2 - arrowHeight / 2));
+
         graphics2D.drawLine(LEFT_OFFSET + leftArrowPartXPos
                 , TOP_OFFSET + (int) (height / 8d * 5)
                 , LEFT_OFFSET + (int) leftBarrierXPos
                 , TOP_OFFSET + (int) (height / 2 + arrowHeight / 2));
 
         // Left barrier
-        graphics2D.fillRect(LEFT_OFFSET + (int) leftBarrierXPos
+        final RoundRectangle2D leftBarrier = new RoundRectangle2D.Float(
+                LEFT_OFFSET + (int) leftBarrierXPos
                 , TOP_OFFSET + verticalMargin
-                , (int) barrierWidth
-                , height - 2 * verticalMargin);
+                , (float) barrierWidth
+                , height - 2 * verticalMargin
+                , 5
+                , 5
+        );
+        graphics2D.fill(leftBarrier);
 
         // Arrow right
         final double rightBarrierXPos = width - threadForkSymbolWith - horizontalMargin;
-        graphics2D.fillRect(LEFT_OFFSET + (int) (rightBarrierXPos + barrierWidth) - 1 // The -1 is a correction due to accuracy problems in floating point
-                // arithmetics
+        final RoundRectangle2D rightArrowStroke = new RoundRectangle2D.Float(
+                LEFT_OFFSET + (int) (rightBarrierXPos + barrierWidth) - 1 // The -1 is a correction due to accuracy problems in floating point arithmetics
                 , TOP_OFFSET + (int) (height / 2 - arrowHeight / 2)
-                , (int) arrowWidth
-                , (int) arrowHeight);
+                , (float) arrowWidth
+                , (float) arrowHeight
+                , 5
+                , 5
+        );
+        graphics2D.fill(rightArrowStroke);
+
         final int rightArrowPartXPos = width - leftArrowPartXPos;//threadForkSymbolWith * 3 / 4 * 4 / 5;
-        graphics2D.setStroke(new BasicStroke((float) arrowHeight));
+        graphics2D.setStroke(new BasicStroke((float) arrowHeight, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
         graphics2D.drawLine(LEFT_OFFSET + rightArrowPartXPos
                 , TOP_OFFSET + (int) (height / 8d * 3)
                 , LEFT_OFFSET + (int) (rightBarrierXPos + barrierWidth)
@@ -182,11 +201,15 @@ public class ZoomedThreadFork extends JPanel
                 , TOP_OFFSET + (int) (height / 2 + arrowHeight / 2));
 
         // Right barrier
-        graphics2D.fillRect(LEFT_OFFSET + (int) rightBarrierXPos
+        final RoundRectangle2D rightBarrier = new RoundRectangle2D.Float(
+                LEFT_OFFSET + (int) rightBarrierXPos
                 , TOP_OFFSET + verticalMargin
-                , (int) barrierWidth
-                , height - 2 * verticalMargin);
-
+                , (float) barrierWidth
+                , height - 2 * verticalMargin
+                , 5
+                , 5
+        );
+        graphics2D.fill(rightBarrier);
 
         // The cluster visualization area on the left
         final double threadVizWidth = (width - 2 * horizontalMargin) * 3d / 8;
