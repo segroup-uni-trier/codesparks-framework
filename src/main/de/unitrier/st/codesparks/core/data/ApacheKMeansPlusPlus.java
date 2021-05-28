@@ -18,7 +18,7 @@ public class ApacheKMeansPlusPlus extends KThreadArtifactClusteringStrategy
         KThreadArtifactClusteringStrategy ret;
         synchronized (instances)
         {
-            Map<Integer, KThreadArtifactClusteringStrategy> strategyMap = instances.computeIfAbsent(metricIdentifier, k1 -> new HashMap<>(4));
+            final Map<Integer, KThreadArtifactClusteringStrategy> strategyMap = instances.computeIfAbsent(metricIdentifier, k1 -> new HashMap<>(4));
             KThreadArtifactClusteringStrategy strategy = strategyMap.get(k);
             if (strategy == null)
             {
@@ -46,11 +46,6 @@ public class ApacheKMeansPlusPlus extends KThreadArtifactClusteringStrategy
             point = new double[]{threadArtifact.getNumericalMetricValue(metricIdentifier)};
         }
 
-        AThreadArtifact getThreadArtifact()
-        {
-            return threadArtifact;
-        }
-
         @Override
         public double[] getPoint()
         {
@@ -66,27 +61,10 @@ public class ApacheKMeansPlusPlus extends KThreadArtifactClusteringStrategy
         {
             threadPoints.add(new ThreadPoint(threadArtifact, this.getMetricIdentifier()));
         }
-
         final EuclideanDistance euclideanDistance = new EuclideanDistance();
-        Clusterer<ThreadPoint> clusterer;
-
-//        clusterer = new FuzzyKMeansClusterer<>(k, 2d);
-        clusterer = new KMeansPlusPlusClusterer<>(k, 100, euclideanDistance);
-
+        final Clusterer<ThreadPoint> clusterer = new KMeansPlusPlusClusterer<>(k, 100, euclideanDistance);
         final List<? extends Cluster<ThreadPoint>> clustering = clusterer.cluster(threadPoints);
-
-//        int cl = 0;
-//        for (final Cluster<ThreadPoint> threadPointCluster : clustering)
-//        {
-//            System.out.println("Cluster: " + ++cl + " size=" + threadPointCluster.getPoints().size());
-//            for (final ThreadPoint point : threadPointCluster.getPoints())
-//            {
-//                System.out.println(point.getThreadArtifact().identifier + " " + point.getPoint()[0]);
-//            }
-//        }
-
         final ThreadArtifactClustering threadArtifactClusters = new ThreadArtifactClustering();
-
         for (final Cluster<ThreadPoint> threadPointCluster : clustering)
         {
             final ThreadArtifactCluster aThreadArtifacts = new ThreadArtifactCluster();
@@ -96,23 +74,6 @@ public class ApacheKMeansPlusPlus extends KThreadArtifactClusteringStrategy
             }
             threadArtifactClusters.add(aThreadArtifacts);
         }
-
-
         return threadArtifactClusters;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(final Object obj)
-    {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        return this.getMetricIdentifier().equals(((AThreadArtifactClusteringStrategy) obj).getMetricIdentifier());
-        //return super.equals(obj);
     }
 }

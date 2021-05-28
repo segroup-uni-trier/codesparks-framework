@@ -43,21 +43,27 @@ public class TotalNumberOfThreadsAndThreadTypesButtonFillStrategy implements ITh
         {
             final IThreadSelectable threadSelectable = threadClusterButton.getThreadSelectables().get(index);
             final ThreadArtifactCluster cluster = threadClusterButton.getCluster();
-            final Set<AThreadArtifact> selectedThreadArtifactsOfCluster = threadSelectable.getSelectedThreadArtifactsOfCluster(cluster);
-            final Set<AThreadArtifact> selectedThreadArtifacts = threadSelectable.getSelectedThreadArtifacts();
-//            boolean createDisabledViz = selectedThreadArtifacts.stream().allMatch(AThreadArtifact::isFiltered);
-//            boolean createDisabledViz = selectedThreadArtifactsOfCluster.stream().allMatch(AThreadArtifact::isFiltered);
+            final boolean createDisabledViz = threadClusterButton.createDisabledViz();
+            Set<AThreadArtifact> selectedThreadArtifacts;
+            Set<AThreadArtifact> selectedThreadArtifactsOfCluster;
+            if (createDisabledViz)
+            { // In case to create a disabled viz, all thread artifacts are filtered!
+                selectedThreadArtifacts = threadSelectable.getFilteredThreadArtifacts();
+                selectedThreadArtifactsOfCluster = threadSelectable.getFilteredThreadArtifactsOfCluster(cluster);
+            } else
+            {
+                selectedThreadArtifacts = threadSelectable.getSelectedThreadArtifacts();
+                selectedThreadArtifactsOfCluster = threadSelectable.getSelectedThreadArtifactsOfCluster(cluster);
+            }
 
             final int numberOfSelectedThreadsOfCluster = selectedThreadArtifactsOfCluster.size();
-            //selectedThreadArtifactsOfCluster.stream().filter(clusterThread -> (createDisabledViz || clusterThread.isSelected())).count();
 
             final double totalNumberOfSelectedThreads = selectedThreadArtifacts.size();
 
             double percent = numberOfSelectedThreadsOfCluster / totalNumberOfSelectedThreads;
 
             final Rectangle boundsRectangle = threadClusterButton.getBoundsRectangle();
-            final int numberOfThreadsWidth = (int) (boundsRectangle.width * percent);//ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent,
-            // boundsRectangle.width);
+            final int numberOfThreadsWidth = (int) (boundsRectangle.width * percent);
 
             final JBColor color = threadClusterButton.getColor();
             final Color backgroundMetricColor = VisualizationUtil.getBackgroundMetricColor(color, .35f);
@@ -66,9 +72,6 @@ public class TotalNumberOfThreadsAndThreadTypesButtonFillStrategy implements ITh
 
             graphics.setColor(backgroundMetricColor);
             graphics.fillRect(boundsRectangle.width - numberOfThreadsWidth, 0, numberOfThreadsWidth, boundsRectangle.height);
-
-            // TODO: Number of types analogous to sum/avg approach, i.e. #threads low saturated and #types fully saturated because it always holds #threads
-            //  >= #types
 
             final AArtifact artifact = threadClusterButton.getArtifact();
             final AMetricIdentifier metricIdentifier = threadClusterButton.getMetricIdentifier();

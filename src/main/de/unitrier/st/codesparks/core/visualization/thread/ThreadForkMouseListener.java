@@ -93,11 +93,18 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
         if (actualNumberOfClustersOfTheDensityEstimation <= 6)
         { // Only show a fork when there are up to six thread classifications.
-            if (actualNumberOfClustersOfTheDensityEstimation > 3)
+            final long numberOfNonEmptyThreadClusters = threadArtifactClustering
+                    .stream()
+                    .filter(cl -> cl.stream()
+                            .anyMatch(AThreadArtifact::isSelected))
+                    .count();
+            final boolean createDisabledViz =
+                    artifact.getThreadArtifactsWithNumericMetricValue(primaryMetricIdentifier).stream().allMatch(AThreadArtifact::isFiltered);
+            final boolean applyKMeansPlusPlus = createDisabledViz || numberOfNonEmptyThreadClusters > 3;
+            if (applyKMeansPlusPlus)
             { // Because the in-situ viz has changed to a k=3 clustering in that case, this will be the clustering we show first.
                 threadArtifactClustering = artifact.clusterThreadArtifacts(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));
             }
-
             final ZoomedThreadFork finalZoomedThreadFork = new ZoomedThreadFork(
                     artifact
                     , primaryMetricIdentifier
@@ -126,7 +133,13 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                     numberOfClustersComboBox.addItem(new ComboBoxItem(i, String.valueOf(i)));
                 }
                 numberOfClustersComboBox.addItem(new ComboBoxItem(0, "Kernel Based Density Estimation (" + actualNumberOfClustersOfTheDensityEstimation + ")"));
-                numberOfClustersComboBox.setSelectedIndex(2); // At the index 2 there is the value 3
+                if (applyKMeansPlusPlus)
+                {
+                    numberOfClustersComboBox.setSelectedIndex(2); // At the index 2 there is the value 3, i.e. the kMeansPlusPlus with k = 3
+                } else
+                {
+                    numberOfClustersComboBox.setSelectedIndex(actualNumberOfClustersOfTheDensityEstimation - 1); // select the density estimation item
+                }
                 final JPanel numberOfClustersPanel = new JPanel();
                 numberOfClustersPanel.setLayout(new BoxLayout(numberOfClustersPanel, BoxLayout.X_AXIS));
 

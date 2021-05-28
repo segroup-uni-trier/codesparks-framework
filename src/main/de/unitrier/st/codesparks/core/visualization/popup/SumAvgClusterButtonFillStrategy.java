@@ -46,26 +46,23 @@ public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFill
         {
             final IThreadSelectable threadSelectable = threadClusterButton.getThreadSelectables().get(index);
             final ThreadArtifactCluster cluster = threadClusterButton.getCluster();
-            final Set<AThreadArtifact> selectedThreadArtifactsOfCluster = threadSelectable.getSelectedThreadArtifactsOfCluster(cluster);
-            final Set<AThreadArtifact> selectedThreadArtifacts = threadSelectable.getSelectedThreadArtifacts();
-            //final AArtifact artifact = threadClusterButton.getArtifact();
-            //boolean createDisabledViz = selectedThreadArtifacts.stream().allMatch(AThreadArtifact::isFiltered);
-
+            final boolean createDisabledViz = threadClusterButton.createDisabledViz();
+            Set<AThreadArtifact> selectedThreadArtifacts;
+            Set<AThreadArtifact> selectedThreadArtifactsOfCluster;
+            if (createDisabledViz)
+            { // In case to create a disabled viz, all thread artifacts are filtered!
+                selectedThreadArtifacts = threadSelectable.getFilteredThreadArtifacts();
+                selectedThreadArtifactsOfCluster = threadSelectable.getFilteredThreadArtifactsOfCluster(cluster);
+            } else
+            {
+                selectedThreadArtifacts = threadSelectable.getSelectedThreadArtifacts();
+                selectedThreadArtifactsOfCluster = threadSelectable.getSelectedThreadArtifactsOfCluster(cluster);
+            }
             final AMetricIdentifier metricIdentifier = threadClusterButton.getMetricIdentifier();
-
-            //final double threadFilteredTotalMetricValueOfArtifact = artifact.getThreadFilteredTotalNumericalMetricValue(metricIdentifier, createDisabledViz);
-
-            double totalOfSelected;
-//            if (createDisabledViz)
-//            {
-//                totalOfSelected = 1D;
-//            } else
-//            {
-            totalOfSelected = selectedThreadArtifacts
+            final double totalOfSelected = selectedThreadArtifacts
                     .stream()
                     .mapToDouble(threadArtifact -> threadArtifact.getNumericalMetricValue(metricIdentifier))
                     .sum();
-//            }
 
             /*
              * An attempt to interpret the full rectangle/bar width not as 100% runtime but as the max runtime sum of the clusters.
@@ -80,28 +77,17 @@ public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFill
 //            }
 //            final double totalOfSelected = maxClusterSum;
 
-
             double percent = ThreadVisualizationUtil.getMetricValueSumOfCurrentSelectionOfThreadsOfTheClusterRelativeToTotal(
                     metricIdentifier
                     , selectedThreadArtifacts
                     , selectedThreadArtifactsOfCluster
                     , totalOfSelected
-                    //      , createDisabledViz
             );
-//                    ThreadVisualizationUtil.getMetricValueSumOfSelectedThreadsOfTheClusterRelativeToTotal(
-//                    metricIdentifier
-//                    , selectedThreadArtifacts
-//                    , selectedThreadArtifactsOfCluster
-//                    , totalOfSelected
-//                    , createDisabledViz
-//            );
 
             final Rectangle boundsRectangle = threadClusterButton.getBoundsRectangle();
 
             // This represents linear scaling of the bar width
-            final int sumWidth = (int) (boundsRectangle.width * percent);//ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, boundsRectangle
-            // .width);
-
+            final int sumWidth = (int) (boundsRectangle.width * percent);
 
             //double linearEulerInterpolationOfPercent = MathUtil.linearInterpolation(1, Math.exp(1D), 0, 1, percent);
             //double lnScaledPercent = Math.log(linearEulerInterpolationOfPercent);

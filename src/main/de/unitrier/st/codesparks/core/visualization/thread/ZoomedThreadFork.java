@@ -5,19 +5,12 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
-import de.unitrier.st.codesparks.core.visualization.popup.IThreadSelectable;
-import de.unitrier.st.codesparks.core.visualization.popup.SumAvgClusterButtonFillStrategy;
-import de.unitrier.st.codesparks.core.visualization.popup.ThreadClusterButton;
-import de.unitrier.st.codesparks.core.visualization.popup.TotalNumberOfThreadsAndThreadTypesButtonFillStrategy;
+import de.unitrier.st.codesparks.core.visualization.popup.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Line2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.List;
 
@@ -97,47 +90,17 @@ public class ZoomedThreadFork extends JPanel
 
         final int horizontalMargin = 10;
         final int verticalMargin = 10;
-//        System.out.println("ZoomedThreadFork: height=" + height + ", width=" + width + ", vizHeight=" + String.valueOf(height - 2 * verticalMargin) + ", " +
-//                "vizWidth=" + String.valueOf(width - 2 * horizontalMargin));
 
         final Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        //graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
-
-/*
-//-------------
-        graphics2D.setColor(JBColor.RED);
-        final int middleStrokeWidth = 4;
-        graphics2D.setStroke(new BasicStroke(middleStrokeWidth));
-        graphics2D.drawLine(LEFT_OFFSET + width / 2 - (int) Math.max(middleStrokeWidth / 2d, 1)
-                , TOP_OFFSET
-                , LEFT_OFFSET + width / 2 - (int) Math.max(middleStrokeWidth / 2d, 1)
-                , TOP_OFFSET + height);
-//-------------
-        graphics2D.setColor(JBColor.BLUE);
-        final int outStrokeWidth = 1;
-        graphics2D.setStroke(new BasicStroke(outStrokeWidth));
-        graphics2D.drawLine(LEFT_OFFSET + (int) (width / 8d)
-                , TOP_OFFSET
-                , LEFT_OFFSET + (int) (width / 8d)
-                , TOP_OFFSET + height);
-        graphics2D.drawLine(LEFT_OFFSET + (int) (width / 8d * 7) - (int) Math.max(outStrokeWidth / 2d, 1)
-                , TOP_OFFSET
-                , LEFT_OFFSET + (int) (width / 8d * 7) - (int) Math.max(outStrokeWidth / 2d, 1)
-                , TOP_OFFSET + height);
-//-------------
-*/
-
 
         /*
          * Calculation of the positions
          */
-
         final double threadForkSymbolWith = (width - 2 * horizontalMargin) / 8d; // 1/2 * 1/4
 
         final double barrierWidth = threadForkSymbolWith * 0.15;
         final double arrowHeight = height * 0.03;
-
 
         graphics2D.setColor(VisConstants.BORDER_COLOR);
 
@@ -241,6 +204,11 @@ public class ZoomedThreadFork extends JPanel
          */
         final int nrOfClusters = Math.max(3, threadArtifactClustering.size());
 
+        final int index = selectableIndexProvider.getThreadSelectableIndex();
+        final IThreadSelectable threadSelectable = threadSelectables.get(index);
+        final boolean createDisabledViz = threadSelectable.getSelectedThreadArtifacts().isEmpty();
+
+        //artifact.getThreadArtifactsWithNumericMetricValue(metricIdentifier).stream().allMatch(AThreadArtifact::isFiltered);
         /*
             let x be the space between the clusters resp. the margins to the top and bottom and y be the cluster width:
 
@@ -267,13 +235,18 @@ public class ZoomedThreadFork extends JPanel
         int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : threadArtifactClustering)
         {
+//            if (!createDisabledViz && threadCluster.stream().noneMatch(AThreadArtifact::isSelected))
             if (threadCluster.isEmpty())
             {
                 continue;
             }
             final VisualThreadClusterProperties clusterProperties = clusterPropertiesManager.getOrDefault(threadCluster, clusterNum);
             final int clusterPosition = clusterProperties.getPosition();
-            final JBColor clusterColor = clusterProperties.getColor();
+            JBColor clusterColor = clusterProperties.getColor();
+            if (createDisabledViz)
+            {
+                clusterColor = ThreadColor.getDisabledColor(clusterColor);
+            }
 
             double clusterYToDraw = clusterY;
             if (clusterPosition > -1)
@@ -298,6 +271,7 @@ public class ZoomedThreadFork extends JPanel
                     , leftClusterButtonBoundsRectangle
                     , SumAvgClusterButtonFillStrategy.getInstance()
                     , clusterHoverable
+                    , createDisabledViz
             );
             add(leftClusterButton);
             // Cluster button right
@@ -317,6 +291,7 @@ public class ZoomedThreadFork extends JPanel
                     , rightClusterButtonBoundsRectangle
                     , TotalNumberOfThreadsAndThreadTypesButtonFillStrategy.getInstance()
                     , clusterHoverable
+                    , createDisabledViz
             );
             add(rightClusterButton);
 

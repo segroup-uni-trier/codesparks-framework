@@ -36,6 +36,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
     private final Rectangle boundsRectangle;
     private final IThreadClusterButtonFillStrategy fillStrategy;
     private final IClusterHoverable clusterHoverable;
+    private final boolean createDisabledViz;
 
     public ThreadClusterButton(final AArtifact artifact
             , final ThreadArtifactClustering clustering
@@ -47,6 +48,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
             , final Rectangle boundsRectangle
             , final IThreadClusterButtonFillStrategy fillStrategy
             , final IClusterHoverable clusterHoverable
+            , final boolean createDisabledViz
     )
     {
         this.artifact = artifact;
@@ -59,6 +61,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
         this.boundsRectangle = boundsRectangle;
         this.fillStrategy = fillStrategy;
         this.clusterHoverable = clusterHoverable;
+        this.createDisabledViz = createDisabledViz;
         this.componentsToRepaint = new HashSet<>(4);
 
         this.addMouseListener(ClusterButtonMouseAdapter.getInstance());
@@ -147,11 +150,10 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
         return clusterHoverable;
     }
 
-    //    @Override
-//    public void paint(final Graphics g)
-//    {
-//        super.paint(g);
-//    }
+    public boolean createDisabledViz()
+    {
+        return createDisabledViz;
+    }
 
     private static class ClusterButtonMouseAdapter extends MouseAdapter
     {

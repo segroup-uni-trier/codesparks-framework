@@ -18,7 +18,8 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.IThreadArtifactFilter;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerItem;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerManager;
 import de.unitrier.st.codesparks.core.editorcoverlayer.IEditorCoverLayerUpdater;
@@ -33,11 +34,12 @@ import de.unitrier.st.codesparks.core.properties.PropertyKey;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.ADataVisualizer;
 import de.unitrier.st.codesparks.core.visualization.ArtifactVisualizationLabelFactoryCache;
-import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 /*
  * Copyright (c), Oliver Moseler, 2021

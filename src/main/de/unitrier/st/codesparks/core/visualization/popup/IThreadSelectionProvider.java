@@ -16,4 +16,6 @@ public interface IThreadSelectionProvider
     Set<AThreadArtifact> getFilteredThreadArtifacts();
 
     Set<AThreadArtifact> getSelectedThreadArtifactsOfCluster(ThreadArtifactCluster cluster);
+
+    Set<AThreadArtifact> getFilteredThreadArtifactsOfCluster(ThreadArtifactCluster cluster);
 }

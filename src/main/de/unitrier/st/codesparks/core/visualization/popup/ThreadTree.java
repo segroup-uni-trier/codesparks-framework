@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public abstract class ThreadTree extends AThreadSelectable implements IThreadArtifactClusteringToMapTransformer
 {
     protected final AArtifact artifact;
-    //protected ThreadArtifactClustering threadArtifactClustering;
     protected final AMetricIdentifier metricIdentifier;
     protected final List<ThreadTreeLeafNode> leafNodes;
     protected final Map<List<AThreadArtifact>, ThreadTreeInnerNode> innerNodes;
@@ -35,7 +34,6 @@ public abstract class ThreadTree extends AThreadSelectable implements IThreadArt
     )
     {
         this.artifact = artifact;
-        //this.threadArtifactClustering = threadArtifactClustering;
         this.metricIdentifier = metricIdentifier;
         leafNodes = new ArrayList<>();
         innerNodes = new HashMap<>();
@@ -135,11 +133,11 @@ public abstract class ThreadTree extends AThreadSelectable implements IThreadArt
     @Override
     public void syncSelection(AThreadSelectable threadSelectable)
     {
-        Set<String> selectedThreadArtifactIdentifiers = threadSelectable.getSelectedThreadArtifactIdentifiers();
-        Set<String> filteredThreadArtifactIdentifiers = threadSelectable.getFilteredThreadArtifactIdentifiers();
-        for (ThreadTreeLeafNode leafNode : leafNodes)
+        final Set<String> selectedThreadArtifactIdentifiers = threadSelectable.getSelectedThreadArtifactIdentifiers();
+        final Set<String> filteredThreadArtifactIdentifiers = threadSelectable.getFilteredThreadArtifactIdentifiers();
+        for (final ThreadTreeLeafNode leafNode : leafNodes)
         {
-            String identifier = leafNode.getThreadArtifact().getIdentifier();
+            final String identifier = leafNode.getThreadArtifact().getIdentifier();
             if (selectedThreadArtifactIdentifiers.contains(identifier))
             {
                 leafNode.setState(ThreeStateCheckBox.State.SELECTED);

@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core;
 
 import com.intellij.openapi.components.ServiceManager;
@@ -9,7 +12,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import de.unitrier.st.codesparks.core.data.IPsiNavigable;
 import de.unitrier.st.codesparks.core.service.ACodeSparksInstanceService;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.text.DecimalFormat;
@@ -17,9 +19,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public final class CoreUtil
 {
     private CoreUtil() {}
@@ -50,7 +49,7 @@ public final class CoreUtil
                 percentageText = df.format(value * 100) + "%";
             }
         }
-        String errorMessage = "did not format " + value + " properly: " + percentageText;
+        final String errorMessage = "did not format " + value + " properly: " + percentageText;
         assert percentageText.length() > 1 : errorMessage;
         assert percentageText.length() < 10 : errorMessage;
         return percentageText;
@@ -69,16 +68,12 @@ public final class CoreUtil
                 percentageText = df.format(value * 100) + "%";
             }
         }
-        StringBuilder strb = new StringBuilder();
-        int length = percentageText.length();
+        final StringBuilder strb = new StringBuilder();
+        final int length = percentageText.length();
         strb.append(" ".repeat(Math.max(0, 6 - length)));
-//        for (int i = 0; i < 6 - length; i++)
-//        {
-//            strb.append(" ");
-//        }
         strb.append(percentageText);
         percentageText = strb.toString();
-        String errorMessage = "did not format " + value + " properly: " + percentageText;
+        final String errorMessage = "did not format " + value + " properly: " + percentageText;
         assert percentageText.length() > 1 : errorMessage;
         assert percentageText.length() < 10 : errorMessage;
         return percentageText;
@@ -86,19 +81,19 @@ public final class CoreUtil
 
     public static String reduceToLength(final String str, final int len, final String prefix)
     {
-        int prefixLength = prefix.length();
+        final int prefixLength = prefix.length();
         if (len <= prefixLength)
         {
             return prefix;
         }
-        int length = str.length();
+        final int length = str.length();
         if (length <= len)
         {
             return str;
         }
-        int start = Math.max(length - len + prefixLength, 0);
+        final int start = Math.max(length - len + prefixLength, 0);
         //noinspection UnnecessaryLocalVariable : Not inlined because of debugging reasons
-        String ret = prefix + str.substring(start, length);
+        final String ret = prefix + str.substring(start, length);
         return ret;
     }
 
@@ -108,9 +103,9 @@ public final class CoreUtil
     }
 
     @SuppressWarnings("unused")
-    public static void appendAll(StringBuilder stringBuilder, @NotNull Collection<String> col)
+    public static void appendAll(final StringBuilder stringBuilder, final Collection<String> col)
     {
-        for (String str : col)
+        for (final String str : col)
         {
             stringBuilder.append(str).append(",");
         }
@@ -119,14 +114,14 @@ public final class CoreUtil
 
     public static Project getCurrentlyOpenedProject()
     {
-        Optional<Project> first = Arrays.stream(ProjectManager.getInstance().getOpenProjects()).filter(Project::isOpen)
+        final Optional<Project> first = Arrays.stream(ProjectManager.getInstance().getOpenProjects()).filter(Project::isOpen)
                 .findFirst();
         return first.orElse(null);
     }
 
     public static ImageIcon getDefaultImageIcon()
     {
-        ACodeSparksInstanceService service = ServiceManager.getService(ACodeSparksInstanceService.class);
+        final ACodeSparksInstanceService service = ServiceManager.getService(ACodeSparksInstanceService.class);
         assert service != null;
         return service.getDefaultPluginImageIcon();
     }
@@ -137,32 +132,17 @@ public final class CoreUtil
         {
             return null;
         }
-        FileEditorManager instance = FileEditorManager.getInstance(project);
-        FileEditor selectedEditor = instance.getSelectedEditor();
+        final FileEditorManager instance = FileEditorManager.getInstance(project);
+        final FileEditor selectedEditor = instance.getSelectedEditor();
         return EditorUtil.getEditorEx(selectedEditor);
     }
 
-//    public static EditorEx getShowingFileEditor(final Project project)
-//    {
-//        FileEditor[] editors = ApplicationManager.getApplication().runReadAction((Computable<FileEditor[]>) () ->
-//                FileEditorManager.getInstance(project).getAllEditors());
-//        for (FileEditor editor : editors)
-//        {
-//            final EditorEx editorEx = EditorUtil.getEditorEx(editor);
-//            if (editorEx != null && editorEx.getContentComponent().isShowing())
-//            {
-//                return editorEx;
-//            }
-//        }
-//        return null;
-//    }
-
     public static void navigate(final String identifier)
     {
-        IArtifactPool artifactPool = ArtifactPoolManager.getInstance().getArtifactPool();
+        final IArtifactPool artifactPool = ArtifactPoolManager.getInstance().getArtifactPool();
         if (artifactPool != null)
         {
-            IPsiNavigable artifact = artifactPool.getArtifact(identifier);
+            final IPsiNavigable artifact = artifactPool.getArtifact(identifier);
             if (artifact != null)
             {
                 artifact.navigate();

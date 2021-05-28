@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.action;
 
 import com.intellij.openapi.actionSystem.AnAction;
@@ -16,9 +19,6 @@ import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerManager;
 import javax.swing.*;
 import java.util.Arrays;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ToggleVisualization extends AnAction
 {
     private boolean visible;
@@ -35,28 +35,32 @@ public class ToggleVisualization extends AnAction
     @Override
     public void actionPerformed(AnActionEvent e)
     {
-        Project project = e.getProject();
+        final Project project = e.getProject();
         if (project == null)
         {
             return;
         }
-        EditorCoverLayerManager editorCoverLayerManager = EditorCoverLayerManager.getInstance(project);
-        final String description = LocalizationUtil.getLocalizedString("codesparks.ui.show.visualization.action.description");
-        Presentation presentation = e.getPresentation();
+        final EditorCoverLayerManager editorCoverLayerManager = EditorCoverLayerManager.getInstance(project);
+
+        final Presentation presentation = e.getPresentation();
         if (visible)
         {
+            //noinspection DialogTitleCapitalization
+            final String description = LocalizationUtil.getLocalizedString("codesparks.ui.hide.visualization.action.description");
             presentation.setIcon(visualizationNotVisibleIcon);
             presentation.setText(description);
             presentation.setDescription(description);
         } else
         {
+            //noinspection DialogTitleCapitalization
+            final String description = LocalizationUtil.getLocalizedString("codesparks.ui.show.visualization.action.description");
             presentation.setIcon(visualizationVisibleIcon);
             presentation.setText(description);
             presentation.setDescription(description);
-            FileEditor[] editors = ApplicationManager.getApplication().runReadAction((Computable<FileEditor[]>) () ->
+            final FileEditor[] editors = ApplicationManager.getApplication().runReadAction((Computable<FileEditor[]>) () ->
                     FileEditorManager.getInstance(project).getAllEditors());
-            VirtualFile[] virtualFiles = Arrays.stream(editors).map(FileEditor::getFile).toArray(VirtualFile[]::new);
-            for (VirtualFile virtualFile : virtualFiles)
+            final VirtualFile[] virtualFiles = Arrays.stream(editors).map(FileEditor::getFile).toArray(VirtualFile[]::new);
+            for (final VirtualFile virtualFile : virtualFiles)
             {
                 editorCoverLayerManager.updateEditorCoverLayerFor(virtualFile);
             }

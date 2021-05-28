@@ -1,16 +1,14 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core;
 
 import com.intellij.execution.Executor;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 
 /*
 This is a template executor. It does nothing but demonstrating the methods which have to be overridden. It can be used to create an own executor for a
@@ -20,6 +18,7 @@ plugin project. An executor needs to be registered in the plugin.xml as a child 
  ...
 </extensions>
  */
+@SuppressWarnings("unused")
 public class CodeSparksExecutor extends Executor
 {
     public static final String CODESPARKS_EXECUTOR_ID = "CodeSparks-Executor-ID";
