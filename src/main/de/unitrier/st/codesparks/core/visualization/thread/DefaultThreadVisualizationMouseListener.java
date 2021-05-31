@@ -48,7 +48,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
         final IThreadSelectableIndexProvider indexProvider = tabbedPane::getSelectedIndex;
 
         ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
+                artifact.clusterThreadArtifacts(KernelBasedDensityEstimationClustering.getInstance(primaryMetricIdentifier));
         if (clustering.size() > 3)
         {
             clustering = artifact.clusterThreadArtifacts(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));

@@ -64,7 +64,7 @@ public class ApacheKMeansPlusPlus extends KThreadArtifactClusteringStrategy
         final EuclideanDistance euclideanDistance = new EuclideanDistance();
         final Clusterer<ThreadPoint> clusterer = new KMeansPlusPlusClusterer<>(k, 100, euclideanDistance);
         final List<? extends Cluster<ThreadPoint>> clustering = clusterer.cluster(threadPoints);
-        final ThreadArtifactClustering threadArtifactClusters = new ThreadArtifactClustering();
+        final ThreadArtifactClustering threadArtifactClusters = new ThreadArtifactClustering(this);
         for (final Cluster<ThreadPoint> threadPointCluster : clustering)
         {
             final ThreadArtifactCluster aThreadArtifacts = new ThreadArtifactCluster();

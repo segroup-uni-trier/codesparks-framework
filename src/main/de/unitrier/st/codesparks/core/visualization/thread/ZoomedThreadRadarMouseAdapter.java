@@ -45,7 +45,8 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
         super.mouseMoved(e);
         int hoverCount = 0;
         final ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier), true);
+                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
+
         for (final ThreadArtifactCluster cluster : clustering)
         {
             if (isPointInArc(e.getX(), e.getY(), cluster))

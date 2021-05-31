@@ -75,11 +75,6 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         threadSelectables.clear();
         final Collection<JComponent> componentsToRegisterToTheThreadSelectables = new ArrayList<>();
 
-        ThreadArtifactClustering threadArtifactClustering =
-                artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
-
-        final int actualNumberOfClustersOfTheDensityEstimation = threadArtifactClustering.size();
-
         // Objects that need to be declared already because they will be used in inner classes.
         final JBTabbedPane selectablesTabbedPane = new JBTabbedPane();
         selectableIndexProvider = selectablesTabbedPane::getSelectedIndex;
@@ -91,9 +86,16 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         KernelBasedDensityEstimationPanel kernelBasedDensityEstimationPanel = null;
         ZoomedThreadFork zoomedThreadFork = null;
 
-        if (actualNumberOfClustersOfTheDensityEstimation <= 6)
+        final AThreadArtifactClusteringStrategy kbdeClusteringStrategy = KernelBasedDensityEstimationClustering.getInstance(primaryMetricIdentifier);
+
+        final ThreadArtifactClustering kbdeClustering = artifact.clusterThreadArtifacts(kbdeClusteringStrategy);
+        final int numberOfEstimatedClusters = kbdeClustering.size();
+
+        ThreadArtifactClustering selectedClustering = artifact.getSelectedClusteringOrApplyAndSelect(kbdeClusteringStrategy);
+
+        if (numberOfEstimatedClusters <= 6)
         { // Only show a fork when there are up to six thread classifications.
-            final long numberOfNonEmptyThreadClusters = threadArtifactClustering
+            final long numberOfNonEmptyThreadClusters = selectedClustering
                     .stream()
                     .filter(cl -> cl.stream()
                             .anyMatch(AThreadArtifact::isSelected))
@@ -103,12 +105,13 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             final boolean applyKMeansPlusPlus = createDisabledViz || numberOfNonEmptyThreadClusters > 3;
             if (applyKMeansPlusPlus)
             { // Because the in-situ viz has changed to a k=3 clustering in that case, this will be the clustering we show first.
-                threadArtifactClustering = artifact.clusterThreadArtifacts(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));
+                selectedClustering =
+                        artifact.getClusteringAndSelect(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));
             }
             final ZoomedThreadFork finalZoomedThreadFork = new ZoomedThreadFork(
                     artifact
                     , primaryMetricIdentifier
-                    , threadArtifactClustering
+                    , selectedClustering
                     , selectableIndexProvider
                     , threadSelectables
                     , this
@@ -119,26 +122,33 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                     selectableIndexProvider
                     , threadSelectables
                     , primaryMetricIdentifier
-                    , threadArtifactClustering
+                    , selectedClustering
             ); // the final variable is for us in lambdas
             kernelBasedDensityEstimationPanel = finalKernelBasedDensityEstimationPanel;
 
             final JPanel centerPanel = new JPanel(new BorderLayout());
 
-            if (actualNumberOfClustersOfTheDensityEstimation > 3)
+            if (numberOfEstimatedClusters > 3)
             {
-                final ComboBox<ComboBoxItem> numberOfClustersComboBox = new ComboBox<>();
-                for (int i = 1; i < actualNumberOfClustersOfTheDensityEstimation; i++)
+                int selectedK = 0; // k = 0 determines the density estimation
+                final AThreadArtifactClusteringStrategy selectedClusteringStrategy = selectedClustering.getStrategy();
+                if (selectedClusteringStrategy instanceof KThreadArtifactClusteringStrategy)
                 {
-                    numberOfClustersComboBox.addItem(new ComboBoxItem(i, String.valueOf(i)));
+                    selectedK = ((KThreadArtifactClusteringStrategy) selectedClusteringStrategy).getK();
                 }
-                numberOfClustersComboBox.addItem(new ComboBoxItem(0, "Kernel Based Density Estimation (" + actualNumberOfClustersOfTheDensityEstimation + ")"));
-                if (applyKMeansPlusPlus)
+                final ComboBox<ComboBoxItem> numberOfClustersComboBox = new ComboBox<>();
+                for (int i = 1; i < numberOfEstimatedClusters; i++)
                 {
-                    numberOfClustersComboBox.setSelectedIndex(2); // At the index 2 there is the value 3, i.e. the kMeansPlusPlus with k = 3
+                    final ComboBoxItem comboBoxItem = new ComboBoxItem(i, String.valueOf(i));
+                    numberOfClustersComboBox.addItem(comboBoxItem);
+                }
+                numberOfClustersComboBox.addItem(new ComboBoxItem(0, "Kernel Based Density Estimation (" + numberOfEstimatedClusters + ")"));
+                if (selectedK > 0)
+                {
+                    numberOfClustersComboBox.setSelectedIndex(selectedK - 1);
                 } else
                 {
-                    numberOfClustersComboBox.setSelectedIndex(actualNumberOfClustersOfTheDensityEstimation - 1); // select the density estimation item
+                    numberOfClustersComboBox.setSelectedIndex(numberOfEstimatedClusters - 1);
                 }
                 final JPanel numberOfClustersPanel = new JPanel();
                 numberOfClustersPanel.setLayout(new BoxLayout(numberOfClustersPanel, BoxLayout.X_AXIS));
@@ -165,9 +175,11 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                                 strategy = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, k);
                             } else
                             {
-                                strategy = SmileKernelDensityClustering.getInstance(primaryMetricIdentifier);
+                                strategy = kbdeClusteringStrategy;
                             }
-                            clustering = artifact.clusterThreadArtifacts(strategy);
+                            //clustering = artifact.clusterThreadArtifacts(strategy, true);//artifact.clusterThreadArtifacts(strategy);
+
+                            clustering = artifact.getClusteringAndSelect(strategy);
 
                             final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
                             propertiesManager.buildDefaultProperties();
@@ -343,7 +355,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         if (kernelBasedDensityEstimationPanel == null)
         {
             kernelBasedDensityEstimationPanel = new KernelBasedDensityEstimationPanel(
-                    selectableIndexProvider, threadSelectables, primaryMetricIdentifier, threadArtifactClustering);
+                    selectableIndexProvider, threadSelectables, primaryMetricIdentifier, selectedClustering);
         }
 
         zoomedVizTabbedPane.addTab("Histogram", kernelBasedDensityEstimationPanel);
@@ -352,11 +364,11 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         /*
          * The selectables tabbed pane
          */
-        final AThreadSelectable threadClustersTree = new ThreadClusterTree(threadArtifactClustering, primaryMetricIdentifier);
+        final AThreadSelectable threadClustersTree = new ThreadClusterTree(selectedClustering, primaryMetricIdentifier);
         threadSelectables.add(threadClustersTree);
         selectablesTabbedPane.addTab("Clusters", new JBScrollPane(threadClustersTree.getComponent()));
 
-        final AThreadSelectable threadTypesTree = new ThreadTypeTree(artifact, threadArtifactClustering, primaryMetricIdentifier);
+        final AThreadSelectable threadTypesTree = new ThreadTypeTree(artifact, selectedClustering, primaryMetricIdentifier);
         threadSelectables.add(threadTypesTree);
         // Register the observers -> they observe each other, i.e. a selection in one will be adopted to all other in the list
         threadClustersTree.setNext(threadTypesTree);

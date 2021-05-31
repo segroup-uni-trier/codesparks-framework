@@ -8,7 +8,7 @@ import smile.stat.distribution.KernelDensity;
 
 import java.util.*;
 
-public class SmileKernelDensityClustering extends AThreadArtifactClusteringStrategy
+public class KernelBasedDensityEstimationClustering extends AThreadArtifactClusteringStrategy
 {
     private static final Map<AMetricIdentifier, AThreadArtifactClusteringStrategy> instances = new HashMap<>(4);
 
@@ -20,14 +20,14 @@ public class SmileKernelDensityClustering extends AThreadArtifactClusteringStrat
             instance = instances.get(metricIdentifier);
             if (instance == null)
             {
-                instance = new SmileKernelDensityClustering(metricIdentifier);
+                instance = new KernelBasedDensityEstimationClustering(metricIdentifier);
                 instances.put(metricIdentifier, instance);
             }
         }
         return instance;
     }
 
-    private SmileKernelDensityClustering(final AMetricIdentifier metricIdentifier)
+    private KernelBasedDensityEstimationClustering(final AMetricIdentifier metricIdentifier)
     {
         super(metricIdentifier);
     }
@@ -35,7 +35,7 @@ public class SmileKernelDensityClustering extends AThreadArtifactClusteringStrat
     @Override
     public ThreadArtifactClustering clusterThreadArtifacts(final Collection<AThreadArtifact> threadArtifacts)
     {
-        final ThreadArtifactClustering threadArtifactClusters = new ThreadArtifactClustering();
+        final ThreadArtifactClustering threadArtifactClusters = new ThreadArtifactClustering(this);
         final int size = threadArtifacts.size();
         if (size < 2)
         {

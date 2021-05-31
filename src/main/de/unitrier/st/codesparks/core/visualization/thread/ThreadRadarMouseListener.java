@@ -56,7 +56,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         final JBTabbedPane tabbedPane = new JBTabbedPane();
 
         final ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier), true);
+                artifact.getSelectedClusteringOrApplyAndSelect(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
 
         final AThreadSelectable threadClustersTree = new ThreadClusterTree(clustering, primaryMetricIdentifier);
         threadSelectables.add(threadClustersTree);

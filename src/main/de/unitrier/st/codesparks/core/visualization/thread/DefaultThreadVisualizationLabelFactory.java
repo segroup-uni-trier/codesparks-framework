@@ -49,8 +49,7 @@ public class DefaultThreadVisualizationLabelFactory extends AArtifactVisualizati
         int totalThreadCnt = 0;
 
         final ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier), true);
-//                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
+                artifact.getSelectedClusteringOrApplyAndSelect(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
 
         final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
 

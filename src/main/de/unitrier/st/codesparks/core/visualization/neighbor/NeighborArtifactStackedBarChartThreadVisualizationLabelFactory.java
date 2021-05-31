@@ -50,7 +50,7 @@ public class NeighborArtifactStackedBarChartThreadVisualizationLabelFactory exte
                 ThreadArtifactClusterNumericalMetricSumComparator.getInstance(primaryMetricIdentifier);
 
         final ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier), true);
+                artifact.getSelectedClusteringOrApplyAndSelect(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
 
         final SortedMap<ThreadArtifactCluster, Set<String>> artifactClusterSets =
                 new TreeMap<>(threadArtifactClusterComparator);

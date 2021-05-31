@@ -51,8 +51,8 @@ public class ZoomedThreadRadar extends AThreadRadar
         //VisualizationUtil.drawTransparentBackground(g2d, getWidth(), getHeight(), AlphaComposite.CLEAR);
 
         final ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier), true);
-//                artifact.getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(metricIdentifier);
+                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
+
         int startAngle = 90; //set start angle to 90 for starting at 12 o'clock
         final JBColor[] colors = {new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), new JBColor(Color.decode("#B25283"),
                 Color.decode("#B25283")), new JBColor(Color.decode("#3E877F"), Color.decode("#3E877F"))};

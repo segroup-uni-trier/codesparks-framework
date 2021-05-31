@@ -81,7 +81,7 @@ public final class ThreadClusterSilhouetteTest
         a2.add(t4);
         a2.add(t5);
 
-        A = new ThreadArtifactClustering();
+        A = new ThreadArtifactClustering(null);
         A.add(a1);
         A.add(a2);
 
@@ -94,7 +94,7 @@ public final class ThreadClusterSilhouetteTest
         b2.add(t3);
         b2.add(t4);
 
-        B = new ThreadArtifactClustering();
+        B = new ThreadArtifactClustering(null);
         B.add(b1);
         B.add(b2);
     }
@@ -198,7 +198,7 @@ public final class ThreadClusterSilhouetteTest
         thr.setNumericalMetricValue(testMetric, 1D);
         ThreadArtifactCluster c = new ThreadArtifactCluster();
         c.add(thr);
-        ThreadArtifactClustering A = new ThreadArtifactClustering();
+        ThreadArtifactClustering A = new ThreadArtifactClustering(null);
         A.add(c);
         final double silhouette = A.silhouette(thr, c, testMetric);
         Assert.assertEquals(0D, silhouette, 0.00001);

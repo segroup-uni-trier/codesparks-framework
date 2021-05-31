@@ -50,12 +50,7 @@ public class NeighborArtifactThreadDotVisualizationLabelFactory extends ANeighbo
                 ThreadArtifactClusterNumericalMetricSumComparator.getInstance(primaryMetricIdentifier);
 
         final ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier), true);
-//                artifact.getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(primaryMetricIdentifier);
-//                        .stream()
-//                        .sorted(threadArtifactClusterComparator)
-//                        .filter(cluster -> !cluster.isEmpty())
-//                        .collect(Collectors.toList());
+                artifact.getSelectedClusteringOrApplyAndSelect(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
 
         final SortedMap<ThreadArtifactCluster, Set<String>> artifactClusterSets =
                 new TreeMap<>(threadArtifactClusterComparator);

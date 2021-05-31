@@ -25,7 +25,7 @@ public final class ThreadListModel extends DefaultListModel<JBCheckBox>
         int artifactCnt = 0;
 
         final ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier), true);
+                artifact.getSelectedClusteringOrApplyAndSelect(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
 
         final Comparator<AThreadArtifact> threadArtifactComparator = ThreadArtifactComparator.getInstance(metricIdentifier);
 

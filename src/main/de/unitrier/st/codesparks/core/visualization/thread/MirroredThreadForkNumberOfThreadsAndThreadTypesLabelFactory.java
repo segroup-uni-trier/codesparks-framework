@@ -86,27 +86,31 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
             totalNumberOfSelectedThreads = totalNumberOfThreads;
         }
 
-        // At first, get the thread classification grounded on the kernel based density estimation
-        ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
+        // At first, get the thread classification based on the kernel based density estimation
 
-        final int numberOfThreadClusters = clustering.size();
+        final AThreadArtifactClusteringStrategy kbdeClusteringStrategy = KernelBasedDensityEstimationClustering.getInstance(primaryMetricIdentifier);
 
-        final long numberOfNonEmptyThreadClusters = clustering
+        final ThreadArtifactClustering kbdeClustering = artifact.clusterThreadArtifacts(kbdeClusteringStrategy);
+        final int numberOfEstimatedClusters = kbdeClustering.size();
+
+        ThreadArtifactClustering selectedClustering = artifact.getSelectedClusteringOrApplyAndSelect(kbdeClusteringStrategy);
+
+
+        final long numberOfNonEmptyThreadClusters = selectedClustering
                 .stream()
                 .filter(cl -> cl.stream()
                         .anyMatch(AThreadArtifact::isSelected))
                 .count();
-        if ((createDisabledViz && numberOfThreadClusters > 3) || numberOfNonEmptyThreadClusters > 3)
+        if ((createDisabledViz && numberOfEstimatedClusters > 3) || numberOfNonEmptyThreadClusters > 3)
         {
             final KThreadArtifactClusteringStrategy apacheKMeansPlusPlus = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3);
-            clustering = artifact.clusterThreadArtifacts(apacheKMeansPlusPlus);
+            selectedClustering = artifact.clusterThreadArtifacts(apacheKMeansPlusPlus);
         }
 
-        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
+        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(selectedClustering);
 
         int clusterNum = 0;
-        for (final ThreadArtifactCluster threadCluster : clustering)
+        for (final ThreadArtifactCluster threadCluster : selectedClustering)
         {
             if (!createDisabledViz && threadCluster.stream().noneMatch(AThreadArtifact::isSelected))
             { // In case the density based classification approach yields more than 3 clusters but only upt to three of them contain selected threads, skip
@@ -155,7 +159,7 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
             threadSquareYPos -= threadSquareOffset;
         }
 
-        if (numberOfThreadClusters > 3) // TODO: When ready, change this to 3
+        if (numberOfEstimatedClusters > 3) // TODO: When ready, change this to 3
         { // The 'plus' symbol indicating that there are more than three thread clusters!
             graphics.setColor(VisConstants.BORDER_COLOR);
 //            final int plusSymbolXOffset = X_OFFSET_LEFT + threadMetaphorWidth - 2;

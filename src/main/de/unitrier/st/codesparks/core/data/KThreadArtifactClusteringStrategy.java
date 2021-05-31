@@ -21,12 +21,12 @@ public abstract class KThreadArtifactClusteringStrategy extends AThreadArtifactC
         this.k = k;
     }
 
-    protected int getK()
+    public int getK()
     {
         return k;
     }
 
-    protected void setK(final int k)
+    public void setK(final int k)
     {
         this.k = k;
     }

@@ -17,11 +17,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+
 public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 {
     private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayData;
     private final AMetricIdentifier secondaryMetricIdentifier;
 
+    @SuppressWarnings("unused")
     public ThreadRadarLabelFactory(
             final AMetricIdentifier primaryMetricIdentifier
             , final AMetricIdentifier secondaryMetricIdentifier
@@ -43,6 +45,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
         this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayDataProvider(primaryMetricIdentifier);
     }
 
+    @SuppressWarnings("unused")
     public ThreadRadarLabelFactory(
             final AMetricIdentifier primaryMetricIdentifier
             , final AMetricIdentifier secondaryMetricIdentifier
@@ -66,7 +69,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
         }
 
         final ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier), true);
+                artifact.getSelectedClusteringOrApplyAndSelect(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
 
         boolean createDisabledViz = false;
         long numberOfSelectedArtifactThreads = threadArtifacts.stream().filter(t -> !t.isFiltered()).count();

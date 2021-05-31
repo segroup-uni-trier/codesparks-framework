@@ -65,7 +65,7 @@ public class ConstraintKMeansWithAMaximumOfThreeClusters extends AThreadArtifact
         final int k = 3;
         final int maxIterations = 100;
 
-        final ThreadArtifactClustering clustering = new ThreadArtifactClustering();
+        final ThreadArtifactClustering clustering = new ThreadArtifactClustering(this);
 
         int size = threadArtifacts.size();
 

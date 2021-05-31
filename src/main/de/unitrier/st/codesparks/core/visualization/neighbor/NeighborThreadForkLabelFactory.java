@@ -96,18 +96,28 @@ public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizati
         final double totalThreadFilteredMetricValueOfAllNeighborsOfLine =
                 getTotalThreadFilteredMetricValueOfAllNeighborsOfLine(threadFilteredNeighborArtifactsOfLine);
 
-        ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(SmileKernelDensityClustering.getInstance(primaryMetricIdentifier));
-        if (clustering.size() > 3)
+        final AThreadArtifactClusteringStrategy kbdeClusteringStrategy = KernelBasedDensityEstimationClustering.getInstance(primaryMetricIdentifier);
+
+//        final ThreadArtifactClustering kbdeClustering = artifact.clusterThreadArtifacts(kbdeClusteringStrategy);
+//        final int numberOfEstimatedClusters = kbdeClustering.size();
+
+        ThreadArtifactClustering selectedClustering = artifact.getSelectedClusteringOrApplyAndSelect(kbdeClusteringStrategy);
+
+        final long numberOfNonEmptyThreadClusters = selectedClustering
+                .stream()
+                .filter(cl -> cl.stream()
+                        .anyMatch(AThreadArtifact::isSelected))
+                .count();
+        if (numberOfNonEmptyThreadClusters > 3)
         {
-            clustering = artifact.clusterThreadArtifacts(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));
+            selectedClustering = artifact.clusterThreadArtifacts(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));
         }
 
-        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
+        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(selectedClustering);
         final boolean[] positionsTaken = new boolean[3];
 
         int clusterNum = 0;
-        for (final ThreadArtifactCluster threadCluster : clustering)
+        for (final ThreadArtifactCluster threadCluster : selectedClustering)
         {
             /*
              * Will be set in the respective thread clustering visualization for

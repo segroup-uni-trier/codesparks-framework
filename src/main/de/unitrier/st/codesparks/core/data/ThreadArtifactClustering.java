@@ -16,14 +16,22 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
 
     private final long id;
 
-    public ThreadArtifactClustering()
-    {
-        this.id = getNextId();
-    }
-
     public final long getId()
     {
         return id;
+    }
+
+    private final AThreadArtifactClusteringStrategy strategy;
+
+    public ThreadArtifactClustering(final AThreadArtifactClusteringStrategy strategy)
+    {
+        this.id = getNextId();
+        this.strategy = strategy;
+    }
+
+    public AThreadArtifactClusteringStrategy getStrategy()
+    {
+        return strategy;
     }
 
     public Set<AThreadArtifact> getThreadArtifactsSet()

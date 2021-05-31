@@ -508,9 +508,39 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
      Thread Clustering
      */
 
-    private final Map<IThreadArtifactClusteringStrategy, ThreadArtifactClustering> clusterings = new HashMap<>();
+    private final Map<AThreadArtifactClusteringStrategy, ThreadArtifactClustering> clusterings = new HashMap<>();
+    private final Map<AThreadArtifactClusteringStrategy, Boolean> selectedClusteringStrategy = new HashMap<>();
 
-    private ThreadArtifactClustering lookupClustering(final AThreadArtifactClusteringStrategy clusteringStrategy)
+    public ThreadArtifactClustering getSelectedClusteringOrApplyAndSelect(final AThreadArtifactClusteringStrategy clusteringStrategy)
+    {
+        ThreadArtifactClustering clustering;
+        synchronized (clusterings)
+        {
+            final Optional<AThreadArtifactClusteringStrategy> selectedStrategy =
+                    selectedClusteringStrategy.entrySet()
+                            .stream()
+                            .filter(Map.Entry::getValue) // value is of type boolean and stands for whether this strategy is selected
+                            .map(Map.Entry::getKey)
+                            .findAny();
+
+            if (selectedStrategy.isPresent())
+            {
+                final AThreadArtifactClusteringStrategy strategy = selectedStrategy.get();
+                clustering = clusterings.get(strategy);
+
+
+                final Comparator<ThreadArtifactCluster> threadArtifactClusterComparator =
+                        ThreadArtifactClusterNumericalMetricSumComparator.getInstance(clusteringStrategy.getMetricIdentifier());
+                clustering.sort(threadArtifactClusterComparator);
+            } else
+            {
+                clustering = getClusteringAndSelect(clusteringStrategy);
+            }
+        }
+        return clustering;
+    }
+
+    public ThreadArtifactClustering getClusteringAndSelect(final AThreadArtifactClusteringStrategy clusteringStrategy)
     {
         ThreadArtifactClustering clustering;
         synchronized (clusterings)
@@ -518,28 +548,32 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
             clustering = clusterings.get(clusteringStrategy);
             if (clustering == null)
             {
-                final Collection<AThreadArtifact> threadArtifacts =
-                        getThreadArtifactsWithNumericMetricValue(clusteringStrategy.getMetricIdentifier());
-                clustering = clusteringStrategy.clusterThreadArtifacts(threadArtifacts);
+                clustering = clusterThreadArtifacts(clusteringStrategy);
                 clusterings.put(clusteringStrategy, clustering);
             }
+            selectedClusteringStrategy.entrySet().forEach(entry -> entry.setValue(false));
+            selectedClusteringStrategy.put(clusteringStrategy, true);
         }
         return clustering;
     }
 
     public ThreadArtifactClustering clusterThreadArtifacts(final AThreadArtifactClusteringStrategy clusteringStrategy)
     {
-        return lookupClustering(clusteringStrategy);
-    }
-
-    public ThreadArtifactClustering clusterThreadArtifacts(final AThreadArtifactClusteringStrategy clusteringStrategy, final boolean sorted)
-    {
-        final ThreadArtifactClustering clustering = lookupClustering(clusteringStrategy);
-        if (sorted)
+        ThreadArtifactClustering clustering;
+        synchronized (clusterings)
         {
-            final Comparator<ThreadArtifactCluster> threadArtifactClusterComparator =
-                    ThreadArtifactClusterNumericalMetricSumComparator.getInstance(clusteringStrategy.getMetricIdentifier());
-            clustering.sort(threadArtifactClusterComparator);
+            clustering = clusterings.get(clusteringStrategy);
+            if (clustering == null)
+            {
+                final AMetricIdentifier metricIdentifier = clusteringStrategy.getMetricIdentifier();
+                final Collection<AThreadArtifact> threadArtifacts =
+                        getThreadArtifactsWithNumericMetricValue(metricIdentifier);
+                clustering = clusteringStrategy.clusterThreadArtifacts(threadArtifacts);
+                final Comparator<ThreadArtifactCluster> threadArtifactClusterComparator =
+                        ThreadArtifactClusterNumericalMetricSumComparator.getInstance(metricIdentifier);
+                clustering.sort(threadArtifactClusterComparator);
+                clusterings.put(clusteringStrategy, clustering);
+            }
         }
         return clustering;
     }
