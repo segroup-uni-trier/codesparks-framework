@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
@@ -8,15 +11,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import static com.intellij.util.ui.ThreeStateCheckBox.State.NOT_SELECTED;
 import static com.intellij.util.ui.ThreeStateCheckBox.State.SELECTED;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ColoredSelectableTreeNode extends DefaultMutableTreeNode
 {
     private JBColor color;
-    //    private boolean isSelected;
     private ThreeStateCheckBox.State state;
-    private ColoredSelectableTreeNode parent;
+//    private ColoredSelectableTreeNode parent;
 
     public ColoredSelectableTreeNode(Object userObject, JBColor color)
     {
@@ -30,15 +29,16 @@ public class ColoredSelectableTreeNode extends DefaultMutableTreeNode
         this(null, color);
     }
 
-    public void setParent(ColoredSelectableTreeNode parent)
-    {
-        this.parent = parent;
-    }
+//    public void setParent(ColoredSelectableTreeNode parent)
+//    {
+//        this.parent = parent;
+//    }
 
     @Override
     public ColoredSelectableTreeNode getParent()
     {
-        return parent;
+        return null;
+        // return parent;
     }
 
     public JBColor getColor()
@@ -66,23 +66,18 @@ public class ColoredSelectableTreeNode extends DefaultMutableTreeNode
         {
             s = SELECTED;
         }
-        //boolean s = !this.isSelected;
         setState(s, true);
     }
 
     public void setState(ThreeStateCheckBox.State state, boolean applyRecursive)
     {
-        //this.isSelected = b;
         this.state = state;
-
-        if (isLeaf())
-        {
-            return;
-        }
+        if (isLeaf()) return;
         if (!applyRecursive) return;
         for (int i = 0; i < getChildCount(); i++)
         {
             final ThreadTreeLeafNode childAt = (ThreadTreeLeafNode) getChildAt(i);
+            //noinspection ConstantConditions, because it's not true!
             childAt.setState(state, applyRecursive);
         }
     }

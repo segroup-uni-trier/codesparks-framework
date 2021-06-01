@@ -225,7 +225,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                         final ThreadArtifactDisplayData selectedThreadData =
                                 threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, selectable.getSelectedThreadArtifacts());
                         final double metricValueSum = selectedThreadData.getMetricValueSum();
-                        final String percentage = CoreUtil.formatPercentage(metricValueSum);
+                        final String percentage = CoreUtil.formatPercentage(metricValueSum, true);
                         setText(metricString + ": " + percentage);
                     }
                 }

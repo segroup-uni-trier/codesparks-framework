@@ -37,7 +37,7 @@ public final class CoreUtil
         {
             if (treatZeroAsIs)
             {
-                percentageText = "0%";
+                percentageText = "0.00%";
             } else
             {
                 percentageText = "<0.01%";
@@ -55,12 +55,23 @@ public final class CoreUtil
         return percentageText;
     }
 
-    public static String formatPercentageWithLeadingWhitespace(double value)
+    public static String formatPercentageWithLeadingWhitespace(final double value)
+    {
+        return formatPercentageWithLeadingWhitespace(value, false);
+    }
+
+    public static String formatPercentageWithLeadingWhitespace(final double value, final boolean treatZeroAsIs)
     {
         String percentageText;
         if (value < 0.0001)
         {
-            percentageText = "<0.01%";
+            if (treatZeroAsIs)
+            {
+                percentageText = "0.00%";
+            } else
+            {
+                percentageText = "<0.01%";
+            }
         } else
         {
             synchronized (df)

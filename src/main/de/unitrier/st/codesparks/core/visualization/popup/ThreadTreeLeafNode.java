@@ -9,21 +9,21 @@ import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 
 public class ThreadTreeLeafNode extends ColoredSelectableTreeNode
 {
-    private final AThreadArtifact codeSparksThread;
+    private final AThreadArtifact threadArtifact;
 
     ThreadTreeLeafNode(final AThreadArtifact threadArtifact, final AMetricIdentifier metricIdentifier, final JBColor color)
     {
         super(threadArtifact.getDisplayString(metricIdentifier), color);
-        this.codeSparksThread = threadArtifact;
+        this.threadArtifact = threadArtifact;
     }
 
-    ThreadTreeLeafNode(final AThreadArtifact codeSparksThread, final AMetricIdentifier metricIdentifier)
+    ThreadTreeLeafNode(final AThreadArtifact threadArtifact, final AMetricIdentifier metricIdentifier)
     {
-        this(codeSparksThread, metricIdentifier, null);
+        this(threadArtifact, metricIdentifier, null);
     }
 
     public AThreadArtifact getThreadArtifact()
     {
-        return codeSparksThread;
+        return threadArtifact;
     }
 }

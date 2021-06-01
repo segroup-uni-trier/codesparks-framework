@@ -113,12 +113,12 @@ public abstract class ThreadTree extends AThreadSelectable implements IThreadArt
 
     private ThreeStateCheckBox.State retrieveInnerNodeState(ThreadTreeInnerNode innerNode)
     {
-        int childCount = innerNode.getChildCount();
+        final int childCount = innerNode.getChildCount();
         boolean allSelected = true;
         boolean allDeselected = true;
         for (int i = 0; i < childCount; i++)
         {
-            ColoredSelectableTreeNode childAt = (ColoredSelectableTreeNode) innerNode.getChildAt(i);
+            final ColoredSelectableTreeNode childAt = (ColoredSelectableTreeNode) innerNode.getChildAt(i);
             allSelected = allSelected && childAt.isSelected();
             allDeselected = allDeselected && !childAt.isSelected();
         }

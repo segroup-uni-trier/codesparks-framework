@@ -37,16 +37,16 @@ public class ThreadTreeInnerNode extends ColoredSelectableTreeNode
     private String getPercentageString()
     {
         double metricValueSum = 0d;
-        int childCount = getChildCount();
+        final int childCount = getChildCount();
         for (int i = 0; i < childCount; i++)
         {
-            ThreadTreeLeafNode childAt = (ThreadTreeLeafNode) getChildAt(i);
+            final ThreadTreeLeafNode childAt = (ThreadTreeLeafNode) getChildAt(i);
             if (childAt.isSelected())
             {
                 metricValueSum += childAt.getThreadArtifact().getNumericalMetricValue(metricIdentifier);
             }
         }
-        return CoreUtil.formatPercentageWithLeadingWhitespace(metricValueSum);
+        return CoreUtil.formatPercentageWithLeadingWhitespace(metricValueSum, true);
     }
 
     private String getSelectedChildrenString()
