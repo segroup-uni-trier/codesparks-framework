@@ -194,8 +194,10 @@
             <batchtest fork="yes">
                 <fileset dir="${test.classes.dir}">
                     <include name="de/unitrier/st/codesparks/core/**/*Test*.class"/>
-                    <exclude name="de/unitrier/st/codesparks/core/**/*TestUtil*.class"/>
+                    <!-- -->
+                    <exclude name="de/unitrier/st/codesparks/core/**/*de.unitrier.st.codesparks.jpt.stacksampling.TestUtil*.class"/>
                     <exclude name="de/unitrier/st/codesparks/core/**/ThreadClusterSilhouetteTest$1.class"/>
+                    <exclude name="de/unitrier/st/codesparks/core/**/ArtifactTrieTestUtil.class"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -211,7 +213,7 @@
             <batchtest fork="yes">
                 <fileset dir="${test.classes.dir}">
                     <include name="de/unitrier/st/codesparks/core/**/*Test*.class"/>
-                    <exclude name="de/unitrier/st/codesparks/core/**/*TestUtil*.class"/>
+                    <exclude name="de/unitrier/st/codesparks/core/**/*de.unitrier.st.codesparks.jpt.stacksampling.TestUtil*.class"/>
                     <exclude name="de/unitrier/st/codesparks/core/**/ThreadClusterSilhouetteTest$1.class"/>
                 </fileset>
             </batchtest>

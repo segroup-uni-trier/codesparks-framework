@@ -46,14 +46,14 @@ public class ToggleVisualization extends AnAction
         if (visible)
         {
             //noinspection DialogTitleCapitalization
-            final String description = LocalizationUtil.getLocalizedString("codesparks.ui.hide.visualization.action.description");
+            final String description = LocalizationUtil.getLocalizedString("codesparks.ui.show.visualization.action.description");
             presentation.setIcon(visualizationNotVisibleIcon);
             presentation.setText(description);
             presentation.setDescription(description);
         } else
         {
             //noinspection DialogTitleCapitalization
-            final String description = LocalizationUtil.getLocalizedString("codesparks.ui.show.visualization.action.description");
+            final String description = LocalizationUtil.getLocalizedString("codesparks.ui.hide.visualization.action.description");
             presentation.setIcon(visualizationVisibleIcon);
             presentation.setText(description);
             presentation.setDescription(description);

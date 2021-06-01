@@ -91,7 +91,6 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         // Draw the y axis, leave an offset to the top
         // graphics2D.drawLine(horizontalMargin, topOffset, horizontalMargin, height - verticalMargin);
 
-        //final int size = threadArtifactsToShow.size();
         final Map<Double, Integer> valueOccurrences = new HashMap<>(numberOfThreadsToShow);
         int maxOccurrence = Integer.MIN_VALUE;
         final double[] metricValuesOfThreadsToShow = new double[numberOfThreadsToShow];
@@ -99,7 +98,7 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         double maxMetricValueOfThreadsToShow = Double.MIN_VALUE;
         for (final AThreadArtifact threadArtifact : threadArtifactsToShow)
         {
-            final double metricValue = threadArtifact.getNumericalMetricValue(primaryMetricIdentifier);
+            final double metricValue = Math.max(0.001, ((int) (threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) * 100)) / 100d);
             metricValuesOfThreadsToShow[i++] = metricValue;
             final int occurrences = valueOccurrences.getOrDefault(metricValue, 0) + 1;
             valueOccurrences.put(metricValue, occurrences);
@@ -120,7 +119,7 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         final int vizWith = width - 2 * horizontalMargin;
 
         // Top line determining the beginning of the viz area
-       // graphics2D.drawLine(horizontalMargin, topOffset + verticalMargin, horizontalMargin + vizWith, topOffset + verticalMargin);
+        // graphics2D.drawLine(horizontalMargin, topOffset + verticalMargin, horizontalMargin + vizWith, topOffset + verticalMargin);
 
         final double yStep = (double) vizHeight / (maxOccurrence + 1);//size;
         final Map<Double, Double> yValues = new HashMap<>();
@@ -148,7 +147,8 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
 
             for (final AThreadArtifact threadArtifact : threadArtifactsOfCluster)
             {
-                final double metricValue = threadArtifact.getNumericalMetricValue(primaryMetricIdentifier);
+                // When it comes to showing the values, the minimal value we distinguish is 0.01
+                final double metricValue = Math.max(0.001, ((int) (threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) * 100)) / 100d);
                 final double xValue = metricValue / maxMetricValueOfAll * vizWith;
                 final Double yValue = yValues.getOrDefault(xValue, yStep);
                 final RoundRectangle2D threadDot = new RoundRectangle2D.Double(
@@ -174,7 +174,7 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
 
             final int dotsToShow = vizWith / 4; // A dot all four pixels
 
-            final double step = maxMetricValueOfAll / dotsToShow;//0.002;//(maxMetricValue - minMetricValue) / (4 * size);
+            final double step = maxMetricValueOfAll / dotsToShow;
             final int dotWidthProbability = 2;
             for (double j = 0d; j <= maxMetricValueOfAll; j += step)
             {
@@ -190,7 +190,7 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
                         , dotWidthProbability
                 );
             }
-            infoString += /*"Kernel Based Density Estimation: */"kernel=gaussian, bandwidth=" + bandWidth;
+            infoString += "kernel=gaussian, bandwidth=" + bandWidth;
         }
 
         final FontMetrics fontMetrics = graphics2D.getFontMetrics();

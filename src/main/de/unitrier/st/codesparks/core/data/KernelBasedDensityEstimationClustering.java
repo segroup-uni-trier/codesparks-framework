@@ -53,35 +53,33 @@ public class KernelBasedDensityEstimationClustering extends AThreadArtifactClust
         int i = 0;
         for (final AThreadArtifact threadArtifact : threadArtifacts)
         {
-            final double metricValue = threadArtifact.getNumericalMetricValue(metricIdentifier);
+            final double metricValue = Math.max(0.001, ((int)(threadArtifact.getNumericalMetricValue(metricIdentifier) * 100)) / 100d);
             maxMetricValue = Math.max(maxMetricValue, metricValue);
             minMetricValue = Math.min(minMetricValue, metricValue);
             metricValues[i++] = metricValue;
             Collection<AThreadArtifact> threads = metricMap.get(metricValue);
             if (threads == null)
             {
-                threads = new ArrayList<>(4);
+                threads = new ArrayList<>(1 << 4);
             }
             threads.add(threadArtifact);
             metricMap.put(metricValue, threads);
         }
-        // TODO: epsilon dependent of number of threads and max value
-        final double bandwidth = 0.01;
 
+        final double bandwidth = 0.01;
         final KernelDensity kernelDensity = new KernelDensity(metricValues, bandwidth);
 
-        // TODO: a step size dependent of the number of threads or the concrete metric values?
-//        final double step = 0.001;
-        final double step = (maxMetricValue - minMetricValue) / (4 * size);
+        final double step = 0.001; // That we don't miss a value. This is the smallest difference we distinguish.
+//        final double step = (maxMetricValue - minMetricValue) / (4 * size);
 
-        double lastM = 0;
+        double splitValue = 0;
         boolean firstRun = true;
         boolean minFound = false;
         double previousProbability = 0d;
         double delta;
-        for (double m = minMetricValue; m < maxMetricValue; m += step)
+        for (double currentValue = minMetricValue; currentValue < maxMetricValue; currentValue += step)
         {
-            final double probability = kernelDensity.p(m);
+            final double probability = kernelDensity.p(currentValue);
             delta = probability - previousProbability;
             previousProbability = probability;
             if (delta > 0 && !minFound)
@@ -95,7 +93,7 @@ public class KernelBasedDensityEstimationClustering extends AThreadArtifactClust
                     final ThreadArtifactCluster cluster = new ThreadArtifactCluster();
                     for (final double metricValue : metricValues)
                     {
-                        if (metricValue > lastM && metricValue <= (m - step)) // We make the cut at the value before
+                        if (metricValue > splitValue && metricValue <= (currentValue - step)) // We make the cut at the value before
                         {
                             final Collection<AThreadArtifact> aThreadArtifacts = metricMap.get(metricValue);
                             cluster.addAll(aThreadArtifacts);
@@ -103,7 +101,7 @@ public class KernelBasedDensityEstimationClustering extends AThreadArtifactClust
                         }
                     }
                     threadArtifactClusters.add(cluster);
-                    lastM = m;
+                    splitValue = currentValue;
                 }
             } else if (delta < 0)
             {
@@ -115,7 +113,7 @@ public class KernelBasedDensityEstimationClustering extends AThreadArtifactClust
         final ThreadArtifactCluster cluster = new ThreadArtifactCluster();
         for (final double metricValue : metricValues)
         {
-            if (metricValue > lastM)
+            if (metricValue > splitValue)
             {
                 final Collection<AThreadArtifact> aThreadArtifacts = metricMap.get(metricValue);
                 cluster.addAll(aThreadArtifacts);
