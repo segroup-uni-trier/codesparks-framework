@@ -29,12 +29,12 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
             , final AMetricIdentifier secondaryMetricIdentifier
     )
     {
-        super(component, new Dimension(500, 175), artifact, primaryMetricIdentifier);
+        super(component, new Dimension(550, 175), artifact, primaryMetricIdentifier);
         this.secondaryMetricIdentifier = secondaryMetricIdentifier;
     }
 
     @Override
-    protected PopupPanel createPopupContent(AArtifact artifact)
+    protected PopupPanel createPopupContent(final AArtifact artifact)
     {
         final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "MethodPopup");
         /*
@@ -136,7 +136,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
         final StringBuilder titleStringBuilder = new StringBuilder();
         titleStringBuilder.append(artifact.getName());
         titleStringBuilder.append(" - ");
-        titleStringBuilder.append(primaryMetricIdentifier.getDisplayString());
+        titleStringBuilder.append(primaryMetricIdentifier.getShortDisplayString());
         titleStringBuilder.append(": ");
         final double metricValue = artifact.getNumericalMetricValue(primaryMetricIdentifier);
         final String percentage = CoreUtil.formatPercentage(metricValue);
@@ -145,7 +145,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
         if (secondaryMetricIdentifier != null)
         {
             titleStringBuilder.append(" ");
-            titleStringBuilder.append(secondaryMetricIdentifier.getDisplayString());
+            titleStringBuilder.append(secondaryMetricIdentifier.getShortDisplayString());
             titleStringBuilder.append(": ");
             final double secondaryMetricValue = artifact.getNumericalMetricValue(secondaryMetricIdentifier);
             titleStringBuilder.append(CoreUtil.formatPercentage(secondaryMetricValue));

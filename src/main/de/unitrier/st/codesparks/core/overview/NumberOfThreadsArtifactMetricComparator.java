@@ -28,6 +28,12 @@ public class NumberOfThreadsArtifactMetricComparator extends ArtifactMetricCompa
             }
 
             @Override
+            public String getShortDisplayString()
+            {
+                return "#Threads";
+            }
+
+            @Override
             public boolean isNumerical()
             {
                 return true;

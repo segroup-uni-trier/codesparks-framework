@@ -50,11 +50,11 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
         this.primaryMetricIdentifier = primaryMetricIdentifier;
     }
 
-    protected abstract PopupPanel createPopupContent(AArtifact artifact); // TODO: remove parameter artifact since it is in the constructor already
+    protected abstract PopupPanel createPopupContent(AArtifact artifact);
 
     protected abstract String createPopupTitle(AArtifact artifact);
 
-    protected void visualizationMouseClicked(MouseEvent e)
+    protected void visualizationMouseClicked(final MouseEvent e)
     {
         final IUserActivityLogger logger = UserActivityLogger.getInstance();
         final String identifier = artifact.getIdentifier();

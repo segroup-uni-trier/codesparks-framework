@@ -181,11 +181,11 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         final JPanel selectedDataDisplayWrapper = new JPanel(new BorderLayout());
         final JPanel selectedDataDisplayBox = new JPanel();
         selectedDataDisplayBox.setLayout(new BoxLayout(selectedDataDisplayBox, BoxLayout.Y_AXIS));
-        selectedDataDisplayBox.setPreferredSize(new Dimension(170, 50));
+        selectedDataDisplayBox.setPreferredSize(new Dimension(170, 40));
         final JPanel hoveredDataDisplayWrapper = new JPanel(new BorderLayout());
         final JPanel hoveredDataDisplayBox = new JPanel();
         hoveredDataDisplayBox.setLayout(new BoxLayout(hoveredDataDisplayBox, BoxLayout.Y_AXIS));
-        hoveredDataDisplayBox.setPreferredSize(new Dimension(170, 50));
+        hoveredDataDisplayBox.setPreferredSize(new Dimension(170, 60));
 
         //Radial Visualization
 
@@ -371,7 +371,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         final StringBuilder titleStringBuilder = new StringBuilder();
         titleStringBuilder.append(artifact.getName());
         titleStringBuilder.append(" - ");
-        titleStringBuilder.append(primaryMetricIdentifier.getDisplayString());
+        titleStringBuilder.append(primaryMetricIdentifier.getShortDisplayString());
         titleStringBuilder.append(": ");
         final double metricValue = artifact.getNumericalMetricValue(primaryMetricIdentifier);
         final String percentage = CoreUtil.formatPercentage(metricValue);
@@ -380,7 +380,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         if (secondaryMetricIdentifier != null)
         {
             titleStringBuilder.append(" ");
-            titleStringBuilder.append(secondaryMetricIdentifier.getDisplayString());
+            titleStringBuilder.append(secondaryMetricIdentifier.getShortDisplayString());
             titleStringBuilder.append(": ");
             final double secondaryMetricValue = artifact.getNumericalMetricValue(secondaryMetricIdentifier);
             titleStringBuilder.append(CoreUtil.formatPercentage(secondaryMetricValue));

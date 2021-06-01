@@ -31,6 +31,12 @@ public final class ThreadClusterSilhouetteTest
         }
 
         @Override
+        public String getShortDisplayString()
+        {
+            return "Test metric";
+        }
+
+        @Override
         public boolean isNumerical()
         {
             return true;
