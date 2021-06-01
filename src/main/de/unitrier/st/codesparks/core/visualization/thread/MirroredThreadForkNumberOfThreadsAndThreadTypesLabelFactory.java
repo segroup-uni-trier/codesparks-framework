@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory extends AArtifactVisualizationLabelFactory
 {
@@ -108,13 +109,15 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
         }
 
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(selectedClustering);
+        final Map<ThreadArtifactCluster, Integer> drawPositions = ThreadVisualizationUtil.getDrawPositions(selectedClustering, clusterPropertiesManager);
 
         int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : selectedClustering)
         {
             if (!createDisabledViz && threadCluster.stream().noneMatch(AThreadArtifact::isSelected))
-            { // In case the density based classification approach yields more than 3 clusters but only upt to three of them contain selected threads, skip
-                // the clusters which only contain filtered threads
+            { // In case the density based classification approach yields more than 3 clusters but only up to three of them contain selected threads. In that
+                // case, skip the clusters which only contain filtered threads.
+                clusterNum += 1;
                 continue;
             }
 
@@ -124,6 +127,9 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
             {
                 clusterColor = ThreadColor.getDisabledColor(clusterColor);
             }
+            final int positionToDrawCluster = drawPositions.get(threadCluster);
+
+            final int clusterYPos = TOP_OFFSET + threadSquareYPos - positionToDrawCluster * threadSquareOffset;
 
             final long numberOfThreadsOfCluster = threadCluster.stream().filter(clusterThread -> (createDisabledViz || clusterThread.isSelected())).count();
 
@@ -131,9 +137,10 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
 
             final int totalNumberOfThreadsWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
 
+            // The number of threads bar
             final Color backgroundMetricColor = VisualizationUtil.getBackgroundMetricColor(clusterColor, .35f);
             graphics.setColor(backgroundMetricColor);
-            graphics.fillRect(X_OFFSET_LEFT + barChartWidth - totalNumberOfThreadsWidth - 2, TOP_OFFSET + threadSquareYPos, totalNumberOfThreadsWidth,
+            graphics.fillRect(X_OFFSET_LEFT + barChartWidth - totalNumberOfThreadsWidth - 2, clusterYPos, totalNumberOfThreadsWidth,
                     threadSquareEdgeLength);
 
             // The thread-types bar
@@ -143,20 +150,20 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
 
             final int totalNumberOfThreadTypesWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
             graphics.setColor(clusterColor);
-            graphics.fillRect(X_OFFSET_LEFT + barChartWidth - totalNumberOfThreadTypesWidth - 2, TOP_OFFSET + threadSquareYPos
+            graphics.fillRect(X_OFFSET_LEFT + barChartWidth - totalNumberOfThreadTypesWidth - 2, clusterYPos
                     , totalNumberOfThreadTypesWidth, threadSquareEdgeLength);
 
             if (totalNumberOfThreadsWidth > 0)
             {
                 // Arrows after barrier
-                graphics.fillRect(X_OFFSET_LEFT + barChartWidth - 2, TOP_OFFSET + threadSquareYPos + 1, arrowLength - 1, 1);
+                graphics.fillRect(X_OFFSET_LEFT + barChartWidth - 2, clusterYPos + 1, arrowLength - 1, 1);
             }
 
             //------------------
 
             clusterNum += 1;
 
-            threadSquareYPos -= threadSquareOffset;
+            //threadSquareYPos -= threadSquareOffset;
         }
 
         if (numberOfEstimatedClusters > 3) // TODO: When ready, change this to 3

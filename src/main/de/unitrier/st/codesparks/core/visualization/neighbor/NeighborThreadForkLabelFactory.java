@@ -8,12 +8,14 @@ import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
+import de.unitrier.st.codesparks.core.visualization.thread.ThreadVisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizationLabelFactory
@@ -97,10 +99,6 @@ public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizati
                 getTotalThreadFilteredMetricValueOfAllNeighborsOfLine(threadFilteredNeighborArtifactsOfLine);
 
         final AThreadArtifactClusteringStrategy kbdeClusteringStrategy = KernelBasedDensityEstimationClustering.getInstance(primaryMetricIdentifier);
-
-//        final ThreadArtifactClustering kbdeClustering = artifact.clusterThreadArtifacts(kbdeClusteringStrategy);
-//        final int numberOfEstimatedClusters = kbdeClustering.size();
-
         ThreadArtifactClustering selectedClustering = artifact.getSelectedClusteringOrApplyAndSelect(kbdeClusteringStrategy);
 
         final long numberOfNonEmptyThreadClusters = selectedClustering
@@ -114,26 +112,20 @@ public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizati
         }
 
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(selectedClustering);
-        final boolean[] positionsTaken = new boolean[3];
+        final Map<ThreadArtifactCluster, Integer> drawPositions = ThreadVisualizationUtil.getDrawPositions(selectedClustering, clusterPropertiesManager);
 
         int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : selectedClustering)
         {
-            /*
-             * Will be set in the respective thread clustering visualization for
-             * the artifact, e.g. ThreadRadarLabelFactory or ThreadForkLabelFactory
-             */
-            VisualThreadClusterProperties properties = clusterPropertiesManager.getOrDefault(threadCluster, clusterNum);
-            final int clusterPosition = properties.getPosition();
+            if (threadCluster.stream().noneMatch(AThreadArtifact::isSelected))
+            {
+                clusterNum += 1;
+                continue;
+            }
+            final VisualThreadClusterProperties properties = clusterPropertiesManager.getOrDefault(threadCluster, clusterNum);
             final JBColor clusterColor = properties.getColor();
 
-            final int positionIndex = findPositionToDraw(positionsTaken, clusterPosition, clusterNum);
-            clusterNum = clusterNum + 1;
-
-            if (positionIndex < 0)
-            { // No more clusterPosition to draw available. Only happens when the number of clusters is set up to be greater than k=3
-                break;
-            }
+            final int positionToDrawCluster = drawPositions.get(threadCluster);
 
             graphics.setColor(clusterColor);
 
@@ -153,7 +145,7 @@ public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizati
                 clusterWidth = 0;
             }
 
-            final int yPositionToDraw = initialThreadSquareYPos - positionIndex * threadSquareOffset;
+            final int yPositionToDraw = initialThreadSquareYPos - positionToDrawCluster * threadSquareOffset;
 
             graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, yPositionToDraw, clusterWidth, threadSquareEdgeLength);
             if (clusterWidth > 0)
@@ -161,6 +153,8 @@ public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizati
                 // Arrows after barrier
                 graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, yPositionToDraw + 1, barrierXPos - 1, 1);
             }
+
+            clusterNum = clusterNum + 1;
         }
 
         return makeLabel(graphics);
@@ -215,35 +209,5 @@ public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizati
         }
 
         return clusterRuntimeOfLine;
-    }
-
-    private int findPositionToDraw(final boolean[] positionsTaken, final int currentPos, final int clusterNum)
-    {
-        if (currentPos < 0 || currentPos > positionsTaken.length - 1)
-        {
-            return getNextFreePos(positionsTaken, clusterNum);
-        }
-        if (!positionsTaken[currentPos])
-        {
-            positionsTaken[currentPos] = true;
-            return currentPos;
-        } else
-        {
-            return getNextFreePos(positionsTaken, currentPos);
-        }
-    }
-
-    private int getNextFreePos(final boolean[] positionsTaken, final int currentPos)
-    {
-        for (int i = 0; i < positionsTaken.length; i++)
-        {
-            int nextPos = (currentPos + i) % positionsTaken.length;
-            if (!positionsTaken[nextPos])
-            {
-                positionsTaken[nextPos] = true;
-                return nextPos;
-            }
-        }
-        return -1;
     }
 }

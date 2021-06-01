@@ -47,6 +47,10 @@ public final class ThreadColor
 
     public static JBColor getNextColor(final int i, final boolean disabledColor)
     {
+        if (i < 0)
+        {
+            throw new IllegalArgumentException("the index value passed must be greater than or equal to zero!");
+        }
         if (disabledColor)
         {
             return disabledColors[i % disabledColors.length];

@@ -12,6 +12,83 @@ public final class ThreadVisualizationUtil
 {
     private ThreadVisualizationUtil() { }
 
+    public static Map<ThreadArtifactCluster, Integer> getDrawPositions(
+            final ThreadArtifactClustering clustering
+            , final VisualThreadClusterPropertiesManager propertiesManager)
+    {
+        final Map<ThreadArtifactCluster, Integer> map = new HashMap<>(3);
+        int clusterNum = 0;
+        for (final ThreadArtifactCluster cluster : clustering)
+        {
+            if (cluster.stream().allMatch(AThreadArtifact::isFiltered))
+            {
+                clusterNum += 1;
+                continue;
+            }
+            final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(cluster, clusterNum);
+            map.put(cluster, properties.getPosition());
+            clusterNum += 1;
+        }
+        if (map.size() > 3)
+        {
+            throw new IllegalArgumentException("No more tha three clusters are meant to contain selected thread artifacts!");
+        }
+        if (map.size() == 0)
+        { // all threads are filtered
+            assert clustering.size() <= 3;
+            clusterNum = 0;
+            for (final ThreadArtifactCluster cluster : clustering)
+            {
+                final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(cluster, clusterNum);
+                map.put(cluster, properties.getPosition());
+                clusterNum += 1;
+            }
+            return map;
+        }
+        final ArrayList<Map.Entry<ThreadArtifactCluster, Integer>> list = new ArrayList<>(map.entrySet());
+        final Comparator<Map.Entry<ThreadArtifactCluster, Integer>> comparator = Comparator.comparingInt(Map.Entry::getValue);
+        list.sort(comparator);
+        final int size = list.size();
+        if (size == 3)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                final Map.Entry<ThreadArtifactCluster, Integer> entry = list.get(i);
+                map.put(entry.getKey(), i);
+            }
+        } else if (size == 2)
+        {
+            final Optional<Map.Entry<ThreadArtifactCluster, Integer>> min = list.stream().min(comparator);
+            //noinspection ConstantConditions, ignored
+            if (min.isPresent())
+            {
+                final Map.Entry<ThreadArtifactCluster, Integer> minEntry = min.get();
+                final Integer pos = Math.max(minEntry.getValue(), 0);
+                map.put(minEntry.getKey(), pos);
+            } else
+            {
+                throw new IllegalArgumentException("No cluster with minimal position present in the set!");
+            }
+            final Optional<Map.Entry<ThreadArtifactCluster, Integer>> max = list.stream().max(comparator);
+            if (max.isPresent())
+            {
+                final Map.Entry<ThreadArtifactCluster, Integer> maxEntry = max.get();
+                final Integer pos = Math.min(maxEntry.getValue(), 2);
+                map.put(maxEntry.getKey(), pos);
+            } else
+            {
+                throw new IllegalArgumentException("No cluster with maximal position present in the set!");
+            }
+        } else
+        {
+            // size == 1
+            final Map.Entry<ThreadArtifactCluster, Integer> entry = list.get(0);
+            int pos = Math.max(0, Math.min(2, entry.getValue()));
+            map.put(entry.getKey(), pos);
+        }
+        return map;
+    }
+
     // Used in ThreadFork and ZoomedThreadFork
     public static int getDiscreteTenValuedScaleWidth(final double percent, final int maxWidth)
     {

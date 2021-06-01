@@ -14,6 +14,7 @@ import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
+import java.util.Map;
 
 public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
 {
@@ -96,8 +97,6 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         ThreadArtifactClustering selectedClustering = artifact.getSelectedClusteringOrApplyAndSelect(kbdeClusteringStrategy);
 
-        //final int numberOfThreadClusters = selectedClustering.size();
-
         final long numberOfNonEmptyThreadClusters = selectedClustering
                 .stream()
                 .filter(cl -> cl.stream()
@@ -109,6 +108,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         }
 
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(selectedClustering);
+        final Map<ThreadArtifactCluster, Integer> drawPositions = ThreadVisualizationUtil.getDrawPositions(selectedClustering, clusterPropertiesManager);
 
         int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : selectedClustering)
@@ -116,6 +116,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             if (!createDisabledViz && threadCluster.stream().noneMatch(AThreadArtifact::isSelected))
             { // In case the density based classification approach yields more than 3 clusters but only upt to three of them contain selected threads, skip
                 // the clusters which only contain filtered threads
+                clusterNum += 1;
                 continue;
             }
 
@@ -125,6 +126,9 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             {
                 clusterColor = ThreadColor.getDisabledColor(clusterColor);
             }
+            final int positionToDrawCluster = drawPositions.get(threadCluster);
+
+            final int clusterYPos = TOP_OFFSET + threadSquareYPos - positionToDrawCluster * threadSquareOffset;
 
             /*
              * Draw the metric value sum bar
@@ -143,14 +147,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             );
 
             int clusterWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
-
-            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, TOP_OFFSET + threadSquareYPos, clusterWidth, threadSquareEdgeLength);
-
-            if (clusterWidth > 0)
-            {
-                // Arrows after barrier
-                graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, TOP_OFFSET + threadSquareYPos + 1, barrierXPos - 1, 1);
-            }
+            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, clusterYPos, clusterWidth, threadSquareEdgeLength);
 
             /*
              * Draw the metric value avg bar
@@ -160,12 +157,12 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
                     threadCluster, threadFilteredTotalMetricValueOfArtifact, createDisabledViz);
 
             clusterWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
-            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, TOP_OFFSET + threadSquareYPos, clusterWidth, threadSquareEdgeLength);
+            graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, clusterYPos, clusterWidth, threadSquareEdgeLength);
 
             if (clusterWidth > 0)
             {
                 // Arrows after barrier
-                graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, TOP_OFFSET + threadSquareYPos + 1, barrierXPos - 1, 1);
+                graphics.fillRect(X_OFFSET_LEFT + barrierXPos + barrierWidth, clusterYPos + 1, barrierXPos - 1, 1);
             }
 
             /*
@@ -174,7 +171,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
             clusterNum += 1;
 
-            threadSquareYPos -= threadSquareOffset;
+            // threadSquareYPos -= threadSquareOffset;
         }
 
         if (numberOfEstimatedClusters > 3)

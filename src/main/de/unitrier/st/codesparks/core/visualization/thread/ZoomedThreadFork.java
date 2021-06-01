@@ -192,8 +192,7 @@ public class ZoomedThreadFork extends JPanel
         double rightThreadRectXPos = width - leftThreadRectXPos - rectVizWidth;//leftBarrierXPos + barrierWidth + (int) (threadVizWidth * 1d / 3);
         rightThreadRectXPos = (rightThreadRectXPos - strokeWidth - halfStrokeWidth);
         graphics2D.drawRect(LEFT_OFFSET + (int) rightThreadRectXPos + 1 // +1 such that the left and right rect will overlap such that visually only one
-                // line
-                // is there
+                // line is there
                 , TOP_OFFSET + (verticalMargin - strokeWidth)
                 , (int) (rectVizWidth + halfStrokeWidth)
                 , height - 2 * verticalMargin + 2 * strokeWidth);
@@ -208,7 +207,6 @@ public class ZoomedThreadFork extends JPanel
         final IThreadSelectable threadSelectable = threadSelectables.get(index);
         final boolean createDisabledViz = threadSelectable.getSelectedThreadArtifacts().isEmpty();
 
-        //artifact.getThreadArtifactsWithNumericMetricValue(metricIdentifier).stream().allMatch(AThreadArtifact::isFiltered);
         /*
             let x be the space between the clusters resp. the margins to the top and bottom and y be the cluster width:
 
@@ -218,8 +216,6 @@ public class ZoomedThreadFork extends JPanel
 
         final double clusterDistance = (height - (2 * verticalMargin)) / (double) (4 * nrOfClusters + 1);
         final double clusterHeight = 3 * clusterDistance;
-
-//        System.out.println("ZoomedThreadFork: clusterDistance=" + clusterDistance + ", clusterHeight=" + clusterHeight);
 
         final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(threadArtifactClustering);
 
@@ -235,9 +231,9 @@ public class ZoomedThreadFork extends JPanel
         int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : threadArtifactClustering)
         {
-//            if (!createDisabledViz && threadCluster.stream().noneMatch(AThreadArtifact::isSelected))
             if (threadCluster.isEmpty())
             {
+                clusterNum += 1;
                 continue;
             }
             final VisualThreadClusterProperties clusterProperties = clusterPropertiesManager.getOrDefault(threadCluster, clusterNum);
@@ -319,10 +315,7 @@ public class ZoomedThreadFork extends JPanel
         }
 
         paintChildren(g);
-//        for (final Component component : getComponents())
-//        {
-//            component.repaint();
-//        }
+
         synchronized (doubleRepaintLock)
         {
             doubleRepaintLock.notifyAll();
