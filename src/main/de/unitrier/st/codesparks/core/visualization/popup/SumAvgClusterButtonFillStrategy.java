@@ -86,8 +86,11 @@ public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFill
 
             final Rectangle boundsRectangle = threadClusterButton.getBoundsRectangle();
 
+
             // This represents linear scaling of the bar width
-            final int sumWidth = (int) (boundsRectangle.width * percent);
+//            final int sumWidth = (int) (boundsRectangle.width * percent);
+            final int sumWidth = ThreadVisualizationUtil.getDiscreteXValuedScaleWidth(20, percent, boundsRectangle.width);
+
 
             //double linearEulerInterpolationOfPercent = MathUtil.linearInterpolation(1, Math.exp(1D), 0, 1, percent);
             //double lnScaledPercent = Math.log(linearEulerInterpolationOfPercent);
@@ -111,8 +114,8 @@ public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFill
                     //          , createDisabledViz
             );
 
-            final int avgWidth = (int) (boundsRectangle.width * percent);//ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, boundsRectangle
-            // .width);
+//            final int avgWidth = (int) (boundsRectangle.width * percent);
+            final int avgWidth = ThreadVisualizationUtil.getDiscreteXValuedScaleWidth(20, percent, boundsRectangle.width);
 
 //            linearEulerInterpolationOfPercent = MathUtil.linearInterpolation(1, Math.exp(1D), 0, 1, percent);
 //            lnScaledPercent = Math.log(linearEulerInterpolationOfPercent);

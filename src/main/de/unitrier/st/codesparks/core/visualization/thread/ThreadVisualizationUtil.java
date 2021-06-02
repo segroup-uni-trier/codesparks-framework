@@ -101,6 +101,23 @@ public final class ThreadVisualizationUtil
         return discreteWidth;
     }
 
+    public static int getDiscreteXValuedScaleWidth(final int x, final double percent, int maxWidth)
+    {
+        int discreteWidth = 0;
+        if (percent > 0D)
+        {
+            if (percent >= 1d)
+            {
+                return maxWidth;
+            }
+            maxWidth = (int) (maxWidth * ((x - 1) / (double) x));
+            double discreteStep = 100d / x;
+            int discrete = (int) ((percent * 100) / discreteStep + 0.9999);
+            discreteWidth = (int) (maxWidth * ((double) discrete / x));
+        }
+        return discreteWidth;
+    }
+
     // Used in ThreadFork
     public static double getMetricValueSumOfSelectedThreads(final AArtifact artifact, final AMetricIdentifier metricIdentifier,
                                                             final boolean ignoreTheFilteredFlagOfThreads)
