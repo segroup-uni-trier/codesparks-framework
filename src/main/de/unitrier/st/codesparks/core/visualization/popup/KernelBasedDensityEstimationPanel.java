@@ -8,10 +8,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.CoreUtil;
-import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.thread.IThreadSelectableIndexProvider;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
@@ -169,30 +166,69 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         String infoString = "";
         if (numberOfThreadsToShow > 1)
         { // Cannot compute a density for only one value!
+            final boolean showMinimaMarkers =
+                    threadArtifactClustering.getStrategy().equals(KernelBasedDensityEstimationClustering.getInstance(primaryMetricIdentifier));
+
             final double bandWidth = 0.01;
             final KernelDensity kernelDensity = new KernelDensity(metricValuesOfThreadsToShow, bandWidth);
 
-            final int dotsToShow = vizWith / 4; // A dot all four pixels
+            final int dotsToShow = vizWith / 4; // A dot every four pixels
 
             final double step = maxMetricValueOfAll / dotsToShow;
             final int dotWidthProbability = 2;
+
+            boolean firstRun = true;
+            boolean minFound = false;
+            double previousProbability = 0d;
+            double delta;
             for (double j = 0d; j <= maxMetricValueOfAll; j += step)
             {
-                final double pj = kernelDensity.p(j);
+                final double probability = kernelDensity.p(j);
                 final double xValue = j / maxMetricValueOfAll * vizWith;
-                final double normalizedPj = pj / 100d;
+                final int xPos = (int) (horizontalMargin + xValue - dotWidthProbability / 2d);
+                final double normalizedPj = probability / 100d;
                 int yValue = (int) (normalizedPj * vizHeight);
+                final int yPos = topOffset + verticalMargin + vizHeight - yValue;
+                graphics2D.setColor(VisConstants.BORDER_COLOR);
                 //noinspection SuspiciousNameCombination
-                graphics2D.fillRect(horizontalMargin + (int) xValue - dotWidthProbability / 2,
+                graphics2D.fillRect(xPos
+                        //horizontalMargin + (int) xValue - dotWidthProbability / 2,
                         //xAxisY - yValue
-                        topOffset + verticalMargin + vizHeight - yValue - 2 // the '-2' is an adjustment to better see the values
+                        , yPos - 2 // the '-2' is an adjustment to better see the values
                         , dotWidthProbability
                         , dotWidthProbability
                 );
+
+                if (showMinimaMarkers)
+                {
+                    // draw markers for every split point, i.e. the local minima of the estimated density function
+                    delta = probability - previousProbability;
+                    previousProbability = probability;
+                    if (delta > 0 && !minFound)
+                    {
+                        minFound = true;
+                        if (firstRun)
+                        {
+                            firstRun = false;
+                        } else
+                        {
+                            final int splitPointXPos = (int) (horizontalMargin + ((j - step) / maxMetricValueOfAll * vizWith));
+                            // final int splitPointY = topOffset + verticalMargin;
+                            graphics2D.setColor(VisConstants.ORANGE);
+                            //graphics2D.setStroke(new BasicStroke(1.5f));
+                            graphics2D.drawLine(splitPointXPos, yPos - 9, splitPointXPos, yPos + 7);
+                            graphics2D.fillRect(splitPointXPos - 2, yPos - 3, 4, 4);
+                        }
+                    } else if (delta < 0)
+                    {
+                        minFound = false;
+                    }
+                }
             }
             infoString += "kernel=gaussian, bandwidth=" + bandWidth;
         }
 
+        graphics2D.setColor(VisConstants.BORDER_COLOR);
         final FontMetrics fontMetrics = graphics2D.getFontMetrics();
         final int stringWidth = fontMetrics.stringWidth(infoString);
         graphics2D.drawString(infoString, width / 2 - stringWidth / 2, topOffset + 10);
