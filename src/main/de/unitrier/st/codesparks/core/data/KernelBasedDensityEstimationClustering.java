@@ -53,7 +53,7 @@ public class KernelBasedDensityEstimationClustering extends AThreadArtifactClust
         int i = 0;
         for (final AThreadArtifact threadArtifact : threadArtifacts)
         {
-            final double metricValue = Math.max(0.001, ((int)(threadArtifact.getNumericalMetricValue(metricIdentifier) * 100)) / 100d);
+            final double metricValue = Math.max(0.0001, ((int)(threadArtifact.getNumericalMetricValue(metricIdentifier) * 1000)) / 1000d);
             maxMetricValue = Math.max(maxMetricValue, metricValue);
             minMetricValue = Math.min(minMetricValue, metricValue);
             metricValues[i++] = metricValue;

@@ -98,7 +98,7 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         double maxMetricValueOfThreadsToShow = Double.MIN_VALUE;
         for (final AThreadArtifact threadArtifact : threadArtifactsToShow)
         {
-            final double metricValue = Math.max(0.001, ((int) (threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) * 100)) / 100d);
+            final double metricValue = Math.max(0.0001, ((int) (threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) * 1000)) / 1000d);
             metricValuesOfThreadsToShow[i++] = metricValue;
             final int occurrences = valueOccurrences.getOrDefault(metricValue, 0) + 1;
             valueOccurrences.put(metricValue, occurrences);
@@ -148,7 +148,7 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
             for (final AThreadArtifact threadArtifact : threadArtifactsOfCluster)
             {
                 // When it comes to showing the values, the minimal value we distinguish is 0.01
-                final double metricValue = Math.max(0.001, ((int) (threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) * 100)) / 100d);
+                final double metricValue = Math.max(0.0001, ((int) (threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) * 1000)) / 1000d);
                 final double xValue = metricValue / maxMetricValueOfAll * vizWith;
                 final Double yValue = yValues.getOrDefault(xValue, yStep);
                 final RoundRectangle2D threadDot = new RoundRectangle2D.Double(
