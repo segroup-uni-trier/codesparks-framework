@@ -17,6 +17,7 @@ import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.IArtifactPool;
 import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.GlobalResetThreadArtifactFilter;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
@@ -649,7 +650,7 @@ public class ArtifactOverview
         sortArtifactsPanelWrapper.add(new JBLabel("Sort artifacts by metric: "));
         sortArtifactsPanelWrapper.add(Box.createRigidArea(new Dimension(10, 0)));
 
-        ComboBox<Comparator<AArtifact>> artifactSortingComboBox = new ComboBox<>();
+        final ComboBox<Comparator<AArtifact>> artifactSortingComboBox = new ComboBox<>();
 
         final Set<ArtifactMetricComparator> artifactMetricComparators = getArtifactMetricComparatorsFor(artifactClass);
         ArtifactMetricComparator enabledArtifactMetricComparator = null;
@@ -715,7 +716,7 @@ public class ArtifactOverview
         int minWidth = 100;
         int maxWidth = 150;
 
-        TableColumn visColumn = jbTable.getColumnModel().getColumn(0);
+        final TableColumn visColumn = jbTable.getColumnModel().getColumn(0);
         visColumn.setMinWidth(minWidth);
         visColumn.setPreferredWidth(maxWidth);
         visColumn.setMaxWidth(maxWidth);
@@ -815,7 +816,7 @@ public class ArtifactOverview
          * Include filters.
          */
 
-        boolean currentFileFilterSelected = currentFileFilter.isSelected();
+        final boolean currentFileFilterSelected = currentFileFilter.isSelected();
         if (currentFileFilterSelected)
         {
             if (currentFileArtifactFilter == null)
@@ -823,12 +824,12 @@ public class ArtifactOverview
                 CodeSparksLogger.addText(String.format("%s: current file artifact filter not setup!", getClass()));
             } else
             {
-                Project project = CoreUtil.getCurrentlyOpenedProject();
-                EditorEx selectedFileEditor = CoreUtil.getSelectedFileEditor(project);
+                final Project project = CoreUtil.getCurrentlyOpenedProject();
+                final EditorEx selectedFileEditor = CoreUtil.getSelectedFileEditor(project);
                 if (selectedFileEditor != null)
                 {
-                    VirtualFile virtualFile = selectedFileEditor.getVirtualFile();
-                    PsiFile psiFile = ApplicationManager.getApplication().runReadAction((Computable<PsiFile>) () -> {
+                    final VirtualFile virtualFile = selectedFileEditor.getVirtualFile();
+                    final PsiFile psiFile = ApplicationManager.getApplication().runReadAction((Computable<PsiFile>) () -> {
                         PsiManager psiManager = PsiManager.getInstance(project);
                         return psiManager.findFile(virtualFile);
                     });
@@ -894,7 +895,7 @@ public class ArtifactOverview
          */
         final Set<AArtifact> nonThreadFilterArtifacts = filtered.stream()
                 .filter(artifact -> artifact.hasThreads() &&
-                        artifact.getThreadArtifacts().stream().anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
+                        artifact.getThreadArtifacts().stream().anyMatch(AThreadArtifact::isSelected))
                 .collect(Collectors.toSet());
         filtered.retainAll(nonThreadFilterArtifacts);
 

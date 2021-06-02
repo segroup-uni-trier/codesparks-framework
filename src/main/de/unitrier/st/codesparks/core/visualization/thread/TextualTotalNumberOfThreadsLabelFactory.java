@@ -6,6 +6,7 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
@@ -13,9 +14,11 @@ import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collection;
 
 public final class TextualTotalNumberOfThreadsLabelFactory extends AArtifactVisualizationLabelFactory
 {
+    @SuppressWarnings("unused")
     public TextualTotalNumberOfThreadsLabelFactory(final AMetricIdentifier metricIdentifier)
     {
         super(metricIdentifier);
@@ -26,6 +29,7 @@ public final class TextualTotalNumberOfThreadsLabelFactory extends AArtifactVisu
         super(metricIdentifier, sequence);
     }
 
+    @SuppressWarnings("unused")
     public TextualTotalNumberOfThreadsLabelFactory(final AMetricIdentifier metricIdentifier, final int sequence, final int xOffsetLeft)
     {
         super(metricIdentifier, sequence, xOffsetLeft);
@@ -34,11 +38,12 @@ public final class TextualTotalNumberOfThreadsLabelFactory extends AArtifactVisu
     @Override
     public JLabel createArtifactLabel(final AArtifact artifact)
     {
+        final Collection<AThreadArtifact> artifactsWithNumericMetricValue = artifact.getThreadArtifactsWithNumericMetricValue(primaryMetricIdentifier);
         long numberOfSelectedArtifactThreads =
-                artifact.getThreadArtifacts().stream().filter(t -> t.getNumericalMetricValue(primaryMetricIdentifier) > 0 && !t.isFiltered()).count();
+                artifactsWithNumericMetricValue.stream().filter(AThreadArtifact::isSelected).count();
         if (numberOfSelectedArtifactThreads == 0)
         { // In case any thread is deselected, i.e. where for all threads thr the method call thr.isFiltered() yields true
-            numberOfSelectedArtifactThreads = artifact.getNumberOfThreads();
+            numberOfSelectedArtifactThreads = artifactsWithNumericMetricValue.size();
         }
         if (numberOfSelectedArtifactThreads == 0)
         {

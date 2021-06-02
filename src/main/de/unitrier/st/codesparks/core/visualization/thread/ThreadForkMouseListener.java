@@ -100,10 +100,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                     .filter(cl -> cl.stream()
                             .anyMatch(AThreadArtifact::isSelected))
                     .count();
-            final boolean createDisabledViz =
-                    artifact.getThreadArtifactsWithNumericMetricValue(primaryMetricIdentifier).stream().allMatch(AThreadArtifact::isFiltered);
-            final boolean applyKMeansPlusPlus = createDisabledViz || numberOfNonEmptyThreadClusters > 3;
-            if (applyKMeansPlusPlus)
+            if (numberOfNonEmptyThreadClusters > 3)
             { // Because the in-situ viz has changed to a k=3 clustering in that case, this will be the clustering we show first.
                 selectedClustering =
                         artifact.getClusteringAndSelect(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));

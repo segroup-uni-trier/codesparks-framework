@@ -96,13 +96,12 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
 
         ThreadArtifactClustering selectedClustering = artifact.getSelectedClusteringOrApplyAndSelect(kbdeClusteringStrategy);
 
-
         final long numberOfNonEmptyThreadClusters = selectedClustering
                 .stream()
                 .filter(cl -> cl.stream()
                         .anyMatch(AThreadArtifact::isSelected))
                 .count();
-        if ((createDisabledViz && numberOfEstimatedClusters > 3) || numberOfNonEmptyThreadClusters > 3)
+        if (numberOfNonEmptyThreadClusters > 3)
         {
             final KThreadArtifactClusteringStrategy apacheKMeansPlusPlus = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3);
             selectedClustering = artifact.clusterThreadArtifacts(apacheKMeansPlusPlus);

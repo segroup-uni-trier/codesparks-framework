@@ -1,18 +1,21 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.java;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import de.unitrier.st.codesparks.core.ArtifactPoolManager;
+import de.unitrier.st.codesparks.core.IArtifactPool;
 import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.overview.ICurrentFileArtifactFilter;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class JavaCurrentFileArtifactFilter implements ICurrentFileArtifactFilter
 {
     private static final Map<Function<AArtifact, String>, ICurrentFileArtifactFilter> instances = new HashMap<>();
@@ -44,11 +47,17 @@ public class JavaCurrentFileArtifactFilter implements ICurrentFileArtifactFilter
     }
 
     @Override
-    public Collection<AArtifact> filterArtifact(final Collection<? extends AArtifact> artifacts, final PsiFile psiFile)
+    public Collection<? extends AArtifact> filterArtifact(final Collection<? extends AArtifact> artifacts, final PsiFile psiFile)
     {
+        final Optional<? extends AArtifact> first = artifacts.stream().findFirst();
+        if (first.isEmpty())
+        {
+            return artifacts;
+        }
+
         final Collection<PsiClass> childrenOfType = PsiTreeUtil.findChildrenOfType(psiFile, PsiClass.class);
         final Set<String> qualifiedNames = new HashSet<>();
-        for (PsiClass psiClass : childrenOfType)
+        for (final PsiClass psiClass : childrenOfType)
         {
             final String qualifiedName = psiClass.getQualifiedName();
             if (qualifiedName == null || qualifiedName.equals(""))
@@ -58,15 +67,28 @@ public class JavaCurrentFileArtifactFilter implements ICurrentFileArtifactFilter
             qualifiedNames.add(qualifiedName);
         }
 
-        @SuppressWarnings("UnnecessaryLocalVariable") // Not inlined due to debugging reasons, i.e to be able to set a line breakpoint and inspect the value
-        // of variable 'collect'!
-        Collection<AArtifact> collect = artifacts.stream()
-                .filter(artifact -> qualifiedNames.stream()
-                        .anyMatch(qualifiedName -> artifactStringFunc.apply(artifact).equals(qualifiedName) // Java classes
-                                || (artifactStringFunc.apply(artifact).toLowerCase().startsWith(qualifiedName.toLowerCase() + ".")
-                                || artifactStringFunc.apply(artifact).toLowerCase().startsWith(qualifiedName.toLowerCase() + "$"))))
-                .collect(Collectors.toList());
+        final Function<AArtifact, Boolean> f = (artifact) -> qualifiedNames.stream()
+                .anyMatch(qualifiedName -> artifactStringFunc.apply(artifact).equals(qualifiedName) // Java classes
+                        || (artifactStringFunc.apply(artifact).toLowerCase().startsWith(qualifiedName.toLowerCase() + ".")
+                        || artifactStringFunc.apply(artifact).toLowerCase().startsWith(qualifiedName.toLowerCase() + "$"))
+                );
 
-        return collect;
+        Collection<AArtifact> filtered;
+        if (first.get() instanceof AThreadArtifact)
+        { // Only thread artifacts
+            final IArtifactPool artifactPool = ArtifactPoolManager.getInstance().getArtifactPool();
+            final Set<AArtifact> setOfNonThreadArtifacts =
+                    artifactPool.getArtifacts().values().stream().flatMap(Collection::stream)
+                            .filter(artifact -> !(artifact instanceof AThreadArtifact)).collect(Collectors.toSet());
+
+            filtered = artifacts.stream()
+                    .filter(thread -> setOfNonThreadArtifacts.stream().anyMatch(
+                            artifact -> artifact.getThreadArtifact(thread.getIdentifier()) != null && f.apply(artifact)
+                    )).collect(Collectors.toList());
+        } else
+        { // Non thread artifacts
+            filtered = artifacts.stream().filter(f::apply).collect(Collectors.toList());
+        }
+        return filtered;
     }
 }
