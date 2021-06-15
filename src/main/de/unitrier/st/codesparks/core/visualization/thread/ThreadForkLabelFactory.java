@@ -9,7 +9,6 @@ import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelF
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
-import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import javax.swing.*;
 import java.awt.*;

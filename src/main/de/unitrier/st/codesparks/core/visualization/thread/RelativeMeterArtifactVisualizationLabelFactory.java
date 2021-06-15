@@ -33,11 +33,6 @@ public class RelativeMeterArtifactVisualizationLabelFactory extends AArtifactVis
     @Override
     public JLabel createArtifactLabel(@NotNull final AArtifact artifact)
     {
-        final Collection<AThreadArtifact> threadArtifacts = artifact.getThreadArtifactsWithNumericMetricValue(primaryMetricIdentifier);
-        if (threadArtifacts.isEmpty())
-        {
-            return emptyLabel();
-        }
         final Class<? extends RelativeMeterArtifactVisualizationLabelFactory> theClass = getClass();
         final URL resource = theClass.getResource("/icons/relative-meter.png");
         if (resource == null)

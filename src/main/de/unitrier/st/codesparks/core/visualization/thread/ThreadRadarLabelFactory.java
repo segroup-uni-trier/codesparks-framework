@@ -8,7 +8,6 @@ import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
-import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -69,7 +68,8 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
         }
 
         final ThreadArtifactClustering clustering =
-                artifact.getSelectedClusteringOrApplyAndSelect(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
+                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
+                //artifact.getSelectedClusteringOrApplyAndSelect(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
 
         boolean createDisabledViz = false;
         long numberOfSelectedArtifactThreads = threadArtifacts.stream().filter(t -> !t.isFiltered()).count();
@@ -98,7 +98,11 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             final ThreadArtifactCluster cluster = clustering.get(i);
             final JBColor color = ThreadColor.getNextColor(i, createDisabledViz);
 
-            final RadialVisualThreadClusterProperties properties = new RadialVisualThreadClusterProperties(cluster, color, artifact.getNumberOfThreads());
+            final RadialVisualThreadClusterProperties properties = new RadialVisualThreadClusterProperties(
+                    cluster
+                    , color
+                    , artifact.getNumberOfThreads()
+            );
             propertiesManager.registerProperties(properties);
 
             final double averageMetricValueOfSelectedThreads = properties.getAverageMetricValueOfSelectedThreads(cluster, primaryMetricIdentifier,

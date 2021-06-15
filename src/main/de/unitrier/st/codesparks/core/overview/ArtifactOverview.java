@@ -17,7 +17,6 @@ import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.IArtifactPool;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.GlobalResetThreadArtifactFilter;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
@@ -27,6 +26,7 @@ import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.AVisualizationSequence;
+import de.unitrier.st.codesparks.core.visualization.BottomFlowLayout;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTable;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTableCellRenderer;
 import de.unitrier.st.codesparks.core.visualization.popup.MetricTableMouseMotionAdapter;
@@ -396,6 +396,14 @@ public class ArtifactOverview
 
     private Set<AArtifactVisualizationLabelFactory> programArtifactVisualizationLabelFactories;
 
+    public void registerProgramArtifactVisualizationLabelFactories(final AArtifactVisualizationLabelFactory... factories)
+    {
+        for (final AArtifactVisualizationLabelFactory factory : factories)
+        {
+            registerProgramArtifactVisualizationLabelFactory(factory);
+        }
+    }
+
     public void registerProgramArtifactVisualizationLabelFactory(final AArtifactVisualizationLabelFactory factory)
     {
         if (programArtifactVisualizationLabelFactories == null)
@@ -435,8 +443,9 @@ public class ArtifactOverview
         {
             return;
         }
-        final JBPanel<BorderLayoutPanel> wrapper = new JBPanel<>();
-        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
+        final JPanel wrapper = new JPanel();
+//        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.X_AXIS));
+        wrapper.setLayout(new BottomFlowLayout());
 
         for (final AArtifactVisualizationLabelFactory programArtifactVisualizationLabelFactory :
                 programArtifactVisualizationLabelFactories

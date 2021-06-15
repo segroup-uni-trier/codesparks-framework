@@ -352,9 +352,9 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         ArtifactOverview.getInstance().registerThreadStateArtifactFilter(threadStateArtifactFilter);
     }
 
-    public void registerProgramArtifactVisualizationLabelFactory(final AArtifactVisualizationLabelFactory factory)
+    public void registerProgramArtifactVisualizationLabelFactories(final AArtifactVisualizationLabelFactory... factories)
     {
-        ArtifactOverview.getInstance().registerProgramArtifactVisualizationLabelFactory(factory);
+        ArtifactOverview.getInstance().registerProgramArtifactVisualizationLabelFactories(factories);
     }
 
     public void registerArtifactMetricComparatorForSorting(final Class<? extends AArtifact> artifactClass,

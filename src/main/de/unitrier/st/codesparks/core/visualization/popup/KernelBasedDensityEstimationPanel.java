@@ -11,6 +11,7 @@ import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.thread.IThreadSelectableIndexProvider;
+import de.unitrier.st.codesparks.core.visualization.thread.ThreadColor;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterProperties;
 import de.unitrier.st.codesparks.core.visualization.thread.VisualThreadClusterPropertiesManager;
 import smile.stat.distribution.KernelDensity;

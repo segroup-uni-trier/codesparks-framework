@@ -139,7 +139,8 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                     final ComboBoxItem comboBoxItem = new ComboBoxItem(i, String.valueOf(i));
                     numberOfClustersComboBox.addItem(comboBoxItem);
                 }
-                numberOfClustersComboBox.addItem(new ComboBoxItem(0, "Kernel Based Density Estimation (" + numberOfEstimatedClusters + ")"));
+//                numberOfClustersComboBox.addItem(new ComboBoxItem(0, "Kernel Based Density Estimation (" + numberOfEstimatedClusters + ")"));
+                numberOfClustersComboBox.addItem(new ComboBoxItem(0, String.valueOf(numberOfEstimatedClusters)));
                 if (selectedK > 0)
                 {
                     numberOfClustersComboBox.setSelectedIndex(selectedK - 1);
@@ -150,7 +151,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                 final JPanel numberOfClustersPanel = new JPanel();
                 numberOfClustersPanel.setLayout(new BoxLayout(numberOfClustersPanel, BoxLayout.X_AXIS));
 
-                final JLabel numberOfClustersLabel = new JLabel("Select the number of clusters k = ");
+                final JLabel numberOfClustersLabel = new JLabel("Recompute with a maximum of clusters k = ");
                 numberOfClustersPanel.add(numberOfClustersLabel);
                 numberOfClustersPanel.add(numberOfClustersComboBox);
 
@@ -179,7 +180,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                             clustering = artifact.getClusteringAndSelect(strategy);
 
                             final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
-                            propertiesManager.buildDefaultProperties();
+                            propertiesManager.buildDefaultProperties(ThreadForkLabelFactory.class);
 
                             finalZoomedThreadFork.setThreadArtifactClustering(clustering);
                             finalKernelBasedDensityEstimationPanel.setThreadArtifactClustering(clustering);

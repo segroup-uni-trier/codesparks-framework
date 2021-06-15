@@ -54,8 +54,8 @@ public class ZoomedThreadRadar extends AThreadRadar
                 artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
 
         int startAngle = 90; //set start angle to 90 for starting at 12 o'clock
-        final JBColor[] colors = {new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), new JBColor(Color.decode("#B25283"),
-                Color.decode("#B25283")), new JBColor(Color.decode("#3E877F"), Color.decode("#3E877F"))};
+//        final JBColor[] colors = {new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), new JBColor(Color.decode("#B25283"),
+//                Color.decode("#B25283")), new JBColor(Color.decode("#3E877F"), Color.decode("#3E877F"))};
         //drawRectangleBackground();
 
         double threadRationFromRunBefore = 0;
@@ -77,27 +77,33 @@ public class ZoomedThreadRadar extends AThreadRadar
         drawInnerCircle();
         for (int i = 0; i < clustering.size(); i++)
         {
-            VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
-            RadialVisualThreadClusterProperties properties =
-                    new RadialVisualThreadClusterProperties(clustering.get(i), colors[i], artifact.getNumberOfThreads());
+            final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
 
-            double filteredRuntimeRatio =
-                    ThreadVisualizationUtil.calculateFilteredAvgNumericalMetricRatioForZoomVisualization(clustering.get(i),
+            final ThreadArtifactCluster cluster = clustering.get(i);
+
+            final JBColor color = ThreadColor.getNextColor(i);
+
+            final RadialVisualThreadClusterProperties properties =
+                    new RadialVisualThreadClusterProperties(cluster, color, artifact.getNumberOfThreads());
+
+            final double filteredRuntimeRatio =
+                    ThreadVisualizationUtil.calculateFilteredAvgNumericalMetricRatioForZoomVisualization(cluster,
                             selectedThreadArtifacts, metricIdentifier, false);
-            double filteredRuntimeRatioSum =
-                    ThreadVisualizationUtil.calculateFilteredSumNumericalMetricRatioForZoomVisualisation(clustering.get(i),
+            final double filteredRuntimeRatioSum =
+                    ThreadVisualizationUtil.calculateFilteredSumNumericalMetricRatioForZoomVisualisation(cluster,
                             metricIdentifier, selectedThreadArtifacts, false);
 
-            final ThreadArtifactCluster clusterArtifacts = (ThreadArtifactCluster) clustering.get(i).clone();
+            final ThreadArtifactCluster clusterArtifacts = (ThreadArtifactCluster) cluster.clone();
             clusterArtifacts.removeAll(filteredThreadArtifacts);
-            double filteredThreadRatio = clusterArtifacts.size() / (double) numberOfSelectedArtifactThreads;
-            double completeFilteredRuntimeDurationOfCluster = getFilteredMetricSumOfCluster(clustering.get(i), metricIdentifier,
+            final double filteredThreadRatio = clusterArtifacts.size() / (double) numberOfSelectedArtifactThreads;
+            final double completeFilteredRuntimeDurationOfCluster = getFilteredMetricSumOfCluster(cluster, metricIdentifier,
                     filteredThreadArtifacts);
 
             properties.setAvgMetricValue(filteredRuntimeRatio);
             properties.setNumberOfThreadsInClusterRatio(filteredThreadRatio);
             properties.setCompleteFilteredNumericalMetricValue(completeFilteredRuntimeDurationOfCluster);
             properties.setSumMetricValue(filteredRuntimeRatioSum);
+            properties.setColor(color);
             propertiesManager.registerProperties(properties);
 
             if (i != 0)
@@ -105,12 +111,12 @@ public class ZoomedThreadRadar extends AThreadRadar
                 startAngle -= threadRationFromRunBefore * 360;
             }
 
-            int angle = (int) (360 * filteredThreadRatio * -1);
-            int radius = getRadius(filteredRuntimeRatio);
-            int radiusSum = getSumRadius(filteredRuntimeRatioSum);
+            final int angle = (int) (360 * filteredThreadRatio * -1);
+            final int radius = getRadius(filteredRuntimeRatio);
+            final int radiusSum = getSumRadius(filteredRuntimeRatioSum);
 
-            drawArcForSumAndAvg(colors[i], radiusSum, radius, startAngle, angle);
-            if (hoveredCluster == clustering.get(i).getId())
+            drawArcForSumAndAvg(color, radiusSum, radius, startAngle, angle);
+            if (hoveredCluster == cluster.getId())
             {
                 markedStartAngle = startAngle;
                 markedAngle = angle;

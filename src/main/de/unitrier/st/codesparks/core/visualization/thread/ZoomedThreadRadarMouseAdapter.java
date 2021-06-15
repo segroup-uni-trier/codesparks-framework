@@ -44,8 +44,8 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
     {
         super.mouseMoved(e);
         int hoverCount = 0;
-        final ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
+//        final ThreadArtifactClustering clustering =
+//                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
 
         for (final ThreadArtifactCluster cluster : clustering)
         {
@@ -72,8 +72,8 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
 
     private boolean isPointInArc(int x, int y, final ThreadArtifactCluster cluster)
     {
-        final VisualThreadClusterProperties visualThreadClusterProperties = VisualThreadClusterPropertiesManager.getInstance(clustering).getOrDefault(cluster
-                , -1);
+        final VisualThreadClusterPropertiesManager instance = VisualThreadClusterPropertiesManager.getInstance(clustering);
+        final VisualThreadClusterProperties visualThreadClusterProperties = instance.getOrDefault(cluster, -1);
         final RadialVisualThreadClusterProperties radialVisualThreadClusterProperties = (RadialVisualThreadClusterProperties) visualThreadClusterProperties;
 
         final double arcAngle = radialVisualThreadClusterProperties.getArcAngle();
