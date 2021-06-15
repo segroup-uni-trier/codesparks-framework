@@ -139,7 +139,6 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                     final ComboBoxItem comboBoxItem = new ComboBoxItem(i, String.valueOf(i));
                     numberOfClustersComboBox.addItem(comboBoxItem);
                 }
-//                numberOfClustersComboBox.addItem(new ComboBoxItem(0, "Kernel Based Density Estimation (" + numberOfEstimatedClusters + ")"));
                 numberOfClustersComboBox.addItem(new ComboBoxItem(0, String.valueOf(numberOfEstimatedClusters)));
                 if (selectedK > 0)
                 {
@@ -175,12 +174,10 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                             {
                                 strategy = kbdeClusteringStrategy;
                             }
-                            //clustering = artifact.clusterThreadArtifacts(strategy, true);//artifact.clusterThreadArtifacts(strategy);
-
                             clustering = artifact.getClusteringAndSelect(strategy);
 
                             final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
-                            propertiesManager.buildDefaultProperties(ThreadForkLabelFactory.class);
+                            propertiesManager.buildDefaultProperties();
 
                             finalZoomedThreadFork.setThreadArtifactClustering(clustering);
                             finalKernelBasedDensityEstimationPanel.setThreadArtifactClustering(clustering);

@@ -56,7 +56,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         final JBTabbedPane tabbedPane = new JBTabbedPane();
 
         final ThreadArtifactClustering clustering =
-                artifact.getSelectedClusteringOrApplyAndSelect(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
+                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
 
         final AThreadSelectable threadClustersTree = new ThreadClusterTree(clustering, primaryMetricIdentifier);
         threadSelectables.add(threadClustersTree);
@@ -192,7 +192,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         zoomedThreadRadar = new ZoomedThreadRadar(artifact, selectableIndexProvider, threadSelectables, primaryMetricIdentifier);
         zoomedThreadRadar.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
         final ZoomedThreadRadarMouseAdapter mouseAdapter =
-                new ZoomedThreadRadarMouseAdapter(zoomedThreadRadar, artifact, clustering, primaryMetricIdentifier, this, northLeftWrapper);
+                new ZoomedThreadRadarMouseAdapter(zoomedThreadRadar, clustering, this, northLeftWrapper);
         zoomedThreadRadar.addMouseMotionListener(mouseAdapter);
         zoomedThreadRadar.addMouseListener(mouseAdapter);
 

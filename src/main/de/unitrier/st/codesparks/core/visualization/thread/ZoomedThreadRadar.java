@@ -48,15 +48,10 @@ public class ZoomedThreadRadar extends AThreadRadar
         }
         VisualizationUtil.clearAndDrawTransparentBackground(g2d, getWidth(), getHeight());
 
-        //VisualizationUtil.drawTransparentBackground(g2d, getWidth(), getHeight(), AlphaComposite.CLEAR);
-
         final ThreadArtifactClustering clustering =
                 artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
 
         int startAngle = 90; //set start angle to 90 for starting at 12 o'clock
-//        final JBColor[] colors = {new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), new JBColor(Color.decode("#B25283"),
-//                Color.decode("#B25283")), new JBColor(Color.decode("#3E877F"), Color.decode("#3E877F"))};
-        //drawRectangleBackground();
 
         double threadRationFromRunBefore = 0;
         int markedStartAngle = -1;
@@ -140,15 +135,12 @@ public class ZoomedThreadRadar extends AThreadRadar
         final float fontSize = 16f;
 
         drawHoverCluster(markedStartAngle, markedAngle, numberOfSelectedArtifactThreads, markedRadius);
-//        drawNumberOfThreadsLabel(labelWidth, fontSize, numberOfSelectedArtifactThreads, yOffsetForTotalThreadsText);
         // Draw number of threads pedestal at the bottom
         drawPedestal(labelWidth, false, fontSize, numberOfSelectedArtifactThreads, yOffsetForTotalThreadsText);
         // Draw number of different thread types pedestal at the top
         final int numberOfSelectedThreadTypesWithNumericMetricValueInSelection =
                 ThreadVisualizationUtil.getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact, metricIdentifier, selectedThreadArtifacts);
-//        final int numberOfDifferentThreadTypes = ThreadVisualizationUtil.getNumberOfSelectedThreadTypesInSelection(artifact, selectedThreadArtifacts);
         drawPedestal(labelWidth, true, fontSize, numberOfSelectedThreadTypesWithNumericMetricValueInSelection, yOffsetForDifferentClassesText);
-//        drawNumberOfDifferentThreadTypesLabel(labelWidth, fontSize, numberOfDifferentThreadTypes, yOffsetForDifferentClassesText);
     }
 
     void onHoverCluster(final long clusterId)

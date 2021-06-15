@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import de.unitrier.st.codesparks.core.data.*;
@@ -8,14 +11,9 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
 {
-    private final AArtifact artifact;
     private final ThreadArtifactClustering clustering;
-    private final AMetricIdentifier metricIdentifier;
     private final int frameSize;
     private final IClusterHoverable clusterHover;
     private final ZoomedThreadRadar threadArtifactVisualization;
@@ -23,17 +21,13 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
 
     ZoomedThreadRadarMouseAdapter(
             final ZoomedThreadRadar threadArtifactVisualization
-            , final AArtifact artifact
             , final ThreadArtifactClustering clustering
-            , final AMetricIdentifier metricIdentifier
             , final IClusterHoverable clusterHover
             , final JPanel visualizationWrapper
     )
     {
         this.threadArtifactVisualization = threadArtifactVisualization;
-        this.artifact = artifact;
         this.clustering = clustering;
-        this.metricIdentifier = metricIdentifier;
         this.frameSize = ThreadRadarConstants.CIRCLE_FRAMESIZE_ZOOMED;
         this.clusterHover = clusterHover;
         this.visualizationWrapper = visualizationWrapper;
@@ -44,8 +38,6 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
     {
         super.mouseMoved(e);
         int hoverCount = 0;
-//        final ThreadArtifactClustering clustering =
-//                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
 
         for (final ThreadArtifactCluster cluster : clustering)
         {

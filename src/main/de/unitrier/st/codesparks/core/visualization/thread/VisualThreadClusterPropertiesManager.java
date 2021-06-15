@@ -6,7 +6,6 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
-import de.unitrier.st.codesparks.core.visualization.popup.ThreadColor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,14 +48,7 @@ public class VisualThreadClusterPropertiesManager
         }
     }
 
-//    public VisualThreadClusterProperties getProperties(final ThreadArtifactCluster cluster)
-//    {
-//        synchronized (propertiesMap)
-//        {
-//            return propertiesMap.get(cluster.getId());
-//        }
-//    }
-
+    @SuppressWarnings("unused")
     public void clearProperties()
     {
         synchronized (propertiesMap)
