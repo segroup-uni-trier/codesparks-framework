@@ -22,7 +22,7 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
     private final boolean[] selected;
     private final Map<String, Integer> threadIdIndex;
 
-    public ThreadListCellRenderer(final AArtifact artifact, final AMetricIdentifier metricIdentifier)
+    public ThreadListCellRenderer(final AArtifact artifact, final AMetricIdentifier metricIdentifier, final boolean applyClusterColors)
     {
         int numberOfThreads = artifact.getNumberOfThreads();
         this.displayColors = new Color[numberOfThreads];
@@ -30,20 +30,24 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
         this.selected = new boolean[numberOfThreads];
         this.threadIdIndex = new HashMap<>();
 
-        ThreadArtifactClustering clustering =
-                artifact.getSelectedClusteringOrApplyAndSelect(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
+        final ThreadArtifactClustering clustering =
+                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
 
-        VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
+        final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
 
         int colArrayIndex = 0;
         int clusterNum = 0;
         for (final ThreadArtifactCluster threadArtifactCluster : clustering)
         {
-            final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(threadArtifactCluster, clusterNum);
-            final JBColor color = properties.getColor();
+            JBColor color = JBColor.BLACK;
+            if (applyClusterColors)
+            {
+                final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(threadArtifactCluster, clusterNum);
+                color = properties.getColor();
+            }
             for (final AThreadArtifact threadArtifact : threadArtifactCluster)
             {
-                boolean filtered = threadArtifact.isFiltered();
+                final boolean filtered = threadArtifact.isFiltered();
                 this.displayColors[colArrayIndex] = filtered ? JBColor.GRAY : color;
                 this.selectedColors[colArrayIndex] = color;
                 this.selected[colArrayIndex] = !filtered;
@@ -109,9 +113,9 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
     {
         synchronized (selected)
         {
-            for (AThreadArtifact codeSparksThread : cluster)
+            for (final AThreadArtifact threadArtifact : cluster)
             {
-                Integer index = threadIdIndex.get(codeSparksThread.getIdentifier());
+                final int index = threadIdIndex.get(threadArtifact.getIdentifier());
                 updateColor(index);
                 selected[index] = !selected[index];
             }
@@ -123,10 +127,10 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
     {
         synchronized (selected)
         {
-            List<Integer> indices = new ArrayList<>();
-            for (AThreadArtifact codeSparksThread : cluster)
+            final List<Integer> indices = new ArrayList<>();
+            for (final AThreadArtifact threadArtifact : cluster)
             {
-                Integer index = threadIdIndex.get(codeSparksThread.getIdentifier());
+                final int index = threadIdIndex.get(threadArtifact.getIdentifier());
                 selected[index] = true;
                 indices.add(index);
             }
@@ -155,9 +159,9 @@ public final class ThreadListCellRenderer implements ListCellRenderer<JBCheckBox
         System.arraycopy(selectedColors, 0, displayColors, 0, displayColors.length);
     }
 
-    private void enableColors(List<Integer> ints)
+    private void enableColors(List<Integer> indices)
     {
-        for (int index : ints)
+        for (int index : indices)
         {
             displayColors[index] = selectedColors[index];
         }

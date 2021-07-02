@@ -63,7 +63,10 @@ public class TotalNumberOfThreadsAndThreadTypesButtonFillStrategy implements ITh
             double percent = numberOfSelectedThreadsOfCluster / totalNumberOfSelectedThreads;
 
             final Rectangle boundsRectangle = threadClusterButton.getBoundsRectangle();
-            final int numberOfThreadsWidth = (int) (boundsRectangle.width * percent);
+
+//            final int numberOfThreadsWidth = (int) (boundsRectangle.width * percent);
+            final int numberOfThreadsWidth = ThreadVisualizationUtil.getDiscreteXValuedScaleWidth((int) Math.min(20, totalNumberOfSelectedThreads), percent,
+                    boundsRectangle.width);
 
             final JBColor color = threadClusterButton.getColor();
             final Color backgroundMetricColor = VisualizationUtil.getBackgroundMetricColor(color, .35f);
@@ -81,7 +84,9 @@ public class TotalNumberOfThreadsAndThreadTypesButtonFillStrategy implements ITh
 
             percent = numberOfSelectedThreadTypesInCluster / totalNumberOfSelectedThreads;
 
-            final int numberOfThreadTypesWidth = (int) (boundsRectangle.width * percent);
+//            final int numberOfThreadTypesWidth = (int) (boundsRectangle.width * percent);
+            final int numberOfThreadTypesWidth = ThreadVisualizationUtil.getDiscreteXValuedScaleWidth((int) Math.min(20, totalNumberOfSelectedThreads),
+                    percent, boundsRectangle.width);
             graphics.setColor(color);
             graphics.fillRect(boundsRectangle.width - numberOfThreadTypesWidth, 0, numberOfThreadTypesWidth, boundsRectangle.height);
         }

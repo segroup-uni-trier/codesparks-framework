@@ -19,7 +19,7 @@ public class ThreadList extends AThreadSelectable
 {
     private final JBList<JBCheckBox> list;
 
-    public ThreadList(final AArtifact artifact, final AMetricIdentifier metricIdentifier)
+    public ThreadList(final AArtifact artifact, final AMetricIdentifier metricIdentifier, final boolean applyClusterColors)
     {
         list = new JBList<>(new ThreadListModel(artifact, metricIdentifier))
         {
@@ -46,7 +46,7 @@ public class ThreadList extends AThreadSelectable
             }
         };
         component = list;
-        final ThreadListCellRenderer threadListCellRenderer = new ThreadListCellRenderer(artifact, metricIdentifier);
+        final ThreadListCellRenderer threadListCellRenderer = new ThreadListCellRenderer(artifact, metricIdentifier, applyClusterColors);
         list.setCellRenderer(threadListCellRenderer);
         final JBList<JBCheckBox> that = list;
         list.addMouseListener(new MouseAdapter()
@@ -60,6 +60,11 @@ public class ThreadList extends AThreadSelectable
                 that.repaint();
             }
         });
+    }
+
+    public ThreadList(final AArtifact artifact, final AMetricIdentifier metricIdentifier)
+    {
+        this(artifact, metricIdentifier, true);
     }
 
     @Override
