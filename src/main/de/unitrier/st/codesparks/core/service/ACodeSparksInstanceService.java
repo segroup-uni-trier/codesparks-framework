@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.service;
 
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 
 import javax.swing.*;
 import java.net.URL;
@@ -17,7 +17,8 @@ public abstract class ACodeSparksInstanceService
     // 'getDefaultPluginImageIcon'. If an interface is used instead, the 'unused' warning wil not appear.
     static ACodeSparksInstanceService getInstance()
     {
-        return ServiceManager.getService(ACodeSparksInstanceService.class);
+        //return ServiceManager.getService(ACodeSparksInstanceService.class);
+        return ApplicationManager.getApplication().getService(ACodeSparksInstanceService.class);
     }
 
     public abstract String getPluginIdString();

@@ -1,6 +1,6 @@
 package de.unitrier.st.codesparks.core.visualization.settings;
 
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.Configurable;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.properties.PropertiesFile;
@@ -19,8 +19,9 @@ public class ThreadVisualizationConfigurable implements Configurable
 {
     public ThreadVisualizationConfigurable()
     {
-        final CodeSparksSettings service = ServiceManager.getService(CodeSparksSettings.class);
-        service.registerConfigurable(this);
+        //final CodeSparksSettings service = ServiceManager.getService(CodeSparksSettings.class);
+        final CodeSparksSettings codeSparksSettings = ApplicationManager.getApplication().getService(CodeSparksSettings.class);
+        codeSparksSettings.registerConfigurable(this);
     }
 
     @Override

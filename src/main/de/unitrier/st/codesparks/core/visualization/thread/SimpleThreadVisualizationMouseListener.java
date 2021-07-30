@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.components.JBPanel;
@@ -16,13 +19,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
-/*
- * Copyright (c), Oliver Moseler, 2021
- */
 public class SimpleThreadVisualizationMouseListener extends AArtifactVisualizationMouseListener
 {
-    //private final List<IThreadSelectable> threadSelectables;
-
     SimpleThreadVisualizationMouseListener(
             final JComponent component
             , final AArtifact artifact
@@ -30,7 +28,6 @@ public class SimpleThreadVisualizationMouseListener extends AArtifactVisualizati
     )
     {
         super(component, new Dimension(520, 170), artifact, primaryMetricIdentifier);
-        //  this.threadSelectables = new ArrayList<>();
     }
 
     @Override
@@ -46,8 +43,11 @@ public class SimpleThreadVisualizationMouseListener extends AArtifactVisualizati
         final ThreadArtifactClustering sortedDefaultThreadArtifactClustering =
                 artifact.getSelectedClusteringOrApplyAndSelect(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
 
-        final ThreadList threadList = new ThreadList(artifact, primaryMetricIdentifier);
+        final ThreadList threadList = new ThreadList(artifact, primaryMetricIdentifier, false);
         tabbedPane.addTab("Threads", new JBScrollPane(threadList.getComponent()));
+
+        final ThreadList threadListCluster = new ThreadList(artifact, primaryMetricIdentifier);
+        tabbedPane.addTab("Threads-Colored-by-Cluster", new JBScrollPane(threadListCluster.getComponent()));
 
         //final Map<String, List<AThreadArtifact>> threadTypeLists = artifact.getThreadTypeLists();
         final AThreadSelectable threadTypesTree = new ThreadTypeTree(artifact, sortedDefaultThreadArtifactClustering, primaryMetricIdentifier);

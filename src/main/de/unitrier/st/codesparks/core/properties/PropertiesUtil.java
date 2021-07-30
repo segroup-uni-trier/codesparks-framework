@@ -2,7 +2,7 @@ package de.unitrier.st.codesparks.core.properties;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManagerCore;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.PluginId;
 import de.unitrier.st.codesparks.core.service.ACodeSparksInstanceService;
 
@@ -28,7 +28,8 @@ public final class PropertiesUtil
                 ".org/intellij/sdk/docs/basics/plugin_structure/plugin_services.html";
         try
         {
-            final ACodeSparksInstanceService service = ServiceManager.getService(ACodeSparksInstanceService.class);
+//            final ACodeSparksInstanceService service = ServiceManager.getService(ACodeSparksInstanceService.class);
+            final ACodeSparksInstanceService service = ApplicationManager.getApplication().getService(ACodeSparksInstanceService.class);
             assert service != null : errMessage;
             final String pluginIdString = service.getPluginIdString();
             PluginId id = PluginId.getId(pluginIdString);
