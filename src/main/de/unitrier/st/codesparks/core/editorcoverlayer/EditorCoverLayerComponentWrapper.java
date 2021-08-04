@@ -1,11 +1,11 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.editorcoverlayer;
 
 import javax.swing.*;
 import java.awt.*;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class EditorCoverLayerComponentWrapper extends JPanel
 {
     private final JComponent component;
@@ -19,7 +19,6 @@ public class EditorCoverLayerComponentWrapper extends JPanel
         this.component.setLocation(0, 0);
         this.setLayout(null);
         this.setSize(component.getSize());
-        // component.setOpaque(false);
         this.add(this.component);
         this.setOpaque(false);
     }

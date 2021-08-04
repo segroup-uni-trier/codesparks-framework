@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.editorcoverlayer;
 
 import com.intellij.openapi.Disposable;
@@ -16,9 +19,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public final class EditorCoverLayerManager implements Disposable// implements ProjectComponent
 {
     private final Project project;
@@ -31,16 +31,16 @@ public final class EditorCoverLayerManager implements Disposable// implements Pr
         this.project = project;
         this.visible = true;
         coverLayers = new HashMap<>();
-        MyEditorFactoryListener myEditorFactoryListener = new MyEditorFactoryListener();
+        final MyEditorFactoryListener myEditorFactoryListener = new MyEditorFactoryListener();
         EditorFactory.getInstance().addEditorFactoryListener(myEditorFactoryListener, this);
     }
 
-    public void setEditorCoverLayerUpdater(IEditorCoverLayerUpdater editorCoverLayerUpdater)
+    public void setEditorCoverLayerUpdater(final IEditorCoverLayerUpdater editorCoverLayerUpdater)
     {
         this.editorCoverLayerUpdater = editorCoverLayerUpdater;
     }
 
-    public void updateEditorCoverLayerFor(VirtualFile virtualFile)
+    public void updateEditorCoverLayerFor(final VirtualFile virtualFile)
     {
         if (editorCoverLayerUpdater == null || virtualFile == null)
         {
@@ -51,7 +51,7 @@ public final class EditorCoverLayerManager implements Disposable// implements Pr
 
     private static EditorCoverLayerManager instance;
 
-    public static EditorCoverLayerManager getInstance(@NotNull Project project)
+    public static EditorCoverLayerManager getInstance(@NotNull final Project project)
     {
         synchronized (EditorCoverLayerManager.class)
         {
@@ -69,22 +69,21 @@ public final class EditorCoverLayerManager implements Disposable// implements Pr
                 return (instance = new EditorCoverLayerManager(project));
             }
         }
-        // return project.getComponent(EditorCoverLayerManager.class);
     }
 
-    public void registerEditorCoverLayer(Editor editor)
+    public void registerEditorCoverLayer(final Editor editor)
     {
-        PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+        final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
         if (psiFile == null)
         {
             return;
         }
-        VirtualFile virtualFile = psiFile.getVirtualFile();
+        final VirtualFile virtualFile = psiFile.getVirtualFile();
         if (virtualFile == null)
         {
             return;
         }
-        Map<Editor, EditorCoverLayer> layerMap = coverLayers.computeIfAbsent(virtualFile, k -> new HashMap<>());
+        final Map<Editor, EditorCoverLayer> layerMap = coverLayers.computeIfAbsent(virtualFile, k -> new HashMap<>());
         EditorCoverLayer editorCoverLayer = layerMap.get(editor);
         if (editorCoverLayer == null)
         {
@@ -95,20 +94,20 @@ public final class EditorCoverLayerManager implements Disposable// implements Pr
         }
     }
 
-    void unregisterEditorCoverLayer(Editor editor)
+    void unregisterEditorCoverLayer(final Editor editor)
     {
-        PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+        final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
         if (psiFile == null)
         {
             return;
         }
-        VirtualFile virtualFile = psiFile.getVirtualFile();
-        Map<Editor, EditorCoverLayer> layerMap = coverLayers.get(virtualFile);
+        final VirtualFile virtualFile = psiFile.getVirtualFile();
+        final Map<Editor, EditorCoverLayer> layerMap = coverLayers.get(virtualFile);
         if (layerMap == null)
         {
             return;
         }
-        EditorCoverLayer editorCoverLayer = layerMap.get(editor);
+        final EditorCoverLayer editorCoverLayer = layerMap.get(editor);
         if (editorCoverLayer == null)
         {
             return;
@@ -118,82 +117,51 @@ public final class EditorCoverLayerManager implements Disposable// implements Pr
         layerMap.remove(editor);
     }
 
-    public boolean add(EditorCoverLayerItem element)
+    public boolean add(final EditorCoverLayerItem item)
     {
         return ApplicationManager.getApplication().runReadAction((Computable<Boolean>) () -> {
-            PsiElement psiElement = element.getPositionalElement();
+            final PsiElement psiElement = item.getPositionalElement();
             if (psiElement == null || !psiElement.isValid())
             {
                 return false;
             }
-            VirtualFile virtualFile = psiElement.getContainingFile().getVirtualFile();
+            final VirtualFile virtualFile = psiElement.getContainingFile().getVirtualFile();
             if (virtualFile == null)
             {
                 return false;
             }
-            Map<Editor, EditorCoverLayer> layerMap = coverLayers.get(virtualFile);
+            final Map<Editor, EditorCoverLayer> layerMap = coverLayers.get(virtualFile);
             if (layerMap == null)
             {
                 return false;
             }
-            Collection<EditorCoverLayer> editorCoverLayers = layerMap.values();
+            final Collection<EditorCoverLayer> editorCoverLayers = layerMap.values();
             if (editorCoverLayers.size() == 0)
             {
-
-
                 return false;
             }
             // At this point the editor cover layers (respective editors) are holding the same file, e.g. when in split mode, i.e. the same
             // file will be displayed in multiple editors
-            for (EditorCoverLayer editorCoverLayer : editorCoverLayers)
+            for (final EditorCoverLayer editorCoverLayer : editorCoverLayers)
             { /* In case we have multiple editors for the same file, also multiple equally profiling artifacts with respective
                  visualizations will be created. So if the same profiling artifact could not be added to the editorcoverlayer since an equal
                  one was already added
                  to it, addLayerItem it to the next editorcoverlayer
                 */
-                if (editorCoverLayer.addLayerItem(element))
+                if (editorCoverLayer.addLayerItem(item))
                 {
                     break;
                 }
             }
-            //editorCoverLayers.forEach(editorCoverLayer -> editorCoverLayer.addLayerItem(element));
             return true;
         });
     }
-
-//    void remove(EditorCoverLayerItem element)
-//    {
-//        ApplicationManager.getApplication().runReadAction(() -> {
-//            PsiElement psiElement = element.getPositionalElement();
-//            if (psiElement == null)
-//            {
-//                return;
-//            }
-//            VirtualFile virtualFile = psiElement.getContainingFile().getVirtualFile();
-//            if (virtualFile == null)
-//            {
-//                return;
-//            }
-//            Map<Editor, EditorCoverLayer> layerMap = coverLayers.get(virtualFile);
-//            if (layerMap == null)
-//            {
-//                return;
-//            }
-//            layerMap.values().forEach(editorCoverLayer -> editorCoverLayer.removeLayerItem(element));
-//        });
-//    }
 
     @Override
     public void dispose()
     {
         clear();
     }
-//
-//    @Override
-//    public void projectClosed()
-//    {
-//        clear();
-//    }
 
     private void clear()
     {
@@ -212,7 +180,7 @@ public final class EditorCoverLayerManager implements Disposable// implements Pr
         });
     }
 
-    public void setEditorCoverLayersVisible(boolean visible)
+    public void setEditorCoverLayersVisible(final boolean visible)
     {
         this.visible = visible;
         coverLayers.values().forEach(layerMap -> layerMap.values().forEach(editorCoverLayer -> editorCoverLayer.setVisible(visible)));
@@ -227,7 +195,7 @@ public final class EditorCoverLayerManager implements Disposable// implements Pr
 
     private IEditorCoverLayerLogger logger;
 
-    public void registerLogger(IEditorCoverLayerLogger logger)
+    public void registerLogger(final IEditorCoverLayerLogger logger)
     {
         this.logger = logger;
     }

@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.editorcoverlayer;
 
 import com.intellij.openapi.editor.Editor;
@@ -8,9 +11,6 @@ import com.intellij.psi.SmartPsiElementPointer;
 
 import javax.swing.*;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class EditorCoverLayerItem
 {
     private boolean valid;
@@ -22,7 +22,7 @@ public class EditorCoverLayerItem
         return component;
     }
 
-    public EditorCoverLayerItem(PsiElement psiElement, JComponent component)
+    public EditorCoverLayerItem(final PsiElement psiElement, final JComponent component)
     {
         if (psiElement != null)
         {
@@ -53,7 +53,7 @@ public class EditorCoverLayerItem
             valid = false;
         } else
         {
-            PsiElement psiElement = smartPsiElementPointer.getElement(); // Return a psi element
+            final PsiElement psiElement = smartPsiElementPointer.getElement(); // Return a psi element
             if (psiElement == null || !psiElement.isValid())
             {
                 valid = false;
@@ -66,20 +66,20 @@ public class EditorCoverLayerItem
      * @return The offset of the current editor cover layer item within the underling editor. Indeed will return the offset of the
      * respective end of the line where the text range of the psi element ends.
      */
-    int getOffset(Editor editor)
+    int getOffset(final Editor editor)
     {
         try
         {
-            PsiElement psiElement = smartPsiElementPointer.getElement();
+            final PsiElement psiElement = smartPsiElementPointer.getElement();
             if (psiElement == null || !psiElement.isValid())
             {
                 return -1;
             }
-            TextRange range = psiElement.getTextRange();
-            int offset = range.getEndOffset(); // initial offset is where the text of the positional element ends
-            int lineNumber = editor.getDocument().getLineNumber(offset); // Get the line of the offset in which the text of the positional
+            final TextRange range = psiElement.getTextRange();
+            final int offset = range.getEndOffset(); // initial offset is where the text of the positional element ends
+            final int lineNumber = editor.getDocument().getLineNumber(offset); // Get the line of the offset in which the text of the positional
             // element ends
-            int lineEndOffset = editor.getDocument().getLineEndOffset(lineNumber); // get the offset of the end of that line
+            final int lineEndOffset = editor.getDocument().getLineEndOffset(lineNumber); // get the offset of the end of that line
             return Math.min(lineEndOffset, editor.getDocument().getTextLength());
         } catch (IndexOutOfBoundsException e)
         {
@@ -88,7 +88,7 @@ public class EditorCoverLayerItem
     }
 
     @Override
-    public boolean equals(Object o)
+    public boolean equals(final Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -100,8 +100,7 @@ public class EditorCoverLayerItem
     @Override
     public int hashCode()
     { // do not addLayerItem component to the hashCode calculus since an editor cover layer item should be considered equal when at the
-        // same position
-        // (-> smartPsiElementPointer)
+        // same position (-> smartPsiElementPointer)
         int result = (valid ? 1 : 0);
         result = 31 * result + smartPsiElementPointer.hashCode();
         return result;
