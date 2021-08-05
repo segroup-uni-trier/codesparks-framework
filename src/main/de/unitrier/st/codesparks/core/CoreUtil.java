@@ -10,7 +10,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import de.unitrier.st.codesparks.core.data.IPsiNavigable;
-import de.unitrier.st.codesparks.core.service.ACodeSparksInstanceService;
+import de.unitrier.st.codesparks.core.service.CodeSparksInstanceService;
 
 import javax.swing.*;
 import java.text.DecimalFormat;
@@ -131,7 +131,7 @@ public final class CoreUtil
 
     public static ImageIcon getDefaultImageIcon()
     {
-        final ACodeSparksInstanceService service = ACodeSparksInstanceService.getInstance();
+        final CodeSparksInstanceService service = CodeSparksInstanceService.getInstance();
         assert service != null;
         return service.getDefaultPluginImageIcon();
     }

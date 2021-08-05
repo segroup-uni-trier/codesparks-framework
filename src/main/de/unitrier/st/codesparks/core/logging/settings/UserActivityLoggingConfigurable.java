@@ -1,13 +1,11 @@
 package de.unitrier.st.codesparks.core.logging.settings;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.Configurable;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import de.unitrier.st.codesparks.core.properties.PropertiesFile;
 import de.unitrier.st.codesparks.core.properties.PropertiesUtil;
 import de.unitrier.st.codesparks.core.properties.PropertyKey;
-import de.unitrier.st.codesparks.core.service.ACodeSparksInstanceService;
 import de.unitrier.st.codesparks.core.settings.CheckBoxComponentWrapper;
 import de.unitrier.st.codesparks.core.settings.CodeSparksSettings;
 import org.jetbrains.annotations.Nullable;

@@ -12,16 +12,15 @@ import javax.swing.*;
 import java.net.URL;
 import java.nio.file.Path;
 
-public abstract class ACodeSparksInstanceService
+public abstract class CodeSparksInstanceService
 {
     // Is used from the plugin mechanics. It is a service and thus a singleton.
     // See documentation at https://jetbrains.org/intellij/sdk/docs/basics/plugin_structure/plugin_services.html
     // I decided to use an abstract class instead of an interface so that I am able to provide implementations for some methods, e.g.
-    // 'getDefaultPluginImageIcon'. If an interface is used instead, the 'unused' warning wil not appear.
-    public static ACodeSparksInstanceService getInstance()
+    // 'getDefaultPluginImageIcon'.
+    public static CodeSparksInstanceService getInstance()
     {
-        //return ServiceManager.getService(ACodeSparksInstanceService.class);
-        return ApplicationManager.getApplication().getService(ACodeSparksInstanceService.class);
+        return ApplicationManager.getApplication().getService(CodeSparksInstanceService.class);
     }
 
     public abstract String getPluginIdString();
@@ -60,7 +59,7 @@ public abstract class ACodeSparksInstanceService
 
     public ImageIcon getDefaultPluginImageIcon()
     {
-        final Class<? extends ACodeSparksInstanceService> aClass = getClass();
+        final Class<? extends CodeSparksInstanceService> aClass = getClass();
         if (aClass == null)
         {
             return null;

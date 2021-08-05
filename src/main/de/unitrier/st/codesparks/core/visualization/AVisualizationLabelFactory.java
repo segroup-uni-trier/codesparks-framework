@@ -41,7 +41,7 @@ public abstract class AVisualizationLabelFactory extends AVisualizationSequence
 
     protected JLabel emptyLabel()
     {
-        JLabel jLabel = new JLabel();
+        final JLabel jLabel = new JLabel();
         jLabel.setSize(0, 0);
         return jLabel;
     }
@@ -54,14 +54,12 @@ public abstract class AVisualizationLabelFactory extends AVisualizationSequence
     protected JLabel makeLabel(final CodeSparksGraphics codeSparksGraphics, final int width)
     {
         final BufferedImage bufferedImage = codeSparksGraphics.getBufferedImage();
-        BufferedImage subImage = bufferedImage.getSubimage(0, 0, width, bufferedImage.getHeight());
-        ImageIcon imageIcon = new ImageIcon(subImage);
+        final BufferedImage subImage = bufferedImage.getSubimage(0, 0, width, bufferedImage.getHeight());
+        final ImageIcon imageIcon = new ImageIcon(subImage);
 
-        JLabel jLabel = new JLabel();
+        final JLabel jLabel = new JLabel();
         jLabel.setIcon(imageIcon);
-
         jLabel.setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
-
         return jLabel;
     }
 

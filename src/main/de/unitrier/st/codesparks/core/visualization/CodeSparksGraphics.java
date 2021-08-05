@@ -76,6 +76,14 @@ public class CodeSparksGraphics extends Graphics2D
         graphics2D.setColor(currentColor);
     }
 
+    public void drawString(final String str, final int x, final int y, final Color color)
+    {
+        final Color currentColor = graphics2D.getColor();
+        graphics2D.setColor(color);
+        graphics2D.drawString(str, x, y);
+        graphics2D.setColor(currentColor);
+    }
+
     public int stringWidth(final String str)
     {
         return graphics2D.getFontMetrics().stringWidth(str);
