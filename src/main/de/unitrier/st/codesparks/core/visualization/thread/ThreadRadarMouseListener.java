@@ -369,7 +369,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
     protected String createPopupTitle(AArtifact artifact)
     {
         final StringBuilder titleStringBuilder = new StringBuilder();
-        titleStringBuilder.append(artifact.getName());
+        titleStringBuilder.append(artifact.getShortName());
         titleStringBuilder.append(" - ");
         titleStringBuilder.append(primaryMetricIdentifier.getShortDisplayString());
         titleStringBuilder.append(": ");

@@ -61,7 +61,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
 
         final long selftimeCnt = threadFilteredNeighborArtifactsOfLine
                 .stream()
-                .filter(npa -> npa.getName().toLowerCase().startsWith("self"))
+                .filter(npa -> npa.getShortName().toLowerCase().startsWith("self"))
                 .count();
 
         numberOfCalleesInSameLine -= selftimeCnt;
@@ -115,7 +115,7 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
             calleeRuntimeSum += neighborRuntime;
 
             // Draw the text.
-            methodRuntimes.put(neighborArtifact.getName(), neighborRuntime);
+            methodRuntimes.put(neighborArtifact.getShortName(), neighborRuntime);
             if (psiElement == null)
             {
                 psiElement = neighborArtifact.getVisPsiElement();//neighborArtifact.getInvocationLineElement();

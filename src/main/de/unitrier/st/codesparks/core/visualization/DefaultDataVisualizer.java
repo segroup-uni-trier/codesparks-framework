@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -13,9 +16,6 @@ import de.unitrier.st.codesparks.core.visualization.neighbor.INeighborArtifactVi
 import java.util.ArrayList;
 import java.util.Collection;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class DefaultDataVisualizer extends ADataVisualizer
 {
     public DefaultDataVisualizer()
@@ -23,9 +23,7 @@ public class DefaultDataVisualizer extends ADataVisualizer
         this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), null, null);
     }
 
-    public DefaultDataVisualizer(
-            final AArtifactVisualizationLabelFactory[] artifactFactories
-    )
+    public DefaultDataVisualizer(final AArtifactVisualizationLabelFactory[] artifactFactories)
     {
         this(DefaultArtifactVisualizer.getInstance(), DefaultNeighborArtifactVisualizer.getInstance(), artifactFactories, null);
     }
@@ -55,30 +53,30 @@ public class DefaultDataVisualizer extends ADataVisualizer
     )
     {
         // TODO: possible parallelization applicable?
-        final Collection<EditorCoverLayerItem> overlayElements = new ArrayList<>();
+        final Collection<EditorCoverLayerItem> coverLayerItems = new ArrayList<>();
 
-        for (AArtifact artifact : matchedArtifacts)
+        for (final AArtifact artifact : matchedArtifacts)
         {
             ApplicationManager.getApplication().runReadAction(() -> {
 
-                AArtifactVisualization artifactVisualization = artifactVisualizer.createArtifactVisualization(artifact,
+                final AArtifactVisualization artifactVisualization = artifactVisualizer.createArtifactVisualization(artifact,
                         artifactLabelFactories);
 
-                PsiElement psiElement = artifact.getVisPsiElement();
-                EditorCoverLayerItem layerItem = new EditorCoverLayerItem(psiElement, artifactVisualization);
+                final PsiElement psiElement = artifact.getVisPsiElement();
+                final EditorCoverLayerItem layerItem = new EditorCoverLayerItem(psiElement, artifactVisualization);
 
-                overlayElements.add(layerItem);
+                coverLayerItems.add(layerItem);
 
-                Collection<ANeighborArtifactVisualization> calleeVisualizations =
+                final Collection<ANeighborArtifactVisualization> calleeVisualizations =
                         neighborArtifactVisualizer.createNeighborArtifactVisualizations(artifact, neighborLabelFactories);
 
-                for (ANeighborArtifactVisualization calleeVisualization : calleeVisualizations)
+                for (final ANeighborArtifactVisualization calleeVisualization : calleeVisualizations)
                 {
-                    EditorCoverLayerItem item = new EditorCoverLayerItem(calleeVisualization.getPsiElement(), calleeVisualization);
-                    overlayElements.add(item);
+                    final EditorCoverLayerItem item = new EditorCoverLayerItem(calleeVisualization.getPsiElement(), calleeVisualization);
+                    coverLayerItems.add(item);
                 }
             });
         }
-        return overlayElements;
+        return coverLayerItems;
     }
 }

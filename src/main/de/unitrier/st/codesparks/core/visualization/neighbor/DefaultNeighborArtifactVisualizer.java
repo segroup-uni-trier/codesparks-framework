@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, Oliver Moseler
+ * Copyright (c) 2021. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
@@ -9,9 +9,6 @@ import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class DefaultNeighborArtifactVisualizer implements INeighborArtifactVisualizer
 {
     private static volatile INeighborArtifactVisualizer instance;
@@ -31,7 +28,7 @@ public class DefaultNeighborArtifactVisualizer implements INeighborArtifactVisua
         return instance;
     }
 
-    private DefaultNeighborArtifactVisualizer() { }
+    private DefaultNeighborArtifactVisualizer() {}
 
     @Override
     public Collection<ANeighborArtifactVisualization> createNeighborArtifactVisualizations(
@@ -39,13 +36,13 @@ public class DefaultNeighborArtifactVisualizer implements INeighborArtifactVisua
             , final ANeighborArtifactVisualizationLabelFactory... neighborFactories
     )
     {
-        assert artifact != null;
+        final List<ANeighborArtifactVisualization> neighborArtifactVisualizations = new ArrayList<>();
+        if (artifact == null)
+        {
+            return neighborArtifactVisualizations;
+        }
 
-        List<ANeighborArtifactVisualization> calleeVisualizations = new ArrayList<>();
-
-        //int lineHeight = VisConstants.getLineHeight();
-
-        Set<Map.Entry<Integer, List<ANeighborArtifact>>> threadFilteredSuccessors = artifact.getSuccessors()
+        final Set<Map.Entry<Integer, List<ANeighborArtifact>>> threadFilteredSuccessors = artifact.getSuccessors()
                 .entrySet()
                 .stream()
                 .filter(integerListEntry ->
@@ -54,18 +51,18 @@ public class DefaultNeighborArtifactVisualizer implements INeighborArtifactVisua
                                         .stream()
                                         .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))).collect(Collectors.toSet());
 
-        for (Map.Entry<Integer, List<ANeighborArtifact>> entry : threadFilteredSuccessors)
+        for (final Map.Entry<Integer, List<ANeighborArtifact>> entry : threadFilteredSuccessors)
         {
-            List<ANeighborArtifact> threadFilteredCalleesOfCurrentLine = entry.getValue()
+            final List<ANeighborArtifact> threadFilteredNeighborsOfCurrentLine = entry.getValue()
                     .stream()
                     .filter(aNeighborProfilingArtifact -> aNeighborProfilingArtifact.getThreadArtifacts()
                             .stream().anyMatch(threadArtifact -> !threadArtifact.isFiltered())).collect(Collectors.toList());
 
-            NeighborArtifactVisualizationWrapper neighborArtifactVisualizationWrapper =
-                    new NeighborArtifactVisualizationWrapper(artifact, threadFilteredCalleesOfCurrentLine, neighborFactories);
+            final NeighborArtifactVisualizationWrapper neighborArtifactVisualizationWrapper =
+                    new NeighborArtifactVisualizationWrapper(artifact, threadFilteredNeighborsOfCurrentLine, neighborFactories);
 
-            calleeVisualizations.add(neighborArtifactVisualizationWrapper);
+            neighborArtifactVisualizations.add(neighborArtifactVisualizationWrapper);
         }
-        return calleeVisualizations;
+        return neighborArtifactVisualizations;
     }
 }

@@ -63,7 +63,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
 
         final List<ANeighborArtifact> artifactSuccessorsList = artifact.getSuccessorsList()
                 .stream()
-                .filter(npa -> !npa.getName().toLowerCase().startsWith("self"))
+                .filter(npa -> !npa.getShortName().toLowerCase().startsWith("self"))
                 .filter(npa -> npa.getThreadArtifacts()
                         .stream()
                         .anyMatch(threadArtifact -> !threadArtifact.isFiltered()
@@ -134,7 +134,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
     protected String createPopupTitle(final AArtifact artifact)
     {
         final StringBuilder titleStringBuilder = new StringBuilder();
-        titleStringBuilder.append(artifact.getName());
+        titleStringBuilder.append(artifact.getShortName());
         titleStringBuilder.append(" - ");
         titleStringBuilder.append(primaryMetricIdentifier.getShortDisplayString());
         titleStringBuilder.append(": ");

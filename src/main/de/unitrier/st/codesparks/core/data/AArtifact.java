@@ -31,6 +31,8 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return name;
     }
 
+    public String getShortName() { return name; }
+
     protected final String identifier;
 
     public String getIdentifier()
@@ -54,11 +56,11 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
 
     protected int lineNumber;
 
-    public int getLineNumber() { return lineNumber; }
+    public int getLineNumber() {return lineNumber;}
 
     protected String fileName;
 
-    public String getFileName() { return fileName; }
+    public String getFileName() {return fileName;}
 
     /*
      * Constructors

@@ -35,7 +35,7 @@ public class MetricTableModel extends DefaultTableModel
         predecessors.sort(comparator);
         successors = artifact.getSuccessorsList()
                 .stream()
-                .filter(npa -> !npa.getName().toLowerCase().startsWith("self"))
+                .filter(npa -> !npa.getShortName().toLowerCase().startsWith("self"))
                 .filter(npa -> npa.getThreadArtifacts()
                         .stream()
                         .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
