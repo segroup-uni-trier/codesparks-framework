@@ -46,4 +46,10 @@ public interface IArtifactPool extends IThreadArtifactFilterable, IArtifactPoolE
      * Clears the complete artifact pool.
      */
     void clear();
+
+    /**
+     *
+     * @param artifactClassDisplayNameProvider
+     */
+    void registerArtifactClassDisplayNameProvider(final IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider);
 }

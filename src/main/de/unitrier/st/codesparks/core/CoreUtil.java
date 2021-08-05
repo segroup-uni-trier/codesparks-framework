@@ -3,7 +3,6 @@
  */
 package de.unitrier.st.codesparks.core;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -132,8 +131,7 @@ public final class CoreUtil
 
     public static ImageIcon getDefaultImageIcon()
     {
-//        final ACodeSparksInstanceService service = ServiceManager.getService(ACodeSparksInstanceService.class);
-        final ACodeSparksInstanceService service = ApplicationManager.getApplication().getService(ACodeSparksInstanceService.class);
+        final ACodeSparksInstanceService service = ACodeSparksInstanceService.getInstance();
         assert service != null;
         return service.getDefaultPluginImageIcon();
     }
@@ -149,12 +147,12 @@ public final class CoreUtil
         return EditorUtil.getEditorEx(selectedEditor);
     }
 
-    public static void navigate(final String identifier)
+    public static void navigate(final String artifactIdentifier)
     {
         final IArtifactPool artifactPool = ArtifactPoolManager.getInstance().getArtifactPool();
         if (artifactPool != null)
         {
-            final IPsiNavigable artifact = artifactPool.getArtifact(identifier);
+            final IPsiNavigable artifact = artifactPool.getArtifact(artifactIdentifier);
             if (artifact != null)
             {
                 artifact.navigate();

@@ -1,9 +1,8 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core.properties;
 
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManagerCore;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.extensions.PluginId;
 import de.unitrier.st.codesparks.core.service.ACodeSparksInstanceService;
 
 import java.io.File;
@@ -12,9 +11,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public final class PropertiesUtil
 {
     private PropertiesUtil() {}
@@ -28,16 +24,8 @@ public final class PropertiesUtil
                 ".org/intellij/sdk/docs/basics/plugin_structure/plugin_services.html";
         try
         {
-//            final ACodeSparksInstanceService service = ServiceManager.getService(ACodeSparksInstanceService.class);
-            final ACodeSparksInstanceService service = ApplicationManager.getApplication().getService(ACodeSparksInstanceService.class);
-            assert service != null : errMessage;
-            final String pluginIdString = service.getPluginIdString();
-            PluginId id = PluginId.getId(pluginIdString);
-            IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(id);
-            assert plugin != null;
-            //PLUGIN_PATH = plugin.getPath().getAbsolutePath();
-            PLUGIN_PATH = plugin.getPluginPath().toString();
-
+            final ACodeSparksInstanceService instance = ACodeSparksInstanceService.getInstance();
+            PLUGIN_PATH = instance.getPluginPathString();
         } catch (NullPointerException e)
         {
             System.err.println(errMessage);
@@ -94,7 +82,7 @@ public final class PropertiesUtil
         {
             properties.load(new FileInputStream(rootPath));
             return properties;
-        } catch (IOException ignored) { }
+        } catch (IOException ignored) {}
         return null;
     }
 

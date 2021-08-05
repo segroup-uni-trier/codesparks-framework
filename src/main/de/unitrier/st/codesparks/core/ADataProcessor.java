@@ -1,15 +1,15 @@
+/*
+ * Copyright (c), Oliver Moseler, 2021
+ */
 package de.unitrier.st.codesparks.core;
 
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public abstract class ADataProcessor extends Task.WithResult<Boolean, Exception> implements IDataProcessor
 {
-    protected final AArtifactPool artifactPool;
+    protected final IArtifactPool artifactPool;
 
     public ADataProcessor(final Project project, final String title, final boolean canBeCancelled)
     {
@@ -17,9 +17,9 @@ public abstract class ADataProcessor extends Task.WithResult<Boolean, Exception>
         artifactPool = createArtifactPoolInstance();
     }
 
-    protected abstract AArtifactPool createArtifactPoolInstance();
+    protected abstract IArtifactPool createArtifactPoolInstance();
 
-    public AArtifactPool getArtifactPool()
+    public IArtifactPool getArtifactPool()
     {
         return artifactPool;
     }

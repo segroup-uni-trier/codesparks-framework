@@ -131,7 +131,8 @@ public class ArtifactOverViewTableModel implements TableModel
 //                return cachedArtifactVisualizationLabel;
                 return labelFactory.createArtifactLabel(artifact);
             case 1:
-                return CoreUtil.reduceToLength(artifact.getIdentifier(), 55, "...");
+//                return CoreUtil.reduceToLength(artifact.getIdentifier(), 55, "...");
+                return CoreUtil.reduceToLength(artifact.getName(), 55, "...");
             default:
                 break;
         }

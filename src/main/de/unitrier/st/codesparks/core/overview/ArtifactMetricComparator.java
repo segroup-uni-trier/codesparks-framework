@@ -25,17 +25,31 @@ public class ArtifactMetricComparator implements Comparator<AArtifact>
             throw new IllegalArgumentException("The argument 'metricIdentifier' must not be null!");
         }
         this.metricIdentifier = metricIdentifier;
-        if (metricIdentifier.isNumerical() && metricIdentifier.isRelative())
+        if (metricIdentifier.isNumerical() )
         {
-            this.toDoubleFunction = artifact -> {
-                if (artifact != null)
+            if (metricIdentifier.isRelative())
+            {
+                this.toDoubleFunction = artifact -> {
+                    if (artifact != null)
+                    {
+                        return DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, metricIdentifier);
+                    } else
+                    {
+                        return 0d;
+                    }
+                };
+            } else {
+                this.toDoubleFunction = artifact ->
                 {
-                    return DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, metricIdentifier);
-                } else
-                {
-                    return 0d;
-                }
-            };
+                    if (artifact != null)
+                    {
+                        return artifact.getNumericalMetricValue(metricIdentifier);
+                    } else
+                    {
+                        return 0d;
+                    }
+                };
+            }
         }
         this.enabled = enabled;
     }

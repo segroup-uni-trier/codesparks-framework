@@ -12,12 +12,12 @@ public class ArtifactBuilder
 {
     private AArtifact artifact;
 
-    public ArtifactBuilder(final String name, final String identifier, final Class<? extends AArtifact> artifactClass)
+    public ArtifactBuilder(final String identifier, final String name, final Class<? extends AArtifact> artifactClass)
     {
         try
         {
             final Constructor<? extends AArtifact> constructor = artifactClass.getDeclaredConstructor(String.class, String.class);
-            artifact = constructor.newInstance(name, identifier);
+            artifact = constructor.newInstance(identifier, name);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e)
         {
             CodeSparksLogger.addText("%s: %s", getClass().getSimpleName(), e.getMessage());
@@ -25,9 +25,9 @@ public class ArtifactBuilder
         }
     }
 
-    public ArtifactBuilder(final String name, final String identifier)
+    public ArtifactBuilder(final String identifier, final String name)
     {
-        artifact = new DefaultArtifact(name, identifier);
+        artifact = new DefaultArtifact(identifier, name);
     }
 
     public ArtifactBuilder setFileName(String fileName)

@@ -899,14 +899,16 @@ public class ArtifactOverview
             filtered.retainAll(threadStateArtifactFilter.filterArtifact(filtered));
         }
 
-        /*
-         * Alternatively, keep all artifacts which have at least one thread which is not filtered.
-         */
-        final Set<AArtifact> nonThreadFilterArtifacts = filtered.stream()
-                .filter(artifact -> artifact.hasThreads() &&
-                        artifact.getThreadArtifacts().stream().anyMatch(AThreadArtifact::isSelected))
-                .collect(Collectors.toSet());
-        filtered.retainAll(nonThreadFilterArtifacts);
+        if (filtered.stream().allMatch(AArtifact::hasThreads))
+        {
+            /*
+             * Alternatively, keep all artifacts which have at least one thread which is not filtered.
+             */
+            final Set<AArtifact> nonThreadFilterArtifacts = filtered.stream()
+                    .filter(artifact -> artifact.getThreadArtifacts().stream().anyMatch(AThreadArtifact::isSelected))
+                    .collect(Collectors.toSet());
+            filtered.retainAll(nonThreadFilterArtifacts);
+        }
 
         return new ArrayList<>(filtered);
     }

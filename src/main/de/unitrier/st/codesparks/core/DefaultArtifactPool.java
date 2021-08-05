@@ -10,22 +10,23 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public abstract class AArtifactPool implements IArtifactPool
+public class DefaultArtifactPool implements IArtifactPool
 {
-    protected AArtifactPool()
+    public DefaultArtifactPool()
     {
-        artifacts = new HashMap<>();
+        this.artifacts = new HashMap<>();
     }
 
-    protected AArtifactPool(IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
+    public DefaultArtifactPool(final IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
     {
-        this();
+        this.artifacts = new HashMap<>();
         this.artifactClassDisplayNameProvider = artifactClassDisplayNameProvider;
     }
 
     private IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider;
 
-    public void registerArtifactClassDisplayNameProvider(IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
+    @Override
+    public void registerArtifactClassDisplayNameProvider(final IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
     {
         this.artifactClassDisplayNameProvider = artifactClassDisplayNameProvider;
     }
