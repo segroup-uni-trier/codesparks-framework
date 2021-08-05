@@ -49,11 +49,27 @@ public abstract class CodeSparksInstanceService
         return pluginPath;
     }
 
+    public Path getAbsolutePluginPath()
+    {
+        final IdeaPluginDescriptor pluginDescriptor = getPluginDescriptor();
+        //noinspection UnnecessaryLocalVariable
+        final Path absolutePath = pluginDescriptor.getPluginPath().toAbsolutePath();
+        return absolutePath;
+    }
+
     public String getPluginPathString()
     {
         final Path pluginPath = getPluginPath();
         //noinspection UnnecessaryLocalVariable
         final String pathString = pluginPath.toString();
+        return pathString;
+    }
+
+    public String getAbsolutePluginPathString()
+    {
+        final Path absolutePluginPath = getAbsolutePluginPath();
+        //noinspection UnnecessaryLocalVariable
+        final String pathString = absolutePluginPath.toString();
         return pathString;
     }
 
