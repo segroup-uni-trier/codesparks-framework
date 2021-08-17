@@ -4,6 +4,7 @@
 package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTabbedPane;
@@ -24,13 +25,14 @@ import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.*;
 
-public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable
+public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable, IClusterMouseClickable
 {
     private IThreadSelectableIndexProvider selectableIndexProvider;
     private final List<IThreadSelectable> threadSelectables;
     private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayDataProvider;
     private final JLabel[] leftHoverLabels;
     private final List<JPanel> hoverPanels;
+    private final List<JPanel> selectionPanels;
     private final JLabel[] rightHoverLabels;
 
     ThreadForkMouseListener(
@@ -46,6 +48,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         this.leftHoverLabels = new JLabel[2];
         this.rightHoverLabels = new JLabel[2];
         hoverPanels = new ArrayList<>(2);
+        selectionPanels = new ArrayList<>(2);
     }
 
     private static class ComboBoxItem
@@ -111,6 +114,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                     , selectedClustering
                     , selectableIndexProvider
                     , threadSelectables
+                    , this
                     , this
             ); // the final variable is for us in lambdas
             zoomedThreadFork = finalZoomedThreadFork;
@@ -227,6 +231,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             };
             leftSelectedMetricLabelWrapper.add(leftSelectedMetricLabel, BorderLayout.CENTER);
             leftSelectedThreadsPanel.add(leftSelectedMetricLabelWrapper);
+            selectionPanels.add(leftSelectedThreadsPanel);
             componentsToRegisterToTheThreadSelectables.add(leftSelectedMetricLabel);
 
             final JPanel leftHoveredClusterPanel = new JPanel();
@@ -304,6 +309,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             final JPanel rightSelectedNumberOfThreadsLabelWrapper = new JPanel(new BorderLayout());
             rightSelectedNumberOfThreadsLabelWrapper.add(rightSelectedNumberOfThreadsLabel);
             rightSelectedThreadsPanel.add(rightSelectedNumberOfThreadsLabelWrapper);
+            selectionPanels.add(rightSelectedThreadsPanel);
             componentsToRegisterToTheThreadSelectables.add(rightSelectedNumberOfThreadsLabel);
 
             final JPanel rightSelectedTypesLabelWrapper = new JPanel(new BorderLayout());
@@ -544,8 +550,8 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
     }
 
     private static final String hoverBorderTitle = "Hovered cluster";
-    private static final Border coloredEtchedBorder = BorderFactory.createEtchedBorder(VisConstants.ORANGE, VisConstants.ORANGE);
-    private static final Border coloredTitledHoverBorder = BorderFactory.createTitledBorder(coloredEtchedBorder, hoverBorderTitle);
+    private static final Border coloredEtchedHoverBorder = BorderFactory.createEtchedBorder(VisConstants.ORANGE, VisConstants.ORANGE);
+    private static final Border coloredTitledHoverBorder = BorderFactory.createTitledBorder(coloredEtchedHoverBorder, hoverBorderTitle);
     private static final Border titledHoverBorder = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), hoverBorderTitle);
 
     @Override
@@ -572,5 +578,40 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         {
             hoverPanel.setBorder(titledHoverBorder);
         }
+    }
+
+    private static final Border coloredEtchedMouseClickedBorder = BorderFactory.createEtchedBorder(JBColor.CYAN, JBColor.CYAN);
+    private static final Border coloredTitledMouseClickedBorder = BorderFactory.createTitledBorder(coloredEtchedMouseClickedBorder, "Selected threads");
+
+    private static final Object mouseClickedLock = new Object();
+
+    @Override
+    public void onMouseClicked()
+    {
+        final Thread thread = new Thread(() -> {
+            final List<Border> formerBorders = new ArrayList<>(selectionPanels.size());
+            synchronized (mouseClickedLock)
+            {
+                for (final JPanel selectionPanel : selectionPanels)
+                {
+                    formerBorders.add(selectionPanel.getBorder());
+                    selectionPanel.setBorder(coloredTitledMouseClickedBorder);
+                }
+                try
+                {
+                    Thread.sleep(500);
+                } catch (InterruptedException e)
+                {
+                    // ignored
+                }
+                int i = 0;
+                for (final JPanel selectionPanel : selectionPanels)
+                {
+                    selectionPanel.setBorder(formerBorders.get(i++));
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 }

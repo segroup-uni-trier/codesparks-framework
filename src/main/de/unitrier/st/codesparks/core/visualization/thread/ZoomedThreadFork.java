@@ -22,6 +22,7 @@ public class ZoomedThreadFork extends JPanel
     private final IThreadSelectableIndexProvider selectableIndexProvider;
     private final List<IThreadSelectable> threadSelectables;
     private final IClusterHoverable clusterHoverable;
+    private final IClusterMouseClickable clusterClickable;
 
     public ZoomedThreadFork(
             final AArtifact artifact
@@ -30,6 +31,7 @@ public class ZoomedThreadFork extends JPanel
             , final IThreadSelectableIndexProvider selectableIndexProvider
             , final List<IThreadSelectable> threadSelectables
             , final IClusterHoverable clusterHoverable
+            , final IClusterMouseClickable clusterClickable
     )
     {
         this.artifact = artifact;
@@ -38,6 +40,7 @@ public class ZoomedThreadFork extends JPanel
         this.selectableIndexProvider = selectableIndexProvider;
         this.threadSelectables = threadSelectables;
         this.clusterHoverable = clusterHoverable;
+        this.clusterClickable = clusterClickable;
         this.setLayout(null);
         final Dimension dimension = new Dimension(maxWidth, maxHeight);
         this.setPreferredSize(dimension);
@@ -267,6 +270,7 @@ public class ZoomedThreadFork extends JPanel
                     , leftClusterButtonBoundsRectangle
                     , SumAvgClusterButtonFillStrategy.getInstance()
                     , clusterHoverable
+                    , clusterClickable
                     , createDisabledViz
             );
             add(leftClusterButton);
@@ -287,6 +291,7 @@ public class ZoomedThreadFork extends JPanel
                     , rightClusterButtonBoundsRectangle
                     , TotalNumberOfThreadsAndThreadTypesButtonFillStrategy.getInstance()
                     , clusterHoverable
+                    , clusterClickable
                     , createDisabledViz
             );
             add(rightClusterButton);

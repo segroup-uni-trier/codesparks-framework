@@ -13,6 +13,7 @@ import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
+import de.unitrier.st.codesparks.core.visualization.thread.IClusterMouseClickable;
 import de.unitrier.st.codesparks.core.visualization.thread.IClusterHoverable;
 import de.unitrier.st.codesparks.core.visualization.thread.IThreadSelectableIndexProvider;
 
@@ -36,6 +37,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
     private final Rectangle boundsRectangle;
     private final IThreadClusterButtonFillStrategy fillStrategy;
     private final IClusterHoverable clusterHoverable;
+    private final IClusterMouseClickable clusterClickable;
     private final boolean createDisabledViz;
 
     public ThreadClusterButton(final AArtifact artifact
@@ -48,6 +50,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
             , final Rectangle boundsRectangle
             , final IThreadClusterButtonFillStrategy fillStrategy
             , final IClusterHoverable clusterHoverable
+            , final IClusterMouseClickable clusterClickable
             , final boolean createDisabledViz
     )
     {
@@ -61,6 +64,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
         this.boundsRectangle = boundsRectangle;
         this.fillStrategy = fillStrategy;
         this.clusterHoverable = clusterHoverable;
+        this.clusterClickable = clusterClickable;
         this.createDisabledViz = createDisabledViz;
         this.componentsToRepaint = new HashSet<>(4);
 
@@ -150,6 +154,8 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
         return clusterHoverable;
     }
 
+    public IClusterMouseClickable getClusterClickable() {return clusterClickable;}
+
     public boolean createDisabledViz()
     {
         return createDisabledViz;
@@ -157,7 +163,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
 
     private static class ClusterButtonMouseAdapter extends MouseAdapter
     {
-        private static MouseAdapter instance;
+        private static volatile MouseAdapter instance;
 
         public static MouseAdapter getInstance()
         {
@@ -223,22 +229,9 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
                 {
                     threadSelectable.toggleCluster(source.getCluster());
                 }
+                source.getClusterClickable().onMouseClicked();
                 source.getClusterHoverable().onExit();
             }
-
-//            new Thread(() -> {
-//                try
-//                {
-//                    Thread.sleep(100);
-//                    final Robot robot = new Robot();
-//                    final int x = e.getLocationOnScreen().x;
-//                    final int y = e.getLocationOnScreen().y;
-//                    robot.mouseMove(x + 1, y);
-//                } catch (AWTException | InterruptedException awtException)
-//                {
-//                    awtException.printStackTrace();
-//                }
-//            }).start();
         }
     }
 }
