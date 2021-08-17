@@ -96,259 +96,274 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
         ThreadArtifactClustering selectedClustering = artifact.getSelectedClusteringOrApplyAndSelect(kbdeClusteringStrategy);
 
-        if (numberOfEstimatedClusters <= 6)
-        { // Only show a fork when there are up to six thread classifications.
-            final long numberOfNonEmptyThreadClusters = selectedClustering
-                    .stream()
-                    .filter(cl -> cl.stream()
-                            .anyMatch(AThreadArtifact::isSelected))
-                    .count();
-            if (numberOfNonEmptyThreadClusters > 3)
-            { // Because the in-situ viz has changed to a k=3 clustering in that case, this will be the clustering we show first.
-                selectedClustering =
-                        artifact.getClusteringAndSelect(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));
-            }
-            final ZoomedThreadFork finalZoomedThreadFork = new ZoomedThreadFork(
-                    artifact
-                    , primaryMetricIdentifier
-                    , selectedClustering
-                    , selectableIndexProvider
-                    , threadSelectables
-                    , this
-                    , this
-            ); // the final variable is for us in lambdas
-            zoomedThreadFork = finalZoomedThreadFork;
+        //if (numberOfEstimatedClusters <= 6)
+        //{ // Only show a fork when there are up to six thread classifications.
+        final long numberOfNonEmptyThreadClusters = selectedClustering
+                .stream()
+                .filter(cl -> cl.stream()
+                        .anyMatch(AThreadArtifact::isSelected))
+                .count();
+        if (numberOfNonEmptyThreadClusters > 3)
+        { // Because the in-situ viz has changed to a k=3 clustering in that case, this will be the clustering we show first.
+            selectedClustering =
+                    artifact.getClusteringAndSelect(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));
+        }
+        final ZoomedThreadFork finalZoomedThreadFork = new ZoomedThreadFork(
+                artifact
+                , primaryMetricIdentifier
+                , selectedClustering
+                , selectableIndexProvider
+                , threadSelectables
+                , this
+                , this
+        ); // the final variable is for us in lambdas
+        zoomedThreadFork = finalZoomedThreadFork;
 
-            final KernelBasedDensityEstimationPanel finalKernelBasedDensityEstimationPanel = new KernelBasedDensityEstimationPanel(
-                    selectableIndexProvider
-                    , threadSelectables
-                    , primaryMetricIdentifier
-                    , selectedClustering
-            ); // the final variable is for us in lambdas
-            kernelBasedDensityEstimationPanel = finalKernelBasedDensityEstimationPanel;
+        final KernelBasedDensityEstimationPanel finalKernelBasedDensityEstimationPanel = new KernelBasedDensityEstimationPanel(
+                selectableIndexProvider
+                , threadSelectables
+                , primaryMetricIdentifier
+                , selectedClustering
+        ); // the final variable is for us in lambdas
+        kernelBasedDensityEstimationPanel = finalKernelBasedDensityEstimationPanel;
 
-            final JPanel centerPanel = new JPanel(new BorderLayout());
+        final JPanel centerPanel = new JPanel(new BorderLayout());
 
-            if (numberOfEstimatedClusters > 3)
+        if (numberOfEstimatedClusters > 1)
+        {
+            int selectedK = 0; // k = 0 determines the density estimation
+            final AThreadArtifactClusteringStrategy selectedClusteringStrategy = selectedClustering.getStrategy();
+            if (selectedClusteringStrategy instanceof KThreadArtifactClusteringStrategy)
             {
-                int selectedK = 0; // k = 0 determines the density estimation
-                final AThreadArtifactClusteringStrategy selectedClusteringStrategy = selectedClustering.getStrategy();
-                if (selectedClusteringStrategy instanceof KThreadArtifactClusteringStrategy)
+                selectedK = ((KThreadArtifactClusteringStrategy) selectedClusteringStrategy).getK();
+            }
+            final ComboBox<ComboBoxItem> numberOfClustersComboBox = new ComboBox<>();
+            final JPanel numberOfClustersPanel = new JPanel();
+            numberOfClustersPanel.setLayout(new BoxLayout(numberOfClustersPanel, BoxLayout.X_AXIS));
+
+
+            if (numberOfEstimatedClusters > 6)
+            {
+                for (int i = 1; i <= 6; i++)
                 {
-                    selectedK = ((KThreadArtifactClusteringStrategy) selectedClusteringStrategy).getK();
+                    final ComboBoxItem comboBoxItem = new ComboBoxItem(i, String.valueOf(i));
+                    numberOfClustersComboBox.addItem(comboBoxItem);
                 }
-                final ComboBox<ComboBoxItem> numberOfClustersComboBox = new ComboBox<>();
+                numberOfClustersComboBox.addItem(new ComboBoxItem(0, "Switch to histogram"));
+            } else
+            {
                 for (int i = 1; i < numberOfEstimatedClusters; i++)
                 {
                     final ComboBoxItem comboBoxItem = new ComboBoxItem(i, String.valueOf(i));
                     numberOfClustersComboBox.addItem(comboBoxItem);
                 }
                 numberOfClustersComboBox.addItem(new ComboBoxItem(0, String.valueOf(numberOfEstimatedClusters)));
-                if (selectedK > 0)
-                {
-                    numberOfClustersComboBox.setSelectedIndex(selectedK - 1);
-                } else
-                {
-                    numberOfClustersComboBox.setSelectedIndex(numberOfEstimatedClusters - 1);
-                }
-                final JPanel numberOfClustersPanel = new JPanel();
-                numberOfClustersPanel.setLayout(new BoxLayout(numberOfClustersPanel, BoxLayout.X_AXIS));
-
-                final JLabel numberOfClustersLabel = new JLabel("Recompute with a maximum of clusters k = ");
-                numberOfClustersPanel.add(numberOfClustersLabel);
-                numberOfClustersPanel.add(numberOfClustersComboBox);
-
-                //noinspection Convert2Lambda
-                numberOfClustersComboBox.addItemListener(new ItemListener()
-                {
-                    @Override
-                    public void itemStateChanged(final ItemEvent e)
-                    {
-                        final int stateChange = e.getStateChange();
-                        if (stateChange == ItemEvent.SELECTED)
-                        {
-                            AThreadArtifactClusteringStrategy strategy;
-                            ThreadArtifactClustering clustering;
-                            final ComboBoxItem item = (ComboBoxItem) e.getItem();
-                            final int k = item.k;
-                            if (k > 0)
-                            {
-                                strategy = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, k);
-                            } else
-                            {
-                                strategy = kbdeClusteringStrategy;
-                            }
-                            clustering = artifact.getClusteringAndSelect(strategy);
-
-                            final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
-                            propertiesManager.buildDefaultProperties();
-
-                            finalZoomedThreadFork.setThreadArtifactClustering(clustering);
-                            finalKernelBasedDensityEstimationPanel.setThreadArtifactClustering(clustering);
-                            for (final IThreadSelectable threadSelectable : threadSelectables)
-                            {
-                                threadSelectable.setThreadArtifactClustering(clustering, true);
-                            }
-                        }
-                    }
-                });
-
-                centerPanel.add(numberOfClustersPanel, BorderLayout.NORTH);
             }
 
-            final Dimension sidePanelDimension = new Dimension(145, 50);
+            if (selectedK > 0)
+            {
+                numberOfClustersComboBox.setSelectedIndex(selectedK - 1);
+            } else
+            {
+                numberOfClustersComboBox.setSelectedIndex(numberOfEstimatedClusters - 1);
+            }
 
-            final JPanel leftPanel = new JPanel();
-            leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-            leftPanel.setMinimumSize(sidePanelDimension);
-            leftPanel.setPreferredSize(sidePanelDimension);
-            final JPanel leftSelectedThreadsPanel = new JPanel();
-            leftSelectedThreadsPanel.setLayout(new BoxLayout(leftSelectedThreadsPanel, BoxLayout.Y_AXIS));
-            leftSelectedThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                    "Selected threads"));
+            final JLabel numberOfClustersLabel = new JLabel("Recompute with a maximum of clusters k = ");
+            numberOfClustersPanel.add(numberOfClustersLabel);
+            numberOfClustersPanel.add(numberOfClustersComboBox);
 
-            // ---------------------------------------------
 
-            final String metricString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.metric");
-            final JPanel leftSelectedMetricLabelWrapper = new JPanel(new BorderLayout());
-            final JLabel leftSelectedMetricLabel = new JLabel()
+            //noinspection Convert2Lambda
+            numberOfClustersComboBox.addItemListener(new ItemListener()
             {
                 @Override
-                public void paintComponent(final Graphics g)
+                public void itemStateChanged(final ItemEvent e)
                 {
-                    super.paintComponent(g);
-                    final int index = selectableIndexProvider.getThreadSelectableIndex();
-                    if (index >= 0)
+                    final int stateChange = e.getStateChange();
+                    if (stateChange == ItemEvent.SELECTED)
                     {
-                        final IThreadSelectable selectable = threadSelectables.get(index);
-                        final ThreadArtifactDisplayData selectedThreadData =
-                                threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, selectable.getSelectedThreadArtifacts());
-                        final double metricValueSum = selectedThreadData.getMetricValueSum();
-                        final String percentage = CoreUtil.formatPercentage(metricValueSum, true);
-                        setText(metricString + ": " + percentage);
+                        AThreadArtifactClusteringStrategy strategy;
+                        ThreadArtifactClustering clustering;
+                        final ComboBoxItem item = (ComboBoxItem) e.getItem();
+                        final int k = item.k;
+                        if (k > 0)
+                        {
+                            strategy = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, k);
+                        } else
+                        {
+                            strategy = kbdeClusteringStrategy;
+                        }
+                        clustering = artifact.getClusteringAndSelect(strategy);
+
+                        final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
+                        propertiesManager.buildDefaultProperties();
+
+                        finalZoomedThreadFork.setThreadArtifactClustering(clustering);
+                        finalKernelBasedDensityEstimationPanel.setThreadArtifactClustering(clustering);
+                        for (final IThreadSelectable threadSelectable : threadSelectables)
+                        {
+                            threadSelectable.setThreadArtifactClustering(clustering, true);
+                        }
                     }
                 }
-            };
-            leftSelectedMetricLabelWrapper.add(leftSelectedMetricLabel, BorderLayout.CENTER);
-            leftSelectedThreadsPanel.add(leftSelectedMetricLabelWrapper);
-            selectionPanels.add(leftSelectedThreadsPanel);
-            componentsToRegisterToTheThreadSelectables.add(leftSelectedMetricLabel);
+            });
 
-            final JPanel leftHoveredClusterPanel = new JPanel();
-            leftHoveredClusterPanel.setLayout(new BoxLayout(leftHoveredClusterPanel, BoxLayout.Y_AXIS));
-            leftHoveredClusterPanel.setBorder(titledHoverBorder);
-
-            final JLabel leftMetricSumLabel = new JLabel();
-            final JPanel leftMetricSumLabelWrapper = new JPanel(new BorderLayout());
-            leftMetricSumLabelWrapper.add(leftMetricSumLabel);
-            leftHoveredClusterPanel.add(leftMetricSumLabelWrapper);
-
-            final JLabel leftMetricAvgLabel = new JLabel();
-            final JPanel leftMetricAvgLabelWrapper = new JPanel(new BorderLayout());
-            leftMetricAvgLabelWrapper.add(leftMetricAvgLabel);
-            leftHoveredClusterPanel.add(leftMetricAvgLabelWrapper);
-
-            leftHoverLabels[0] = leftMetricSumLabel;
-            leftHoverLabels[0].setText("Metric (sum): n/a");
-            leftHoverLabels[1] = leftMetricAvgLabel;
-            leftHoverLabels[1].setText("Metric (avg): n/a");
-
-            leftPanel.add(leftSelectedThreadsPanel);
-            leftPanel.add(leftHoveredClusterPanel);
-
-            hoverPanels.add(leftHoveredClusterPanel);
-
-            // TODO
-
-            final JPanel rightPanel = new JPanel();
-            rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-            rightPanel.setMinimumSize(sidePanelDimension);
-            rightPanel.setPreferredSize(sidePanelDimension);
-
-
-            final JPanel rightSelectedThreadsPanel = new JPanel();
-            rightSelectedThreadsPanel.setLayout(new BoxLayout(rightSelectedThreadsPanel, BoxLayout.Y_AXIS));
-            rightSelectedThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                    "Selected threads"));
-
-            final String numberOfThreadTypesString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberoftypes");
-            final JLabel rightSelectedTypesLabel = new JLabel()
-            {
-                @Override
-                public void paintComponent(final Graphics g)
-                {
-                    super.paintComponent(g);
-                    final int index = selectableIndexProvider.getThreadSelectableIndex();
-                    if (index >= 0)
-                    {
-                        final IThreadSelectable selectable = threadSelectables.get(index);
-                        final ThreadArtifactDisplayData selectedThreadData =
-                                threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, selectable.getSelectedThreadArtifacts());
-                        setText(numberOfThreadTypesString + ": " + selectedThreadData.getNumberOfThreadTypes());
-                    }
-                }
-            };
-            final String numberOfThreadsString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberofthreads");
-            final JLabel rightSelectedNumberOfThreadsLabel = new JLabel()
-            {
-                @Override
-                public void paintComponent(final Graphics g)
-                {
-                    super.paintComponent(g);
-                    final int index = selectableIndexProvider.getThreadSelectableIndex();
-                    if (index >= 0)
-                    {
-                        final IThreadSelectable selectable = threadSelectables.get(index);
-                        final ThreadArtifactDisplayData selectedThreadData =
-                                threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, selectable.getSelectedThreadArtifacts());
-                        setText(numberOfThreadsString + ": " + selectedThreadData.getNumberOfThreads());
-                    }
-                }
-            };
-
-            final JPanel rightSelectedNumberOfThreadsLabelWrapper = new JPanel(new BorderLayout());
-            rightSelectedNumberOfThreadsLabelWrapper.add(rightSelectedNumberOfThreadsLabel);
-            rightSelectedThreadsPanel.add(rightSelectedNumberOfThreadsLabelWrapper);
-            selectionPanels.add(rightSelectedThreadsPanel);
-            componentsToRegisterToTheThreadSelectables.add(rightSelectedNumberOfThreadsLabel);
-
-            final JPanel rightSelectedTypesLabelWrapper = new JPanel(new BorderLayout());
-            rightSelectedTypesLabelWrapper.add(rightSelectedTypesLabel);
-            rightSelectedThreadsPanel.add(rightSelectedTypesLabelWrapper);
-            componentsToRegisterToTheThreadSelectables.add(rightSelectedTypesLabel);
-
-            final JPanel rightHoveredClusterPanel = new JPanel();
-            rightHoveredClusterPanel.setLayout(new BoxLayout(rightHoveredClusterPanel, BoxLayout.Y_AXIS));
-            rightHoveredClusterPanel.setBorder(titledHoverBorder);
-
-            final JLabel rightHoverThreadsLabel = new JLabel();
-            final JPanel rightHoverThreadsLabelWrapper = new JPanel(new BorderLayout());
-            rightHoverThreadsLabelWrapper.add(rightHoverThreadsLabel);
-            rightHoveredClusterPanel.add(rightHoverThreadsLabelWrapper);
-
-            final JLabel rightHoverTypesLabel = new JLabel();
-            final JPanel rightHoverTypesLabelWrapper = new JPanel(new BorderLayout());
-            rightHoverTypesLabelWrapper.add(rightHoverTypesLabel);
-            rightHoveredClusterPanel.add(rightHoverTypesLabelWrapper);
-
-
-            rightHoverLabels[0] = rightHoverThreadsLabel;
-            rightHoverLabels[0].setText("#Threads : n/a");
-            rightHoverLabels[1] = rightHoverTypesLabel;
-            rightHoverLabels[1].setText("#Types: n/a");
-
-            rightPanel.add(rightSelectedThreadsPanel);
-            rightPanel.add(rightHoveredClusterPanel);
-
-            hoverPanels.add(rightHoveredClusterPanel);
-
-            // From left to right
-            centerPanel.add(leftPanel, BorderLayout.WEST);
-            centerPanel.add(zoomedThreadFork, BorderLayout.CENTER);
-            centerPanel.add(rightPanel, BorderLayout.EAST);
-
-            zoomedVizTabbedPane.addTab("ThreadFork", centerPanel);
+            centerPanel.add(numberOfClustersPanel, BorderLayout.NORTH);
         }
+
+        final Dimension sidePanelDimension = new Dimension(145, 50);
+
+        final JPanel leftPanel = new JPanel();
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        leftPanel.setMinimumSize(sidePanelDimension);
+        leftPanel.setPreferredSize(sidePanelDimension);
+        final JPanel leftSelectedThreadsPanel = new JPanel();
+        leftSelectedThreadsPanel.setLayout(new BoxLayout(leftSelectedThreadsPanel, BoxLayout.Y_AXIS));
+        leftSelectedThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                "Selected threads"));
+
+        // ---------------------------------------------
+
+        final String metricString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.metric");
+        final JPanel leftSelectedMetricLabelWrapper = new JPanel(new BorderLayout());
+        final JLabel leftSelectedMetricLabel = new JLabel()
+        {
+            @Override
+            public void paintComponent(final Graphics g)
+            {
+                super.paintComponent(g);
+                final int index = selectableIndexProvider.getThreadSelectableIndex();
+                if (index >= 0)
+                {
+                    final IThreadSelectable selectable = threadSelectables.get(index);
+                    final ThreadArtifactDisplayData selectedThreadData =
+                            threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, selectable.getSelectedThreadArtifacts());
+                    final double metricValueSum = selectedThreadData.getMetricValueSum();
+                    final String percentage = CoreUtil.formatPercentage(metricValueSum, true);
+                    setText(metricString + ": " + percentage);
+                }
+            }
+        };
+        leftSelectedMetricLabelWrapper.add(leftSelectedMetricLabel, BorderLayout.CENTER);
+        leftSelectedThreadsPanel.add(leftSelectedMetricLabelWrapper);
+        selectionPanels.add(leftSelectedThreadsPanel);
+        componentsToRegisterToTheThreadSelectables.add(leftSelectedMetricLabel);
+
+        final JPanel leftHoveredClusterPanel = new JPanel();
+        leftHoveredClusterPanel.setLayout(new BoxLayout(leftHoveredClusterPanel, BoxLayout.Y_AXIS));
+        leftHoveredClusterPanel.setBorder(titledHoverBorder);
+
+        final JLabel leftMetricSumLabel = new JLabel();
+        final JPanel leftMetricSumLabelWrapper = new JPanel(new BorderLayout());
+        leftMetricSumLabelWrapper.add(leftMetricSumLabel);
+        leftHoveredClusterPanel.add(leftMetricSumLabelWrapper);
+
+        final JLabel leftMetricAvgLabel = new JLabel();
+        final JPanel leftMetricAvgLabelWrapper = new JPanel(new BorderLayout());
+        leftMetricAvgLabelWrapper.add(leftMetricAvgLabel);
+        leftHoveredClusterPanel.add(leftMetricAvgLabelWrapper);
+
+        leftHoverLabels[0] = leftMetricSumLabel;
+        leftHoverLabels[0].setText("Metric (sum): n/a");
+        leftHoverLabels[1] = leftMetricAvgLabel;
+        leftHoverLabels[1].setText("Metric (avg): n/a");
+
+        leftPanel.add(leftSelectedThreadsPanel);
+        leftPanel.add(leftHoveredClusterPanel);
+
+        hoverPanels.add(leftHoveredClusterPanel);
+
+        // TODO
+
+        final JPanel rightPanel = new JPanel();
+        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+        rightPanel.setMinimumSize(sidePanelDimension);
+        rightPanel.setPreferredSize(sidePanelDimension);
+
+
+        final JPanel rightSelectedThreadsPanel = new JPanel();
+        rightSelectedThreadsPanel.setLayout(new BoxLayout(rightSelectedThreadsPanel, BoxLayout.Y_AXIS));
+        rightSelectedThreadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                "Selected threads"));
+
+        final String numberOfThreadTypesString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberoftypes");
+        final JLabel rightSelectedTypesLabel = new JLabel()
+        {
+            @Override
+            public void paintComponent(final Graphics g)
+            {
+                super.paintComponent(g);
+                final int index = selectableIndexProvider.getThreadSelectableIndex();
+                if (index >= 0)
+                {
+                    final IThreadSelectable selectable = threadSelectables.get(index);
+                    final ThreadArtifactDisplayData selectedThreadData =
+                            threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, selectable.getSelectedThreadArtifacts());
+                    setText(numberOfThreadTypesString + ": " + selectedThreadData.getNumberOfThreadTypes());
+                }
+            }
+        };
+        final String numberOfThreadsString = LocalizationUtil.getLocalizedString("codesparks.ui.popup.thread.numberofthreads");
+        final JLabel rightSelectedNumberOfThreadsLabel = new JLabel()
+        {
+            @Override
+            public void paintComponent(final Graphics g)
+            {
+                super.paintComponent(g);
+                final int index = selectableIndexProvider.getThreadSelectableIndex();
+                if (index >= 0)
+                {
+                    final IThreadSelectable selectable = threadSelectables.get(index);
+                    final ThreadArtifactDisplayData selectedThreadData =
+                            threadArtifactsDisplayDataProvider.getDisplayDataOfSelectedThreads(artifact, selectable.getSelectedThreadArtifacts());
+                    setText(numberOfThreadsString + ": " + selectedThreadData.getNumberOfThreads());
+                }
+            }
+        };
+
+        final JPanel rightSelectedNumberOfThreadsLabelWrapper = new JPanel(new BorderLayout());
+        rightSelectedNumberOfThreadsLabelWrapper.add(rightSelectedNumberOfThreadsLabel);
+        rightSelectedThreadsPanel.add(rightSelectedNumberOfThreadsLabelWrapper);
+        selectionPanels.add(rightSelectedThreadsPanel);
+        componentsToRegisterToTheThreadSelectables.add(rightSelectedNumberOfThreadsLabel);
+
+        final JPanel rightSelectedTypesLabelWrapper = new JPanel(new BorderLayout());
+        rightSelectedTypesLabelWrapper.add(rightSelectedTypesLabel);
+        rightSelectedThreadsPanel.add(rightSelectedTypesLabelWrapper);
+        componentsToRegisterToTheThreadSelectables.add(rightSelectedTypesLabel);
+
+        final JPanel rightHoveredClusterPanel = new JPanel();
+        rightHoveredClusterPanel.setLayout(new BoxLayout(rightHoveredClusterPanel, BoxLayout.Y_AXIS));
+        rightHoveredClusterPanel.setBorder(titledHoverBorder);
+
+        final JLabel rightHoverThreadsLabel = new JLabel();
+        final JPanel rightHoverThreadsLabelWrapper = new JPanel(new BorderLayout());
+        rightHoverThreadsLabelWrapper.add(rightHoverThreadsLabel);
+        rightHoveredClusterPanel.add(rightHoverThreadsLabelWrapper);
+
+        final JLabel rightHoverTypesLabel = new JLabel();
+        final JPanel rightHoverTypesLabelWrapper = new JPanel(new BorderLayout());
+        rightHoverTypesLabelWrapper.add(rightHoverTypesLabel);
+        rightHoveredClusterPanel.add(rightHoverTypesLabelWrapper);
+
+
+        rightHoverLabels[0] = rightHoverThreadsLabel;
+        rightHoverLabels[0].setText("#Threads : n/a");
+        rightHoverLabels[1] = rightHoverTypesLabel;
+        rightHoverLabels[1].setText("#Types: n/a");
+
+        rightPanel.add(rightSelectedThreadsPanel);
+        rightPanel.add(rightHoveredClusterPanel);
+
+        hoverPanels.add(rightHoveredClusterPanel);
+
+        // From left to right
+        centerPanel.add(leftPanel, BorderLayout.WEST);
+        centerPanel.add(zoomedThreadFork, BorderLayout.CENTER);
+        centerPanel.add(rightPanel, BorderLayout.EAST);
+
+        zoomedVizTabbedPane.addTab("ThreadFork", centerPanel);
+//        }
 
         /*
          * The thread metric density estimation / histogram
