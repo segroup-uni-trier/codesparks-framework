@@ -83,10 +83,10 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         final Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setStroke(new BasicStroke(2));
         graphics2D.setColor(VisConstants.BORDER_COLOR);
-        // Draw the x axis at the bottom of the panel
+        // Draw the x-axis at the bottom of the panel
         final int xAxisY = height - verticalMargin;
         graphics2D.drawLine(horizontalMargin, xAxisY, width - horizontalMargin, xAxisY);
-        // Draw the y axis, leave an offset to the top
+        // Draw the y-axis, leave an offset to the top
         // graphics2D.drawLine(horizontalMargin, topOffset, horizontalMargin, height - verticalMargin);
 
         final Map<Double, Integer> valueOccurrences = new HashMap<>(numberOfThreadsToShow);
@@ -163,7 +163,43 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
             }
         }
 
+        // Labels and tikz on the x-axis
+
         graphics2D.setColor(VisConstants.BORDER_COLOR);
+
+        graphics2D.drawLine(horizontalMargin + vizWith, xAxisY - 1, horizontalMargin + vizWith, xAxisY + 3); // max tik
+        graphics2D.drawLine(horizontalMargin, xAxisY - 1, horizontalMargin, xAxisY + 3); // min tik
+        graphics2D.drawLine(horizontalMargin + vizWith / 2, xAxisY - 1, horizontalMargin + vizWith / 2, xAxisY + 3); // middle tik
+
+        final FontMetrics fontMetrics = graphics2D.getFontMetrics();
+        final String xAxisMaxLabel = CoreUtil.formatPercentage(maxMetricValueOfAll);
+        final int stringWidthMaxLabel = fontMetrics.stringWidth(xAxisMaxLabel);
+        graphics2D.drawString(xAxisMaxLabel, horizontalMargin + vizWith - stringWidthMaxLabel / 2
+                //, xAxisY + 3
+                , topOffset + verticalMargin + vizHeight + 16
+        );
+
+        final String xAxisMinLabel = CoreUtil.formatPercentage(0, true);
+        final int stringWidthMinLabel = fontMetrics.stringWidth(xAxisMinLabel);
+        graphics2D.drawString(xAxisMinLabel, horizontalMargin - stringWidthMinLabel / 2
+                //, xAxisY + 3
+                , topOffset + verticalMargin + vizHeight + 16
+        );
+
+        final String xAxisMidLabel = CoreUtil.formatPercentage(maxMetricValueOfAll / 2);
+        final int stringWidthMidLabel = fontMetrics.stringWidth(xAxisMidLabel);
+        graphics2D.drawString(xAxisMidLabel, horizontalMargin + (vizWith / 2) - stringWidthMidLabel / 2
+                //, xAxisY + 3
+                , topOffset + verticalMargin + vizHeight + 16
+        );
+
+        if (!showKernelBasedDensityEstimation)
+        {
+            return;
+        }
+
+        // The kernel-based-density-estimation-function graph
+
         String infoString = "";
         if (numberOfThreadsToShow > 1)
         { // Cannot compute a density for only one value!
@@ -230,35 +266,17 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         }
 
         graphics2D.setColor(VisConstants.BORDER_COLOR);
-        final FontMetrics fontMetrics = graphics2D.getFontMetrics();
+        //final FontMetrics fontMetrics = graphics2D.getFontMetrics();
         final int stringWidth = fontMetrics.stringWidth(infoString);
         graphics2D.drawString(infoString, width / 2 - stringWidth / 2, topOffset + 10);
-
-        // Labels and tikz on the x-axis
-
-        graphics2D.drawLine(horizontalMargin + vizWith, xAxisY - 1, horizontalMargin + vizWith, xAxisY + 3); // max tik
-        graphics2D.drawLine(horizontalMargin, xAxisY - 1, horizontalMargin, xAxisY + 3); // min tik
-        graphics2D.drawLine(horizontalMargin + vizWith / 2, xAxisY - 1, horizontalMargin + vizWith / 2, xAxisY + 3); // middle tik
-
-        final String xAxisMaxLabel = CoreUtil.formatPercentage(maxMetricValueOfAll);
-        final int stringWidthMaxLabel = fontMetrics.stringWidth(xAxisMaxLabel);
-        graphics2D.drawString(xAxisMaxLabel, horizontalMargin + vizWith - stringWidthMaxLabel / 2
-                //, xAxisY + 3
-                , topOffset + verticalMargin + vizHeight + 16
-        );
-
-        final String xAxisMinLabel = CoreUtil.formatPercentage(0, true);
-        final int stringWidthMinLabel = fontMetrics.stringWidth(xAxisMinLabel);
-        graphics2D.drawString(xAxisMinLabel, horizontalMargin - stringWidthMinLabel / 2
-                //, xAxisY + 3
-                , topOffset + verticalMargin + vizHeight + 16
-        );
-
-        final String xAxisMidLabel = CoreUtil.formatPercentage(maxMetricValueOfAll / 2);
-        final int stringWidthMidLabel = fontMetrics.stringWidth(xAxisMidLabel);
-        graphics2D.drawString(xAxisMidLabel, horizontalMargin + (vizWith / 2) - stringWidthMidLabel / 2
-                //, xAxisY + 3
-                , topOffset + verticalMargin + vizHeight + 16
-        );
     }
+
+    private boolean showKernelBasedDensityEstimation = false;
+
+    public void setShowKernelBasedDensityEstimation(final boolean b)
+    {
+        this.showKernelBasedDensityEstimation = b;
+        repaint();
+    }
+
 }

@@ -384,7 +384,15 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
          * The thread metric density estimation / histogram
          */
 
-        zoomedVizTabbedPane.addTab("Histogram", kernelBasedDensityEstimationPanel);
+        final JPanel kbdeCenterPanel = new JPanel(new BorderLayout());
+        final JCheckBox showDensityEstimation = new JCheckBox("Show the kernel based density estimation.");
+        showDensityEstimation.setSelected(false);
+        showDensityEstimation.addActionListener((event)
+                -> kernelBasedDensityEstimationPanel.setShowKernelBasedDensityEstimation(showDensityEstimation.isSelected()));
+        kbdeCenterPanel.add(showDensityEstimation, BorderLayout.NORTH);
+        kbdeCenterPanel.add(kernelBasedDensityEstimationPanel, BorderLayout.CENTER);
+
+        zoomedVizTabbedPane.addTab("Histogram", kbdeCenterPanel);
         popupPanel.add(zoomedVizTabbedPane);
 
         // The following change listener is necessary for the case that k > 6 is selected in the combo box, i.e. the histogram tab will be selected
