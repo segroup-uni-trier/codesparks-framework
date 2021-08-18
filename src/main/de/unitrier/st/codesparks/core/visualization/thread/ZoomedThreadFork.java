@@ -52,8 +52,17 @@ public class ZoomedThreadFork extends JPanel
 
     public void setThreadArtifactClustering(final ThreadArtifactClustering threadArtifactClustering)
     {
+        if (threadArtifactClustering.size() > 6)
+        {
+            return;
+        }
         this.threadArtifactClustering = threadArtifactClustering;
         new Thread(this::doubleRepaint).start();
+    }
+
+    ThreadArtifactClustering getThreadArtifactClustering()
+    {
+        return this.threadArtifactClustering;
     }
 
     private final Object doubleRepaintLock = new Object();

@@ -44,6 +44,19 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
         return threadArtifacts;
     }
 
+    public int sizeAccordingToCurrentThreadSelection()
+    {
+        final long count = this.stream().filter(cluster -> cluster.stream()
+                .anyMatch(AThreadArtifact::isSelected)).count();
+        return (int) count;
+    }
+
+    @Override
+    public int size()
+    {
+        return (int) this.stream().filter(cluster -> !cluster.isEmpty()).count();
+    }
+
     /**
      * The distance ...
      *

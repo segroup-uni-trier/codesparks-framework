@@ -19,6 +19,8 @@ import de.unitrier.st.codesparks.core.visualization.popup.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -86,8 +88,8 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
          * The zoomed viz tabbed pane
          */
         final JBTabbedPane zoomedVizTabbedPane = new JBTabbedPane();
-        KernelBasedDensityEstimationPanel kernelBasedDensityEstimationPanel = null;
-        ZoomedThreadFork zoomedThreadFork = null;
+        KernelBasedDensityEstimationPanel kernelBasedDensityEstimationPanel;
+        ZoomedThreadFork zoomedThreadFork;
 
         final AThreadArtifactClusteringStrategy kbdeClusteringStrategy = KernelBasedDensityEstimationClustering.getInstance(primaryMetricIdentifier);
 
@@ -96,17 +98,10 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
         ThreadArtifactClustering selectedClustering = artifact.getSelectedClusteringOrApplyAndSelect(kbdeClusteringStrategy);
 
-        //if (numberOfEstimatedClusters <= 6)
-        //{ // Only show a fork when there are up to six thread classifications.
-        final long numberOfNonEmptyThreadClusters = selectedClustering
-                .stream()
-                .filter(cl -> cl.stream()
-                        .anyMatch(AThreadArtifact::isSelected))
-                .count();
+        final int numberOfNonEmptyThreadClusters = selectedClustering.sizeAccordingToCurrentThreadSelection();
         if (numberOfNonEmptyThreadClusters > 3)
         { // Because the in-situ viz has changed to a k=3 clustering in that case, this will be the clustering we show first.
-            selectedClustering =
-                    artifact.getClusteringAndSelect(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));
+            selectedClustering = artifact.getClusteringAndSelect(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));
         }
         final ZoomedThreadFork finalZoomedThreadFork = new ZoomedThreadFork(
                 artifact
@@ -124,92 +119,115 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                 , threadSelectables
                 , primaryMetricIdentifier
                 , selectedClustering
-        ); // the final variable is for us in lambdas
+        ); // the final variable is for use in lambdas
         kernelBasedDensityEstimationPanel = finalKernelBasedDensityEstimationPanel;
 
-        final JPanel centerPanel = new JPanel(new BorderLayout());
+        final JPanel forkCenterPanel = new JPanel(new BorderLayout());
 
-        if (numberOfEstimatedClusters > 1)
+        /*
+         * ComboBox
+         */
+
+        int selectedK = 0; // k = 0 determines the density estimation
+        final AThreadArtifactClusteringStrategy selectedClusteringStrategy = selectedClustering.getStrategy();
+        if (selectedClusteringStrategy instanceof KThreadArtifactClusteringStrategy)
         {
-            int selectedK = 0; // k = 0 determines the density estimation
-            final AThreadArtifactClusteringStrategy selectedClusteringStrategy = selectedClustering.getStrategy();
-            if (selectedClusteringStrategy instanceof KThreadArtifactClusteringStrategy)
+            selectedK = ((KThreadArtifactClusteringStrategy) selectedClusteringStrategy).getK();
+        }
+        final ComboBox<ComboBoxItem> numberOfClustersComboBox = new ComboBox<>();
+        if (numberOfEstimatedClusters > 6)
+        {
+            for (int i = 1; i <= 6; i++)
             {
-                selectedK = ((KThreadArtifactClusteringStrategy) selectedClusteringStrategy).getK();
+                final ComboBoxItem comboBoxItem = new ComboBoxItem(i, String.valueOf(i));
+                numberOfClustersComboBox.addItem(comboBoxItem);
             }
-            final ComboBox<ComboBoxItem> numberOfClustersComboBox = new ComboBox<>();
-            final JPanel numberOfClustersPanel = new JPanel();
-            numberOfClustersPanel.setLayout(new BoxLayout(numberOfClustersPanel, BoxLayout.X_AXIS));
-
-
-            if (numberOfEstimatedClusters > 6)
+            numberOfClustersComboBox.addItem(new ComboBoxItem(0, numberOfEstimatedClusters + " (switch to histogram)"));
+        } else
+        {
+            for (int i = 1; i < numberOfEstimatedClusters; i++)
             {
-                for (int i = 1; i <= 6; i++)
-                {
-                    final ComboBoxItem comboBoxItem = new ComboBoxItem(i, String.valueOf(i));
-                    numberOfClustersComboBox.addItem(comboBoxItem);
-                }
-                numberOfClustersComboBox.addItem(new ComboBoxItem(0, "Switch to histogram"));
-            } else
-            {
-                for (int i = 1; i < numberOfEstimatedClusters; i++)
-                {
-                    final ComboBoxItem comboBoxItem = new ComboBoxItem(i, String.valueOf(i));
-                    numberOfClustersComboBox.addItem(comboBoxItem);
-                }
-                numberOfClustersComboBox.addItem(new ComboBoxItem(0, String.valueOf(numberOfEstimatedClusters)));
+                final ComboBoxItem comboBoxItem = new ComboBoxItem(i, String.valueOf(i));
+                numberOfClustersComboBox.addItem(comboBoxItem);
             }
+            numberOfClustersComboBox.addItem(new ComboBoxItem(0, String.valueOf(numberOfEstimatedClusters)));
+        }
+        if (selectedK > 0)
+        {
+            numberOfClustersComboBox.setSelectedIndex(selectedK - 1);
+        } else
+        {
+            numberOfClustersComboBox.setSelectedIndex(numberOfEstimatedClusters - 1);
+        }
 
-            if (selectedK > 0)
+        numberOfClustersComboBox.addItemListener(new ItemListener()
+        {
+            private ComboBoxItem previousItem;
+            private int ignoreStateChanges = 0;
+
+            @Override
+            public void itemStateChanged(final ItemEvent e)
             {
-                numberOfClustersComboBox.setSelectedIndex(selectedK - 1);
-            } else
-            {
-                numberOfClustersComboBox.setSelectedIndex(numberOfEstimatedClusters - 1);
-            }
-
-            final JLabel numberOfClustersLabel = new JLabel("Recompute with a maximum of clusters k = ");
-            numberOfClustersPanel.add(numberOfClustersLabel);
-            numberOfClustersPanel.add(numberOfClustersComboBox);
-
-
-            //noinspection Convert2Lambda
-            numberOfClustersComboBox.addItemListener(new ItemListener()
-            {
-                @Override
-                public void itemStateChanged(final ItemEvent e)
+                final int stateChange = e.getStateChange();
+                if (stateChange == ItemEvent.SELECTED)
                 {
-                    final int stateChange = e.getStateChange();
-                    if (stateChange == ItemEvent.SELECTED)
+                    if (ignoreStateChanges > 0)
                     {
-                        AThreadArtifactClusteringStrategy strategy;
-                        ThreadArtifactClustering clustering;
-                        final ComboBoxItem item = (ComboBoxItem) e.getItem();
-                        final int k = item.k;
-                        if (k > 0)
-                        {
-                            strategy = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, k);
-                        } else
-                        {
-                            strategy = kbdeClusteringStrategy;
-                        }
-                        clustering = artifact.getClusteringAndSelect(strategy);
+                        ignoreStateChanges -= 1;
+                        return;
+                    }
+                    AThreadArtifactClusteringStrategy strategy;
+                    ThreadArtifactClustering clustering;
+                    final ComboBoxItem item = (ComboBoxItem) e.getItem();
+                    final int k = item.k;
+                    if (k > 0)
+                    {
+                        strategy = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, k);
+                    } else
+                    {
+                        strategy = kbdeClusteringStrategy;
+                    }
+                    clustering = artifact.getClusteringAndSelect(strategy);
 
-                        final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
-                        propertiesManager.buildDefaultProperties();
+                    final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance(clustering);
+                    propertiesManager.buildDefaultProperties();
 
+                    finalKernelBasedDensityEstimationPanel.setThreadArtifactClustering(clustering);
+
+                    if (numberOfEstimatedClusters > 6 && k == 0)
+                    {
+                        zoomedVizTabbedPane.setSelectedIndex(1); // Switch to histogram tab
+                        ignoreStateChanges = 2; // deselect and select
+                        numberOfClustersComboBox.setSelectedItem(previousItem);
+                    } else
+                    {
                         finalZoomedThreadFork.setThreadArtifactClustering(clustering);
-                        finalKernelBasedDensityEstimationPanel.setThreadArtifactClustering(clustering);
                         for (final IThreadSelectable threadSelectable : threadSelectables)
                         {
                             threadSelectable.setThreadArtifactClustering(clustering, true);
                         }
                     }
                 }
-            });
+                if (stateChange == ItemEvent.DESELECTED)
+                {
+                    if (ignoreStateChanges > 0)
+                    {
+                        ignoreStateChanges -= 1;
+                        return;
+                    }
+                    previousItem = (ComboBoxItem) e.getItem();
+                }
+            }
+        });
+        final JLabel numberOfClustersLabel = new JLabel("Recompute with a maximum of clusters k = ");
+        final JPanel numberOfClustersPanel = new JPanel();
+        numberOfClustersPanel.setLayout(new BoxLayout(numberOfClustersPanel, BoxLayout.X_AXIS));
+        numberOfClustersPanel.add(numberOfClustersLabel);
+        numberOfClustersPanel.add(numberOfClustersComboBox);
 
-            centerPanel.add(numberOfClustersPanel, BorderLayout.NORTH);
-        }
+        forkCenterPanel.add(numberOfClustersPanel, BorderLayout.NORTH);
+
+        // ---------------------------------------------
 
         final Dimension sidePanelDimension = new Dimension(145, 50);
 
@@ -273,13 +291,12 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
         hoverPanels.add(leftHoveredClusterPanel);
 
-        // TODO
+        // -------------------------------------------------
 
         final JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         rightPanel.setMinimumSize(sidePanelDimension);
         rightPanel.setPreferredSize(sidePanelDimension);
-
 
         final JPanel rightSelectedThreadsPanel = new JPanel();
         rightSelectedThreadsPanel.setLayout(new BoxLayout(rightSelectedThreadsPanel, BoxLayout.Y_AXIS));
@@ -346,7 +363,6 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         rightHoverTypesLabelWrapper.add(rightHoverTypesLabel);
         rightHoveredClusterPanel.add(rightHoverTypesLabelWrapper);
 
-
         rightHoverLabels[0] = rightHoverThreadsLabel;
         rightHoverLabels[0].setText("#Threads : n/a");
         rightHoverLabels[1] = rightHoverTypesLabel;
@@ -358,24 +374,40 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         hoverPanels.add(rightHoveredClusterPanel);
 
         // From left to right
-        centerPanel.add(leftPanel, BorderLayout.WEST);
-        centerPanel.add(zoomedThreadFork, BorderLayout.CENTER);
-        centerPanel.add(rightPanel, BorderLayout.EAST);
+        forkCenterPanel.add(leftPanel, BorderLayout.WEST);
+        forkCenterPanel.add(zoomedThreadFork, BorderLayout.CENTER);
+        forkCenterPanel.add(rightPanel, BorderLayout.EAST);
 
-        zoomedVizTabbedPane.addTab("ThreadFork", centerPanel);
-//        }
+        zoomedVizTabbedPane.addTab("ThreadFork", forkCenterPanel);
 
         /*
          * The thread metric density estimation / histogram
          */
-        if (kernelBasedDensityEstimationPanel == null)
-        {
-            kernelBasedDensityEstimationPanel = new KernelBasedDensityEstimationPanel(
-                    selectableIndexProvider, threadSelectables, primaryMetricIdentifier, selectedClustering);
-        }
 
         zoomedVizTabbedPane.addTab("Histogram", kernelBasedDensityEstimationPanel);
         popupPanel.add(zoomedVizTabbedPane);
+
+        // The following change listener is necessary for the case that k > 6 is selected in the combo box, i.e. the histogram tab will be selected
+        // automatically but the selection of the combo box is reset (to the previous value lower than or equal to 6). Therefore, the histogram shows
+        // something different from the threadfork. Now the idea is to sync the kbde histogram again with the actual selection,
+        // when the user goes back to the ThreadFork tab. It is placed here to prevent the trigger of change events
+        // when new tabs are added to the tabbed pane.
+
+        //noinspection Convert2Lambda
+        zoomedVizTabbedPane.addChangeListener(new ChangeListener()
+        {
+            @Override
+            public void stateChanged(final ChangeEvent e)
+            {
+                final JBTabbedPane source = (JBTabbedPane) e.getSource();
+                final int selectedIndex = source.getSelectedIndex();
+                if (selectedIndex == 0)
+                {
+                    final ThreadArtifactClustering threadArtifactClustering = finalZoomedThreadFork.getThreadArtifactClustering();
+                    finalKernelBasedDensityEstimationPanel.setThreadArtifactClustering(threadArtifactClustering);
+                }
+            }
+        });
 
         /*
          * The selectables tabbed pane
@@ -506,10 +538,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         for (final IThreadSelectable threadSelectable : threadSelectables)
         {
             threadSelectable.registerComponentToRepaintOnSelection(kernelBasedDensityEstimationPanel);
-            if (zoomedThreadFork != null)
-            {
-                threadSelectable.registerComponentToRepaintOnSelection(zoomedThreadFork);
-            }
+            threadSelectable.registerComponentToRepaintOnSelection(zoomedThreadFork);
             for (final JComponent component : componentsToRegisterToTheThreadSelectables)
             {
                 threadSelectable.registerComponentToRepaintOnSelection(component);

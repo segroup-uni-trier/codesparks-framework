@@ -128,7 +128,7 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
         {
             final VisualThreadClusterProperties properties = clusterPropertiesManager.getOrDefault(cluster, clusterNum);
             JBColor clusterColor = properties.getColor();
-            if (createDisabledViz)
+            if (createDisabledViz || threadArtifactClustering.size() > 6)
             {
                 clusterColor = ThreadColor.getDisabledColor(clusterColor);
             }
