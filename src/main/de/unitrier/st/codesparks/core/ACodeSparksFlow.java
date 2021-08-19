@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
+
 package de.unitrier.st.codesparks.core;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -41,9 +45,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-/*
- * Copyright (c), Oliver Moseler, 2021
- */
 public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpdater
 {
     protected IDataProvider dataProvider;
@@ -259,7 +260,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
             ToolWindow toolWindow = toolWindowManager.getToolWindow(toolWindowIdName);
             if (toolWindow == null)
             {
-                ImageIcon defaultImageIcon = CoreUtil.getDefaultImageIcon();
+                final ImageIcon defaultImageIcon = CoreUtil.getDefaultImageIcon();
                 toolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
                         toolWindowIdName
                         , ToolWindowAnchor.RIGHT
@@ -274,7 +275,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                 ));
             }
             addArtifactsTo(toolWindow);
-            toolWindow.show(() -> {});
+            toolWindow.show();
         });
     }
 

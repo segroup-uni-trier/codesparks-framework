@@ -13,8 +13,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
-import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerManager;
+import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -67,6 +70,20 @@ public class ToggleVisualization extends AnAction
         }
         visible = !visible;
         editorCoverLayerManager.setEditorCoverLayersVisible(visible);
+
+        // Hide/show the overview tool window
+        final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+        final String toolWindowIdName = LocalizationUtil.getLocalizedString("codesparks.ui.artifactoverview.displayname");
+        UIUtil.invokeLaterIfNeeded(() -> {
+            final ToolWindow toolWindow = toolWindowManager.getToolWindow(toolWindowIdName);
+            if (toolWindow != null)
+            {
+                if (visible)
+                    toolWindow.show();
+                else
+                    toolWindow.hide();
+            }
+        });
     }
 
     @Override
