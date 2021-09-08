@@ -1,8 +1,8 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ArtifactPoolManager
 {
     private static volatile ArtifactPoolManager instance;

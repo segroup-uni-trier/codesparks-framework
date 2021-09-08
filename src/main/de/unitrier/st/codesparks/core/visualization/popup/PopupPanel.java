@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -6,9 +9,6 @@ import com.intellij.util.ui.components.BorderLayoutPanel;
 
 import java.awt.*;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public final class PopupPanel extends JBPanel<BorderLayoutPanel>
 {
     private String type;

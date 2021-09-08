@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization;
 
 import com.intellij.ui.Gray;
@@ -5,9 +8,6 @@ import com.intellij.ui.JBColor;
 
 import java.awt.*;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public abstract class VisConstants
 {
     private VisConstants() {}

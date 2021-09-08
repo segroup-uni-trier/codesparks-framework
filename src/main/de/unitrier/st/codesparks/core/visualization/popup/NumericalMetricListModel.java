@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.components.JBTextArea;
@@ -9,9 +12,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class NumericalMetricListModel extends DefaultListModel<JBTextArea>
 {
     private final List<ANeighborArtifact> neighborArtifacts;

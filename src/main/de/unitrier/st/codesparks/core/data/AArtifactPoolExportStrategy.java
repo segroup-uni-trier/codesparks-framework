@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.data;
 
 import com.intellij.openapi.project.Project;
@@ -13,9 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public abstract class AArtifactPoolExportStrategy implements IArtifactPoolExportStrategy
 {
     private final Project project;

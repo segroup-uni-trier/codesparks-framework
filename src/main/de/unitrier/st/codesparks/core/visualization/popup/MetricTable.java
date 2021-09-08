@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.table.JBTable;
@@ -6,9 +9,6 @@ import javax.swing.table.TableModel;
 
 /**
  * Created by Oliver Moseler on 16.10.2014.
- */
-/*
- * Copyright (c), Oliver Moseler, 2020
  */
 public class MetricTable extends JBTable
 {

@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization;
 
 import de.unitrier.st.codesparks.core.ArtifactPoolManager;
@@ -8,9 +11,6 @@ import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ArtifactVisualizationLabelFactoryCache
 {
     private ArtifactVisualizationLabelFactoryCache()

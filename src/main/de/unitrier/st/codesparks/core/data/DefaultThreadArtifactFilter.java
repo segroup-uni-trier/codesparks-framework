@@ -1,12 +1,12 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.data;
 
 import de.unitrier.st.codesparks.core.visualization.popup.IThreadSelectable;
 
 import java.util.Set;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class DefaultThreadArtifactFilter implements IThreadArtifactFilter
 {
 

@@ -1,12 +1,12 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization;
 
 import org.jetbrains.annotations.Contract;
 
 import java.awt.Color;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 @SuppressWarnings({"UseJBColor", "InspectionUsingGrayColors"})
 final class ColorScale
 {

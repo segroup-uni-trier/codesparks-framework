@@ -1,10 +1,10 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization;
 
 import java.awt.*;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public final class BottomFlowLayout extends FlowLayout
 {
     public BottomFlowLayout()

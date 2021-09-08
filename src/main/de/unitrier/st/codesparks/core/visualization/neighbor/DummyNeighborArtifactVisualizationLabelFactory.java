@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import de.unitrier.st.codesparks.core.CoreUtil;
@@ -8,9 +11,6 @@ import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import javax.swing.*;
 import java.util.List;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 @SuppressWarnings("unused")
 public class DummyNeighborArtifactVisualizationLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {

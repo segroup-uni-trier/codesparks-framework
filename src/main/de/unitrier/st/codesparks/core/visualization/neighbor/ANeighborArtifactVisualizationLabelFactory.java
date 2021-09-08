@@ -1,11 +1,11 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.visualization.AVisualizationLabelFactory;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public abstract class ANeighborArtifactVisualizationLabelFactory extends AVisualizationLabelFactory
         implements INeighborArtifactVisualizationLabelFactory
 {

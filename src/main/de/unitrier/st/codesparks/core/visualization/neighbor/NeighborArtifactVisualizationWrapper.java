@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
@@ -9,9 +12,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 class NeighborArtifactVisualizationWrapper extends ANeighborArtifactVisualization
 {
     NeighborArtifactVisualizationWrapper(

@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization;
 
 import com.intellij.openapi.editor.ex.EditorEx;
@@ -12,9 +15,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public final class VisualizationUtil
 {
     private VisualizationUtil() {}

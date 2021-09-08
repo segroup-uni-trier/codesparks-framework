@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.JBColor;
@@ -8,9 +11,6 @@ import javax.swing.*;
 import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ThreadTreeCellRenderer implements TreeCellRenderer
 {
     @Override

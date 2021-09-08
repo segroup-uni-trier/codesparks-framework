@@ -1,5 +1,5 @@
 /*
- * Copyright (c), Oliver Moseler, 2021
+ * Copyright (c) 2021. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.data;
 

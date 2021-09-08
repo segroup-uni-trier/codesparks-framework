@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.data;
 
 import java.util.Comparator;
@@ -5,9 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.ToDoubleFunction;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ThreadArtifactClusterNumericalMetricSumComparator implements Comparator<ThreadArtifactCluster>
 {
     private final static Map<AMetricIdentifier, Comparator<ThreadArtifactCluster>> comparators = new HashMap<>();

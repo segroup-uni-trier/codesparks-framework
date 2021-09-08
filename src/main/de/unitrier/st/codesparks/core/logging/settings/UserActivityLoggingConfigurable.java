@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.logging.settings;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -12,9 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 final class UserActivityLoggingConfigurable implements Configurable
 {
     public UserActivityLoggingConfigurable()

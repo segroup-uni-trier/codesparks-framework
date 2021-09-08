@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.logging;
 
 import com.intellij.openapi.project.Project;
@@ -13,9 +16,6 @@ import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 
 import javax.swing.*;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public final class CodeSparksLogger
 {
     private CodeSparksLogger() {}

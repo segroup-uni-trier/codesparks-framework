@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.settings;
 
 import com.intellij.openapi.components.Service;
@@ -12,9 +15,6 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 @Service
 public final class CodeSparksSettings implements SearchableConfigurable.Parent
 {

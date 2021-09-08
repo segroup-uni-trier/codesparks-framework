@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.settings;
 
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
@@ -6,9 +9,6 @@ import de.unitrier.st.codesparks.core.properties.PropertiesUtil;
 import de.unitrier.st.codesparks.core.properties.PropertyKey;
 import de.unitrier.st.codesparks.core.settings.CheckBoxComponentWrapper;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class ThreadVisualizationConfigurableComponentWrapper extends CheckBoxComponentWrapper
 {
     private ThreadVisualizationConfigurableComponentWrapper()

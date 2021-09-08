@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2021. Oliver Moseler
  */
@@ -14,9 +13,6 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.Set;
 
-/*
- * Copyright (c), Oliver Moseler, 2021
- */
 public class ArtifactTrieStatisticsTest
 {
     @BeforeClass

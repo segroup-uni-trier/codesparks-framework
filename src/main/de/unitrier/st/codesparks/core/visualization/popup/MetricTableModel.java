@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import de.unitrier.st.codesparks.core.data.*;
@@ -7,9 +10,6 @@ import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class MetricTableModel extends DefaultTableModel
 {
     private final List<ANeighborArtifact> successors;

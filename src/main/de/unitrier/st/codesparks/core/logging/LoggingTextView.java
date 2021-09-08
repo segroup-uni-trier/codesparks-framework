@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.logging;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -6,9 +9,6 @@ import com.intellij.ui.components.JBScrollPane;
 import javax.swing.*;
 import java.awt.*;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class LoggingTextView implements ITextView
 {
     private final JPanel rootPanel;

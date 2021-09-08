@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
 import com.intellij.ui.components.JBTextArea;
@@ -10,9 +13,6 @@ import java.awt.font.TextAttribute;
 import java.util.HashMap;
 import java.util.Map;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class MetricListMouseMotionAdapter extends MouseMotionAdapter
 {
     private final MetricList list;

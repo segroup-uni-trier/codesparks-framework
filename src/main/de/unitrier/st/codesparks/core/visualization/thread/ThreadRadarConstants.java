@@ -1,8 +1,8 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 abstract class ThreadRadarConstants
 {
     static final int CIRCLESIZE = 32;

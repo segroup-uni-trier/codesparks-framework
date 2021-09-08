@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization;
 
 import de.unitrier.st.codesparks.core.CoreUtil;
@@ -6,9 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/*
- * Copyright (c), Oliver Moseler, 2020
- */
 public class DummyArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
     public DummyArtifactVisualizationLabelFactory() { super(null);}

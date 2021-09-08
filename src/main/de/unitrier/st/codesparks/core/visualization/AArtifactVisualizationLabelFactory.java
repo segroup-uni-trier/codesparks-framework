@@ -1,10 +1,10 @@
+/*
+ * Copyright (c) 2021. Oliver Moseler
+ */
 package de.unitrier.st.codesparks.core.visualization;
 
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 
-/*
- * Copyright (C) 2021, Oliver Moseler
- */
 public abstract class AArtifactVisualizationLabelFactory extends AVisualizationLabelFactory implements IArtifactVisualizationLabelFactory
 {
     protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
