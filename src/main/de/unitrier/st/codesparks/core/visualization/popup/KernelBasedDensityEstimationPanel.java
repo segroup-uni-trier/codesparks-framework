@@ -193,18 +193,19 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
                 , topOffset + verticalMargin + vizHeight + 16
         );
 
-        if (!showKernelBasedDensityEstimation)
-        {
-            return;
-        }
-
         // The kernel-based-density-estimation-function graph
 
         String infoString = "";
         if (numberOfThreadsToShow > 1)
         { // Cannot compute a density for only one value!
             final boolean showMinimaMarkers =
-                    threadArtifactClustering.getStrategy().equals(KernelBasedDensityEstimationClustering.getInstance(primaryMetricIdentifier));
+                    threadArtifactClustering.getStrategy().equals(KernelBasedDensityEstimationClustering.getInstance(primaryMetricIdentifier))
+                    && (
+                            showKernelBasedDensityEstimation
+                    ||
+                            threadArtifactClustering.size() > 6
+                    )
+                    ;
 
             final double bandWidth = 0.01;
             final KernelDensity kernelDensity = new KernelDensity(metricValuesOfThreadsToShow, bandWidth);
@@ -226,15 +227,19 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
                 final double normalizedPj = probability / 100d;
                 int yValue = (int) (normalizedPj * vizHeight);
                 final int yPos = topOffset + verticalMargin + vizHeight - yValue;
-                graphics2D.setColor(VisConstants.BORDER_COLOR);
-                //noinspection SuspiciousNameCombination
-                graphics2D.fillRect(xPos
-                        //horizontalMargin + (int) xValue - dotWidthProbability / 2,
-                        //xAxisY - yValue
-                        , yPos - 2 // the '-2' is an adjustment to better see the values
-                        , dotWidthProbability
-                        , dotWidthProbability
-                );
+
+                if (showKernelBasedDensityEstimation)
+                {
+                    graphics2D.setColor(VisConstants.BORDER_COLOR);
+                    //noinspection SuspiciousNameCombination
+                    graphics2D.fillRect(xPos
+                            //horizontalMargin + (int) xValue - dotWidthProbability / 2,
+                            //xAxisY - yValue
+                            , yPos - 2 // the '-2' is an adjustment to better see the values
+                            , dotWidthProbability
+                            , dotWidthProbability
+                    );
+                }
 
                 if (showMinimaMarkers)
                 {
@@ -265,10 +270,13 @@ public class KernelBasedDensityEstimationPanel extends JBPanel<BorderLayoutPanel
             infoString += "kernel=gaussian, bandwidth=" + bandWidth;
         }
 
-        graphics2D.setColor(VisConstants.BORDER_COLOR);
-        //final FontMetrics fontMetrics = graphics2D.getFontMetrics();
-        final int stringWidth = fontMetrics.stringWidth(infoString);
-        graphics2D.drawString(infoString, width / 2 - stringWidth / 2, topOffset + 10);
+        if (showKernelBasedDensityEstimation)
+        {
+            graphics2D.setColor(VisConstants.BORDER_COLOR);
+            //final FontMetrics fontMetrics = graphics2D.getFontMetrics();
+            final int stringWidth = fontMetrics.stringWidth(infoString);
+            graphics2D.drawString(infoString, width / 2 - stringWidth / 2, topOffset + 10);
+        }
     }
 
     private boolean showKernelBasedDensityEstimation = false;

@@ -385,7 +385,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
          */
 
         final JPanel kbdeCenterPanel = new JPanel(new BorderLayout());
-        final JCheckBox showDensityEstimation = new JCheckBox("Show the kernel based density estimation.");
+        final JCheckBox showDensityEstimation = new JCheckBox("Show the density function.");
         showDensityEstimation.setSelected(false);
         showDensityEstimation.addActionListener((event)
                 -> kernelBasedDensityEstimationPanel.setShowKernelBasedDensityEstimation(showDensityEstimation.isSelected()));
