@@ -19,7 +19,7 @@ public interface IArtifactPool extends IThreadArtifactFilterable, IArtifactPoolE
 
     AArtifact getOrCreateArtifact(final Class<? extends AArtifact> artifactClass, final String identifier, final Object... arguments);
 
-    AArtifact getOrCreateThreadArtifact(final Class<? extends AThreadArtifact> threadArtifactClass, final String threadIdentifier);
+    AThreadArtifact getOrCreateThreadArtifact(final Class<? extends AThreadArtifact> threadArtifactClass, final String threadIdentifier);
 
     List<AArtifact> getArtifacts(final Class<? extends AArtifact> artifactClass);
 

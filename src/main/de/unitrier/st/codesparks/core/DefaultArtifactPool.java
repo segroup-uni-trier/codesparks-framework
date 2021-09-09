@@ -211,24 +211,24 @@ public class DefaultArtifactPool implements IArtifactPool
     }
 
     @Override
-    public AArtifact getOrCreateThreadArtifact(final Class<? extends AThreadArtifact> threadArtifactClass, final String threadIdentifier)
+    public AThreadArtifact getOrCreateThreadArtifact(final Class<? extends AThreadArtifact> threadArtifactClass, final String threadIdentifier)
     {
         if (threadArtifactClass == null || threadIdentifier == null || "".equals(threadIdentifier))
         {
             return null;
         }
-        AArtifact artifact;
+        AThreadArtifact threadArtifact;
         synchronized (artifactsLock)
         {
             final Map<String, AArtifact> artifactsOfClassMap = artifacts.computeIfAbsent(threadArtifactClass, k -> new HashMap<>());
-            artifact = artifactsOfClassMap.get(threadIdentifier);
-            if (artifact == null)
+            threadArtifact = (AThreadArtifact) artifactsOfClassMap.get(threadIdentifier);
+            if (threadArtifact == null)
             {
                 try
                 {
-                    final Constructor<? extends AArtifact> declaredConstructor = threadArtifactClass.getDeclaredConstructor(String.class);
-                    artifact = declaredConstructor.newInstance(threadIdentifier);
-                    artifactsOfClassMap.put(threadIdentifier, artifact);
+                    final Constructor<? extends AThreadArtifact> declaredConstructor = threadArtifactClass.getDeclaredConstructor(String.class);
+                    threadArtifact = declaredConstructor.newInstance(threadIdentifier);
+                    artifactsOfClassMap.put(threadIdentifier, threadArtifact);
                     artifacts.put(threadArtifactClass, artifactsOfClassMap);
                 } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e)
                 {
@@ -236,7 +236,7 @@ public class DefaultArtifactPool implements IArtifactPool
                 }
             }
         }
-        return artifact;
+        return threadArtifact;
     }
 
     @Override
