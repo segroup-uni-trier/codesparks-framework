@@ -651,7 +651,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                 }
                 try
                 {
-                    Thread.sleep(500);
+                    Thread.sleep(700);
                 } catch (InterruptedException e)
                 {
                     // ignored
