@@ -51,7 +51,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     private final Lazy<Map<IMetricIdentifier, Object>> metrics;
 
     /*
-     * Non final fields
+     * Non-final fields
      */
 
     protected int lineNumber;

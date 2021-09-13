@@ -7,7 +7,12 @@ import de.unitrier.st.codesparks.core.CoreUtil;
 
 public abstract class AThreadArtifact extends AArtifact
 {
-    private String callSite;
+    /**
+     * The callSiteIdentifier should contain an identifier of a method (lambda etc.) that is executed by the respective thread. That is:
+     * &bull; The run method of a subclass of java.lang.Thread or anonymous and explicit Runnable implementations
+     * &bull; The lambda expression. In that case the identifier has the format: <classIdentifier>@<lineNumber>
+     */
+    private String callSiteIdentifier;
     private boolean filtered;
 
     public AThreadArtifact(final String identifier, final Class<? extends AThreadArtifact> threadArtifactClass)
@@ -16,14 +21,14 @@ public abstract class AThreadArtifact extends AArtifact
         filtered = false;
     }
 
-    public String getCallSite()
+    public String getCallSiteIdentifier()
     {
-        return callSite;
+        return callSiteIdentifier;
     }
 
-    public void setCallSite(final String callSite)
+    public void setCallSiteIdentifier(final String callSiteIdentifier)
     {
-        this.callSite = callSite;
+        this.callSiteIdentifier = callSiteIdentifier;
     }
 
     public boolean isFiltered()
