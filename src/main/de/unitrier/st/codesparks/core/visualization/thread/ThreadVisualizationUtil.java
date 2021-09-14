@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public final class ThreadVisualizationUtil
 {
-    private ThreadVisualizationUtil() { }
+    private ThreadVisualizationUtil() {}
 
     public static Map<ThreadArtifactCluster, Integer> getDrawPositions(
             final ThreadArtifactClustering clustering
@@ -109,6 +109,10 @@ public final class ThreadVisualizationUtil
             if (percent >= 1d)
             {
                 return maxWidth;
+            }
+            if (x < 20)
+            {
+                return (int) (maxWidth * percent);
             }
             maxWidth = (int) (maxWidth * ((x - 1) / (double) x));
             double discreteStep = 100d / x;
