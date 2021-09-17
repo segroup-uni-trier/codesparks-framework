@@ -18,15 +18,19 @@ import java.util.Map;
 
 public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory extends AArtifactVisualizationLabelFactory
 {
+    private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayData;
+
     @SuppressWarnings("unused")
     public MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         super(primaryMetricIdentifier);
+        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayDataProvider(primaryMetricIdentifier);
     }
 
     public MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(primaryMetricIdentifier, sequence);
+        this.threadArtifactsDisplayData = new DefaultThreadArtifactsDisplayDataProvider(primaryMetricIdentifier);
     }
 
     @Override
@@ -177,7 +181,8 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
 
         // Creation of the label
         final JLabel jLabel = makeLabel(graphics);
-        jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
+//        jLabel.addMouseListener(new DefaultThreadVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
+        jLabel.addMouseListener(new ThreadForkMouseListener(jLabel, artifact, primaryMetricIdentifier, threadArtifactsDisplayData));
         return jLabel;
     }
 }
