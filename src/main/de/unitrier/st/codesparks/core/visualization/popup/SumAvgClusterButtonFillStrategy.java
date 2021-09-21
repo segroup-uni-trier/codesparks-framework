@@ -18,7 +18,7 @@ import java.util.Set;
 
 public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFillStrategy
 {
-    private static IThreadClusterButtonFillStrategy instance;
+    private static volatile IThreadClusterButtonFillStrategy instance;
 
     public static IThreadClusterButtonFillStrategy getInstance()
     {

@@ -7,7 +7,7 @@ public final class CodeSparksFlowManager
 {
     private CodeSparksFlowManager() {}
 
-    private static CodeSparksFlowManager instance;
+    private static volatile CodeSparksFlowManager instance;
 
     public static CodeSparksFlowManager getInstance()
     {

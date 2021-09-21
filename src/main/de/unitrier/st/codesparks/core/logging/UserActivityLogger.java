@@ -73,7 +73,7 @@ public final class UserActivityLogger implements IUserActivityLogger, IEditorCov
         }
     }
 
-    private static UserActivityLogger instance;
+    private static volatile UserActivityLogger instance;
 
     public static UserActivityLogger getInstance()
     {

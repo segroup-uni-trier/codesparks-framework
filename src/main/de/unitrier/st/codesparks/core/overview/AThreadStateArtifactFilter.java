@@ -13,23 +13,23 @@ public abstract class AThreadStateArtifactFilter
     private final Map<Integer, String> states;
     private final Map<Integer, Boolean> checked;
 
-    public AThreadStateArtifactFilter(Map<Integer, String> states)
+    public AThreadStateArtifactFilter(final Map<Integer, String> states)
     {
         this.states = states;
         this.checked = new HashMap<>();
-        for (Integer value : states.keySet())
+        for (final Integer value : states.keySet())
         {
             checked.put(value, true);
         }
     }
 
-    public AThreadStateArtifactFilter(Map<Integer, String> states, int... checkedStates)
+    public AThreadStateArtifactFilter(final Map<Integer, String> states, final int... checkedStates)
     {
         this(states);
-        List<Integer> checkedStatesList = Arrays.stream(checkedStates).boxed().collect(Collectors.toList());
+        final List<Integer> checkedStatesList = Arrays.stream(checkedStates).boxed().collect(Collectors.toList());
         for (Integer state : states.keySet())
         {
-            boolean stateChecked = checkedStatesList.contains(state);
+            final boolean stateChecked = checkedStatesList.contains(state);
             checked.put(state, stateChecked);
         }
     }

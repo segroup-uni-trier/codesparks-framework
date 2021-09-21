@@ -18,7 +18,7 @@ public class ArtifactVisualizationLabelFactoryCache
         cache = new HashMap<>();
     }
 
-    private static ArtifactVisualizationLabelFactoryCache instance;
+    private static volatile ArtifactVisualizationLabelFactoryCache instance;
 
     public static ArtifactVisualizationLabelFactoryCache getInstance()
     {
