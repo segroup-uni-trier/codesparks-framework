@@ -13,9 +13,14 @@ public final class PopupPanel extends JBPanel<BorderLayoutPanel>
 {
     private String type;
 
-    public PopupPanel(LayoutManager layout, final String type)
+    public PopupPanel(final LayoutManager layout, final String type)
     {
         super(layout);
+        this.type = type;
+    }
+
+    public PopupPanel(final String type)
+    {
         this.type = type;
     }
 

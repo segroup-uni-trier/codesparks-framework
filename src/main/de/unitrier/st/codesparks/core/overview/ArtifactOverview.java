@@ -68,7 +68,7 @@ public class ArtifactOverview
         return instance;
     }
 
-    private ArtifactOverview() { setupUI(); }
+    private ArtifactOverview() {setupUI();}
 
     private void setupUI()
     {
@@ -223,14 +223,11 @@ public class ArtifactOverview
 
         programArtifactVisualizationPanel = new JBPanel<>();
         threadFilterPanel.add(programArtifactVisualizationPanel);
-        // Horizontal glue has no effect
-//        threadFilterPanel.add(Box.createHorizontalGlue());
 
-        final JBPanel<BorderLayoutPanel> threadFilterControlsPanel = new JBPanel<>();// new JBPanel(new BorderLayout());
+        final JBPanel<BorderLayoutPanel> threadFilterControlsPanel = new JBPanel<>();
         threadFilterControlsPanel.setLayout(new BoxLayout(threadFilterControlsPanel, BoxLayout.Y_AXIS));
 
         final JButton resetThreadFilterButton = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
-        //resetThreadFilterButton.setMaximumSize(new Dimension(50, 30));
         resetThreadFilterButton.addActionListener(e -> {
             UserActivityLogger.getInstance().log(UserActivityEnum.OverviewThreadFilterReset);
             CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(GlobalResetThreadArtifactFilter
@@ -266,7 +263,7 @@ public class ArtifactOverview
 
         final JBPanel<BorderLayoutPanel> resultsPanel = new BorderLayoutPanel();// new JBPanel(new BorderLayout());
         tabbedPane = new JBTabbedPane();
-        tabbedPaneChangeListener = new ArtifactTabbedPaneChangeListener(tabbedPane);
+        tabbedPaneChangeListener = new ArtifactTabbedPaneChangeListener();
 
         resultsPanel.add(tabbedPane, BorderLayout.CENTER);
         rootPanel.add(resultsPanel, BorderLayout.CENTER);
@@ -279,23 +276,17 @@ public class ArtifactOverview
         applyArtifactFilterButton.addActionListener(actionListener);
         currentFileFilter.addActionListener(
                 e -> {
-                    boolean selected = currentFileFilter.isSelected();
-
-                    String s = !selected ? "disabled" : "enabled";
-
-                    UserActivityLogger.getInstance().log(UserActivityEnum.OverviewArtifactFilterCurrentEditorArtifactsOnlyChecked, s);
-
+                    final boolean selected = currentFileFilter.isSelected();
+                    final String state = !selected ? "disabled" : "enabled";
+                    UserActivityLogger.getInstance().log(UserActivityEnum.OverviewArtifactFilterCurrentEditorArtifactsOnlyChecked, state);
                     filterOverView();
                 }
         );
         standardLibraryFilter.addActionListener(
                 e -> {
-                    boolean selected = standardLibraryFilter.isSelected();
-
-                    String s = !selected ? "disabled" : "enabled";
-
-                    UserActivityLogger.getInstance().log(UserActivityEnum.OverviewArtifactFilterExcludeStandardLibraryChecked, s);
-
+                    final boolean selected = standardLibraryFilter.isSelected();
+                    final String state = !selected ? "disabled" : "enabled";
+                    UserActivityLogger.getInstance().log(UserActivityEnum.OverviewArtifactFilterExcludeStandardLibraryChecked, state);
                     filterOverView();
                 }
         );
@@ -338,26 +329,21 @@ public class ArtifactOverview
 
     private static class ArtifactTabbedPaneChangeListener implements ChangeListener
     {
-        private final JBTabbedPane tabbedPane;
         private final IUserActivityLogger userActivityLogger;
 
-        ArtifactTabbedPaneChangeListener(final JBTabbedPane tabbedPane)
+        ArtifactTabbedPaneChangeListener()
         {
-            this.tabbedPane = tabbedPane;
             this.userActivityLogger = UserActivityLogger.getInstance();
         }
 
         @Override
         public void stateChanged(ChangeEvent e)
         {
-            final int selectedIndex = tabbedPane.getSelectedIndex();
-            if (selectedIndex == 0)
-            {
-                userActivityLogger.log(UserActivityEnum.OverviewMethodTabEntered);
-            } else
-            {
-                userActivityLogger.log(UserActivityEnum.OverviewClassesTabEntered);
-            }
+            //final int selectedIndex = tabbedPane.getSelectedIndex();
+            final JBTabbedPane source = (JBTabbedPane) e.getSource();
+            final int selectedIndex = source.getSelectedIndex();
+            final String title = source.getTitleAt(selectedIndex);
+            userActivityLogger.log(UserActivityEnum.OverviewSwitchedToArtifactTab, String.valueOf(selectedIndex), title);
         }
     }
 
@@ -694,6 +680,8 @@ public class ArtifactOverview
                     if (tableModel != null)
                     {
                         tableModel.sortArtifacts(artifactMetricComparator);
+                        UserActivityLogger.getInstance().log(UserActivityEnum.OverviewArtifactsSorted,
+                                artifactPool.getArtifactClassDisplayName(artifactClass), artifactMetricComparator.getMetricIdentifier().getDisplayString());
                         jbTable.repaint();
                     }
                 } else

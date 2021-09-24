@@ -92,6 +92,8 @@ public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFill
             final int sumWidth = ThreadVisualizationUtil.getDiscreteXValuedScaleWidth(20, percent, boundsRectangle.width);
 
 
+            clusterStats = "sum=" + percent;
+
             //double linearEulerInterpolationOfPercent = MathUtil.linearInterpolation(1, Math.exp(1D), 0, 1, percent);
             //double lnScaledPercent = Math.log(linearEulerInterpolationOfPercent);
             //final int lnScaledSumWidth = (int) (boundsRectangle.width * lnScaledPercent);
@@ -123,11 +125,22 @@ public class SumAvgClusterButtonFillStrategy implements IThreadClusterButtonFill
 
 //            final int sqrtScaledAvgWidth = (int) (boundsRectangle.width * Math.sqrt(percent));
 
+            // For user activity logging
+            clusterStats += ",avg=" + percent;
+
 
             graphics.setColor(color);
             graphics.fillRect(0, 0, avgWidth, boundsRectangle.height);
 //            graphics.fillRect(0, 0, lnScaledAvgWidth, boundsRectangle.height);
 //            graphics.fillRect(0, 0, sqrtScaledAvgWidth, boundsRectangle.height);
         }
+    }
+
+    private String clusterStats = null;
+
+    @Override
+    public String toString()
+    {
+        return "ClusterSumAndAverage" + (clusterStats != null ? ":" + clusterStats : "");
     }
 }

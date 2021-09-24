@@ -13,6 +13,9 @@ import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
+import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
+import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
+import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationMouseListener;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
@@ -26,6 +29,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.*;
+
+import static de.unitrier.st.codesparks.core.logging.UserActivityEnum.*;
+
 
 public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable, IClusterMouseClickable
 {
@@ -74,7 +80,11 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
     @Override
     protected PopupPanel createPopupContent(final AArtifact artifact)
     {
-        final PopupPanel popupPanel = new PopupPanel();
+        final IUserActivityLogger logger = UserActivityLogger.getInstance();
+
+//        logger.log(ThreadForkDetailViewOpened, artifact.getName());
+
+        final PopupPanel popupPanel = new PopupPanel("ThreadForkDetailView");
         popupPanel.setLayout(new BoxLayout(popupPanel, BoxLayout.Y_AXIS));
 
         threadSelectables.clear();
@@ -83,6 +93,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         // Objects that need to be declared already because they will be used in inner classes.
         final JBTabbedPane selectablesTabbedPane = new JBTabbedPane();
         selectableIndexProvider = selectablesTabbedPane::getSelectedIndex;
+
 
         /*
          * The zoomed viz tabbed pane
@@ -180,6 +191,10 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                     ThreadArtifactClustering clustering;
                     final ComboBoxItem item = (ComboBoxItem) e.getItem();
                     final int k = item.k;
+
+                    final String kSelected = String.valueOf(k == 0 ? numberOfEstimatedClusters : k);
+                    logger.log(ThreadForkDetailViewNumberOfClustersSelected, kSelected);
+
                     if (k > 0)
                     {
                         strategy = ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, k);
@@ -388,7 +403,12 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         final JCheckBox showDensityEstimation = new JCheckBox("Show the density function.");
         showDensityEstimation.setSelected(false);
         showDensityEstimation.addActionListener((event)
-                -> kernelBasedDensityEstimationPanel.setShowKernelBasedDensityEstimation(showDensityEstimation.isSelected()));
+                -> {
+            final boolean selected = showDensityEstimation.isSelected();
+            kernelBasedDensityEstimationPanel.setShowKernelBasedDensityEstimation(selected);
+            final String state = selected ? "enabled" : "disabled";
+            UserActivityLogger.getInstance().log(UserActivityEnum.HistogramShowDensityFunction, state);
+        });
         kbdeCenterPanel.add(showDensityEstimation, BorderLayout.NORTH);
         kbdeCenterPanel.add(kernelBasedDensityEstimationPanel, BorderLayout.CENTER);
 
@@ -409,6 +429,8 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             {
                 final JBTabbedPane source = (JBTabbedPane) e.getSource();
                 final int selectedIndex = source.getSelectedIndex();
+                final String title = source.getTitleAt(selectedIndex);
+                logger.log(ThreadForkDetailViewSwitchedToVisualizationTab, String.valueOf(selectedIndex), title);
                 if (selectedIndex == 0)
                 {
                     final ThreadArtifactClustering threadArtifactClustering = finalZoomedThreadFork.getThreadArtifactClustering();
@@ -439,6 +461,23 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         popupPanel.add(selectablesTabbedPaneWrapper);
 
         /*
+        For user activity logging
+         */
+
+        //noinspection Convert2Lambda
+        selectablesTabbedPane.addChangeListener(new ChangeListener()
+        {
+            @Override
+            public void stateChanged(final ChangeEvent e)
+            {
+                final JBTabbedPane source = (JBTabbedPane) e.getSource();
+                final int selectedIndex = source.getSelectedIndex();
+                final String title = source.getTitleAt(selectedIndex);
+                logger.log(ThreadForkDetailViewSwitchedToSelectablesTab, String.valueOf(selectedIndex), title);
+            }
+        });
+
+        /*
          * Beginning with the buttons
          */
 
@@ -462,7 +501,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             {
                 threadSelectable.deselectAll();
             }
-
+            UserActivityLogger.getInstance().log(ThreadForkDetailViewDeselectAllButtonClicked);
         });
         final JBPanel<BorderLayoutPanel> deselectAllButtonWrapper = new JBPanel<>(new BorderLayout());
         deselectAllButtonWrapper.add(deselectAll, BorderLayout.CENTER);
@@ -475,6 +514,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             {
                 threadSelectable.selectAll();
             }
+            UserActivityLogger.getInstance().log(ThreadForkDetailViewSelectAllButtonClicked);
         });
         final JBPanel<BorderLayoutPanel> selectAllButtonWrapper = new JBPanel<>(new BorderLayout());
         selectAllButtonWrapper.add(selectAll, BorderLayout.CENTER);
@@ -486,6 +526,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             {
                 threadSelectable.invertAll();
             }
+            UserActivityLogger.getInstance().log(ThreadForkDetailViewInvertSelectionButtonClicked);
         });
         final JBPanel<BorderLayoutPanel> invertButtonWrapper = new JBPanel<>(new BorderLayout());
         invertButtonWrapper.add(invert, BorderLayout.CENTER);
@@ -508,6 +549,7 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         resetThreadFilterGlobal.addActionListener(e -> {
             popupPanel.cancelPopup();
             CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(GlobalResetThreadArtifactFilter.getInstance());
+            UserActivityLogger.getInstance().log(ThreadForkDetailViewResetThreadFilterButtonClicked);
         });
         final JBPanel<BorderLayoutPanel> resetThreadFilterGlobalButtonWrapper = new JBPanel<>(new BorderLayout());
         resetThreadFilterGlobalButtonWrapper.add(resetThreadFilterGlobal, BorderLayout.CENTER);
@@ -525,6 +567,11 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                 final IThreadArtifactFilter threadArtifactFilter = new DefaultThreadArtifactFilter(iThreadSelectable);
                 CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(threadArtifactFilter);
             }
+            // TODO: in case there are more than three thread groups selected they cannot be displayed by the in-situ ThreadFork. therefore, tell this to
+            //  the user, i.e., that the maximum number of groups to be computed will be reset to three. Or allow the user to cancel and get back to the
+            //  popup.
+
+            UserActivityLogger.getInstance().log(ThreadForkDetailViewApplyThreadFilterButtonClicked);
         });
         final JBPanel<BorderLayoutPanel> applyThreadFilterButtonWrapper = new JBPanel<>(new BorderLayout());
         applyThreadFilterButtonWrapper.add(applyThreadFilter, BorderLayout.CENTER);
@@ -599,6 +646,11 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         {
             hoverPanel.setBorder(coloredTitledHoverBorder);
         }
+
+        final String clusterStats =
+                hoveredThreadData.getMetricValueSum() + "," + hoveredThreadData.getMetricValueAvg() + "," + hoveredThreadData.getNumberOfThreads() + "," + hoveredThreadData.getNumberOfThreadTypes();
+
+        UserActivityLogger.getInstance().log(ThreadForkClusterButtonHovered, clusterStats);
     }
 
     private static final String hoverBorderTitle = "Hovered cluster";

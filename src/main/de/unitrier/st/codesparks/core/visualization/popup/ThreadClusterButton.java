@@ -11,11 +11,14 @@ import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
+import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
+import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.thread.IClusterMouseClickable;
 import de.unitrier.st.codesparks.core.visualization.thread.IClusterHoverable;
 import de.unitrier.st.codesparks.core.visualization.thread.IThreadSelectableIndexProvider;
+import de.unitrier.st.codesparks.core.visualization.thread.ThreadArtifactDisplayData;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -231,6 +234,11 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
                 }
                 source.getClusterClickable().onMouseClicked();
                 source.getClusterHoverable().onExit();
+
+
+                UserActivityLogger.getInstance().log(UserActivityEnum.ThreadForkDetailViewClusterBarClicked,
+                        source.getArtifact().getIdentifier(), source.fillStrategy.toString());
+
             }
         }
     }

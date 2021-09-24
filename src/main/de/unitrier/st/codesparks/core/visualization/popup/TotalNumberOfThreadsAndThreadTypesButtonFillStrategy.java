@@ -84,11 +84,22 @@ public class TotalNumberOfThreadsAndThreadTypesButtonFillStrategy implements ITh
 
             percent = numberOfSelectedThreadTypesInCluster / totalNumberOfSelectedThreads;
 
+            // For user activity logging
+            clusterStats = "selectedThreads=" + numberOfSelectedThreadsOfCluster + ",selectedThreadTypes=" + numberOfSelectedThreadTypesInCluster;
+
 //            final int numberOfThreadTypesWidth = (int) (boundsRectangle.width * percent);
             final int numberOfThreadTypesWidth = ThreadVisualizationUtil.getDiscreteXValuedScaleWidth((int) Math.min(20, totalNumberOfSelectedThreads),
                     percent, boundsRectangle.width);
             graphics.setColor(color);
             graphics.fillRect(boundsRectangle.width - numberOfThreadTypesWidth, 0, numberOfThreadTypesWidth, boundsRectangle.height);
         }
+    }
+
+    private String clusterStats = null;
+
+    @Override
+    public String toString()
+    {
+        return "ClusterNumberOfThreadsAndTypes" + (clusterStats != null ? ":" + clusterStats : "");
     }
 }

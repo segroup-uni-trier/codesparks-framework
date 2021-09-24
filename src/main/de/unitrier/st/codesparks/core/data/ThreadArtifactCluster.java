@@ -61,10 +61,10 @@ public class ThreadArtifactCluster extends ArrayList<AThreadArtifact>
     @Override
     public String toString()
     {
-        StringBuilder strb = new StringBuilder();
-        for (AThreadArtifact codeSparksThread : this)
+        final StringBuilder strb = new StringBuilder();
+        for (final AThreadArtifact threadArtifact : this)
         {
-            strb.append(codeSparksThread.getIdentifier()).append(",");
+            strb.append(threadArtifact.getIdentifier()).append(",");
         }
         strb.deleteCharAt(strb.length() - 1);
         return strb.toString();

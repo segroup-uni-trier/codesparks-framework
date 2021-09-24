@@ -98,7 +98,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         final JButton selectAll = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.selectallbutton"));
         selectAll.addActionListener(e -> {
 
-            UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewSelectAllButtonClicked);
+            UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailViewSelectAllButtonClicked);
 
             for (final IThreadSelectable threadSelectable : this.threadSelectables)
             {
@@ -108,7 +108,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         final JButton deselectAll = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.deselectallbutton"));
         deselectAll.addActionListener(e -> {
 
-            UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewDeselectAllButtonClicked);
+            UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailViewDeselectAllButtonClicked);
 
             for (final IThreadSelectable threadSelectable : this.threadSelectables)
             {
@@ -119,7 +119,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         final JButton invert = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.invertallbutton"));
         invert.addActionListener(e -> {
 
-            UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewInvertSelectionButtonClicked);
+            UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailViewInvertSelectionButtonClicked);
 
             for (final IThreadSelectable threadSelectable : this.threadSelectables)
             {
@@ -130,7 +130,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         final JButton reset = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.button.reset.thread.filter.global"));
         reset.addActionListener(e -> {
 
-            UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewResetThreadFilterButtonClicked);
+            UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailViewResetThreadFilterButtonClicked);
 
             popupPanel.cancelPopup();
             threadSelectables.forEach(IThreadSelectable::selectAll);
@@ -141,7 +141,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         final JButton apply = new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.button.apply.thread.filter"));
         apply.addActionListener(e -> {
 
-            UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailsViewApplyThreadFilterButtonClicked);
+            UserActivityLogger.getInstance().log(UserActivityEnum.ThreadRadarDetailViewApplyThreadFilterButtonClicked);
 
             popupPanel.cancelPopup();
             final int index = selectableIndexProvider.getThreadSelectableIndex();

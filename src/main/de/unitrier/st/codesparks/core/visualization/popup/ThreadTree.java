@@ -6,6 +6,7 @@ package de.unitrier.st.codesparks.core.visualization.popup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.util.ui.ThreeStateCheckBox;
 import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 
@@ -89,14 +90,15 @@ public abstract class ThreadTree extends AThreadSelectable implements IThreadArt
                 lastPathComponent.toggleSelected();
 
                 final boolean selected = lastPathComponent.isSelected();
-                final String s = !selected ? "disabled" : "enabled";
+                final String state = !selected ? "disabled" : "enabled";
+                final IUserActivityLogger logger = UserActivityLogger.getInstance();
                 if (lastPathComponent.isLeaf())
                 {
-                    UserActivityLogger.getInstance().log(UserActivityEnum.ThreadTreeNodeToggled, s,
+                    logger.log(UserActivityEnum.ThreadTreeNodeToggled, state,
                             ((ThreadTreeLeafNode) lastPathComponent).getThreadArtifact().getIdentifier());
                 } else
                 {
-                    UserActivityLogger.getInstance().log(UserActivityEnum.ThreadTreeNodeToggled, s,
+                    logger.log(UserActivityEnum.ThreadTreeNodeToggled, state,
                             lastPathComponent.toString());
                 }
 
