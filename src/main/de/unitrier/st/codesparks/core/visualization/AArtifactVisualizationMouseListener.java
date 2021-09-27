@@ -58,7 +58,7 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
     {
         final IUserActivityLogger logger = UserActivityLogger.getInstance();
         final String identifier = artifact.getIdentifier();
-        final Object source = e.getSource();
+
         final JBPanel<BorderLayoutPanel> popupPanelWrapper = new BorderLayoutPanel();
         final PopupPanel popupPanel = createPopupContent(artifact);
 
@@ -68,7 +68,7 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
 
         final String popupTitle = createPopupTitle(artifact);
 
-        ComponentPopupBuilder componentPopupBuilder = JBPopupFactory.getInstance().
+        final ComponentPopupBuilder componentPopupBuilder = JBPopupFactory.getInstance().
                 createComponentPopupBuilder(popupPanelWrapper, null)
                 .setMovable(true)
 //                                    .setFocusable(true)
@@ -77,22 +77,22 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
                 .setMinSize(dimension)
 //                                    .setShowShadow(true)
                 .setCouldPin(jbPopup -> {
-                    Project project = CoreUtil.getCurrentlyOpenedProject();
-                    String name = LocalizationUtil.getLocalizedString("codesparks.ui.artifactpopup.displayname");
-                    ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+                    final Project project = CoreUtil.getCurrentlyOpenedProject();
+                    final String name = LocalizationUtil.getLocalizedString("codesparks.ui.artifactpopup.displayname");
+                    final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
                     final ToolWindow toolWindow = toolWindowManager.getToolWindow(name);
                     if (toolWindow != null)
                     {
                         toolWindow.remove();
                     }
-                    JBPanel<BorderLayoutPanel> pinPanel = new BorderLayoutPanel();
-                    JBPanel<BorderLayoutPanel> titlePanel = new BorderLayoutPanel();
+                    final JBPanel<BorderLayoutPanel> pinPanel = new BorderLayoutPanel();
+                    final JBPanel<BorderLayoutPanel> titlePanel = new BorderLayoutPanel();
                     titlePanel.add(new JLabel(popupTitle, JLabel.CENTER), BorderLayout.CENTER);
 
                     pinPanel.add(titlePanel, BorderLayout.NORTH);
                     pinPanel.add(popupPanel, BorderLayout.CENTER);
 
-                    ToolWindow methodPopupToolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
+                    final ToolWindow methodPopupToolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
                             name
                             , ToolWindowAnchor.RIGHT
                             , null
@@ -105,7 +105,7 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
                             , () -> name
                     ));
 
-                    ContentManager contentManager = methodPopupToolWindow.getContentManager();
+                    final ContentManager contentManager = methodPopupToolWindow.getContentManager();
                     contentManager.addContent(ContentFactory.SERVICE.getInstance()
                             .createContent(pinPanel, "", true));
                     jbPopup.cancel();
@@ -118,8 +118,11 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
         popup.setSize(dimension);
         popup.setMinimumSize(dimension);
         popup.pack(false, true);
-        popup.canClose();
-        popup.showUnderneathOf((Component) source);
+      //  popup.canClose();
+
+        final Component source = (Component) e.getSource();
+        popup.showUnderneathOf(source);
+
         popupPanel.registerPopup(popup); // In order to be able to close the popup in case the user
         // clicked on a caller/callee to navigate to it.
     }

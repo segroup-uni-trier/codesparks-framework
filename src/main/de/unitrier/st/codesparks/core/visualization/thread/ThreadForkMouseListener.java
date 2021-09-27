@@ -25,8 +25,7 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.util.List;
 import java.util.*;
 
@@ -555,24 +554,114 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         resetThreadFilterGlobalButtonWrapper.add(resetThreadFilterGlobal, BorderLayout.CENTER);
         controlButtonsPanel.add(resetThreadFilterGlobalButtonWrapper);
 
+
         // Apply thread filter button.
         final JButton applyThreadFilter =
                 new JButton(LocalizationUtil.getLocalizedString("codesparks.ui.popup.button.apply.thread.filter"));
-        applyThreadFilter.addActionListener(e -> {
-            popupPanel.cancelPopup();
-            final int index = selectableIndexProvider.getThreadSelectableIndex();
-            if (index < threadSelectables.size())
+
+
+        //final Component that = this;
+
+        applyThreadFilter.addMouseListener(new MouseAdapter() {
+
+            private void applyThreadFilterAndClosePopup(final IThreadSelectable threadSelectable)
             {
-                final IThreadSelectable iThreadSelectable = threadSelectables.get(index);
-                final IThreadArtifactFilter threadArtifactFilter = new DefaultThreadArtifactFilter(iThreadSelectable);
+                popupPanel.cancelPopup();
+                final IThreadArtifactFilter threadArtifactFilter = new DefaultThreadArtifactFilter(threadSelectable);
                 CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(threadArtifactFilter);
             }
-            // TODO: in case there are more than three thread groups selected they cannot be displayed by the in-situ ThreadFork. therefore, tell this to
-            //  the user, i.e., that the maximum number of groups to be computed will be reset to three. Or allow the user to cancel and get back to the
-            //  popup.
 
-            UserActivityLogger.getInstance().log(ThreadForkDetailViewApplyThreadFilterButtonClicked);
+            @Override
+            public void mouseClicked(final MouseEvent e)
+            {
+
+
+
+
+
+                final ThreadArtifactClustering threadArtifactClustering = finalZoomedThreadFork.getThreadArtifactClustering();
+                final int index = selectableIndexProvider.getThreadSelectableIndex();
+                if (index < threadSelectables.size())
+                {
+                    final IThreadSelectable threadSelectable = threadSelectables.get(index);
+//                    System.out.println(threadArtifactClustering.sizeAccordingToCurrentThreadSelection(threadSelectable));
+//                    System.out.println(threadArtifactClustering.getStrategy());
+                    if (threadArtifactClustering.sizeAccordingToCurrentThreadSelection(threadSelectable) > 3)
+                    {
+                        
+
+                        final ApplyThreadFilterDialog applyThreadFilterDialog = new ApplyThreadFilterDialog(popupPanel.getRootPane());
+                        final boolean result = applyThreadFilterDialog.showAndGet();
+                        if (result)
+                        { // User clicked OK
+                            applyThreadFilterAndClosePopup(threadSelectable);
+                        } else
+                        { // User clicked Cancel
+//                            popupPanel.grabFocus();
+                            popupPanel.requestFocus();
+                        }
+                    } else
+                    {
+                        applyThreadFilterAndClosePopup(threadSelectable);
+                    }
+
+
+                    // TODO: in case there are more than three thread groups selected they cannot be displayed by the in-situ ThreadFork. therefore, tell
+                    //  this to
+                    //  the user, i.e., that the maximum number of groups to be computed will be reset to three. Or allow the user to cancel and get back to the
+                    //  popup.
+
+                    UserActivityLogger.getInstance().log(ThreadForkDetailViewApplyThreadFilterButtonClicked);
+                super.mouseClicked(e);
+            }}
         });
+
+//        applyThreadFilter.addActionListener(new ActionListener()
+//        {
+//            private void applyThreadFilterAndClosePopup(final IThreadSelectable threadSelectable)
+//            {
+//                popupPanel.cancelPopup();
+//                final IThreadArtifactFilter threadArtifactFilter = new DefaultThreadArtifactFilter(threadSelectable);
+//                CodeSparksFlowManager.getInstance().getCurrentCodeSparksFlow().applyThreadArtifactFilter(threadArtifactFilter);
+//            }
+//
+//            @Override
+//            public void actionPerformed(final ActionEvent e)
+//            {
+//                final ThreadArtifactClustering threadArtifactClustering = finalZoomedThreadFork.getThreadArtifactClustering();
+//                final int index = selectableIndexProvider.getThreadSelectableIndex();
+//                if (index < threadSelectables.size())
+//                {
+//                    final IThreadSelectable threadSelectable = threadSelectables.get(index);
+////                    System.out.println(threadArtifactClustering.sizeAccordingToCurrentThreadSelection(threadSelectable));
+////                    System.out.println(threadArtifactClustering.getStrategy());
+//                    if (threadArtifactClustering.sizeAccordingToCurrentThreadSelection(threadSelectable) > 3)
+//                    {
+//                        final ApplyThreadFilterDialog applyThreadFilterDialog = new ApplyThreadFilterDialog(((Component) e.getSource()));
+//                        final boolean result = applyThreadFilterDialog.showAndGet();
+//                        if (result)
+//                        { // User clicked OK
+//                            applyThreadFilterAndClosePopup(threadSelectable);
+//                        } else
+//                        { // User clicked Cancel
+////                            popupPanel.grabFocus();
+//                            popupPanel.requestFocus();
+//                        }
+//                    } else
+//                    {
+//                        applyThreadFilterAndClosePopup(threadSelectable);
+//                    }
+//
+//
+//                    // TODO: in case there are more than three thread groups selected they cannot be displayed by the in-situ ThreadFork. therefore, tell
+//                    //  this to
+//                    //  the user, i.e., that the maximum number of groups to be computed will be reset to three. Or allow the user to cancel and get back to the
+//                    //  popup.
+//
+//                    UserActivityLogger.getInstance().log(ThreadForkDetailViewApplyThreadFilterButtonClicked);
+//                }
+//            }
+//        });
         final JBPanel<BorderLayoutPanel> applyThreadFilterButtonWrapper = new JBPanel<>(new BorderLayout());
         applyThreadFilterButtonWrapper.add(applyThreadFilter, BorderLayout.CENTER);
         controlButtonsPanel.add(applyThreadFilterButtonWrapper);

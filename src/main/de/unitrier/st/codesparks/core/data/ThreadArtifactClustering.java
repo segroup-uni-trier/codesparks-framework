@@ -3,6 +3,8 @@
  */
 package de.unitrier.st.codesparks.core.data;
 
+import de.unitrier.st.codesparks.core.visualization.popup.IThreadSelectable;
+
 import java.util.*;
 
 public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
@@ -48,6 +50,13 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
     {
         final long count = this.stream().filter(cluster -> cluster.stream()
                 .anyMatch(AThreadArtifact::isSelected)).count();
+        return (int) count;
+    }
+
+    public int sizeAccordingToCurrentThreadSelection(final IThreadSelectable threadSelectable)
+    {
+        final long count = this.stream().filter(cluster ->
+                !threadSelectable.getSelectedThreadArtifactsOfCluster(cluster).isEmpty()).count();
         return (int) count;
     }
 
