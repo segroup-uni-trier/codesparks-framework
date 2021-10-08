@@ -69,13 +69,15 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
         final String popupTitle = createPopupTitle(artifact);
 
         final ComponentPopupBuilder componentPopupBuilder = JBPopupFactory.getInstance().
-                createComponentPopupBuilder(popupPanelWrapper, null)
+                createComponentPopupBuilder(popupPanelWrapper, popupPanelWrapper)
                 .setMovable(true)
-//                                    .setFocusable(true)
+//                .setFocusable(true)
                 .setResizable(true)
-//                                    .setRequestFocus(true)
+//                .setRequestFocus(true)
                 .setMinSize(dimension)
-//                                    .setShowShadow(true)
+//              .setShowShadow(true)
+                .setMayBeParent(true)
+                //.setCancelOnClickOutside(false)
                 .setCouldPin(jbPopup -> {
                     final Project project = CoreUtil.getCurrentlyOpenedProject();
                     final String name = LocalizationUtil.getLocalizedString("codesparks.ui.artifactpopup.displayname");
@@ -118,7 +120,6 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
         popup.setSize(dimension);
         popup.setMinimumSize(dimension);
         popup.pack(false, true);
-      //  popup.canClose();
 
         final Component source = (Component) e.getSource();
         popup.showUnderneathOf(source);

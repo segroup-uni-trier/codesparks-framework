@@ -3,16 +3,24 @@
  */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.openapi.ui.MessageDialogBuilder;
+import com.intellij.openapi.ui.OkCancelDialogBuilder;
+import com.intellij.openapi.ui.popup.*;
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTabbedPane;
+import com.intellij.util.ui.JBSwingUtilities;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
+import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
@@ -562,7 +570,8 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 
         //final Component that = this;
 
-        applyThreadFilter.addMouseListener(new MouseAdapter() {
+        applyThreadFilter.addMouseListener(new MouseAdapter()
+        {
 
             private void applyThreadFilterAndClosePopup(final IThreadSelectable threadSelectable)
             {
@@ -576,9 +585,6 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
             {
 
 
-
-
-
                 final ThreadArtifactClustering threadArtifactClustering = finalZoomedThreadFork.getThreadArtifactClustering();
                 final int index = selectableIndexProvider.getThreadSelectableIndex();
                 if (index < threadSelectables.size())
@@ -588,18 +594,65 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 //                    System.out.println(threadArtifactClustering.getStrategy());
                     if (threadArtifactClustering.sizeAccordingToCurrentThreadSelection(threadSelectable) > 3)
                     {
-                        
+                        applyThreadFilterAndClosePopup(threadSelectable);
 
-                        final ApplyThreadFilterDialog applyThreadFilterDialog = new ApplyThreadFilterDialog(popupPanel.getRootPane());
-                        final boolean result = applyThreadFilterDialog.showAndGet();
-                        if (result)
-                        { // User clicked OK
-                            applyThreadFilterAndClosePopup(threadSelectable);
-                        } else
-                        { // User clicked Cancel
-//                            popupPanel.grabFocus();
-                            popupPanel.requestFocus();
-                        }
+                        //TODO: confirmation message dialog
+
+//                        final Project project = CoreUtil.getCurrentlyOpenedProject();
+//                        final Point popupLocation = popupPanel.getPopupLocation(e);
+
+                        /*
+                         ********************************
+                         */
+
+//                        final MessageDialogBuilder.YesNo yesNo = OkCancelDialogBuilder.yesNo("Title", "Message");
+//                        yesNo.ask(popupPanel.getRootPane());
+
+                        /*
+                         *******************************
+                         */
+
+//                        final JBPanel<BorderLayoutPanel> confirmationPanel = new JBPanel<>();
+//
+//                        JBLabel message = new JBLabel("The current selection has more than three clusters which cannot be displayed in the visualizations " +
+//                                "embedded in the source code.");
+//
+//                        confirmationPanel.add(message, BorderLayout.CENTER);
+//
+//                        final ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(confirmationPanel,
+//                                confirmationPanel);
+//                        popupBuilder.setMovable(false);
+//                        popupBuilder.setModalContext(true);
+//                        popupBuilder.setCancelOnClickOutside(false);
+//                        popupBuilder.setTitle("Confirmation");
+//
+//
+//                        final JBPopup confirmationPopup = popupBuilder.createPopup();
+//                        confirmationPopup.showInCenterOf(popupPanel.getRootPane());
+
+                        /*
+                         *******************************
+                         */
+
+//                        final ApplyThreadFilterDialog applyThreadFilterDialog = new ApplyThreadFilterDialog(project, popup.getOwner());
+//
+//                        if (popup == null)
+//                        {
+//                            CodeSparksLogger.addText("Popup is null!");
+//                        } else
+//                        {
+//
+//                           // popup.mayCancelOnClickOutside(false);
+//                        }
+//                        final boolean result = applyThreadFilterDialog.showAndGet();
+//                        if (result)
+//                        { // User clicked OK
+//                            applyThreadFilterAndClosePopup(threadSelectable);
+//                        } else
+//                        { // User clicked Cancel
+////                            popupPanel.grabFocus();
+//                            popupPanel.requestFocus();
+//                        }
                     } else
                     {
                         applyThreadFilterAndClosePopup(threadSelectable);
@@ -612,8 +665,9 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
                     //  popup.
 
                     UserActivityLogger.getInstance().log(ThreadForkDetailViewApplyThreadFilterButtonClicked);
-                super.mouseClicked(e);
-            }}
+                    super.mouseClicked(e);
+                }
+            }
         });
 
 //        applyThreadFilter.addActionListener(new ActionListener()
@@ -655,7 +709,8 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
 //
 //                    // TODO: in case there are more than three thread groups selected they cannot be displayed by the in-situ ThreadFork. therefore, tell
 //                    //  this to
-//                    //  the user, i.e., that the maximum number of groups to be computed will be reset to three. Or allow the user to cancel and get back to the
+//                    //  the user, i.e., that the maximum number of groups to be computed will be reset to three. Or allow the user to cancel and get back
+//                    to the
 //                    //  popup.
 //
 //                    UserActivityLogger.getInstance().log(ThreadForkDetailViewApplyThreadFilterButtonClicked);
