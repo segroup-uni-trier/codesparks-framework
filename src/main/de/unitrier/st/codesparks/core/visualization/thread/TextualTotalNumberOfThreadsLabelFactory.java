@@ -65,9 +65,13 @@ public final class TextualTotalNumberOfThreadsLabelFactory extends AArtifactVisu
 
         graphics.setColor(VisConstants.BORDER_COLOR);
 
-        final Font formerFont = graphics.getFont();
-        Font newFont = formerFont.deriveFont(formerFont.getSize() * 0.9f);
-        graphics.setFont(newFont);
+        final Font arialFont = new Font("Arial", Font.BOLD, 11);
+
+        // final Font formerFont = graphics.getFont();
+        // Font newFont = formerFont.deriveFont(formerFont.getSize() * 0.9f);
+        // graphics.setFont(newFont);
+        //
+        graphics.setFont(arialFont);
 
         final int fontHeight = graphics.fontHeight();
         final int halfLineHeight = (int) Math.ceil(lineHeight / 2D);
@@ -78,11 +82,13 @@ public final class TextualTotalNumberOfThreadsLabelFactory extends AArtifactVisu
 
         textWidth += graphics.stringWidth(sumAndColonString);
 
-        newFont = formerFont.deriveFont(formerFont.getSize() * 1.0f);
-        graphics.setFont(newFont);
+        // newFont = formerFont.deriveFont(formerFont.getSize() * 1.0f);
+        // graphics.setFont(newFont);
+        //
+        // graphics.setFont(arialFont);
 
         final String totalNumberOfThreadsString = String.valueOf(numberOfSelectedArtifactThreads);
-        graphics.drawString(totalNumberOfThreadsString, X_OFFSET_LEFT + TEXT_START_OFFSET_LEFT + textWidth, textYPos + 1);
+        graphics.drawString(totalNumberOfThreadsString, X_OFFSET_LEFT + TEXT_START_OFFSET_LEFT + textWidth, textYPos); // + 1);
 
         textWidth += graphics.getFontMetrics().stringWidth(totalNumberOfThreadsString);
 

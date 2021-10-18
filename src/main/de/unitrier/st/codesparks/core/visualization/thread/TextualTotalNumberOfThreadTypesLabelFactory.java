@@ -10,6 +10,7 @@ import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 
 import javax.swing.*;
+import java.awt.*;
 
 public final class TextualTotalNumberOfThreadTypesLabelFactory extends AArtifactVisualizationLabelFactory
 {
@@ -60,7 +61,11 @@ public final class TextualTotalNumberOfThreadTypesLabelFactory extends AArtifact
         final int textYPos = halfLineHeight + halfTextHeight - (int) (Math.floor(halfTextHeight / 2D) - 1);
 
         final String str = "/" + numberOfSelectedThreadTypes;
-        graphics.drawString(str, X_OFFSET_LEFT, textYPos + 1);
+
+        final Font arialFont = new Font("Arial", Font.BOLD, 11);
+        graphics.setFont(arialFont);
+
+        graphics.drawString(str, X_OFFSET_LEFT, textYPos); // + 1);
         totalWidth += graphics.stringWidth(str);
 
 
