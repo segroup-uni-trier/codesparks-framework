@@ -20,15 +20,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizationLabelFactory
+public class ThreadForkNeighborLabelFactory extends ANeighborArtifactVisualizationLabelFactory
 {
     @SuppressWarnings("unused")
-    public NeighborThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
+    public ThreadForkNeighborLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
         this(primaryMetricIdentifier, 0);
     }
 
-    public NeighborThreadForkLabelFactory(final AMetricIdentifier primaryMetricIdentifier, int sequence)
+    public ThreadForkNeighborLabelFactory(final AMetricIdentifier primaryMetricIdentifier, int sequence)
     {
         super(primaryMetricIdentifier, sequence);
     }
@@ -63,7 +63,7 @@ public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizati
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
 
         final int X_OFFSET_LEFT = 2;
-        final int X_OFFSET_RIGHT = 1;
+        final int X_OFFSET_RIGHT = 0;
 
         final int threadMetaphorWidth = 24;
         final int barChartWidth = 24;
@@ -206,7 +206,7 @@ public class NeighborThreadForkLabelFactory extends ANeighborArtifactVisualizati
                         .collect(Collectors.toList());
 
         double clusterRuntimeOfLine = 0;
-        final Set<AThreadArtifact> threads = new HashSet<>(1<<4);
+        final Set<AThreadArtifact> threads = new HashSet<>(1 << 4);
 
         for (final ANeighborArtifact neighborExecutedByAnyClusterThread : neighborArtifactsExecutedByThreadsOfTheCluster)
         {
