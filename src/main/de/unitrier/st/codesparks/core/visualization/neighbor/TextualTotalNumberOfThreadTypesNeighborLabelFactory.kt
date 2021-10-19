@@ -27,28 +27,10 @@ class TextualTotalNumberOfThreadTypesNeighborLabelFactory(primaryMetricIdentifie
             return emptyLabel()
         }
 
-        val threadTypeLists: MutableMap<String, ArrayList<AThreadArtifact>> = mutableMapOf()
+        val threadTypeListsOfLine: Map<String, ArrayList<AThreadArtifact>> = NeighborThreadVisualizationUtil
+            .getThreadTypesListOfLine(threadFilteredNeighborArtifactsOfLine, primaryMetricIdentifier)
 
-        for (neighborArtifact in threadFilteredNeighborArtifactsOfLine)
-        {
-            val currentThreadTypeLists =
-                neighborArtifact.getThreadTypeListsOfSelectedThreadsWithNumericMetricValue(primaryMetricIdentifier)
-            for (currentThreadTypeList in currentThreadTypeLists)
-            {
-                val key = currentThreadTypeList.key
-                val list = threadTypeLists.getOrDefault(key, ArrayList())
-                for (aThreadArtifact in currentThreadTypeList.value)
-                {
-                    if (list.none { thr -> thr.identifier.equals(aThreadArtifact.identifier) })
-                    { // No duplicates
-                        list.add(aThreadArtifact)
-                    }
-                }
-                threadTypeLists[key] = list
-            }
-        }
-
-        val numberOfDifferentThreadTypes: Int = threadTypeLists.size
+        val numberOfDifferentThreadTypesOfLine: Int = threadTypeListsOfLine.size
 
         val lineHeight = VisConstants.getLineHeight()
         val graphics = getGraphics(300, lineHeight)
@@ -61,7 +43,7 @@ class TextualTotalNumberOfThreadTypesNeighborLabelFactory(primaryMetricIdentifie
         val halfFontHeight: Int = ceil(fontHeight / 2.0).toInt()
         val textYPos: Int = halfLineHeight + halfFontHeight - (floor(halfFontHeight / 2.0) - 1).toInt()
 
-        val totalNumberOfThreadTypesString = "/$numberOfDifferentThreadTypes"
+        val totalNumberOfThreadTypesString = "/$numberOfDifferentThreadTypesOfLine"
         graphics.drawString(totalNumberOfThreadTypesString, X_OFFSET_LEFT, textYPos)
 
         val totalWidth = X_OFFSET_LEFT + graphics.stringWidth(totalNumberOfThreadTypesString)

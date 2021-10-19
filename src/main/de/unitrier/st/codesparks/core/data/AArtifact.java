@@ -559,6 +559,31 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return clustering;
     }
 
+    public ThreadArtifactClustering getSelectedClustering()
+    {
+        ThreadArtifactClustering clustering = null;
+        synchronized (clusterings)
+        {
+            final Optional<AThreadArtifactClusteringStrategy> selectedStrategy =
+                    selectedClusteringStrategy.entrySet()
+                            .stream()
+                            .filter(Map.Entry::getValue) // value is of type boolean and stands for whether this strategy is selected
+                            .map(Map.Entry::getKey)
+                            .findAny();
+
+            if (selectedStrategy.isPresent())
+            {
+                final AThreadArtifactClusteringStrategy strategy = selectedStrategy.get();
+                clustering = clusterings.get(strategy);
+
+                final Comparator<ThreadArtifactCluster> threadArtifactClusterComparator =
+                        ThreadArtifactClusterNumericalMetricSumComparator.getInstance(clustering.getStrategy().getMetricIdentifier());
+                clustering.sort(threadArtifactClusterComparator);
+            }
+        }
+        return clustering;
+    }
+
     public ThreadArtifactClustering clusterThreadArtifacts(final AThreadArtifactClusteringStrategy clusteringStrategy)
     {
         ThreadArtifactClustering clustering;
