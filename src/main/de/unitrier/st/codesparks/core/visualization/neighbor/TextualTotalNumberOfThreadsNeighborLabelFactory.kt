@@ -16,18 +16,28 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 class TextualTotalNumberOfThreadsNeighborLabelFactory(primaryMetricIdentifier: AMetricIdentifier?, sequence: Int) :
-        ANeighborArtifactVisualizationLabelFactory(primaryMetricIdentifier, sequence) {
-    override fun createNeighborArtifactLabel(artifact: AArtifact?, threadFilteredNeighborArtifactsOfLine: MutableList<ANeighborArtifact>?): JLabel {
-        if (threadFilteredNeighborArtifactsOfLine == null) {
+    ANeighborArtifactVisualizationLabelFactory(primaryMetricIdentifier, sequence)
+{
+
+    override fun createNeighborArtifactLabel(
+        artifact: AArtifact?,
+        threadFilteredNeighborArtifactsOfLine: MutableList<ANeighborArtifact>?
+    ): JLabel
+    {
+        if (threadFilteredNeighborArtifactsOfLine == null)
+        {
             return emptyLabel()
         }
         val differentThreads: MutableSet<AThreadArtifact> = HashSet()
-        for (neighborArtifact in threadFilteredNeighborArtifactsOfLine) {
+        for (neighborArtifact in threadFilteredNeighborArtifactsOfLine)
+        {
             val threadArtifacts = neighborArtifact.threadArtifacts
             for (threadArtifact in threadArtifacts.filter { thr ->
                 thr.getNumericalMetricValue(primaryMetricIdentifier) > 0 && thr.isSelected
-            }) {
-                if (differentThreads.none { thread -> thread.identifier.equals(threadArtifact.identifier) }) {
+            })
+            {
+                if (differentThreads.none { thread -> thread.identifier.equals(threadArtifact.identifier) })
+                {
                     differentThreads.add(threadArtifact)
                 }
             }

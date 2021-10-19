@@ -7,27 +7,48 @@ package de.unitrier.st.codesparks.core.visualization.neighbor
 import de.unitrier.st.codesparks.core.data.AArtifact
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact
+import de.unitrier.st.codesparks.core.data.AThreadArtifact
 import de.unitrier.st.codesparks.core.visualization.VisConstants
 import java.awt.Font
 import javax.swing.JLabel
 import kotlin.math.ceil
 import kotlin.math.floor
 
-class TextualTotalNumberOfThreadTypesNeighborLabelFactory(primaryMetricIdentifier: AMetricIdentifier?, sequence: Int)
-    : ANeighborArtifactVisualizationLabelFactory(primaryMetricIdentifier, sequence) {
-    override fun createNeighborArtifactLabel(artifact: AArtifact?, threadFilteredNeighborArtifactsOfLine: MutableList<ANeighborArtifact>?): JLabel {
+class TextualTotalNumberOfThreadTypesNeighborLabelFactory(primaryMetricIdentifier: AMetricIdentifier?, sequence: Int) :
+    ANeighborArtifactVisualizationLabelFactory(primaryMetricIdentifier, sequence)
+{
+    override fun createNeighborArtifactLabel(
+        artifact: AArtifact?,
+        threadFilteredNeighborArtifactsOfLine: MutableList<ANeighborArtifact>?
+    ): JLabel
+    {
         if (threadFilteredNeighborArtifactsOfLine == null)
         {
             return emptyLabel()
         }
-        var numberOfDifferentThreadTypes: Int = 0
+
+        val threadTypeLists: MutableMap<String, ArrayList<AThreadArtifact>> = mutableMapOf()
+
         for (neighborArtifact in threadFilteredNeighborArtifactsOfLine)
         {
-            val threadTypeLists = neighborArtifact.threadTypeLists
-
-
+            val currentThreadTypeLists =
+                neighborArtifact.getThreadTypeListsOfSelectedThreadsWithNumericMetricValue(primaryMetricIdentifier)
+            for (currentThreadTypeList in currentThreadTypeLists)
+            {
+                val key = currentThreadTypeList.key
+                val list = threadTypeLists.getOrDefault(key, ArrayList())
+                for (aThreadArtifact in currentThreadTypeList.value)
+                {
+                    if (list.none { thr -> thr.identifier.equals(aThreadArtifact.identifier) })
+                    { // No duplicates
+                        list.add(aThreadArtifact)
+                    }
+                }
+                threadTypeLists[key] = list
+            }
         }
 
+        val numberOfDifferentThreadTypes: Int = threadTypeLists.size
 
         val lineHeight = VisConstants.getLineHeight()
         val graphics = getGraphics(300, lineHeight)
