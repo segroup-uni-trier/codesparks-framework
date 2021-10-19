@@ -15,17 +15,16 @@ import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
-import de.unitrier.st.codesparks.core.visualization.thread.IClusterMouseClickable;
 import de.unitrier.st.codesparks.core.visualization.thread.IClusterHoverable;
+import de.unitrier.st.codesparks.core.visualization.thread.IClusterMouseClickable;
 import de.unitrier.st.codesparks.core.visualization.thread.IThreadSelectableIndexProvider;
-import de.unitrier.st.codesparks.core.visualization.thread.ThreadArtifactDisplayData;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 
 public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
 {
