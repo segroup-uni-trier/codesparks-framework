@@ -9,6 +9,7 @@ package de.unitrier.st.codesparks.core.visualization.neighbor
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact
 import de.unitrier.st.codesparks.core.data.AThreadArtifact
+import java.util.stream.Collectors
 
 object NeighborThreadVisualizationUtil
 {
@@ -63,6 +64,78 @@ object NeighborThreadVisualizationUtil
         }
         return threadTypeListsOfLine
     }
+
+    @JvmStatic
+    fun getTotalThreadFilteredMetricValueOfAllNeighborsOfLine(
+        threadFilteredNeighborArtifactsOfLine: List<ANeighborArtifact>,
+        primaryMetricIdentifier: AMetricIdentifier
+    ): Double
+    {
+        val totalThreadFilteredMetricValueOfAllNeighborsOfLine = threadFilteredNeighborArtifactsOfLine.stream()
+            .mapToDouble { neighbor: ANeighborArtifact ->
+                val neighborNonFilteredThreadArtifacts =
+                    neighbor.threadArtifacts.stream().filter { obj: AThreadArtifact -> obj.isSelected }
+                        .collect(Collectors.toList())
+                val neighborNumericalMetricValue =
+                    neighbor.getNumericalMetricValue(primaryMetricIdentifier)
+                var neighborTotal = 0.0
+                for (neighborThread in neighborNonFilteredThreadArtifacts)
+                {
+                    neighborTotal += neighborThread.getNumericalMetricValue(primaryMetricIdentifier) * neighborNumericalMetricValue
+                }
+                neighborTotal
+            }.sum()
+        return totalThreadFilteredMetricValueOfAllNeighborsOfLine
+    }
+
+    @JvmStatic
+    fun getThreadFilteredClusterMetricValueOfLineRelativeToTotal(
+        neighborArtifacts: List<ANeighborArtifact>,
+        threadCluster: List<AThreadArtifact>,
+        totalRuntimeOfAllNeighborsOfLine: Double,
+        primaryMetricIdentifier: AMetricIdentifier,
+        average: Boolean
+    ): Double
+    {
+        val neighborArtifactsExecutedByThreadsOfTheCluster = neighborArtifacts.stream()
+            .filter { neighbor: ANeighborArtifact ->
+                neighbor.threadArtifacts
+                    .stream()
+                    .anyMatch { threadExecutingNeighbor: AThreadArtifact ->
+                        threadExecutingNeighbor.isSelected &&
+                                threadCluster.stream()
+                                    .anyMatch { threadOfCluster: AThreadArtifact -> threadOfCluster.isSelected && threadOfCluster.identifier == threadExecutingNeighbor.identifier }
+                    }
+            }
+            .collect(Collectors.toList())
+
+        var clusterRuntimeOfLine = 0.0
+        val threads: MutableSet<AThreadArtifact> = java.util.HashSet(1 shl 4)
+
+        for (neighborExecutedByAnyClusterThread in neighborArtifactsExecutedByThreadsOfTheCluster)
+        {
+            val neighborRuntime = neighborExecutedByAnyClusterThread.getNumericalMetricValue(primaryMetricIdentifier)
+            for (thread in threadCluster.stream().filter { obj: AThreadArtifact -> obj.isSelected }
+                .collect(Collectors.toList()))
+            {
+                val neighborThread = neighborExecutedByAnyClusterThread.getThreadArtifact(thread.identifier) ?: continue
+                val neighborThreadRuntimeRatio = neighborThread.getNumericalMetricValue(primaryMetricIdentifier)
+                clusterRuntimeOfLine += neighborRuntime / totalRuntimeOfAllNeighborsOfLine * neighborThreadRuntimeRatio
+                if (neighborThreadRuntimeRatio > 0)
+                { //
+                    if (threads.stream().noneMatch { t: AThreadArtifact -> t.identifier == neighborThread.identifier })
+                    { // Maybe the same thread (identifier) executes different callees in a single line, but it must not be counted multiple times!
+                        threads.add(neighborThread)
+                    }
+                }
+            }
+        }
+        return if (average)
+        {
+            clusterRuntimeOfLine / threads.size
+        } else clusterRuntimeOfLine
+    }
+
 }
 
 
