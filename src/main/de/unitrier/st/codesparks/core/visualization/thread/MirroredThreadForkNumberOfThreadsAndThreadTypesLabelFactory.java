@@ -133,9 +133,9 @@ public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory e
 
             final int clusterYPos = TOP_OFFSET + threadSquareYPos - positionToDrawCluster * threadSquareOffset;
 
-            final long numberOfThreadsOfCluster = threadCluster.stream().filter(clusterThread -> (createDisabledViz || clusterThread.isSelected())).count();
+            final long numberOfSelectedThreadsOfCluster = threadCluster.stream().filter(clusterThread -> (createDisabledViz || clusterThread.isSelected())).count();
 
-            double percent = numberOfThreadsOfCluster / totalNumberOfSelectedThreads;
+            double percent = numberOfSelectedThreadsOfCluster / totalNumberOfSelectedThreads;
 
             final int totalNumberOfThreadsWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
 
