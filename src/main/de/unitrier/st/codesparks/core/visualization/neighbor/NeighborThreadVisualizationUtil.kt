@@ -1,8 +1,7 @@
 /*
  * Copyright (c) 2021. Oliver Moseler
  */
-@file:JvmName("NeighborThreadVisualizationUtil")
-//@file:JvmMultifileClass
+//@file:JvmName("NeighborThreadVisualizationUtil")
 
 package de.unitrier.st.codesparks.core.visualization.neighbor
 

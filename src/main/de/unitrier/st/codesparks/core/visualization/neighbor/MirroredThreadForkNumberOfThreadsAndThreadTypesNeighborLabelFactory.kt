@@ -49,7 +49,6 @@ class MirroredThreadForkNumberOfThreadsAndThreadTypesNeighborLabelFactory(
 
         val threadSquareEdgeLength = 3
 
-        // val initialThreadSquareYPos = lineHeight - threadSquareEdgeLength - 2
         val threadSquareOffset = threadSquareEdgeLength + 1
 
         val graphics = getGraphics(totalWidth, lineHeight + TOP_OFFSET)
@@ -59,7 +58,6 @@ class MirroredThreadForkNumberOfThreadsAndThreadTypesNeighborLabelFactory(
         // The rectangle for the bars
         val threadVisualisationArea = Rectangle(X_OFFSET_LEFT, TOP_OFFSET, barChartWidth - 1, lineHeight - 1)
         graphics.drawRectangle(threadVisualisationArea)
-
 
         // Thread metaphor
         val barrierXOffset = 9
@@ -96,11 +94,6 @@ class MirroredThreadForkNumberOfThreadsAndThreadTypesNeighborLabelFactory(
         var clusterNum = 0
         for (threadCluster in selectedClustering)
         {
-//            val numberOfThreadsOfClusterOfLine = threadCluster.filter {
-//                it.isSelected && differentThreadsOfLine.any { thr ->
-//                    thr.identifier.equals(it.identifier)
-//                }
-//            }.size
             val numberOfThreadsOfClusterOfLine: Int = NeighborThreadVisualizationUtil
                 .getThreadsOfClusterOfLine(differentThreadsOfLine, threadCluster).size
             if (numberOfThreadsOfClusterOfLine == 0)
@@ -131,17 +124,6 @@ class MirroredThreadForkNumberOfThreadsAndThreadTypesNeighborLabelFactory(
             // The thread-types bar
             val threadTypesSetOfClusterOfLine: Set<String> = NeighborThreadVisualizationUtil
                 .getThreadTypesOfClusterOfLine(threadTypesListOfLine, threadCluster)
-//            val threadTypesSetOfClusterOfLine: MutableSet<String> = HashSet()
-//            for (threadArtifact in threadCluster)
-//            {
-//                for (entry in threadTypesListOfLine.entries)
-//                {
-//                    if (entry.value.any { it.identifier.equals(threadArtifact.identifier) })
-//                    {
-//                        threadTypesSetOfClusterOfLine.add(entry.key)
-//                    }
-//                }
-//            }
             val numberOfThreadTypesOfClusterOfLine = threadTypesSetOfClusterOfLine.size
             percent = numberOfThreadTypesOfClusterOfLine / totalNumberOfSelectedThreadsOfLine.toDouble()
 
