@@ -98,7 +98,8 @@ public class ThreadForkNeighborLabelFactory extends ANeighborArtifactVisualizati
         graphics.drawRectangle(threadVisualisationArea);
 
         final double totalThreadFilteredMetricValueOfAllNeighborsOfLine =
-                getTotalThreadFilteredMetricValueOfAllNeighborsOfLine(threadFilteredNeighborArtifactsOfLine);
+                NeighborThreadVisualizationUtil.getTotalThreadFilteredMetricValueOfAllNeighborsOfLine(threadFilteredNeighborArtifactsOfLine,
+                        primaryMetricIdentifier);
 
         final AThreadArtifactClusteringStrategy kbdeClusteringStrategy = KernelBasedDensityEstimationClustering.getInstance(primaryMetricIdentifier);
         ThreadArtifactClustering selectedClustering = artifact.getSelectedClusteringOrApplyAndSelect(kbdeClusteringStrategy);
@@ -133,10 +134,11 @@ public class ThreadForkNeighborLabelFactory extends ANeighborArtifactVisualizati
             graphics.setColor(clusterMetricValueSumColor);
 
             // Draw the sum metric value
-            double percent = getThreadFilteredClusterMetricValueOfLineRelativeToTotal(
+            double percent = NeighborThreadVisualizationUtil.getThreadFilteredClusterMetricValueOfLineRelativeToTotal(
                     threadFilteredNeighborArtifactsOfLine
                     , threadCluster
                     , totalThreadFilteredMetricValueOfAllNeighborsOfLine
+                    , primaryMetricIdentifier
                     , false
             );
             percent = Math.min(1., percent); // Possible floating point arithmetic rounding errors!
@@ -146,10 +148,11 @@ public class ThreadForkNeighborLabelFactory extends ANeighborArtifactVisualizati
             graphics.fillRect(X_OFFSET_LEFT + threadMetaphorWidth + 2, yPositionToDraw, clusterWidth, threadSquareEdgeLength);
 
             // Draw the average metric value
-            percent = getThreadFilteredClusterMetricValueOfLineRelativeToTotal(
+            percent = NeighborThreadVisualizationUtil.getThreadFilteredClusterMetricValueOfLineRelativeToTotal(
                     threadFilteredNeighborArtifactsOfLine
                     , threadCluster
                     , totalThreadFilteredMetricValueOfAllNeighborsOfLine
+                    , primaryMetricIdentifier
                     , true
             );
             clusterWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);
@@ -169,6 +172,7 @@ public class ThreadForkNeighborLabelFactory extends ANeighborArtifactVisualizati
         return makeLabel(graphics);
     }
 
+    @SuppressWarnings("unused") // Moved this method to class NeighborThreadVisualizationUtil. Had to be converted to kotlin
     private double getTotalThreadFilteredMetricValueOfAllNeighborsOfLine(final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine)
     {
         //noinspection UnnecessaryLocalVariable
@@ -188,6 +192,7 @@ public class ThreadForkNeighborLabelFactory extends ANeighborArtifactVisualizati
         return totalThreadFilteredMetricValueOfAllNeighborsOfLine;
     }
 
+    @SuppressWarnings("unused") // Moved this method to class NeighborThreadVisualizationUtil. Had to be converted to kotlin
     private double getThreadFilteredClusterMetricValueOfLineRelativeToTotal(
             final List<ANeighborArtifact> neighborArtifacts
             , final List<AThreadArtifact> threadCluster

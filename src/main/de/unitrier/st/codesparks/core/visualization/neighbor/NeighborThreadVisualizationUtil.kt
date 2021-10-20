@@ -9,7 +9,6 @@ package de.unitrier.st.codesparks.core.visualization.neighbor
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact
 import de.unitrier.st.codesparks.core.data.AThreadArtifact
-import java.util.stream.Collectors
 
 object NeighborThreadVisualizationUtil
 {
@@ -71,20 +70,15 @@ object NeighborThreadVisualizationUtil
         primaryMetricIdentifier: AMetricIdentifier
     ): Double
     {
-        val totalThreadFilteredMetricValueOfAllNeighborsOfLine = threadFilteredNeighborArtifactsOfLine.stream()
-            .mapToDouble { neighbor: ANeighborArtifact ->
-                val neighborNonFilteredThreadArtifacts =
-                    neighbor.threadArtifacts.stream().filter { obj: AThreadArtifact -> obj.isSelected }
-                        .collect(Collectors.toList())
-                val neighborNumericalMetricValue =
-                    neighbor.getNumericalMetricValue(primaryMetricIdentifier)
-                var neighborTotal = 0.0
-                for (neighborThread in neighborNonFilteredThreadArtifacts)
-                {
-                    neighborTotal += neighborThread.getNumericalMetricValue(primaryMetricIdentifier) * neighborNumericalMetricValue
-                }
-                neighborTotal
-            }.sum()
+        val totalThreadFilteredMetricValueOfAllNeighborsOfLine = threadFilteredNeighborArtifactsOfLine.map { neighbor
+            ->
+            val neighborNonFilteredThreadArtifacts = neighbor.threadArtifacts.filter { it.isSelected }
+            val neighborNumericalMetricValue = neighbor.getNumericalMetricValue(primaryMetricIdentifier)
+            val neighborTotal = neighborNonFilteredThreadArtifacts.sumOf {
+                it.getNumericalMetricValue(primaryMetricIdentifier) * neighborNumericalMetricValue
+            }
+            neighborTotal
+        }.sumOf { it }
         return totalThreadFilteredMetricValueOfAllNeighborsOfLine
     }
 
@@ -97,33 +91,30 @@ object NeighborThreadVisualizationUtil
         average: Boolean
     ): Double
     {
-        val neighborArtifactsExecutedByThreadsOfTheCluster = neighborArtifacts.stream()
-            .filter { neighbor: ANeighborArtifact ->
-                neighbor.threadArtifacts
-                    .stream()
-                    .anyMatch { threadExecutingNeighbor: AThreadArtifact ->
-                        threadExecutingNeighbor.isSelected &&
-                                threadCluster.stream()
-                                    .anyMatch { threadOfCluster: AThreadArtifact -> threadOfCluster.isSelected && threadOfCluster.identifier == threadExecutingNeighbor.identifier }
-                    }
+        val neighborArtifactsExecutedByThreadsOfTheCluster = neighborArtifacts.filter { neighbor ->
+            neighbor.threadArtifacts.any { threadExecutingNeighbor ->
+                threadExecutingNeighbor.isSelected && threadCluster.any { threadOfCluster ->
+                    threadOfCluster.isSelected && threadOfCluster.identifier == threadExecutingNeighbor.identifier
+                    // in Kotlin the '==' operator is the same as 'equals' in Java
+                }
             }
-            .collect(Collectors.toList())
+        }
 
         var clusterRuntimeOfLine = 0.0
-        val threads: MutableSet<AThreadArtifact> = java.util.HashSet(1 shl 4)
+        val threads: MutableSet<AThreadArtifact> = HashSet(1 shl 4)
 
         for (neighborExecutedByAnyClusterThread in neighborArtifactsExecutedByThreadsOfTheCluster)
         {
             val neighborRuntime = neighborExecutedByAnyClusterThread.getNumericalMetricValue(primaryMetricIdentifier)
-            for (thread in threadCluster.stream().filter { obj: AThreadArtifact -> obj.isSelected }
-                .collect(Collectors.toList()))
+            for (thread in threadCluster.filter { it.isSelected })
             {
                 val neighborThread = neighborExecutedByAnyClusterThread.getThreadArtifact(thread.identifier) ?: continue
                 val neighborThreadRuntimeRatio = neighborThread.getNumericalMetricValue(primaryMetricIdentifier)
-                clusterRuntimeOfLine += neighborRuntime / totalRuntimeOfAllNeighborsOfLine * neighborThreadRuntimeRatio
+                clusterRuntimeOfLine += (neighborRuntime / totalRuntimeOfAllNeighborsOfLine) *
+                        neighborThreadRuntimeRatio
                 if (neighborThreadRuntimeRatio > 0)
-                { //
-                    if (threads.stream().noneMatch { t: AThreadArtifact -> t.identifier == neighborThread.identifier })
+                {
+                    if (threads.none { it.identifier == neighborThread.identifier })
                     { // Maybe the same thread (identifier) executes different callees in a single line, but it must not be counted multiple times!
                         threads.add(neighborThread)
                     }
