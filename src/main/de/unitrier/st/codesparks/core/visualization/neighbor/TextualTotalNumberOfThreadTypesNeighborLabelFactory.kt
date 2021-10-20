@@ -27,12 +27,9 @@ class TextualTotalNumberOfThreadTypesNeighborLabelFactory(primaryMetricIdentifie
             return emptyLabel()
         }
 
-        val threadTypeListsOfLine: Map<String, ArrayList<AThreadArtifact>> = NeighborThreadVisualizationUtil
-            .getThreadTypesListOfLine(threadFilteredNeighborArtifactsOfLine, primaryMetricIdentifier)
-
-        val numberOfDifferentThreadTypesOfLine: Int = threadTypeListsOfLine.size
-
+        val X_OFFSET_LEFT = this.X_OFFSET_LEFT + 0
         val lineHeight = VisConstants.getLineHeight()
+
         val graphics = getGraphics(300, lineHeight)
         graphics.color = VisConstants.BORDER_COLOR
         val arialFont = Font("Arial", Font.BOLD, 11)
@@ -43,10 +40,16 @@ class TextualTotalNumberOfThreadTypesNeighborLabelFactory(primaryMetricIdentifie
         val halfFontHeight: Int = ceil(fontHeight / 2.0).toInt()
         val textYPos: Int = halfLineHeight + halfFontHeight - (floor(halfFontHeight / 2.0) - 1).toInt()
 
+        val threadTypeListsOfLine: Map<String, ArrayList<AThreadArtifact>> = NeighborThreadVisualizationUtil
+            .getThreadTypesListOfLine(threadFilteredNeighborArtifactsOfLine, primaryMetricIdentifier)
+
+        val numberOfDifferentThreadTypesOfLine: Int = threadTypeListsOfLine.size
+
         val totalNumberOfThreadTypesString = "/$numberOfDifferentThreadTypesOfLine"
         graphics.drawString(totalNumberOfThreadTypesString, X_OFFSET_LEFT, textYPos)
 
-        val totalWidth = X_OFFSET_LEFT + graphics.stringWidth(totalNumberOfThreadTypesString)
+        val textWidth = graphics.stringWidth(totalNumberOfThreadTypesString)
+        val totalWidth = X_OFFSET_LEFT + textWidth
 
         return makeLabel(graphics, totalWidth)
     }

@@ -96,12 +96,14 @@ class MirroredThreadForkNumberOfThreadsAndThreadTypesNeighborLabelFactory(
         var clusterNum = 0
         for (threadCluster in selectedClustering)
         {
-            val numberOfThreadsOfCluster = threadCluster.filter {
-                it.isSelected && differentThreadsOfLine.any { thr ->
-                    thr.identifier.equals(it.identifier)
-                }
-            }.size
-            if (numberOfThreadsOfCluster == 0)
+//            val numberOfThreadsOfClusterOfLine = threadCluster.filter {
+//                it.isSelected && differentThreadsOfLine.any { thr ->
+//                    thr.identifier.equals(it.identifier)
+//                }
+//            }.size
+            val numberOfThreadsOfClusterOfLine: Int = NeighborThreadVisualizationUtil
+                .getThreadsOfClusterOfLine(differentThreadsOfLine, threadCluster).size
+            if (numberOfThreadsOfClusterOfLine == 0)
             {
                 clusterNum += 1
                 continue
@@ -113,7 +115,7 @@ class MirroredThreadForkNumberOfThreadsAndThreadTypesNeighborLabelFactory(
             val positionToDrawCluster = drawPositions[threadCluster]
             val clusterYPos = TOP_OFFSET + threadSquareYPos - positionToDrawCluster!! * threadSquareOffset
 
-            var percent: Double = numberOfThreadsOfCluster / totalNumberOfSelectedThreadsOfLine.toDouble()
+            var percent: Double = numberOfThreadsOfClusterOfLine / totalNumberOfSelectedThreadsOfLine.toDouble()
 
             val totalNumberOfThreadsWidth =
                 ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth)
@@ -127,17 +129,19 @@ class MirroredThreadForkNumberOfThreadsAndThreadTypesNeighborLabelFactory(
             )
 
             // The thread-types bar
-            val threadTypesSetOfClusterOfLine: MutableSet<String> = HashSet()
-            for (threadArtifact in threadCluster)
-            {
-                for (entry in threadTypesListOfLine.entries)
-                {
-                    if (entry.value.any { it.identifier.equals(threadArtifact.identifier) })
-                    {
-                        threadTypesSetOfClusterOfLine.add(entry.key)
-                    }
-                }
-            }
+            val threadTypesSetOfClusterOfLine: Set<String> = NeighborThreadVisualizationUtil
+                .getThreadTypesOfClusterOfLine(threadTypesListOfLine, threadCluster)
+//            val threadTypesSetOfClusterOfLine: MutableSet<String> = HashSet()
+//            for (threadArtifact in threadCluster)
+//            {
+//                for (entry in threadTypesListOfLine.entries)
+//                {
+//                    if (entry.value.any { it.identifier.equals(threadArtifact.identifier) })
+//                    {
+//                        threadTypesSetOfClusterOfLine.add(entry.key)
+//                    }
+//                }
+//            }
             val numberOfThreadTypesOfClusterOfLine = threadTypesSetOfClusterOfLine.size
             percent = numberOfThreadTypesOfClusterOfLine / totalNumberOfSelectedThreadsOfLine.toDouble()
 
@@ -145,8 +149,10 @@ class MirroredThreadForkNumberOfThreadsAndThreadTypesNeighborLabelFactory(
                 ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth)
 
             graphics.color = clusterColor
-            graphics.fillRect(X_OFFSET_LEFT + barChartWidth - totalNumberOfThreadTypesOfClusterOfLineWidth - 2,
-                clusterYPos, totalNumberOfThreadTypesOfClusterOfLineWidth, threadSquareEdgeLength)
+            graphics.fillRect(
+                X_OFFSET_LEFT + barChartWidth - totalNumberOfThreadTypesOfClusterOfLineWidth - 2,
+                clusterYPos, totalNumberOfThreadTypesOfClusterOfLineWidth, threadSquareEdgeLength
+            )
 
             if (totalNumberOfThreadsWidth > 0)
             {

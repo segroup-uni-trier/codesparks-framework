@@ -2,13 +2,14 @@
  * Copyright (c) 2021. Oliver Moseler
  */
 @file:JvmName("NeighborThreadVisualizationUtil")
-@file:JvmMultifileClass
+//@file:JvmMultifileClass
 
 package de.unitrier.st.codesparks.core.visualization.neighbor
 
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact
 import de.unitrier.st.codesparks.core.data.AThreadArtifact
+import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster
 
 object NeighborThreadVisualizationUtil
 {
@@ -125,6 +126,38 @@ object NeighborThreadVisualizationUtil
         {
             clusterRuntimeOfLine / threads.size
         } else clusterRuntimeOfLine
+    }
+
+    @JvmStatic
+    fun getThreadTypesOfClusterOfLine(
+        threadTypesListOfLine: Map<String, ArrayList<AThreadArtifact>>,
+        threadCluster: ThreadArtifactCluster
+    ): Set<String>
+    {
+        val threadTypesSetOfClusterOfLine: MutableSet<String> = HashSet()
+        for (threadArtifact in threadCluster)
+        {
+            for (entry in threadTypesListOfLine.entries)
+            {
+                if (entry.value.any { it.identifier.equals(threadArtifact.identifier) })
+                {
+                    threadTypesSetOfClusterOfLine.add(entry.key)
+                }
+            }
+        }
+        return threadTypesSetOfClusterOfLine
+    }
+
+    @JvmStatic
+    fun getThreadsOfClusterOfLine(differentThreadsOfLine: Set<AThreadArtifact>, threadCluster: ThreadArtifactCluster):
+            List<AThreadArtifact>
+    {
+        val threadsOfClusterOfLine = threadCluster.filter {
+            it.isSelected && differentThreadsOfLine.any { thr ->
+                thr.identifier.equals(it.identifier)
+            }
+        }
+        return threadsOfClusterOfLine
     }
 
 }
