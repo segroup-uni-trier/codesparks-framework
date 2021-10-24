@@ -20,12 +20,12 @@ public final class ThreadColor
 //            new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")),
 //            new JBColor(Color.decode("#B25283"), Color.decode("#B25283")),
 //            new JBColor(Color.decode("#3E877F"), Color.decode("#3E877F")),
-            new JBColor(Color.decode("#1b9e77"), Color.decode("#1b9e77")),
-            new JBColor(Color.decode("#d95f02"), Color.decode("#d95f02")),
-            new JBColor(Color.decode("#7570b3"), Color.decode("#7570b3")),
-            new JBColor(Color.decode("#e7298a"), Color.decode("#e7298a")),
-            new JBColor(Color.decode("#66a61e"), Color.decode("#66a61e")),
-            new JBColor(Color.decode("#e6ab02"), Color.decode("#e6ab02"))
+            new JBColor(Color.decode("#1b9e77"), Color.decode("#1b9e77")), // greenish more into blue
+            new JBColor(Color.decode("#7570b3"), Color.decode("#7570b3")), // purple
+            new JBColor(Color.decode("#d95f02"), Color.decode("#d95f02")), // orange
+            new JBColor(Color.decode("#e7298a"), Color.decode("#e7298a")), // red-pinkish
+            new JBColor(Color.decode("#66a61e"), Color.decode("#66a61e")), // green
+            new JBColor(Color.decode("#e6ab02"), Color.decode("#e6ab02")) // yellowish
     };
 
     private static final JBColor[] disabledColors = {
