@@ -104,6 +104,8 @@
 
     <!-- Compilation -->
 
+    <property environment="env"/>
+
     <target name="compile" depends="clean-classes, def-libs, kotlin-init" unless="compilation-executed">
         <echo message="${jdk.home.intellij_idea}"/>
         <echo message="OS Name is:         ${os.name}" />
@@ -119,7 +121,7 @@
             <classpath>
                 <path refid="libs"/>
             </classpath>
-            <compilerarg line="-encoding UTF-8 -source 11 -target 11 -Xlint:-unchecked"/>
+            <compilerarg line="-encoding UTF-8 -source 11 --system ${env.JAVA_HOME} -target 11 -Xlint:-unchecked"/>
             <withKotlin/>
         </javac>
         <property name="compilation-executed" value="true"/>
