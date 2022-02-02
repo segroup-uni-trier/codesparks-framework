@@ -67,9 +67,10 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             return emptyLabel();
         }
 
+        // Note, when changing this, also change the clustering strategy in class 'ZoomedThreadRadar'
         final ThreadArtifactClustering clustering =
                 artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
-                //artifact.getSelectedClusteringOrApplyAndSelect(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
+//                artifact.clusterThreadArtifacts(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 2));
 
         boolean createDisabledViz = false;
         long numberOfSelectedArtifactThreads = threadArtifacts.stream().filter(t -> !t.isFiltered()).count();

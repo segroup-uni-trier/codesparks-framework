@@ -18,6 +18,7 @@ public class ZoomedThreadRadar extends AThreadRadar
     private final IThreadSelectableIndexProvider indexProvider;
     private long hoveredCluster = -1;
     private final AMetricIdentifier metricIdentifier;
+    private final ThreadArtifactClustering clustering;
 
     ZoomedThreadRadar(
             final AArtifact artifact
@@ -31,6 +32,9 @@ public class ZoomedThreadRadar extends AThreadRadar
         this.artifact = artifact;
         this.threadSelectables = threadSelectables;
         this.metricIdentifier = metricIdentifier;
+        // Note, when changing this, also change the clustering strategy in class 'ThreadRadarLabelFactory'
+//        this.clustering = artifact.clusterThreadArtifacts(ApacheKMeansPlusPlus.getInstance(metricIdentifier, 2));
+        this.clustering = artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
     }
 
     @Override
@@ -47,9 +51,6 @@ public class ZoomedThreadRadar extends AThreadRadar
             return;
         }
         VisualizationUtil.clearAndDrawTransparentBackground(g2d, getWidth(), getHeight());
-
-        final ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
 
         int startAngle = 90; //set start angle to 90 for starting at 12 o'clock
 
@@ -153,5 +154,10 @@ public class ZoomedThreadRadar extends AThreadRadar
     {
         hoveredCluster = -1;
         repaint();
+    }
+
+    ThreadArtifactClustering getClustering()
+    {
+        return clustering;
     }
 }

@@ -61,10 +61,23 @@ public class ApacheKMeansPlusPlus extends KThreadArtifactClusteringStrategy
         {
             threadPoints.add(new ThreadPoint(threadArtifact, this.getMetricIdentifier()));
         }
+        final ThreadArtifactClustering threadArtifactClusters = new ThreadArtifactClustering(this);
+        // In case there are too few threads to cluster for a given k, apply a trivial clustering. That is, assign every thread to an own cluster.
+        if (threadPoints.size() <= k)
+        {
+            for (final ThreadPoint threadPoint : threadPoints)
+            {
+                final ThreadArtifactCluster cluster = new ThreadArtifactCluster();
+                cluster.add(threadPoint.threadArtifact);
+                threadArtifactClusters.add(cluster);
+            }
+            return threadArtifactClusters;
+        }
+
         final EuclideanDistance euclideanDistance = new EuclideanDistance();
         final Clusterer<ThreadPoint> clusterer = new KMeansPlusPlusClusterer<>(k, 100, euclideanDistance);
         final List<? extends Cluster<ThreadPoint>> clustering = clusterer.cluster(threadPoints);
-        final ThreadArtifactClustering threadArtifactClusters = new ThreadArtifactClustering(this);
+
         for (final Cluster<ThreadPoint> threadPointCluster : clustering)
         {
             final ThreadArtifactCluster aThreadArtifacts = new ThreadArtifactCluster();

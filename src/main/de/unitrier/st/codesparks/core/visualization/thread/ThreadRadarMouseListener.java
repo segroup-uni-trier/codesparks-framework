@@ -55,8 +55,15 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         threadSelectables.clear();
         final JBTabbedPane tabbedPane = new JBTabbedPane();
 
+        // Note, the sequence in which the 'selectableIndexProvider' and the 'zoomedThreadRadar' are assigned here is crucial!
+        selectableIndexProvider = tabbedPane::getSelectedIndex;
+
+        zoomedThreadRadar = new ZoomedThreadRadar(artifact, selectableIndexProvider, threadSelectables, primaryMetricIdentifier);
+
         final ThreadArtifactClustering clustering =
-                artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
+                //artifact.clusterThreadArtifacts(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(primaryMetricIdentifier));
+                //artifact.clusterThreadArtifacts(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 2));
+                zoomedThreadRadar.getClustering();
 
         final AThreadSelectable threadClustersTree = new ThreadClusterTree(clustering, primaryMetricIdentifier);
         threadSelectables.add(threadClustersTree);
@@ -71,8 +78,6 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
 
         threadClustersTree.setNext(threadTypesTree);
         threadTypesTree.setNext(threadClustersTree);
-
-        selectableIndexProvider = tabbedPane::getSelectedIndex;
 
         // -------------------------
 
@@ -188,11 +193,9 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
         hoveredDataDisplayBox.setPreferredSize(new Dimension(170, 60));
 
         //Radial Visualization
-
-        zoomedThreadRadar = new ZoomedThreadRadar(artifact, selectableIndexProvider, threadSelectables, primaryMetricIdentifier);
         zoomedThreadRadar.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
         final ZoomedThreadRadarMouseAdapter mouseAdapter =
-                new ZoomedThreadRadarMouseAdapter(zoomedThreadRadar, clustering, this, northLeftWrapper);
+                new ZoomedThreadRadarMouseAdapter(zoomedThreadRadar, this, northLeftWrapper);
         zoomedThreadRadar.addMouseMotionListener(mouseAdapter);
         zoomedThreadRadar.addMouseListener(mouseAdapter);
 

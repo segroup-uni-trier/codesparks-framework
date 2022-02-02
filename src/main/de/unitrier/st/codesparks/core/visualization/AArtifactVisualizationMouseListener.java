@@ -83,6 +83,7 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
                     final String name = LocalizationUtil.getLocalizedString("codesparks.ui.artifactpopup.displayname");
                     final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
                     final ToolWindow toolWindow = toolWindowManager.getToolWindow(name);
+                    System.out.println("toolwindow = " + toolWindow);
                     if (toolWindow != null)
                     {
                         toolWindow.remove();

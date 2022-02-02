@@ -14,12 +14,14 @@ public final class ThreadColor
 {
     private ThreadColor() {}
 
+//    private static final int nrOfColors = 3;
     private static final int nrOfColors = 6;
 
     private static final JBColor[] enabledColors = {
-//            new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")),
-//            new JBColor(Color.decode("#B25283"), Color.decode("#B25283")),
-//            new JBColor(Color.decode("#3E877F"), Color.decode("#3E877F")),
+//            new JBColor(Color.decode("#3E877F"), Color.decode("#3E877F")), // Green
+//            new JBColor(Color.decode("#B25283"), Color.decode("#B25283")), // Red
+//            new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), // Purple
+            // Don't forget to change the 'nrOfColors' accordingly
             new JBColor(Color.decode("#1b9e77"), Color.decode("#1b9e77")), // greenish more into blue
             new JBColor(Color.decode("#7570b3"), Color.decode("#7570b3")), // purple
             new JBColor(Color.decode("#d95f02"), Color.decode("#d95f02")), // orange

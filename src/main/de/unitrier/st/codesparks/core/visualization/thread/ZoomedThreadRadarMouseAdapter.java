@@ -13,21 +13,18 @@ import java.awt.event.MouseEvent;
 
 public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
 {
-    private final ThreadArtifactClustering clustering;
     private final int frameSize;
     private final IClusterHoverable clusterHover;
-    private final ZoomedThreadRadar threadArtifactVisualization;
+    private final ZoomedThreadRadar threadRadar;
     private final JPanel visualizationWrapper;
 
     ZoomedThreadRadarMouseAdapter(
-            final ZoomedThreadRadar threadArtifactVisualization
-            , final ThreadArtifactClustering clustering
+            final ZoomedThreadRadar threadRadar
             , final IClusterHoverable clusterHover
             , final JPanel visualizationWrapper
     )
     {
-        this.threadArtifactVisualization = threadArtifactVisualization;
-        this.clustering = clustering;
+        this.threadRadar = threadRadar;
         this.frameSize = ThreadRadarConstants.CIRCLE_FRAMESIZE_ZOOMED;
         this.clusterHover = clusterHover;
         this.visualizationWrapper = visualizationWrapper;
@@ -39,6 +36,7 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
         super.mouseMoved(e);
         int hoverCount = 0;
 
+        final ThreadArtifactClustering clustering = threadRadar.getClustering();
         for (final ThreadArtifactCluster cluster : clustering)
         {
             if (isPointInArc(e.getX(), e.getY(), cluster))
@@ -50,7 +48,7 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
         }
         if (hoverCount == 0)
         {
-            threadArtifactVisualization.unHoverCluster();
+            threadRadar.unHoverCluster();
             clusterHover.onExit();
         }
     }
@@ -64,8 +62,12 @@ public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
 
     private boolean isPointInArc(int x, int y, final ThreadArtifactCluster cluster)
     {
+        final ThreadArtifactClustering clustering = threadRadar.getClustering();
         final VisualThreadClusterPropertiesManager instance = VisualThreadClusterPropertiesManager.getInstance(clustering);
         final VisualThreadClusterProperties visualThreadClusterProperties = instance.getOrDefault(cluster, -1);
+
+        assert visualThreadClusterProperties instanceof RadialVisualThreadClusterProperties;
+
         final RadialVisualThreadClusterProperties radialVisualThreadClusterProperties = (RadialVisualThreadClusterProperties) visualThreadClusterProperties;
 
         final double arcAngle = radialVisualThreadClusterProperties.getArcAngle();
