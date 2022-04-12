@@ -35,19 +35,19 @@ public final class ThreadColor
 //            new JBColor(Color.decode("#777777"), Color.decode("#777777")),
 //            new JBColor(Color.decode("#555555"), Color.decode("#555555"))
 
-//            new JBColor(Color.decode("#d9d9d9"), Color.decode("#d9d9d9")),
+            new JBColor(Color.decode("#d9d9d9"), Color.decode("#d9d9d9")),
+            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd")),
+            new JBColor(Color.decode("#969696"), Color.decode("#969696")),
+            new JBColor(Color.decode("#636363"), Color.decode("#636363")),
+            new JBColor(Color.decode("#252525"), Color.decode("#252525")),
+            new JBColor(Color.decode("#555555"), Color.decode("#555555"))
+            // Six times the same color
 //            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd")),
-//            new JBColor(Color.decode("#969696"), Color.decode("#969696")),
-//            new JBColor(Color.decode("#636363"), Color.decode("#636363")),
-//            new JBColor(Color.decode("#252525"), Color.decode("#252525")),
-//            new JBColor(Color.decode("#555555"), Color.decode("#555555"))
-
-            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd")),
-            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd")),
-            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd")),
-            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd")),
-            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd")),
-            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd"))
+//            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd")),
+//            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd")),
+//            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd")),
+//            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd")),
+//            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd"))
     };
 
     private static final Map<JBColor, JBColor> toDisabledMap = new HashMap<>(nrOfColors);
@@ -61,6 +61,8 @@ public final class ThreadColor
             toDisabledMap.put(enabledColors[i], disabledColors[i]);
             toEnabledMap.put(disabledColors[i], enabledColors[i]);
         }
+
+       // assert enabledColors.length == disabledColors.length;
     }
 
     public static JBColor getNextColor(final int i)

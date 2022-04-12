@@ -17,9 +17,9 @@ public abstract class AThreadStateArtifactFilter
     {
         this.states = states;
         this.checked = new HashMap<>();
-        for (final Integer value : states.keySet())
+        for (final Integer state : states.keySet())
         {
-            checked.put(value, true);
+            checked.put(state, true);
         }
     }
 
@@ -27,7 +27,7 @@ public abstract class AThreadStateArtifactFilter
     {
         this(states);
         final List<Integer> checkedStatesList = Arrays.stream(checkedStates).boxed().collect(Collectors.toList());
-        for (Integer state : states.keySet())
+        for (final Integer state : states.keySet())
         {
             final boolean stateChecked = checkedStatesList.contains(state);
             checked.put(state, stateChecked);
