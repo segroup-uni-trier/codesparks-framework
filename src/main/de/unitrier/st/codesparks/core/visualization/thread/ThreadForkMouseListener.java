@@ -17,7 +17,6 @@ import de.unitrier.st.codesparks.core.logging.IUserActivityLogger;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationMouseListener;
-import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.popup.*;
 
 import javax.swing.*;
@@ -33,7 +32,6 @@ import java.util.List;
 import java.util.*;
 
 import static de.unitrier.st.codesparks.core.logging.UserActivityEnum.*;
-
 
 public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable, IClusterMouseClickable
 {
@@ -783,6 +781,11 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
         }
         for (final JPanel hoverPanel : hoverPanels)
         {
+            final VisualThreadClusterPropertiesManager instance = VisualThreadClusterPropertiesManager.getInstance(artifact.getSelectedClustering());
+            final VisualThreadClusterProperties visualThreadClusterProperties = instance.getOrDefault(cluster, index);
+            final JBColor color = visualThreadClusterProperties.getColor();
+            final Border coloredEtchedHoverBorder = BorderFactory.createEtchedBorder(color, color);
+            final Border coloredTitledHoverBorder = BorderFactory.createTitledBorder(coloredEtchedHoverBorder, hoverBorderTitle);
             hoverPanel.setBorder(coloredTitledHoverBorder);
         }
 
@@ -793,8 +796,6 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
     }
 
     private static final String hoverBorderTitle = "Hovered cluster";
-    private static final Border coloredEtchedHoverBorder = BorderFactory.createEtchedBorder(VisConstants.ORANGE, VisConstants.ORANGE);
-    private static final Border coloredTitledHoverBorder = BorderFactory.createTitledBorder(coloredEtchedHoverBorder, hoverBorderTitle);
     private static final Border titledHoverBorder = BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), hoverBorderTitle);
 
     @Override

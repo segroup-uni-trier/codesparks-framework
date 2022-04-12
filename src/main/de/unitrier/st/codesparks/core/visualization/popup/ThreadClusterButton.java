@@ -13,7 +13,6 @@ import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 import de.unitrier.st.codesparks.core.logging.UserActivityEnum;
 import de.unitrier.st.codesparks.core.logging.UserActivityLogger;
-import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 import de.unitrier.st.codesparks.core.visualization.thread.IClusterHoverable;
 import de.unitrier.st.codesparks.core.visualization.thread.IClusterMouseClickable;
@@ -109,7 +108,7 @@ public class ThreadClusterButton extends JBPanel<BorderLayoutPanel>
         }
         if (mouseIn)
         {
-            graphics.setColor(VisConstants.ORANGE);
+            graphics.setColor(color);
             final int strokeWidth = 2;
             graphics.setStroke(new BasicStroke(strokeWidth));
             graphics.drawRect(1, 1, getWidth() - strokeWidth, getHeight() - strokeWidth);
