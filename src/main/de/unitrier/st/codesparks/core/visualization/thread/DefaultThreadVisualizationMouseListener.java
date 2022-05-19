@@ -37,7 +37,7 @@ public class DefaultThreadVisualizationMouseListener extends AArtifactVisualizat
     @Override
     protected PopupPanel createPopupContent(final AArtifact artifact)
     {
-        final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "DefaultThreadVisualizationPopup");
+        final PopupPanel popupPanel = new PopupPanel("DefaultThreadVisualizationPopup");
 
         threadSelectables.clear();
 

@@ -50,7 +50,7 @@ public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListene
     @Override
     protected PopupPanel createPopupContent(final AArtifact artifact)
     {
-        final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "ThreadRadarPopup");
+        final PopupPanel popupPanel = new PopupPanel("ThreadRadarDetailView");
 
         threadSelectables.clear();
         final JBTabbedPane tabbedPane = new JBTabbedPane();

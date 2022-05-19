@@ -482,10 +482,11 @@ public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener
          */
 
         final JBPanel<BorderLayoutPanel> buttonsPanel = new JBPanel<>();
+        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
         final Dimension buttonsPanelDimension = new Dimension(400, 70);
         buttonsPanel.setMinimumSize(buttonsPanelDimension);
         buttonsPanel.setPreferredSize(buttonsPanelDimension);
-        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
+
 
         /*
          ***************** The selection buttons

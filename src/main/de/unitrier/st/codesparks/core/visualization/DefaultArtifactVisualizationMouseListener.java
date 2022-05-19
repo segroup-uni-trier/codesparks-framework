@@ -36,7 +36,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
     @Override
     protected PopupPanel createPopupContent(final AArtifact artifact)
     {
-        final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "MethodPopup");
+        final PopupPanel popupPanel = new PopupPanel("MethodPopup");
         /*
          * Do not remove the following disabled code!
          */

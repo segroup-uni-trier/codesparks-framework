@@ -33,7 +33,7 @@ public class SimpleThreadVisualizationMouseListener extends AArtifactVisualizati
     @Override
     protected PopupPanel createPopupContent(AArtifact artifact)
     {
-        final PopupPanel popupPanel = new PopupPanel(new BorderLayout(), "DefaultThreadVisualizationPopup");
+        final PopupPanel popupPanel = new PopupPanel("SimpleThreadVisualizationPopup");
 
         final JBPanel<BorderLayoutPanel> centerPanel = new JBPanel<>();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));

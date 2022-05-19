@@ -63,7 +63,7 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
         final JBPanel<BorderLayoutPanel> popupPanelWrapper = new BorderLayoutPanel();
         final PopupPanel popupPanel = createPopupContent(artifact);
 
-        logger.log(UserActivityEnum.PopupOpened, popupPanel.getType(), identifier);
+        logger.log(UserActivityEnum.PopupOpened, popupPanel.getDescription(), identifier);
 
         final JBPanel<BorderLayoutPanel> controlButtonsWrapper = new JBPanel<>();
         final JPanel controlButtonsBox = new JPanel();
@@ -114,7 +114,7 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
             jbPopup.cancel();
             popupToolWindow.show(() -> {});
 
-            logger.log(UserActivityEnum.PopupPinned, popupPanel.getType(), identifier);
+            logger.log(UserActivityEnum.PopupPinned, popupPanel.getDescription(), identifier);
             return true;
         };
 

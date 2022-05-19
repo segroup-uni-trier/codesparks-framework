@@ -34,7 +34,7 @@ public class MetricListPopupMouseAdapter extends MouseAdapter
         if (neighborArtifactAt != null)
         {
             String neighborArtifactAtIdentifier = neighborArtifactAt.getIdentifier();
-            UserActivityLogger.getInstance().log(UserActivityEnum.PopupNavigated, popupPanel.getType(), neighborArtifactAtIdentifier);
+            UserActivityLogger.getInstance().log(UserActivityEnum.PopupNavigated, popupPanel.getDescription(), neighborArtifactAtIdentifier);
             CoreUtil.navigate(neighborArtifactAtIdentifier);
         }
         popupPanel.cancelPopup();

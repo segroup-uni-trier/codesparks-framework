@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.visualization.popup;
 
@@ -11,36 +11,25 @@ import java.awt.*;
 
 public final class PopupPanel extends JBPanel<BorderLayoutPanel>
 {
-    private String type;
+    private final String description;
 
-    public PopupPanel(final LayoutManager layout, final String type)
+    public PopupPanel(final String description)
     {
-        super(layout);
-        this.type = type;
+        super(new BorderLayout());
+        this.description = description;
     }
 
-    public PopupPanel(final String type)
+    public String getDescription()
     {
-        this.type = type;
+        return description;
     }
-
-    public PopupPanel() { }
 
     private JBPopup popup;
+    private final Object popupLock = new Object();
 
-    public String getType()
+    public void registerPopup(final JBPopup popup)
     {
-        return type;
-    }
-
-    public void setType(final String type)
-    {
-        this.type = type;
-    }
-
-    public void registerPopup(JBPopup popup)
-    {
-        synchronized (this)
+        synchronized (popupLock)
         {
             this.popup = popup;
         }
@@ -48,7 +37,7 @@ public final class PopupPanel extends JBPanel<BorderLayoutPanel>
 
     public void cancelPopup()
     {
-        synchronized (this)
+        synchronized (popupLock)
         {
             if (popup != null)
             {
