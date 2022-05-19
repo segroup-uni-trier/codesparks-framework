@@ -7,10 +7,11 @@ import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
 import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VisualThreadClusterPropertiesManager
+public class VisualThreadClusterPropertiesManager implements Serializable
 {
     private static final Map<Long, VisualThreadClusterPropertiesManager> instances = new HashMap<>(1 << 5);
 

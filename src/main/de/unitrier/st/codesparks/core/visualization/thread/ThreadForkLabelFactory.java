@@ -12,6 +12,10 @@ import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Map;
 
@@ -57,7 +61,8 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final int TOP_OFFSET = 6;
 
         final int lineHeight = VisualizationUtil.getLineHeightFloor(VisConstants.getLineHeight(), threadsPerColumn);
-        final CodeSparksGraphics graphics = getGraphics(X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT, lineHeight + TOP_OFFSET);
+        final CodeSparksGraphics graphics = getGraphics(X_OFFSET_LEFT + threadMetaphorWidth + barChartWidth + X_OFFSET_RIGHT,
+                lineHeight + TOP_OFFSET);
 
         // Thread metaphor
         graphics.setDefaultColor();
@@ -66,8 +71,10 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         // Leading arrow
         graphics.fillRect(X_OFFSET_LEFT, TOP_OFFSET + lineHeight / 2, barrierXPos - 1, 1);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, TOP_OFFSET + lineHeight / 2 - 3, X_OFFSET_LEFT + barrierXPos - 1, TOP_OFFSET + lineHeight / 2);
-        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, TOP_OFFSET + lineHeight / 2 + 3, X_OFFSET_LEFT + barrierXPos - 1, TOP_OFFSET + lineHeight / 2);
+        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, TOP_OFFSET + lineHeight / 2 - 3, X_OFFSET_LEFT + barrierXPos - 1,
+                TOP_OFFSET + lineHeight / 2);
+        graphics.drawLine(X_OFFSET_LEFT + barrierXPos - 4, TOP_OFFSET + lineHeight / 2 + 3, X_OFFSET_LEFT + barrierXPos - 1,
+                TOP_OFFSET + lineHeight / 2);
 
         // Vertical bar or barrier, respectively
         final int barrierWidth = 3;
@@ -89,7 +96,8 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final double threadFilteredTotalMetricValueOfArtifact = ThreadVisualizationUtil.getMetricValueSumOfSelectedThreads(artifact,
                 primaryMetricIdentifier, createDisabledViz);
 
-        final AThreadArtifactClusteringStrategy kbdeClusteringStrategy = KernelBasedDensityEstimationClustering.getInstance(primaryMetricIdentifier);
+        final AThreadArtifactClusteringStrategy kbdeClusteringStrategy =
+                KernelBasedDensityEstimationClustering.getInstance(primaryMetricIdentifier);
 
         final ThreadArtifactClustering kbdeClustering = artifact.clusterThreadArtifacts(kbdeClusteringStrategy);
         final int numberOfEstimatedClusters = kbdeClustering.size();
@@ -106,14 +114,18 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             selectedClustering = artifact.getClusteringAndSelect(ApacheKMeansPlusPlus.getInstance(primaryMetricIdentifier, 3));
         }
 
-        final VisualThreadClusterPropertiesManager clusterPropertiesManager = VisualThreadClusterPropertiesManager.getInstance(selectedClustering);
-        final Map<ThreadArtifactCluster, Integer> drawPositions = ThreadVisualizationUtil.getDrawPositions(selectedClustering, clusterPropertiesManager);
+        final VisualThreadClusterPropertiesManager clusterPropertiesManager =
+                VisualThreadClusterPropertiesManager.getInstance(selectedClustering);
+
+        final Map<ThreadArtifactCluster, Integer> drawPositions = ThreadVisualizationUtil.getDrawPositions(selectedClustering,
+                clusterPropertiesManager);
 
         int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : selectedClustering)
         {
             if (!createDisabledViz && threadCluster.stream().noneMatch(AThreadArtifact::isSelected))
-            { // In case the density based classification approach yields more than 3 clusters but only upt to three of them contain selected threads, skip
+            { // In case the density based classification approach yields more than 3 clusters but only upt to three of them contain
+                // selected threads, skip
                 // the clusters which only contain filtered threads
                 clusterNum += 1;
                 continue;
@@ -152,7 +164,8 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
              * Draw the metric value avg bar
              */
             graphics.setColor(clusterColor);
-            percent = ThreadVisualizationUtil.getMetricValueAverageOfSelectedThreadsOfTheClusterRelativeToTotal(primaryMetricIdentifier, threadArtifacts,
+            percent = ThreadVisualizationUtil.getMetricValueAverageOfSelectedThreadsOfTheClusterRelativeToTotal(primaryMetricIdentifier,
+                    threadArtifacts,
                     threadCluster, threadFilteredTotalMetricValueOfArtifact, createDisabledViz);
 
             clusterWidth = ThreadVisualizationUtil.getDiscreteTenValuedScaleWidth(percent, clusterBarMaxWidth);

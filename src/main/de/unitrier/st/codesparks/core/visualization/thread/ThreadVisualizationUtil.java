@@ -16,77 +16,149 @@ public final class ThreadVisualizationUtil
             final ThreadArtifactClustering clustering
             , final VisualThreadClusterPropertiesManager propertiesManager)
     {
-        final Map<ThreadArtifactCluster, Integer> map = new HashMap<>(3);
-        int clusterNum = 0;
-        for (final ThreadArtifactCluster cluster : clustering)
+        int size = clustering.size();
+        final Map<ThreadArtifactCluster, Integer> map = new HashMap<>(size);
+        final Map<ThreadArtifactCluster, Integer> retMap = new HashMap<>(size);
+
+        for (int i = 0; i < size; i++)
         {
-            if (cluster.stream().allMatch(AThreadArtifact::isFiltered))
+            ThreadArtifactCluster cluster = clustering.get(i);
+            if (cluster.stream().anyMatch(AThreadArtifact::isSelected))
             {
-                clusterNum += 1;
-                continue;
+                final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(cluster, i);
+                map.put(cluster, properties.getPosition());
             }
-            final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(cluster, clusterNum);
-            map.put(cluster, properties.getPosition());
-            clusterNum += 1;
         }
-        if (map.size() > 3)
+
+
+        int mapSize = map.size();
+        if (mapSize > 3)
         {
             throw new IllegalArgumentException("No more tha three clusters are meant to contain selected thread artifacts!");
         }
-        if (map.size() == 0)
+        if (mapSize == 0)
         { // all threads are filtered
             assert clustering.size() <= 3;
-            clusterNum = 0;
+            int clusterNum = 0;
             for (final ThreadArtifactCluster cluster : clustering)
             {
                 final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(cluster, clusterNum);
-                map.put(cluster, properties.getPosition());
+                retMap.put(cluster, properties.getPosition());
                 clusterNum += 1;
             }
-            return map;
+            return retMap;
         }
         final ArrayList<Map.Entry<ThreadArtifactCluster, Integer>> list = new ArrayList<>(map.entrySet());
         final Comparator<Map.Entry<ThreadArtifactCluster, Integer>> comparator = Comparator.comparingInt(Map.Entry::getValue);
         list.sort(comparator);
-        final int size = list.size();
-        if (size == 3)
+        //final int size = list.size();
+        if (mapSize == 3)
         {
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < mapSize; i++)
             {
                 final Map.Entry<ThreadArtifactCluster, Integer> entry = list.get(i);
-                map.put(entry.getKey(), i);
+                retMap.put(entry.getKey(), i);
             }
-        } else if (size == 2)
+        } else if (mapSize == 2)
         {
-            final Optional<Map.Entry<ThreadArtifactCluster, Integer>> min = list.stream().min(comparator);
-            //noinspection ConstantConditions, ignored
-            if (min.isPresent())
+            // Only case that there are two!
+            Optional<Map.Entry<ThreadArtifactCluster, Integer>> maxGreaterOrEqualTwo =
+                    map.entrySet().stream().filter(entry -> entry.getValue() >= 2).max(comparator);
+
+            if (maxGreaterOrEqualTwo.isPresent())
             {
-                final Map.Entry<ThreadArtifactCluster, Integer> minEntry = min.get();
-                final Integer pos = Math.max(minEntry.getValue(), 0);
-                map.put(minEntry.getKey(), pos);
+                Map.Entry<ThreadArtifactCluster, Integer> entry = maxGreaterOrEqualTwo.get();
+                retMap.put(entry.getKey(), 2);
+                map.remove(entry.getKey());
+
+                //
+                Optional<Map.Entry<ThreadArtifactCluster, Integer>> greaterOrEqualOne =
+                        map.entrySet().stream().filter(entry1 -> entry1.getValue() >= 1).findFirst();
+                if (greaterOrEqualOne.isPresent())
+                {
+                    Map.Entry<ThreadArtifactCluster, Integer> entry1 = greaterOrEqualOne.get();
+                    retMap.put(entry1.getKey(), 1);
+                    map.remove(entry1.getKey());
+                } else
+                {
+                    Optional<Map.Entry<ThreadArtifactCluster, Integer>> any = map.entrySet().stream().findAny();
+                    assert any.isPresent(); // We know that there are
+                    Map.Entry<ThreadArtifactCluster, Integer> entry1 = any.get();
+                    retMap.put(entry1.getKey(), 0);
+                    map.remove(entry1.getKey());
+                }
+
             } else
             {
-                throw new IllegalArgumentException("No cluster with minimal position present in the set!");
-            }
-            final Optional<Map.Entry<ThreadArtifactCluster, Integer>> max = list.stream().max(comparator);
-            if (max.isPresent())
-            {
-                final Map.Entry<ThreadArtifactCluster, Integer> maxEntry = max.get();
-                final Integer pos = Math.min(maxEntry.getValue(), 2);
-                map.put(maxEntry.getKey(), pos);
-            } else
-            {
-                throw new IllegalArgumentException("No cluster with maximal position present in the set!");
+                Optional<Map.Entry<ThreadArtifactCluster, Integer>> any =
+                        map.entrySet().stream().filter(elem -> elem.getValue() == 1).findAny();
+                assert any.isPresent();
+                Map.Entry<ThreadArtifactCluster, Integer> entry = any.get();
+                retMap.put(entry.getKey(), 1);
+                map.remove(entry.getKey());
+
+                Optional<Map.Entry<ThreadArtifactCluster, Integer>> any1 =
+                        map.entrySet().stream().filter(elem -> elem.getValue() == 0).findAny();
+                assert any1.isPresent();
+                Map.Entry<ThreadArtifactCluster, Integer> entry1 = any1.get();
+                retMap.put(entry1.getKey(), 0);
+                map.remove(entry1.getKey());
             }
         } else
         {
             // size == 1
             final Map.Entry<ThreadArtifactCluster, Integer> entry = list.get(0);
             int pos = Math.max(0, Math.min(2, entry.getValue()));
-            map.put(entry.getKey(), pos);
+            retMap.put(entry.getKey(), pos);
         }
-        return map;
+
+//        try
+//        {
+//           assert map.values().stream().distinct().count() == map.values().size();
+//        } catch (AssertionError a)
+//        {
+//            ObjectOutputStream cOut = null;
+//            ObjectOutputStream pOut = null;
+//            try
+//            {
+//                cOut = new ObjectOutputStream(new FileOutputStream("/home/moseler/Desktop/test-clustering.ser"));
+//                cOut.writeObject(clustering);
+//
+//                pOut = new ObjectOutputStream(new FileOutputStream("/home/moseler/Desktop/test-clusterPropertiesManager.ser"));
+//                pOut.writeObject(propertiesManager);
+//            } catch (IOException e)
+//            {
+//                e.printStackTrace();
+//            } finally
+//            {
+//                if (cOut != null)
+//                {
+//                    try
+//                    {
+//                        cOut.flush();
+//                        cOut.close();
+//                    } catch (IOException e)
+//                    {
+//                        // ignored
+//                    }
+//                }
+//                if (pOut != null)
+//                {
+//                    try
+//                    {
+//                        pOut.flush();
+//                        pOut.close();
+//                    } catch (IOException e)
+//                    {
+//                        // ignored
+//                    }
+//                }
+//            }
+//
+//            //throw a;
+//        }
+
+        return retMap;
     }
 
     // Used in ThreadFork and ZoomedThreadFork
@@ -352,7 +424,8 @@ public final class ThreadVisualizationUtil
         {
             selectedThreadArtifacts = new HashSet<>(artifact.getSelectedThreadArtifactsWithNumericMetricValue(metricIdentifier));
         }
-        return getNumberOfSelectedThreadTypesWithNumericMetricValueInSet(artifact, metricIdentifier, selectedThreadArtifacts, ignoreFilteredFlagOfThreads);
+        return getNumberOfSelectedThreadTypesWithNumericMetricValueInSet(artifact, metricIdentifier, selectedThreadArtifacts,
+                ignoreFilteredFlagOfThreads);
     }
 
     public static int getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(
@@ -369,7 +442,8 @@ public final class ThreadVisualizationUtil
             , final boolean ignoreFilteredFlagOfThreads
     )
     {
-        return getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact, metricIdentifier, null, ignoreFilteredFlagOfThreads);
+        return getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact, metricIdentifier, null,
+                ignoreFilteredFlagOfThreads);
     }
 
     public static int getNumberOfSelectedThreadTypesWithNumericMetricValueInCluster(
@@ -379,8 +453,10 @@ public final class ThreadVisualizationUtil
             , final boolean ignoreTheFilteredFlagOfThreads
     )
     {
-        final Set<AThreadArtifact> threadArtifactSet = threadArtifactCluster.stream().filter(t -> ignoreTheFilteredFlagOfThreads || t.isSelected())
-                .collect(Collectors.toSet());
-        return getNumberOfSelectedThreadTypesWithNumericMetricValueInSet(artifact, metricIdentifier, threadArtifactSet, ignoreTheFilteredFlagOfThreads);
+        final Set<AThreadArtifact> threadArtifactSet =
+                threadArtifactCluster.stream().filter(t -> ignoreTheFilteredFlagOfThreads || t.isSelected())
+                        .collect(Collectors.toSet());
+        return getNumberOfSelectedThreadTypesWithNumericMetricValueInSet(artifact, metricIdentifier, threadArtifactSet,
+                ignoreTheFilteredFlagOfThreads);
     }
 }
