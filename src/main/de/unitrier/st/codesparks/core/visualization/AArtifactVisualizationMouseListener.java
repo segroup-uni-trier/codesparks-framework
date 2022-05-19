@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.visualization;
 
@@ -15,6 +15,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
+import com.intellij.util.Processor;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
@@ -64,69 +65,98 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
 
         logger.log(UserActivityEnum.PopupOpened, popupPanel.getType(), identifier);
 
+        final JBPanel<BorderLayoutPanel> controlButtonsWrapper = new JBPanel<>();
+        final JPanel controlButtonsBox = new JPanel();
+        controlButtonsBox.setLayout(new BoxLayout(controlButtonsBox, BoxLayout.X_AXIS));
+        controlButtonsBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        controlButtonsBox.setAlignmentY(Component.TOP_ALIGNMENT);
+
+        controlButtonsWrapper.add(controlButtonsBox, BorderLayout.CENTER);
+
+        popupPanelWrapper.add(controlButtonsWrapper, BorderLayout.SOUTH);
         popupPanelWrapper.add(popupPanel, BorderLayout.CENTER);
 
         final String popupTitle = createPopupTitle(artifact);
 
+        final Processor<JBPopup> pinProcessor = jbPopup -> {
+            final String name = LocalizationUtil.getLocalizedString("codesparks.ui.artifactpopup.displayname");
+            final Project project = CoreUtil.getCurrentlyOpenedProject();
+            final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+            final ToolWindow toolWindow = toolWindowManager.getToolWindow(name);
+            if (toolWindow != null)
+            {
+                toolWindow.remove();
+            }
+            final JBPanel<BorderLayoutPanel> pinPanel = new BorderLayoutPanel();
+            final JBPanel<BorderLayoutPanel> titlePanel = new BorderLayoutPanel();
+            titlePanel.add(new JLabel(popupTitle, JLabel.CENTER), BorderLayout.CENTER);
+
+            pinPanel.add(titlePanel, BorderLayout.NORTH);
+            pinPanel.add(popupPanel, BorderLayout.CENTER);
+
+            //noinspection UnstableApiUsage
+            final ToolWindow popupToolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
+                    name
+                    , ToolWindowAnchor.RIGHT
+                    , null
+                    , true
+                    , true
+                    , true
+                    , true
+                    , null
+                    , IconLoader.getIcon("/icons/profiling_13x12.png", getClass())
+                    , () -> name
+            ));
+
+            final ContentManager contentManager = popupToolWindow.getContentManager();
+            contentManager.addContent(ContentFactory.SERVICE.getInstance().createContent(pinPanel, "", true));
+
+            jbPopup.cancel();
+            popupToolWindow.show(() -> {});
+
+            logger.log(UserActivityEnum.PopupPinned, popupPanel.getType(), identifier);
+            return true;
+        };
+
         final ComponentPopupBuilder componentPopupBuilder = JBPopupFactory.getInstance().
                 createComponentPopupBuilder(popupPanelWrapper, popupPanelWrapper)
+                .setTitle(popupTitle)
                 .setMovable(true)
-//                .setFocusable(true)
+                //.setShowBorder(true)
                 .setResizable(true)
-//                .setRequestFocus(true)
                 .setMinSize(dimension)
-//              .setShowShadow(true)
-                .setMayBeParent(true)
+                /* Experiments */
+                //.setFocusable(true)
+                //.setRequestFocus(true)
+                //.setShowShadow(true)
+                //.setMayBeParent(true)
+                //.setLocateByContent(true)
+                //.setBelongsToGlobalPopupStack(true)
+                //.setCancelKeyEnabled(true)
+                //.setNormalWindowLevel(true)
+                /* There are other cancel strategies possible: */
+                //.setCancelOnOtherWindowOpen(true)
                 //.setCancelOnClickOutside(false)
-                .setCouldPin(jbPopup -> {
-                    final Project project = CoreUtil.getCurrentlyOpenedProject();
-                    final String name = LocalizationUtil.getLocalizedString("codesparks.ui.artifactpopup.displayname");
-                    final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-                    final ToolWindow toolWindow = toolWindowManager.getToolWindow(name);
-                    System.out.println("toolwindow = " + toolWindow);
-                    if (toolWindow != null)
-                    {
-                        toolWindow.remove();
-                    }
-                    final JBPanel<BorderLayoutPanel> pinPanel = new BorderLayoutPanel();
-                    final JBPanel<BorderLayoutPanel> titlePanel = new BorderLayoutPanel();
-                    titlePanel.add(new JLabel(popupTitle, JLabel.CENTER), BorderLayout.CENTER);
-
-                    pinPanel.add(titlePanel, BorderLayout.NORTH);
-                    pinPanel.add(popupPanel, BorderLayout.CENTER);
-
-                    final ToolWindow methodPopupToolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
-                            name
-                            , ToolWindowAnchor.RIGHT
-                            , null
-                            , true
-                            , true
-                            , true
-                            , true
-                            , null
-                            , IconLoader.getIcon("/icons/profiling_13x12.png", getClass())
-                            , () -> name
-                    ));
-
-                    final ContentManager contentManager = methodPopupToolWindow.getContentManager();
-                    contentManager.addContent(ContentFactory.SERVICE.getInstance()
-                            .createContent(pinPanel, "", true));
-                    jbPopup.cancel();
-                    methodPopupToolWindow.show(() -> {});
-
-                    logger.log(UserActivityEnum.PopupPinned, popupPanel.getType(), identifier);
+                //.setCancelOnWindowDeactivation(true)
+                //.setCancelOnMouseOutCallback(mouseEvent -> true)
+                .setCancelCallback(() -> {
+                    //System.out.println("should cancel?");
                     return true;
-                }).setTitle(popupTitle);
+                })
+                .setCouldPin(pinProcessor)
+                ;
         final JBPopup popup = componentPopupBuilder.createPopup();
         popup.setSize(dimension);
         popup.setMinimumSize(dimension);
         popup.pack(false, true);
+        popup.setRequestFocus(true); // Must! be set to true in order to make 'setCouldPin' work!
 
         final Component source = (Component) e.getSource();
         popup.showUnderneathOf(source);
 
         popupPanel.registerPopup(popup); // In order to be able to close the popup in case the user
         // clicked on a caller/callee to navigate to it.
+
     }
 
     @Override
