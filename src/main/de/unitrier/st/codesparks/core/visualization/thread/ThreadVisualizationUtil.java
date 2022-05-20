@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
@@ -16,13 +16,13 @@ public final class ThreadVisualizationUtil
             final ThreadArtifactClustering clustering
             , final VisualThreadClusterPropertiesManager propertiesManager)
     {
-        int size = clustering.size();
-        final Map<ThreadArtifactCluster, Integer> map = new HashMap<>(size);
-        final Map<ThreadArtifactCluster, Integer> retMap = new HashMap<>(size);
+        final int nrOfClusters = clustering.size();
+        final Map<ThreadArtifactCluster, Integer> map = new HashMap<>(nrOfClusters);
+        final Map<ThreadArtifactCluster, Integer> retMap = new HashMap<>(nrOfClusters);
 
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < nrOfClusters; i++)
         {
-            ThreadArtifactCluster cluster = clustering.get(i);
+            final ThreadArtifactCluster cluster = clustering.get(i);
             if (cluster.stream().anyMatch(AThreadArtifact::isSelected))
             {
                 final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(cluster, i);
@@ -30,133 +30,85 @@ public final class ThreadVisualizationUtil
             }
         }
 
-
-        int mapSize = map.size();
-        if (mapSize > 3)
+        final int nrOfClustersToDraw = map.size(); // Nr of clusters that contain selected threads.
+        if (nrOfClustersToDraw > 3)
         {
-            throw new IllegalArgumentException("No more tha three clusters are meant to contain selected thread artifacts!");
+            throw new IllegalArgumentException("No more than three clusters are meant to contain selected thread artifacts!");
         }
-        if (mapSize == 0)
-        { // all threads are filtered
+        if (nrOfClustersToDraw == 0)
+        { // All threads are filtered (deselected)
             assert clustering.size() <= 3;
-            int clusterNum = 0;
-            for (final ThreadArtifactCluster cluster : clustering)
+            for (int i = 0; i < nrOfClusters; i++)
             {
-                final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(cluster, clusterNum);
+                final ThreadArtifactCluster cluster = clustering.get(i);
+                final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(cluster, i);
                 retMap.put(cluster, properties.getPosition());
-                clusterNum += 1;
             }
+
             return retMap;
         }
         final ArrayList<Map.Entry<ThreadArtifactCluster, Integer>> list = new ArrayList<>(map.entrySet());
         final Comparator<Map.Entry<ThreadArtifactCluster, Integer>> comparator = Comparator.comparingInt(Map.Entry::getValue);
         list.sort(comparator);
-        //final int size = list.size();
-        if (mapSize == 3)
+
+        if (nrOfClustersToDraw == 3)
         {
-            for (int i = 0; i < mapSize; i++)
+            for (int i = 0; i < nrOfClustersToDraw; i++)
             {
                 final Map.Entry<ThreadArtifactCluster, Integer> entry = list.get(i);
                 retMap.put(entry.getKey(), i);
             }
-        } else if (mapSize == 2)
-        {
-            // Only case that there are two!
-            Optional<Map.Entry<ThreadArtifactCluster, Integer>> maxGreaterOrEqualTwo =
+        } else if (nrOfClustersToDraw == 2)
+        { // In case that there are exactly two clusters to draw!
+            final Optional<Map.Entry<ThreadArtifactCluster, Integer>> maxGreaterOrEqualTwo =
                     map.entrySet().stream().filter(entry -> entry.getValue() >= 2).max(comparator);
 
             if (maxGreaterOrEqualTwo.isPresent())
             {
-                Map.Entry<ThreadArtifactCluster, Integer> entry = maxGreaterOrEqualTwo.get();
+                final Map.Entry<ThreadArtifactCluster, Integer> entry = maxGreaterOrEqualTwo.get();
                 retMap.put(entry.getKey(), 2);
                 map.remove(entry.getKey());
 
                 //
-                Optional<Map.Entry<ThreadArtifactCluster, Integer>> greaterOrEqualOne =
+                final Optional<Map.Entry<ThreadArtifactCluster, Integer>> greaterOrEqualOne =
                         map.entrySet().stream().filter(entry1 -> entry1.getValue() >= 1).findFirst();
                 if (greaterOrEqualOne.isPresent())
                 {
-                    Map.Entry<ThreadArtifactCluster, Integer> entry1 = greaterOrEqualOne.get();
+                    final Map.Entry<ThreadArtifactCluster, Integer> entry1 = greaterOrEqualOne.get();
                     retMap.put(entry1.getKey(), 1);
                     map.remove(entry1.getKey());
                 } else
                 {
-                    Optional<Map.Entry<ThreadArtifactCluster, Integer>> any = map.entrySet().stream().findAny();
+                    final Optional<Map.Entry<ThreadArtifactCluster, Integer>> any = map.entrySet().stream().findAny();
                     assert any.isPresent(); // We know that there are
                     Map.Entry<ThreadArtifactCluster, Integer> entry1 = any.get();
                     retMap.put(entry1.getKey(), 0);
                     map.remove(entry1.getKey());
                 }
-
             } else
             {
-                Optional<Map.Entry<ThreadArtifactCluster, Integer>> any =
+                final Optional<Map.Entry<ThreadArtifactCluster, Integer>> any =
                         map.entrySet().stream().filter(elem -> elem.getValue() == 1).findAny();
                 assert any.isPresent();
-                Map.Entry<ThreadArtifactCluster, Integer> entry = any.get();
+                final Map.Entry<ThreadArtifactCluster, Integer> entry = any.get();
                 retMap.put(entry.getKey(), 1);
                 map.remove(entry.getKey());
 
-                Optional<Map.Entry<ThreadArtifactCluster, Integer>> any1 =
+                final Optional<Map.Entry<ThreadArtifactCluster, Integer>> any1 =
                         map.entrySet().stream().filter(elem -> elem.getValue() == 0).findAny();
                 assert any1.isPresent();
-                Map.Entry<ThreadArtifactCluster, Integer> entry1 = any1.get();
+                final Map.Entry<ThreadArtifactCluster, Integer> entry1 = any1.get();
                 retMap.put(entry1.getKey(), 0);
                 map.remove(entry1.getKey());
             }
         } else
-        {
-            // size == 1
+        { // nrOfClustersToDraw == 1
             final Map.Entry<ThreadArtifactCluster, Integer> entry = list.get(0);
-            int pos = Math.max(0, Math.min(2, entry.getValue()));
+            final int pos = Math.max(0, Math.min(2, entry.getValue()));
             retMap.put(entry.getKey(), pos);
         }
 
-//        try
-//        {
-//           assert map.values().stream().distinct().count() == map.values().size();
-//        } catch (AssertionError a)
-//        {
-//            ObjectOutputStream cOut = null;
-//            ObjectOutputStream pOut = null;
-//            try
-//            {
-//                cOut = new ObjectOutputStream(new FileOutputStream("/home/moseler/Desktop/test-clustering.ser"));
-//                cOut.writeObject(clustering);
-//
-//                pOut = new ObjectOutputStream(new FileOutputStream("/home/moseler/Desktop/test-clusterPropertiesManager.ser"));
-//                pOut.writeObject(propertiesManager);
-//            } catch (IOException e)
-//            {
-//                e.printStackTrace();
-//            } finally
-//            {
-//                if (cOut != null)
-//                {
-//                    try
-//                    {
-//                        cOut.flush();
-//                        cOut.close();
-//                    } catch (IOException e)
-//                    {
-//                        // ignored
-//                    }
-//                }
-//                if (pOut != null)
-//                {
-//                    try
-//                    {
-//                        pOut.flush();
-//                        pOut.close();
-//                    } catch (IOException e)
-//                    {
-//                        // ignored
-//                    }
-//                }
-//            }
-//
-//            //throw a;
-//        }
+        assert retMap.values().stream().distinct().count() == retMap.values().size();
 
         return retMap;
     }
