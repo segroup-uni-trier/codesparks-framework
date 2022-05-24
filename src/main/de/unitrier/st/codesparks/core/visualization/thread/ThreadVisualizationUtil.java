@@ -13,8 +13,9 @@ public final class ThreadVisualizationUtil
     private ThreadVisualizationUtil() {}
 
     public static Map<ThreadArtifactCluster, Integer> getDrawPositions(
-            final ThreadArtifactClustering clustering
-            , final VisualThreadClusterPropertiesManager propertiesManager)
+            final ThreadArtifactClustering clustering,
+            final VisualThreadClusterPropertiesManager propertiesManager
+    )
     {
         final int nrOfClusters = clustering.size();
         final Map<ThreadArtifactCluster, Integer> map = new HashMap<>(nrOfClusters);
@@ -35,6 +36,7 @@ public final class ThreadVisualizationUtil
         {
             throw new IllegalArgumentException("No more than three clusters are meant to contain selected thread artifacts!");
         }
+
         if (nrOfClustersToDraw == 0)
         { // All threads are filtered (deselected)
             assert clustering.size() <= 3;
@@ -44,21 +46,13 @@ public final class ThreadVisualizationUtil
                 final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(cluster, i);
                 retMap.put(cluster, properties.getPosition());
             }
-
             return retMap;
         }
-        final ArrayList<Map.Entry<ThreadArtifactCluster, Integer>> list = new ArrayList<>(map.entrySet());
-        final Comparator<Map.Entry<ThreadArtifactCluster, Integer>> comparator = Comparator.comparingInt(Map.Entry::getValue);
-        list.sort(comparator);
 
-        if (nrOfClustersToDraw == 3)
-        {
-            for (int i = 0; i < nrOfClustersToDraw; i++)
-            {
-                final Map.Entry<ThreadArtifactCluster, Integer> entry = list.get(i);
-                retMap.put(entry.getKey(), i);
-            }
-        } else if (nrOfClustersToDraw == 2)
+        // Note: getValue denotes the position where to draw the cluster bar from 0=bottom to 2=top.
+        final Comparator<Map.Entry<ThreadArtifactCluster, Integer>> comparator = Comparator.comparingInt(Map.Entry::getValue);
+
+        if (nrOfClustersToDraw == 2)
         { // In case that there are exactly two clusters to draw!
             final Optional<Map.Entry<ThreadArtifactCluster, Integer>> maxGreaterOrEqualTwo =
                     map.entrySet().stream().filter(entry -> entry.getValue() >= 2).max(comparator);
@@ -93,7 +87,7 @@ public final class ThreadVisualizationUtil
                 final Map.Entry<ThreadArtifactCluster, Integer> entry = any.get();
                 retMap.put(entry.getKey(), 1);
                 map.remove(entry.getKey());
-
+                //
                 final Optional<Map.Entry<ThreadArtifactCluster, Integer>> any1 =
                         map.entrySet().stream().filter(elem -> elem.getValue() == 0).findAny();
                 assert any1.isPresent();
@@ -102,10 +96,25 @@ public final class ThreadVisualizationUtil
                 map.remove(entry1.getKey());
             }
         } else
-        { // nrOfClustersToDraw == 1
-            final Map.Entry<ThreadArtifactCluster, Integer> entry = list.get(0);
-            final int pos = Math.max(0, Math.min(2, entry.getValue()));
-            retMap.put(entry.getKey(), pos);
+        {
+            if (nrOfClustersToDraw == 3)
+            {
+                final ArrayList<Map.Entry<ThreadArtifactCluster, Integer>> list = new ArrayList<>(map.entrySet());
+                list.sort(comparator);
+                for (int i = 0; i < nrOfClustersToDraw; i++)
+                {
+                    final Map.Entry<ThreadArtifactCluster, Integer> entry = list.get(i);
+                    retMap.put(entry.getKey(), i);
+                }
+            } else
+            { // nrOfClustersToDraw == 1
+                final Optional<Map.Entry<ThreadArtifactCluster, Integer>> any = map.entrySet().stream().findAny();
+                assert any.isPresent();
+                final Map.Entry<ThreadArtifactCluster, Integer> entry = any.get();
+                //final Map.Entry<ThreadArtifactCluster, Integer> entry = list.get(0);
+                final int pos = Math.max(0, Math.min(2, entry.getValue()));
+                retMap.put(entry.getKey(), pos);
+            }
         }
 
         assert retMap.values().stream().distinct().count() == retMap.values().size();
@@ -147,7 +156,8 @@ public final class ThreadVisualizationUtil
     }
 
     // Used in ThreadFork
-    public static double getMetricValueSumOfSelectedThreads(final AArtifact artifact, final AMetricIdentifier metricIdentifier,
+    public static double getMetricValueSumOfSelectedThreads(final AArtifact artifact,
+                                                            final AMetricIdentifier metricIdentifier,
                                                             final boolean ignoreTheFilteredFlagOfThreads)
     {
         //noinspection UnnecessaryLocalVariable
@@ -228,7 +238,6 @@ public final class ThreadVisualizationUtil
             final Collection<AThreadArtifact> selectedThreadArtifacts,
             final Collection<AThreadArtifact> threadArtifactsOfCluster,
             final double total
-
             // final boolean createDisabledViz
     )
     {
@@ -245,18 +254,19 @@ public final class ThreadVisualizationUtil
     }
 
     // Used in ZoomedThreadRadar
-    public static double calculateFilteredSumNumericalMetricRatioForZoomVisualisation(final ThreadArtifactCluster cluster,
-                                                                                      final AMetricIdentifier metricIdentifier,
-                                                                                      final Set<AThreadArtifact> selectedThreadArtifacts,
-                                                                                      final boolean ignoreFilter)
+    public static double calculateFilteredSumNumericalMetricRatioForZoomVisualisation(
+            final ThreadArtifactCluster cluster,
+            final AMetricIdentifier metricIdentifier,
+            final Set<AThreadArtifact> selectedThreadArtifacts,
+            final boolean ignoreFilter)
     {
         double sum = 0;
-        for (AThreadArtifact codeSparksThread : selectedThreadArtifacts)
+        for (final AThreadArtifact threadArtifact : selectedThreadArtifacts)
         {
-            if (!cluster.contains(codeSparksThread) && !ignoreFilter)
-                continue;
-
-            sum += codeSparksThread.getNumericalMetricValue(metricIdentifier);
+            if (cluster.contains(threadArtifact) || ignoreFilter)
+            {
+                sum += threadArtifact.getNumericalMetricValue(metricIdentifier);
+            }
         }
         return sum;
     }
@@ -388,6 +398,7 @@ public final class ThreadVisualizationUtil
         return getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(artifact, metricIdentifier, null, false);
     }
 
+    @SuppressWarnings("unused")
     public static int getNumberOfSelectedThreadTypesWithNumericMetricValueInSelection(
             final AArtifact artifact
             , final AMetricIdentifier metricIdentifier
