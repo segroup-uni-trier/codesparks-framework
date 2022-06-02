@@ -10,6 +10,8 @@ import org.jgrapht.io.GraphExporter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class ArtifactTrieDotExportStrategy implements IArtifactTrieExportStrategy
 {
@@ -34,9 +36,14 @@ public class ArtifactTrieDotExportStrategy implements IArtifactTrieExportStrateg
             File file = new File(destinationFilePath);
             if (!file.exists())
             {
+                if (!file.isDirectory())
+                { // Assuming the parent is a directory
+                    Files.createDirectories(Paths.get(file.getParent()));
+                }
                 //noinspection ResultOfMethodCallIgnored
                 file.createNewFile();
             }
+
             fileWriter = new FileWriter(file);
             exporter.exportGraph(artifactTrie, fileWriter);
         } catch (IOException | ExportException e)
@@ -48,6 +55,7 @@ public class ArtifactTrieDotExportStrategy implements IArtifactTrieExportStrateg
             {
                 try
                 {
+                    fileWriter.flush();
                     fileWriter.close();
                 } catch (IOException e)
                 {
