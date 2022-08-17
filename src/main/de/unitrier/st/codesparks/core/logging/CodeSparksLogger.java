@@ -45,7 +45,7 @@ public final class CodeSparksLogger
                         , () -> toolWindowIdName
                 ));
                 loggingTextView = new LoggingTextView();
-                Content content = ContentFactory.SERVICE.getInstance().createContent(loggingTextView.getRootPanel(), "", true);
+                Content content = ContentFactory.getInstance().createContent(loggingTextView.getRootPanel(), "", true);
                 ContentManager contentManager = profilingLogToolWindow.getContentManager();
                 contentManager.addContent(content);
             }

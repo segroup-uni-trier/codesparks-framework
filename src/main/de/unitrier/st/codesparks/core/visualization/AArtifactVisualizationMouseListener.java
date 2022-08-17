@@ -109,7 +109,7 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
             ));
 
             final ContentManager contentManager = popupToolWindow.getContentManager();
-            contentManager.addContent(ContentFactory.SERVICE.getInstance().createContent(pinPanel, "", true));
+            contentManager.addContent(ContentFactory.getInstance().createContent(pinPanel, "", true));
 
             jbPopup.cancel();
             popupToolWindow.show(() -> {});
