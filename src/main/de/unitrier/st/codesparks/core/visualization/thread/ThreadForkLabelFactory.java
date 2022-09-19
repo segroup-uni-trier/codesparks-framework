@@ -104,6 +104,8 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         ThreadArtifactClustering selectedClustering = artifact.getSelectedClusteringOrApplyAndSelect(kbdeClusteringStrategy);
 
+        assert selectedClustering != null;
+
         final long numberOfNonEmptyThreadClusters = selectedClustering
                 .stream()
                 .filter(cl -> cl.stream()
@@ -119,6 +121,8 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
 
         final Map<ThreadArtifactCluster, Integer> drawPositions = ThreadVisualizationUtil.getDrawPositions(selectedClustering,
                 clusterPropertiesManager);
+
+        assert drawPositions != null;
 
         int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : selectedClustering)

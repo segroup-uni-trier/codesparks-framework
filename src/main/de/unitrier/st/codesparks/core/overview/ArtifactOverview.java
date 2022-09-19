@@ -83,7 +83,7 @@ public class ArtifactOverview
         filterPanelWrapper.setLayout(new BoxLayout(filterPanelWrapper, BoxLayout.Y_AXIS));
 
         /*
-         * The filter panel contains one the one hand the filter by identifier elements, i.e. pure text filters
+         * The filter panel contains the artifact-identifier filter, i.e., pure text filters for the different artifact tabs
          */
         final JBPanel<BorderLayoutPanel> filterByIdentifierPanel = new JBPanel<>();
         filterByIdentifierPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
