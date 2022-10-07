@@ -12,10 +12,6 @@ import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Map;
 
@@ -122,8 +118,6 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         final Map<ThreadArtifactCluster, Integer> drawPositions = ThreadVisualizationUtil.getDrawPositions(selectedClustering,
                 clusterPropertiesManager);
 
-        assert drawPositions != null;
-
         int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : selectedClustering)
         {
@@ -141,6 +135,7 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
             {
                 clusterColor = ThreadColor.getDisabledColor(clusterColor);
             }
+
             final int positionToDrawCluster = drawPositions.get(threadCluster);
 
             final int clusterYPos = TOP_OFFSET + threadSquareYPos - positionToDrawCluster * threadSquareOffset;
