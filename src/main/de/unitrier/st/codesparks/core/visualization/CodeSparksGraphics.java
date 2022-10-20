@@ -25,6 +25,7 @@ public class CodeSparksGraphics extends Graphics2D
 {
     private final Graphics2D graphics2D;
     private final BufferedImage bi;
+    private final Font defaultFont;
 
     public CodeSparksGraphics(final int width, final int height)
     {
@@ -36,6 +37,13 @@ public class CodeSparksGraphics extends Graphics2D
         this.graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         this.graphics2D.fillRect(0, 0, bi.getWidth(), bi.getHeight());
         this.graphics2D.setComposite(composite);
+        this.defaultFont = new Font("Arial", Font.BOLD, 11);
+        this.graphics2D.setFont(defaultFont);
+    }
+
+    public void restoreDefaultFont()
+    {
+        this.graphics2D.setFont(defaultFont);
     }
 
     public BufferedImage getBufferedImage()
@@ -43,6 +51,13 @@ public class CodeSparksGraphics extends Graphics2D
         return this.bi;
     }
 
+    /**
+     * <p> Use {@link AVisualizationLabelFactory#makeLabel(CodeSparksGraphics, int)} instead.
+     *
+     * @param width The desired width of the image which is placed on the label.
+     * @return The JBLabel that contains the image derived from the CodeSparksGraphics object.
+     */
+    @Deprecated()
     public JBLabel getLabel(final int width)
     {
         final BufferedImage subImage = bi.getSubimage(0, 0, width, bi.getHeight());

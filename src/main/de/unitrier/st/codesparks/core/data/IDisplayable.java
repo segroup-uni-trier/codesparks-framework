@@ -8,4 +8,6 @@ public interface IDisplayable
     String getDisplayString(final AMetricIdentifier metricIdentifier, final int maxLen);
 
     String getDisplayString(final AMetricIdentifier metricIdentifier);
+
+    String getDisplayString();
 }

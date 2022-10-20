@@ -33,6 +33,9 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
 
     public String getShortName() { return name; }
 
+    /**
+     * Typically, this should reflect the fully qualified name of the artifact.
+     */
     protected final String identifier;
 
     public String getIdentifier()
@@ -150,6 +153,12 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
             metricValueString = getMetricValue(metricIdentifier).toString();
         }
         return name + " - " + metricIdentifier.getDisplayString() + ": " + metricValueString;
+    }
+
+    @Override
+    public String getDisplayString()
+    {
+        return name;
     }
 
     /*
