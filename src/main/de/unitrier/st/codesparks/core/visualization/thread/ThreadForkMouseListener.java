@@ -33,6 +33,7 @@ import java.util.*;
 
 import static de.unitrier.st.codesparks.core.logging.UserActivityEnum.*;
 
+//TODO: Move to CodeSparks-JPT
 public class ThreadForkMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable, IClusterMouseClickable
 {
     private IThreadSelectableIndexProvider selectableIndexProvider;

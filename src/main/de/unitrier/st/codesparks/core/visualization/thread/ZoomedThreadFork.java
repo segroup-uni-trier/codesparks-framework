@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.util.List;
 
+//TODO: Move to CodeSparks-JPT
 public class ZoomedThreadFork extends JPanel
 {
     private final AArtifact artifact;

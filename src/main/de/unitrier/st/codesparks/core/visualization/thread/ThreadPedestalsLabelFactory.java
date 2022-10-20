@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+//TODO: Move to CodeSparks-JPT
 public final class ThreadPedestalsLabelFactory extends AArtifactVisualizationLabelFactory
 {
     public ThreadPedestalsLabelFactory(final AMetricIdentifier metricIdentifier)

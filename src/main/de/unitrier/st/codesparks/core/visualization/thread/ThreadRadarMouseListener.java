@@ -21,6 +21,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: Move to CodeSparks-JPT
 public class ThreadRadarMouseListener extends AArtifactVisualizationMouseListener implements IClusterHoverable
 {
     private ZoomedThreadRadar zoomedThreadRadar;
