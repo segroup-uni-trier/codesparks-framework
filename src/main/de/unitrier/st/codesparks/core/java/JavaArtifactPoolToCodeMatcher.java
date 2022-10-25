@@ -10,8 +10,9 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import de.unitrier.st.codesparks.core.AArtifactPoolToCodeMatcher;
+import de.unitrier.st.codesparks.core.ArtifactToCodeMatcherUtil;
 import de.unitrier.st.codesparks.core.IArtifactPool;
-import de.unitrier.st.codesparks.core.IArtifactPoolToCodeMatcher;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 
@@ -23,17 +24,15 @@ import java.util.*;
 /**
  * @author Oliver Moseler
  */
-public final class JavaArtifactPoolToCodeMatcher implements IArtifactPoolToCodeMatcher
+public final class JavaArtifactPoolToCodeMatcher extends AArtifactPoolToCodeMatcher
 {
-    private final Class<? extends AArtifact>[] artifactClasses;
-
     /**
      * @param classes The classes extending AArtifact.
      */
     @SafeVarargs
     public JavaArtifactPoolToCodeMatcher(final Class<? extends AArtifact>... classes)
     {
-        this.artifactClasses = classes;
+        super(classes);
     }
 
     private Collection<PsiClass> getClassesFrom(PsiFile psiFile)
@@ -79,22 +78,22 @@ public final class JavaArtifactPoolToCodeMatcher implements IArtifactPoolToCodeM
         return artifact;
     }
 
-    @SafeVarargs
-    private Class<? extends AArtifact> findClassWithAnnotation(
-            final Class<? extends Annotation> annotation
-            , final Class<? extends AArtifact>... artifactClasses
-    )
-    {
-        if (artifactClasses == null)
-        {
-            return null;
-        }
-        Optional<Class<? extends AArtifact>> first =
-                Arrays.stream(artifactClasses)
-                        .filter(aClass -> aClass.isAnnotationPresent(annotation))
-                        .findFirst();
-        return first.orElse(null);
-    }
+//    @SafeVarargs
+//    private Class<? extends AArtifact> findClassWithAnnotation(
+//            final Class<? extends Annotation> annotation
+//            , final Class<? extends AArtifact>... artifactClasses
+//    )
+//    {
+//        if (artifactClasses == null)
+//        {
+//            return null;
+//        }
+//        Optional<Class<? extends AArtifact>> first =
+//                Arrays.stream(artifactClasses)
+//                        .filter(aClass -> aClass.isAnnotationPresent(annotation))
+//                        .findFirst();
+//        return first.orElse(null);
+//    }
 
     @Override
     public Collection<AArtifact> matchArtifactsToCodeFiles(
@@ -109,8 +108,8 @@ public final class JavaArtifactPoolToCodeMatcher implements IArtifactPoolToCodeM
             return matchedProfilingResults;
         }
 
-        Class<? extends AArtifact> methodArtifactClass = findClassWithAnnotation(JavaMethodArtifact.class, artifactClasses);
-        Class<? extends AArtifact> classArtifactClass = findClassWithAnnotation(JavaClassArtifact.class, artifactClasses);
+        Class<? extends AArtifact> methodArtifactClass = ArtifactToCodeMatcherUtil.findClassWithAnnotation(JavaMethodArtifact.class, artifactClasses);
+        Class<? extends AArtifact> classArtifactClass = ArtifactToCodeMatcherUtil.findClassWithAnnotation(JavaClassArtifact.class, artifactClasses);
 
         if (methodArtifactClass == null && classArtifactClass == null)
         {
