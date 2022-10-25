@@ -9,15 +9,16 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.util.ui.components.BorderLayoutPanel;
+import de.unitrier.st.codesparks.core.api.Experimental;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
 
+@Experimental
 public class ApplyThreadFilterDialog extends DialogWrapper
 {
-
     private Point popupLocation;
 
     protected ApplyThreadFilterDialog(final Project project, final Component parent)
@@ -29,7 +30,6 @@ public class ApplyThreadFilterDialog extends DialogWrapper
         setTitle("Apply Thread Filter");
         init();
         //setLocation(popupLocation);
-
     }
 
     @Override
@@ -48,8 +48,7 @@ public class ApplyThreadFilterDialog extends DialogWrapper
     }
 
     @Override
-    protected @Nullable
-    JComponent createCenterPanel()
+    protected @Nullable JComponent createCenterPanel()
     {
         JBPanel<BorderLayoutPanel> dialogPanel = new BorderLayoutPanel();
 
