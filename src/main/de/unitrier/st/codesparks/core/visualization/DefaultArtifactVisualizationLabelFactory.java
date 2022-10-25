@@ -35,6 +35,7 @@ public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVis
         /*
          * Retrieve the metric value, its textual representation and its text width.
          */
+
         final Object metricValue = artifact.getMetricValue(primaryMetricIdentifier);
         final String metricValueText = primaryMetricIdentifier.getValueDisplayString(metricValue);
         final CodeSparksGraphics graphics = getGraphics(lineHeight);

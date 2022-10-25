@@ -15,7 +15,8 @@ import javax.swing.JLabel
 import kotlin.math.ceil
 import kotlin.math.floor
 
-class TextualTotalNumberOfThreadsNeighborLabelFactory(primaryMetricIdentifier: AMetricIdentifier?, sequence: Int) :
+class TextualTotalNumberOfThreadsNeighborLabelFactory(primaryMetricIdentifier: AMetricIdentifier?, sequence:
+Int) :
     ANeighborArtifactVisualizationLabelFactory(primaryMetricIdentifier, sequence)
 {
 

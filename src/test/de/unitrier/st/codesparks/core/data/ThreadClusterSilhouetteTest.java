@@ -37,10 +37,16 @@ public final class ThreadClusterSilhouetteTest
         }
 
         @Override
-        public boolean isNumerical()
+        public Class<Double> getMetricValueType()
         {
-            return true;
+            return Double.class;
         }
+
+//        @Override
+//        public boolean isNumerical()
+//        {
+//            return true;
+//        }
 
         @Override
         public boolean isRelative()

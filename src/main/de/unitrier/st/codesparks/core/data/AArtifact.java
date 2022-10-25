@@ -31,7 +31,7 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return name;
     }
 
-    public String getShortName() { return name; }
+    public String getShortName() {return name;}
 
     /**
      * Typically, this should reflect the fully qualified name of the artifact.
@@ -182,13 +182,17 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     }
 
     /**
-     * A thread safe method to get or create a metric value in case it might not have been initialised yet. If the value is non null, no new value will be
+     * A thread safe method to get or create a metric value in case it might not have been initialised yet. If the value is non-null, no new value will be
      * instantiated.
      *
      * @param metricIdentifier The metric identifier.
      * @return The value (as object) associated with the metric identifier.
      */
-    public final Object getOrCreateMetricValue(final AMetricIdentifier metricIdentifier, final Constructor<?> constructor, final Object... initArgs)
+    public final Object getOrCreateMetricValue(
+            final AMetricIdentifier metricIdentifier,
+            final Constructor<?> constructor,
+            final Object... initArgs
+    )
     {
         if (metricIdentifier == null)
         {
@@ -781,19 +785,16 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
 
     public void clear()
     {
-//        this.metrics.getOrCompute().clear();
         final Map<IMetricIdentifier, Object> metricsMap = this.metrics.get();
         if (metricsMap != null)
         {
             metricsMap.clear();
         }
-//        this.threadMap.getOrCompute().clear();
         final Map<String, AThreadArtifact> threadArtifactMap = this.threadMap.get();
         if (threadArtifactMap != null)
         {
             threadArtifactMap.clear();
         }
-
         final Map<Integer, List<ANeighborArtifact>> predecessors = this.predecessors.get();
         if (predecessors != null)
         {
@@ -803,7 +804,6 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
             }
             predecessors.clear();
         }
-
         final Map<Integer, List<ANeighborArtifact>> successors = this.successors.get();
         if (successors != null)
         {

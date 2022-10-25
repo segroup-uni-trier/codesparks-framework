@@ -16,8 +16,8 @@ import java.awt.Rectangle
 import javax.swing.JLabel
 
 class MirroredThreadForkNumberOfThreadsAndThreadTypesNeighborLabelFactory(
-    primaryMetricIdentifier:
-    AMetricIdentifier?, sequence: Int
+    primaryMetricIdentifier: AMetricIdentifier?,
+    sequence: Int
 ) :
     ANeighborArtifactVisualizationLabelFactory
         (primaryMetricIdentifier, sequence)

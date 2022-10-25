@@ -27,7 +27,7 @@ public final class JavaUtil
 
     public static String checkAndReplaceConstructorName(final String methodString)
     {
-        int index = methodString.indexOf("<");
+        final int index = methodString.indexOf("<");
         if (index < 0)
         {
             return methodString;

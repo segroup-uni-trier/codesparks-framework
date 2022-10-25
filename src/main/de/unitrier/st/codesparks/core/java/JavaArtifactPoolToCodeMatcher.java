@@ -9,17 +9,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
 import de.unitrier.st.codesparks.core.AArtifactPoolToCodeMatcher;
-import de.unitrier.st.codesparks.core.ArtifactToCodeMatcherUtil;
+import de.unitrier.st.codesparks.core.ArtifactPoolToCodeMatcherUtil;
 import de.unitrier.st.codesparks.core.IArtifactPool;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Oliver Moseler
@@ -35,66 +34,6 @@ public final class JavaArtifactPoolToCodeMatcher extends AArtifactPoolToCodeMatc
         super(classes);
     }
 
-    private Collection<PsiClass> getClassesFrom(PsiFile psiFile)
-    {
-        return ApplicationManager.getApplication().runReadAction(
-                (Computable<Collection<PsiClass>>) () -> {
-                    Collection<PsiClass> psiClasses = PsiTreeUtil.findChildrenOfType(psiFile, PsiClass.class);
-                    psiClasses.removeIf(psiClass -> psiClass instanceof PsiAnonymousClass || psiClass instanceof
-                            PsiTypeParameter);
-                    return psiClasses;
-                });
-    }
-
-    private Collection<PsiMethod> getMethodsFrom(PsiFile psiFile)
-    {
-        return ApplicationManager.getApplication().runReadAction(
-                (Computable<Collection<PsiMethod>>) () -> PsiTreeUtil.findChildrenOfType(psiFile, PsiMethod.class)
-        );
-    }
-
-    private AArtifact instantiateArtifact(
-            final Class<? extends AArtifact> artifactClass
-            , final String... constructorParameters
-    )
-    {
-        AArtifact artifact = null;
-        Constructor<?>[] constructors = artifactClass.getConstructors();
-        Optional<Constructor<?>> first =
-                Arrays.stream(constructors).
-                        filter(constructor -> constructor.getParameterCount() == constructorParameters.length)
-                        .findFirst();
-        if (first.isPresent())
-        {
-            Constructor<?> constructor = first.get();
-            try
-            {
-                artifact = (AArtifact) constructor.newInstance((Object[]) constructorParameters);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        return artifact;
-    }
-
-//    @SafeVarargs
-//    private Class<? extends AArtifact> findClassWithAnnotation(
-//            final Class<? extends Annotation> annotation
-//            , final Class<? extends AArtifact>... artifactClasses
-//    )
-//    {
-//        if (artifactClasses == null)
-//        {
-//            return null;
-//        }
-//        Optional<Class<? extends AArtifact>> first =
-//                Arrays.stream(artifactClasses)
-//                        .filter(aClass -> aClass.isAnnotationPresent(annotation))
-//                        .findFirst();
-//        return first.orElse(null);
-//    }
-
     @Override
     public Collection<AArtifact> matchArtifactsToCodeFiles(
             final IArtifactPool artifactPool
@@ -102,14 +41,14 @@ public final class JavaArtifactPoolToCodeMatcher extends AArtifactPoolToCodeMatc
             , final VirtualFile... files
     )
     {
-        Collection<AArtifact> matchedProfilingResults = new ArrayList<>();
+        final Collection<AArtifact> matchedProfilingResults = new ArrayList<>();
         if (artifactPool == null)
         {
             return matchedProfilingResults;
         }
 
-        Class<? extends AArtifact> methodArtifactClass = ArtifactToCodeMatcherUtil.findClassWithAnnotation(JavaMethodArtifact.class, artifactClasses);
-        Class<? extends AArtifact> classArtifactClass = ArtifactToCodeMatcherUtil.findClassWithAnnotation(JavaClassArtifact.class, artifactClasses);
+        final Class<? extends AArtifact> methodArtifactClass = ArtifactPoolToCodeMatcherUtil.findClassWithAnnotation(JavaMethodArtifact.class, artifactClasses);
+        final Class<? extends AArtifact> classArtifactClass = ArtifactPoolToCodeMatcherUtil.findClassWithAnnotation(JavaClassArtifact.class, artifactClasses);
 
         if (methodArtifactClass == null && classArtifactClass == null)
         {
@@ -117,30 +56,32 @@ public final class JavaArtifactPoolToCodeMatcher extends AArtifactPoolToCodeMatc
         }
 
         final JavaPsiClassNameHelper javaPsiClassNameHelper = new JavaPsiClassNameHelper();
-        for (VirtualFile file : files)
+        for (final VirtualFile file : files)
         {
-            PsiFile psiFile = ApplicationManager.getApplication().runReadAction((Computable<PsiFile>) () -> {
-                PsiManager psiManager = PsiManager.getInstance(project);
+            final PsiFile psiFile = ApplicationManager.getApplication().runReadAction((Computable<PsiFile>) () -> {
+                final PsiManager psiManager = PsiManager.getInstance(project);
                 return psiManager.findFile(file);
             });
             // Match methods
             if (methodArtifactClass != null)
             {
-                Collection<PsiMethod> psiMethods = getMethodsFrom(psiFile);
-                for (PsiMethod psiMethod : psiMethods)
+                final Collection<PsiMethod> psiMethods = JavaArtifactPoolToCodeMatcherUtil.getJavaMethodsFrom(psiFile);
+                // Search the Java psi methods for matching artifacts
+                for (final PsiMethod psiMethod : psiMethods)
                 {
-                    String fullyQualifiedClassNameOfMethod = ApplicationManager.getApplication().runReadAction(
+                    final String fullyQualifiedClassNameOfMethod = ApplicationManager.getApplication().runReadAction(
                             (Computable<String>) () -> javaPsiClassNameHelper.computeFullyQualifiedClassName(psiMethod));
-                    String name = ApplicationManager.getApplication().runReadAction((Computable<String>) psiMethod::getName);
-                    Boolean isConstructor =
-                            ApplicationManager.getApplication().runReadAction((Computable<Boolean>) psiMethod::isConstructor);
+                    final Boolean isConstructor = ApplicationManager.getApplication().runReadAction((Computable<Boolean>) psiMethod::isConstructor);
+                    final String name;
                     if (isConstructor)
                     {
                         name = "<init>";
+                    } else
+                    {
+                        name = ApplicationManager.getApplication().runReadAction((Computable<String>) psiMethod::getName);
                     }
-                    String parameters = JavaUtil.computePsiMethodParameterString(psiMethod);
-                    String identifier = JavaUtil.computeMethodIdentifier(name, parameters,
-                            fullyQualifiedClassNameOfMethod);
+                    final String parameters = JavaUtil.computePsiMethodParameterString(psiMethod);
+                    String identifier = JavaUtil.computeMethodIdentifier(name, parameters, fullyQualifiedClassNameOfMethod);
 
                     AArtifact profilingMethod = artifactPool.getArtifact(identifier);
                     if (profilingMethod == null)
@@ -149,10 +90,10 @@ public final class JavaArtifactPoolToCodeMatcher extends AArtifactPoolToCodeMatc
                         int index = fullyQualifiedClassNameOfMethod.lastIndexOf("$");
                         if (index > 0)
                         { // We are concerned with an inner class
-                            String outerClass = fullyQualifiedClassNameOfMethod.substring(0, index);
+                            final String outerClass = fullyQualifiedClassNameOfMethod.substring(0, index);
 
-                            StringBuilder strb = new StringBuilder(parameters);
-                            String append;
+                            final StringBuilder strb = new StringBuilder(parameters);
+                            final String append;
                             if (parameters.length() > 2)
                             { // there are more parameters
                                 append = ", ";
@@ -166,27 +107,27 @@ public final class JavaArtifactPoolToCodeMatcher extends AArtifactPoolToCodeMatc
                             profilingMethod = artifactPool.getArtifact(identifier);
                             if (profilingMethod == null)
                             {
-                                profilingMethod = instantiateArtifact(methodArtifactClass, name, identifier);
+                                profilingMethod = ArtifactPoolToCodeMatcherUtil.instantiateArtifact(methodArtifactClass, name, identifier);
                             }
                         } else
                         {
-                            profilingMethod = instantiateArtifact(methodArtifactClass, name, identifier);
+                            profilingMethod = ArtifactPoolToCodeMatcherUtil.instantiateArtifact(methodArtifactClass, name, identifier);
                         }
                     }
                     assert profilingMethod != null;
-                    PsiParameterList parameterList =
+                    final PsiParameterList parameterList =
                             ApplicationManager.getApplication().runReadAction((Computable<PsiParameterList>) psiMethod::getParameterList);
                     profilingMethod.setVisPsiElement(parameterList);
                     matchedProfilingResults.add(profilingMethod);
 
-                    // Match method invocations
-                    Document document = PsiDocumentManager.getInstance(project).getDocument(psiFile);
+                    // Match the callees of a method artifact; line based in the body of a method
+                    final Document document = PsiDocumentManager.getInstance(project).getDocument(psiFile);
                     if (document == null)
                     {
                         continue;
                     }
-                    Map<Integer, List<ANeighborArtifact>> successors = profilingMethod.getSuccessors();
-                    for (Map.Entry<Integer, List<ANeighborArtifact>> successorEntry : successors.entrySet())
+                    final Map<Integer, List<ANeighborArtifact>> successors = profilingMethod.getSuccessors(); // The callees
+                    for (final Map.Entry<Integer, List<ANeighborArtifact>> successorEntry : successors.entrySet())
                     {
                         int lineStartOffset;
                         try
@@ -196,10 +137,10 @@ public final class JavaArtifactPoolToCodeMatcher extends AArtifactPoolToCodeMatc
                         {
                             continue;
                         }
-                        PsiElement psiElement = ApplicationManager.getApplication().runReadAction(
+                        final PsiElement psiElement = ApplicationManager.getApplication().runReadAction(
                                 (Computable<PsiElement>) () -> psiFile.findElementAt(lineStartOffset));
                         assert psiElement != null;
-                        PsiElement sibling = psiElement.getPrevSibling();
+                        final PsiElement sibling = psiElement.getPrevSibling();
                         successorEntry.getValue()
                                 .forEach(neighbor -> neighbor.setVisPsiElement(sibling != null ? sibling : psiElement));//setInvocationLineElement(sibling !=
                         // null ? sibling : psiElement));
@@ -209,24 +150,20 @@ public final class JavaArtifactPoolToCodeMatcher extends AArtifactPoolToCodeMatc
             // Match classes
             if (classArtifactClass != null)
             {
-                Collection<PsiClass> psiClasses = getClassesFrom(psiFile);
-                for (PsiClass psiClass : psiClasses)
+                final Collection<PsiClass> psiClasses = JavaArtifactPoolToCodeMatcherUtil.getJavaClassesFrom(psiFile);
+                for (final PsiClass psiClass : psiClasses)
                 {
                     String psiClassQualifiedName =
                             ApplicationManager.getApplication().runReadAction(
                                     (Computable<String>) () -> javaPsiClassNameHelper.computeFullyQualifiedClassName(psiClass));
-
                     psiClassQualifiedName = psiClassQualifiedName.replaceAll("[$]", ".");
-
                     AArtifact profilingClass = artifactPool.getArtifact(psiClassQualifiedName);
-
-
                     if (profilingClass == null)
                     {
-                        profilingClass = instantiateArtifact(classArtifactClass, psiClassQualifiedName);
+                        profilingClass = ArtifactPoolToCodeMatcherUtil.instantiateArtifact(classArtifactClass, psiClassQualifiedName);
                     }
                     assert profilingClass != null;
-                    PsiReferenceList implementsList =
+                    final PsiReferenceList implementsList =
                             ApplicationManager.getApplication().runReadAction((Computable<PsiReferenceList>) psiClass::getImplementsList);
                     profilingClass.setVisPsiElement(implementsList);
                     matchedProfilingResults.add(profilingClass);

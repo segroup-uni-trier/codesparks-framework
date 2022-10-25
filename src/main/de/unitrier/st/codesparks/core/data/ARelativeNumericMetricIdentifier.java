@@ -4,17 +4,30 @@
 
 package de.unitrier.st.codesparks.core.data;
 
+import de.unitrier.st.codesparks.core.CoreUtil;
+
 public abstract class ARelativeNumericMetricIdentifier extends AMetricIdentifier
 {
     @Override
-    public boolean isNumerical()
+    public final boolean isRelative()
     {
         return true;
     }
 
     @Override
-    public boolean isRelative()
+    public Class<Double> getMetricValueType()
     {
-        return true;
+        return Double.class;
+    }
+
+    @Override
+    public String getValueDisplayString(final Object metricValue)
+    {
+        if (metricValue != null)
+        {
+            //final Class<Double> metricValueType = getMetricValueType();
+            return CoreUtil.formatPercentage((Double) metricValue);
+        }
+        return "N/A";
     }
 }

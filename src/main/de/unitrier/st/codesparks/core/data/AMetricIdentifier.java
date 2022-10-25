@@ -35,4 +35,11 @@ public abstract class AMetricIdentifier implements IMetricIdentifier
     {
         return getDisplayString();
     }
+
+    @Override
+    public final boolean isNumerical()
+    {
+        final Class<?> metricValueType = getMetricValueType();
+        return Double.class.equals(metricValueType);
+    }
 }
