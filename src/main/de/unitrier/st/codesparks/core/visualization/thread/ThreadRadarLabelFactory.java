@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-
+//TODO: Move to CodeSparks-JPT
 public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
 {
     private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayData;

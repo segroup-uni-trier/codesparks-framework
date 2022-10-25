@@ -3,6 +3,7 @@
  */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
+//TODO: Move to CodeSparks-JPT
 abstract class ThreadRadarConstants
 {
     static final int CIRCLESIZE = 32;

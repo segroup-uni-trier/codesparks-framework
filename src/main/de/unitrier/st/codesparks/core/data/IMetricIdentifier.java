@@ -15,6 +15,8 @@ interface IMetricIdentifier extends Serializable
 
     String getShortDisplayString();
 
+    String getValueDisplayString(Object metricValue);
+
     /**
      * Determines if the metric is designed to represent a numerical value, i.e. its data type is a double.
      *

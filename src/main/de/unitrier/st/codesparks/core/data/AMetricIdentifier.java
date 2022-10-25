@@ -21,6 +21,16 @@ public abstract class AMetricIdentifier implements IMetricIdentifier
     }
 
     @Override
+    public String getValueDisplayString(final Object metricValue)
+    {
+        if (metricValue != null)
+        {
+            return metricValue.toString();
+        }
+        return "N/A";
+    }
+
+    @Override
     public String toString()
     {
         return getDisplayString();

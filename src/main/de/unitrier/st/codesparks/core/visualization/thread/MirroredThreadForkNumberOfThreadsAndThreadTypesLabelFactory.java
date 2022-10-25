@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+//TODO: Move to CodeSparks-JPT
 public final class MirroredThreadForkNumberOfThreadsAndThreadTypesLabelFactory extends AArtifactVisualizationLabelFactory
 {
     private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayData;

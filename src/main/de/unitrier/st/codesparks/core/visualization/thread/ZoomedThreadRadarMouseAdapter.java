@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+//TODO: Move to CodeSparks-JPT
 public class ZoomedThreadRadarMouseAdapter extends MouseAdapter
 {
     private final int frameSize;

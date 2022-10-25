@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Set;
 
+//TODO: Move to CodeSparks-JPT
 public abstract class AThreadRadar extends JPanel
 {
     protected Graphics2D g2d;

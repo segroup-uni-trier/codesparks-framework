@@ -3,233 +3,75 @@
  */
 package de.unitrier.st.codesparks.core.visualization;
 
-import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
-import de.unitrier.st.codesparks.core.data.DataUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
 
 import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
 
 public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    private final AMetricIdentifier secondaryMetricIdentifier;
-
-    @SuppressWarnings("unused")
-    public DefaultArtifactVisualizationLabelFactory(
-            final AMetricIdentifier primaryMetricIdentifier
-            , final AMetricIdentifier secondaryMetricIdentifier
-    )
-    {
-        this(primaryMetricIdentifier, secondaryMetricIdentifier, 0);
-    }
+    private final IMetricValueColorCodingStrategy metricValueColorCodingStrategy;
 
     public DefaultArtifactVisualizationLabelFactory(
-            final AMetricIdentifier primaryMetricIdentifier
-            , final AMetricIdentifier secondaryMetricIdentifier
-            , final int sequence
+            final AMetricIdentifier primaryMetricIdentifier,
+            final IMetricValueColorCodingStrategy metricValueColorCodingStrategy
     )
     {
-        super(primaryMetricIdentifier, sequence);
-        this.secondaryMetricIdentifier = secondaryMetricIdentifier;
+        super(primaryMetricIdentifier, 0);
+        this.metricValueColorCodingStrategy = metricValueColorCodingStrategy;
     }
 
     @Override
     public JLabel createArtifactLabel(@NotNull final AArtifact artifact)
     {
+        // The default line height of Intellij IDEA source-code editors.
         final int lineHeight = VisConstants.getLineHeight();
-        final int iconWidth = X_OFFSET + RECTANGLE_WIDTH + 4 * CALLEE_TRIANGLES_WIDTH + 1;
-
-        final CodeSparksGraphics graphics = getGraphics(iconWidth, lineHeight);
-
-        final int selfBarHeight = 2;
         final int X_OFFSET = VisConstants.X_OFFSET;
-        final int Y_OFFSET = selfBarHeight + 1;
-
+        final int Y_OFFSET = 3;
         /*
-         * Draw the intensity rectangle
+         * Retrieve the metric value, its textual representation and its text width.
          */
-        final Rectangle intensityRectangle = new Rectangle(X_OFFSET, Y_OFFSET, RECTANGLE_WIDTH, lineHeight - 1 - selfBarHeight);
-        final double threadFilteredMetricValue = DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, primaryMetricIdentifier);
-        final Color metricColor = VisualizationUtil.getMetricColor(threadFilteredMetricValue);
-
-        graphics.setColor(metricColor);
-        graphics.fillRectangle(intensityRectangle);
-
+        final Object metricValue = artifact.getMetricValue(primaryMetricIdentifier);
+        final String metricValueText = primaryMetricIdentifier.getValueDisplayString(metricValue);
+        final CodeSparksGraphics graphics = getGraphics(lineHeight);
+        final double metricValueTextWidth = graphics.stringWidth(metricValueText);
         /*
-         * Draw the self metric
+         * Draw the rectangular colored area
          */
-        final double threadFilteredMetricValueSelf = DataUtil.getThreadFilteredRelativeNumericMetricValueOf(artifact, secondaryMetricIdentifier);
-        final double selfPercentage = threadFilteredMetricValueSelf / threadFilteredMetricValue;
-        int selfWidth = 0;
-        if (selfPercentage > 0D)
-        {
-            if (selfPercentage < 1D)
-            {
-                int discrete = (int) ((selfPercentage * 100) / 10) + 1;
-                selfWidth = RECTANGLE_WIDTH / 10 * discrete;
-            } else
-            {
-                selfWidth = RECTANGLE_WIDTH;
-            }
-        }
-        if (selfWidth > 0)
-        {
-            graphics.drawLine(X_OFFSET, 0, X_OFFSET + selfWidth, 0);
-            graphics.drawLine(X_OFFSET, 0, X_OFFSET + selfWidth, 0);
-        }
-        graphics.setColor(VisualizationUtil.getBackgroundMetricColor(metricColor, .1f));
-        graphics.drawLine(X_OFFSET + selfWidth, 0, X_OFFSET + RECTANGLE_WIDTH, 0);
-        graphics.drawLine(X_OFFSET + selfWidth, 0, X_OFFSET + RECTANGLE_WIDTH, 0);
+        final int HORIZONTAL_PADDING = 6;
+        final int rectangleWidth = (int) (HORIZONTAL_PADDING + metricValueTextWidth + HORIZONTAL_PADDING);
+        final Rectangle frame = new Rectangle(X_OFFSET, Y_OFFSET, rectangleWidth, lineHeight - 3);
+        final Color metricValueColor = metricValueColorCodingStrategy.getMetricValueColor(metricValue);
+        graphics.setColor(metricValueColor);
+        graphics.fillRectangle(frame);
+        /*
+         * Draw the rectangular border (frame)
+         */
         graphics.setColor(BORDER_COLOR);
-        graphics.drawRect(X_OFFSET, Y_OFFSET, RECTANGLE_WIDTH, lineHeight - Y_OFFSET - 1);
+        graphics.drawRect(X_OFFSET, Y_OFFSET, rectangleWidth, lineHeight - Y_OFFSET - 1);
         /*
-         * Draw the text
+         * Draw the text, centered
          */
-        final String percentageText = CoreUtil.formatPercentage(threadFilteredMetricValue);
-        final double textWidth = graphics.stringWidth(percentageText);//graphics.getFontMetrics().stringWidth(percentageText);
-        //graphics.setColor(JBColor.DARK_GRAY);
-        final Font font = new Font("Arial", Font.BOLD, 11);  // TODO: support different font sizes
-        graphics.setFont(font);
-        final Color textColor = VisualizationUtil.getTextColor(metricColor);
+        final Color textColor = VisualizationUtil.getTextColor(metricValueColor);
         graphics.setColor(textColor);
-        graphics.drawString(percentageText, X_OFFSET + 1 + (int) ((RECTANGLE_WIDTH / 2d) - (textWidth / 2d)),
-                Y_OFFSET + (int) ((lineHeight - Y_OFFSET) * .75d));
+        graphics.drawString(metricValueText,
+                X_OFFSET + (int) ((rectangleWidth / 2d) - (metricValueTextWidth / 2d)),
+                Y_OFFSET + (int) ((lineHeight - Y_OFFSET) * .75d)
+        );
         graphics.setColor(STANDARD_FONT_COLOR);
         /*
-         * Draw caller and callee triangles
+         * Create the actual label.
          */
-        drawPredecessors(artifact, intensityRectangle, graphics, lineHeight, metricColor);
-        drawSuccessors(artifact, intensityRectangle, graphics, lineHeight, metricColor);
-
-        final JLabel jLabel = makeLabel(graphics, iconWidth);
-        jLabel.addMouseListener(new DefaultArtifactVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier, secondaryMetricIdentifier));
+        final JLabel jLabel = makeLabel(graphics, X_OFFSET + rectangleWidth + 2); // +2 for the border. 1 left + 1 right
+        /*
+         * Add details on demand via popup accessible by a mouse click.
+         */
+        jLabel.addMouseListener(new DefaultArtifactVisualizationMouseListener(jLabel, artifact, primaryMetricIdentifier));
         return jLabel;
     }
 
-    private void drawPredecessors(
-            final AArtifact artifact
-            , final Rectangle visualizationArea
-            , final Graphics graphics
-            , final int lineHeight
-            , final Color performanceColor
-    )
-    {
-        final long predecessorSize = artifact.getPredecessors()
-                .values()
-                .stream()
-                .flatMap(Collection::stream)
-                .filter(npa -> npa.getThreadArtifacts()
-                        .stream()
-                        .anyMatch(threadArtifact -> !threadArtifact.isFiltered()
-                                && threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) > 0))
-                .count();
-        if (predecessorSize >= 2)
-        {
-            final Triangle trianglePointsExtra1 = getTriangle(
-                    visualizationArea.x - 5,
-                    visualizationArea.y - 1, 3);
-            graphics.setColor(performanceColor);
-            fillTriangle(trianglePointsExtra1, graphics);
-            graphics.setColor(BORDER_COLOR);
-            drawTriangle(trianglePointsExtra1, graphics);
-            final Triangle trianglePointsExtra2 = getTriangle(
-                    visualizationArea.x - 5,
-                    visualizationArea.y + 7, 3);
-            graphics.setColor(performanceColor);
-            fillTriangle(trianglePointsExtra2, graphics);
-            graphics.setColor(BORDER_COLOR);
-            drawTriangle(trianglePointsExtra2, graphics);
-        }
-        if (predecessorSize == 1 || predecessorSize > 2)
-        {
-            final Triangle trianglePoints = getTriangle(visualizationArea.x - 6,
-                    visualizationArea.y + 15 / 2 - 5, 4);
-            graphics.setColor(performanceColor);
-            fillTriangle(trianglePoints, graphics);
-            graphics.setColor(BORDER_COLOR);
-            drawTriangle(trianglePoints, graphics);
-        }
-    }
-
-    private void drawSuccessors(
-            final AArtifact artifact
-            , final Rectangle visualizationArea
-            , final Graphics graphics
-            , final int lineHeight
-            , final Color performanceColor
-    )
-    {
-        final long successorSize =
-                artifact.getSuccessors()
-                        .values()
-                        .stream()
-                        .flatMap(Collection::stream)
-                        .filter(npa -> !npa.getShortName().toLowerCase().startsWith("self"))
-                        .filter(npa -> npa.getThreadArtifacts()
-                                .stream()
-                                .anyMatch(threadArtifact -> !threadArtifact.isFiltered()
-                                        && threadArtifact.getNumericalMetricValue(primaryMetricIdentifier) > 0))
-                        .count();
-        if (successorSize >= 2)
-        {
-            final Triangle trianglePoints = getTriangle(visualizationArea.x
-                            + visualizationArea.width + CALLEE_TRIANGLES_WIDTH,
-                    visualizationArea.y - 1, 3);
-            graphics.setColor(performanceColor);
-            fillTriangle(trianglePoints, graphics);
-            graphics.setColor(BORDER_COLOR);
-            drawTriangle(trianglePoints, graphics);
-            final Triangle trianglePointsExtra2 = getTriangle(visualizationArea.x
-                            + visualizationArea.width + CALLEE_TRIANGLES_WIDTH,
-                    visualizationArea.y + 7, 3);
-            graphics.setColor(performanceColor);
-            fillTriangle(trianglePointsExtra2, graphics);
-            graphics.setColor(BORDER_COLOR);
-            drawTriangle(trianglePointsExtra2, graphics);
-        }
-        if (successorSize == 1 || successorSize > 2)
-        {
-            final Triangle trianglePoints = getTriangle(visualizationArea.x
-                            + visualizationArea.width + CALLEE_TRIANGLES_WIDTH + 1,
-                    visualizationArea.y + 15 / 2 - 5, 4);
-            graphics.setColor(performanceColor);
-            fillTriangle(trianglePoints, graphics);
-            graphics.setColor(BORDER_COLOR);
-            drawTriangle(trianglePoints, graphics);
-        }
-    }
-
-    private static Triangle getTriangle(final int x, final int y, final int size)
-    {
-        return new Triangle(new int[]{x, x + size, x}, new int[]{y, y + size, y + 2 * size}, 3);
-    }
-
-    private static void fillTriangle(final Triangle triangle, final Graphics graphics)
-    {
-        graphics.fillPolygon(triangle.xPoints, triangle.yPoints, triangle.nPoints);
-    }
-
-    private static void drawTriangle(final Triangle triangle, final Graphics graphics)
-    {
-        graphics.drawPolygon(triangle.xPoints, triangle.yPoints, triangle.nPoints);
-    }
-
-    private static class Triangle
-    {
-        final int[] xPoints;
-        final int[] yPoints;
-        final int nPoints;
-
-        Triangle(int[] xPoints, int[] yPoints, int nPoints)
-        {
-            this.xPoints = xPoints;
-            this.yPoints = yPoints;
-            this.nPoints = nPoints;
-        }
-    }
 }

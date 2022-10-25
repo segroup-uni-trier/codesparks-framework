@@ -15,6 +15,7 @@ import java.awt.*;
 import java.util.Collection;
 import java.util.Map;
 
+//TODO: Move to CodeSparks-JPT
 public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFactory
 {
     private final IThreadArtifactsDisplayDataProvider threadArtifactsDisplayData;

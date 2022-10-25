@@ -12,6 +12,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Set;
 
+//TODO: Move to CodeSparks-JPT
 public class ZoomedThreadRadar extends AThreadRadar
 {
     private final List<IThreadSelectable> threadSelectables;

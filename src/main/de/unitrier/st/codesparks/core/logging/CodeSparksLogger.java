@@ -4,10 +4,7 @@
 package de.unitrier.st.codesparks.core.logging;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.RegisterToolWindowTask;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowAnchor;
-import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.openapi.wm.*;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
@@ -20,19 +17,32 @@ public final class CodeSparksLogger
 {
     private CodeSparksLogger() {}
 
-    private static ToolWindow profilingLogToolWindow;
+    private static ToolWindow codeSparksLogToolWindow;
+
+    private static final String CODESPARKS_LOG_TOOL_WINDOW_ID = "CodeSparksLogToolWindow";
     private static ITextView loggingTextView;
 
     public static void setup(Project project)
     {
         synchronized (CodeSparksLogger.class)
         {
-            if (profilingLogToolWindow == null)
+            if (codeSparksLogToolWindow == null)
             {
                 final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
                 final String toolWindowIdName = LocalizationUtil.getLocalizedString("codesparks.logger.view.displayname");
                 ImageIcon defaultImageIcon = CoreUtil.getDefaultImageIcon();
-                profilingLogToolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
+                // To test
+//                final RegisterToolWindowTaskBuilder toolWindowTaskBuilder = new RegisterToolWindowTaskBuilder(toolWindowIdName);
+//                toolWindowTaskBuilder.anchor = ToolWindowAnchor.RIGHT;
+//                toolWindowTaskBuilder.sideTool = true;
+//                toolWindowTaskBuilder.canCloseContent = true;
+//                toolWindowTaskBuilder.shouldBeAvailable = true;
+//                toolWindowTaskBuilder.icon = defaultImageIcon;
+//                toolWindowTaskBuilder.stripeTitle = () -> toolWindowIdName;
+//                @SuppressWarnings("KotlinInternalInJava") final RegisterToolWindowTask registerToolWindowTask = toolWindowTaskBuilder.build();
+//                toolWindowManager.registerToolWindow(registerToolWindowTask);
+                // Working
+                codeSparksLogToolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
                         toolWindowIdName
                         , ToolWindowAnchor.RIGHT
                         , null
@@ -46,7 +56,7 @@ public final class CodeSparksLogger
                 ));
                 loggingTextView = new LoggingTextView();
                 Content content = ContentFactory.getInstance().createContent(loggingTextView.getRootPanel(), "", true);
-                ContentManager contentManager = profilingLogToolWindow.getContentManager();
+                ContentManager contentManager = codeSparksLogToolWindow.getContentManager();
                 contentManager.addContent(content);
             }
         }

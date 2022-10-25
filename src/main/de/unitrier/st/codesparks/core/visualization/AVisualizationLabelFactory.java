@@ -46,9 +46,25 @@ public abstract class AVisualizationLabelFactory extends AVisualizationSequence
         return jLabel;
     }
 
+    /**
+     * Use if the width of teh glyph to create is already known.
+     * @param width The width of the glyph image.
+     * @param height The height of the glyph image. Typically, this corresponds to the line height source-code editor.
+     * @return An instance of CodeSparksGraphics.
+     */
     protected CodeSparksGraphics getGraphics(final int width, final int height)
     {
         return new CodeSparksGraphics(width, height);
+    }
+
+    /**
+     * Use if the width of teh glyph to create is unknown.
+     * @param height The height of the glyph image. Typically, this corresponds to the line height source-code editor.
+     * @return An instance of CodeSparksGraphics.
+     */
+    protected CodeSparksGraphics getGraphics(final int height)
+    {
+        return new CodeSparksGraphics(5000, height);
     }
 
     protected JLabel makeLabel(final CodeSparksGraphics codeSparksGraphics, final int width)
