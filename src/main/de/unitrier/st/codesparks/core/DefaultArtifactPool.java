@@ -58,7 +58,7 @@ public class DefaultArtifactPool implements IArtifactPool
                 final Constructor<? extends AArtifact> declaredConstructor = artifactClass.getDeclaredConstructor(String.class, String.class);
                 final String name = "Program";
                 synchronized (programArtifactLock)
-                { // Double checked locking! This method might be called by multiple threads simultaneously. For instance, that's the case in the
+                { // Double-checked locking! This method might be called by multiple threads simultaneously. For instance, that's the case in the
                     // stack sampling thread analysis strategies of the CodeSparks-JPT instance because that data is processed simultaneously using a thread
                     // pool!
                     if (programArtifact == null)
