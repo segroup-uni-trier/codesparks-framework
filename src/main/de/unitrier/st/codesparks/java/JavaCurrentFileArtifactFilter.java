@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2021. Oliver Moseler
  */
-package de.unitrier.st.codesparks.core.java;
+package de.unitrier.st.codesparks.java;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;

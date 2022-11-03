@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022. Oliver Moseler
  */
-package de.unitrier.st.codesparks.core.java;
+package de.unitrier.st.codesparks.java;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;

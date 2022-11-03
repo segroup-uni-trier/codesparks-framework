@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Oliver Moseler
  */
 
-package de.unitrier.st.codesparks.core.java;
+package de.unitrier.st.codesparks.java;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
