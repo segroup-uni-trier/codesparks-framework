@@ -3,12 +3,15 @@
  */
 package de.unitrier.st.codesparks.core;
 
-import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
+import de.unitrier.st.codesparks.core.data.IThreadArtifactFilter;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DefaultArtifactPool implements IArtifactPool
 {
@@ -96,7 +99,7 @@ public class DefaultArtifactPool implements IArtifactPool
     }
 
     @Override
-    public Map<Class<? extends AArtifact>, List<AArtifact>> getArtifacts()
+    public Map<Class<? extends AArtifact>, List<AArtifact>> getMapOfArtifacts()
     {
         Map<Class<? extends AArtifact>, List<AArtifact>> map = new HashMap<>();
         synchronized (artifactsLock)
@@ -124,6 +127,18 @@ public class DefaultArtifactPool implements IArtifactPool
 
             return new ArrayList<>(artifacts);
         }
+    }
+
+    @Override
+    public List<AArtifact> getAllArtifacts()
+    {
+        final Map<Class<? extends AArtifact>, List<AArtifact>> mapOfArtifacts = getMapOfArtifacts();
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        final List<AArtifact> artifactList = mapOfArtifacts.entrySet()
+                .stream()
+                .flatMap(entry -> entry.getValue().stream())
+                .collect(Collectors.toList());
+        return artifactList;
     }
 
     @Override
@@ -163,6 +178,51 @@ public class DefaultArtifactPool implements IArtifactPool
             return artifact;
         }
     }
+
+//    public static List<?> getIntersection(Collection<?> col1, Collection<?> col2) {
+//
+//        // Call of the critical method.
+//        return ListUtils.retainAll(col1, col2);
+//    }
+//
+//    public static void wasteTime(int seconds) {
+//
+//        // Simulation of more calls.
+//        TestUtils.wasteTime(seconds);
+//    }
+
+//    public static int multiply(int x, int y) {
+//
+//        return x * y;}
+//
+//
+//
+//    public static void fillData() {
+//
+//        }
+//
+//        final static class TestUtils{
+//
+//        public static void wasteTime(int seconds){
+//            long nanos = seconds * 1000000000L;
+//            final long now = System.nanoTime();
+//            while((System.nanoTime() - now) < nanos)
+//            {
+//                nanos = ((nanos + 10) * 10) / 10 - 10;
+//            }
+//        }
+//
+//        }
+//
+//
+//    public static void doIt()
+//    {
+//        final List<?> intersection = getIntersection(new ArrayList<>(), new ArrayList<>());
+//        final int multiply = multiply(1, 2);
+//        wasteTime(5);
+//        fillData();
+//    }
+
 
     @Override
     public final AArtifact getOrCreateArtifact(final Class<? extends AArtifact> artifactClass, final String identifier, final Object... arguments)

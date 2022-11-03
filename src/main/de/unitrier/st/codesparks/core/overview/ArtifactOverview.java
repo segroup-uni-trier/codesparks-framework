@@ -571,7 +571,7 @@ public class ArtifactOverview
             Set<String> includeFilters = retrieveCustomFilters(includeFilter);
             Set<String> excludeFilters = retrieveCustomFilters(excludeFilter);
 
-            final Map<Class<? extends AArtifact>, List<AArtifact>> map = artifactPool.getArtifacts();
+            final Map<Class<? extends AArtifact>, List<AArtifact>> map = artifactPool.getMapOfArtifacts();
             if (map == null)
             {
                 return;

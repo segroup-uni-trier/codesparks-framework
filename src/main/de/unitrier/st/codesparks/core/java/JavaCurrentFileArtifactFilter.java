@@ -78,8 +78,12 @@ public class JavaCurrentFileArtifactFilter implements ICurrentFileArtifactFilter
         { // Only thread artifacts
             final IArtifactPool artifactPool = ArtifactPoolManager.getInstance().getArtifactPool();
             final Set<AArtifact> setOfNonThreadArtifacts =
-                    artifactPool.getArtifacts().values().stream().flatMap(Collection::stream)
-                            .filter(artifact -> !(artifact instanceof AThreadArtifact)).collect(Collectors.toSet());
+//                    artifactPool.getMapOfArtifacts().values().stream().flatMap(Collection::stream)
+//                            .filter(artifact -> !(artifact instanceof AThreadArtifact)).collect(Collectors.toSet());
+                    artifactPool.getAllArtifacts()
+                            .stream()
+                            .filter(artifact -> !(artifact instanceof AThreadArtifact))
+                            .collect(Collectors.toSet());
 
             filtered = artifacts.stream()
                     .filter(thread -> setOfNonThreadArtifacts.stream().anyMatch(

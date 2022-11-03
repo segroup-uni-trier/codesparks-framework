@@ -20,6 +20,7 @@ public interface IArtifactPool extends IThreadArtifactFilterable, IArtifactPoolE
 
     /**
      * Get an artifact by identifier.
+     *
      * @param identifier The identifier associated with a corresponding artifact.
      * @return The artifact that is associated with the given identifier.
      */
@@ -27,8 +28,9 @@ public interface IArtifactPool extends IThreadArtifactFilterable, IArtifactPoolE
 
     /**
      * Get an artifact by its class and identifier.
+     *
      * @param artifactClass The class of the artifact.
-     * @param identifier The identifier associated with a corresponding artifact.
+     * @param identifier    The identifier associated with a corresponding artifact.
      * @return The artifact associated with the specified identifier and of the type of the specified class.
      */
     AArtifact getArtifact(final Class<? extends AArtifact> artifactClass, final String identifier);
@@ -39,7 +41,9 @@ public interface IArtifactPool extends IThreadArtifactFilterable, IArtifactPoolE
 
     List<AArtifact> getArtifacts(final Class<? extends AArtifact> artifactClass);
 
-    Map<Class<? extends AArtifact>, List<AArtifact>> getArtifacts();
+    List<AArtifact> getAllArtifacts();
+
+    Map<Class<? extends AArtifact>, List<AArtifact>> getMapOfArtifacts();
 
     String getArtifactClassDisplayName(final Class<? extends AArtifact> artifactClass);
 
