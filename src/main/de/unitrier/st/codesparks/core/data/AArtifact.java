@@ -110,18 +110,20 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
     }
 
     @Override
-    public void navigate()
+    public boolean navigate()
     {
         final PsiElement visPsiElement = getVisPsiElement();
         if (visPsiElement == null)
         {
-            return;
+            return false;
         }
         final PsiElement navigationElement = visPsiElement.getNavigationElement();
         if (navigationElement instanceof Navigatable)
         {
             ((Navigatable) navigationElement).navigate(true);
+            return true;
         }
+        return false;
     }
 
     /*
