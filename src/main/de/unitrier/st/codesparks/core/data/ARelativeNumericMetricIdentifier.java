@@ -15,7 +15,7 @@ public abstract class ARelativeNumericMetricIdentifier extends AMetricIdentifier
     }
 
     @Override
-    public Class<Double> getMetricValueType()
+    public final Class<Double> getMetricValueType()
     {
         return Double.class;
     }
