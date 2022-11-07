@@ -15,6 +15,7 @@ import org.jdom2.Element;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -327,7 +328,7 @@ public final class JavaUtil
                         return parameterTypeCanonicalText;
                     }
 
-                    // The parameter is of type of an inner class!
+                    // The parameter is of type of inner class!
                     String presentableText = parameterType.getPresentableText();
                     final StringBuilder strb = new StringBuilder(parameterTypeCanonicalText);
                     while (!className.equals(presentableText))
@@ -359,15 +360,27 @@ public final class JavaUtil
     }
 
 
-
     public static boolean isClassArtifact(final AArtifact artifact)
     {
-
-        // TODO check whether it has the JavaClassArtifact Attribute
-        return false;
+        return isArtifactOfType(artifact, JavaClassArtifact.class);
+//        final Class<? extends AArtifact> artifactClass = artifact.getClass();
+//        final boolean isClassArtifact = artifactClass.isAnnotationPresent(JavaClassArtifact.class);
+//        return isClassArtifact;
     }
 
+    public static boolean isMethodArtifact(final AArtifact artifact)
+    {
+        return isArtifactOfType(artifact, JavaMethodArtifact.class);
+//        final Class<? extends AArtifact> artifactClass = artifact.getClass();
+//        final boolean isMethodArtifact = artifactClass.isAnnotationPresent(JavaMethodArtifact.class);
+//        return isMethodArtifact;
+    }
 
-
-
+    public static boolean isArtifactOfType(final AArtifact artifact, final Class<? extends Annotation> annotationType)
+    {
+        final Class<? extends AArtifact> artifactClass = artifact.getClass();
+        //noinspection UnnecessaryLocalVariable
+        final boolean isArtifactOfType = artifactClass.isAnnotationPresent(annotationType);
+        return isArtifactOfType;
+    }
 }

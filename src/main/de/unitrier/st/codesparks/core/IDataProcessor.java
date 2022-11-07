@@ -8,4 +8,6 @@ import de.unitrier.st.codesparks.core.data.IArtifactPool;
 public interface IDataProcessor
 {
     IArtifactPool processData();
+
+    void postProcess(IArtifactPool artifactPool);
 }

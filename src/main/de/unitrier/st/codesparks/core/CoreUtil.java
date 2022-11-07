@@ -91,6 +91,15 @@ public final class CoreUtil
         return percentageText;
     }
 
+    public static String roundAndFormatToDigitsAfterComma(final double value, final int nrOfDigits)
+    {
+        final double dec = 10D * nrOfDigits;
+        final double val = value * dec;
+        final double roundVal = (double) Math.round(val);
+        double vVal = roundVal / dec;
+        return String.valueOf(vVal);
+    }
+
     public static String reduceToLength(final String str, final int len, final String prefix)
     {
         final int prefixLength = prefix.length();

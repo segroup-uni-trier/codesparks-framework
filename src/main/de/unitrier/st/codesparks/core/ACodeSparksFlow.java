@@ -129,6 +129,17 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         }
     }
 
+    private void postProcess(final IArtifactPool artifactPool)
+    {
+        if (dataProvider != null)
+        {
+            dataProvider.postProcess(artifactPool);
+        } else
+        {
+            CodeSparksLogger.addText(String.format("%s: data processor not setup!", getClass()));
+        }
+    }
+
     private Collection<EditorCoverLayerItem> createVisualization(Collection<AArtifact> matchedArtifacts)
     {
         if (dataVisualizer != null)
@@ -167,6 +178,8 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                 {
                     final ArtifactPoolManager instance = ArtifactPoolManager.getInstance();
                     instance.setArtifactPool(artifactPool);
+
+                    postProcess(artifactPool);
 
                     final FileEditor[] editors = ApplicationManager.getApplication().runReadAction((Computable<FileEditor[]>) () ->
                             FileEditorManager.getInstance(project).getAllEditors());
