@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2022. Oliver Moseler
+ * Copyright (c) 2022.
  */
 
-package de.unitrier.st.codesparks.core;
+package de.unitrier.st.codesparks.core.matching;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
 

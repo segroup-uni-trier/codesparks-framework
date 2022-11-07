@@ -6,7 +6,6 @@ package de.unitrier.st.codesparks.core.data;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import de.unitrier.st.codesparks.core.CoreUtil;
-import de.unitrier.st.codesparks.core.IThreadArtifactFilterable;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 
 import java.io.Serializable;

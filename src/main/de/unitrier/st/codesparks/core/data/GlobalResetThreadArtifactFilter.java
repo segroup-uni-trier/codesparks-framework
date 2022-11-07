@@ -3,9 +3,6 @@
  */
 package de.unitrier.st.codesparks.core.data;
 
-import de.unitrier.st.codesparks.core.ArtifactPoolManager;
-import de.unitrier.st.codesparks.core.IArtifactPool;
-
 import java.util.HashSet;
 import java.util.Set;
 

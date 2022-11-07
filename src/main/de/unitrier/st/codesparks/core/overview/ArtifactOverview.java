@@ -15,7 +15,7 @@ import com.intellij.ui.components.*;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.CoreUtil;
-import de.unitrier.st.codesparks.core.IArtifactPool;
+import de.unitrier.st.codesparks.core.data.IArtifactPool;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 import de.unitrier.st.codesparks.core.data.GlobalResetThreadArtifactFilter;

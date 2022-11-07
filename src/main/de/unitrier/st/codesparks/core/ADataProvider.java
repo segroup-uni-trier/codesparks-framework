@@ -3,6 +3,8 @@
  */
 package de.unitrier.st.codesparks.core;
 
+import de.unitrier.st.codesparks.core.data.IArtifactPool;
+
 public abstract class ADataProvider implements IDataProvider
 {
     private final IDataCollector profilingDataCollector;

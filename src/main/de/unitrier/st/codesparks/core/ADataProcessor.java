@@ -6,6 +6,7 @@ package de.unitrier.st.codesparks.core;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import de.unitrier.st.codesparks.core.data.IArtifactPool;
 
 public abstract class ADataProcessor extends Task.WithResult<Boolean, Exception> implements IDataProcessor
 {

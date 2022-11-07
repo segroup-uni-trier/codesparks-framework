@@ -4,8 +4,6 @@
 package de.unitrier.st.codesparks.core.data;
 
 import com.intellij.openapi.project.Project;
-import de.unitrier.st.codesparks.core.IArtifactPool;
-import de.unitrier.st.codesparks.core.IArtifactPoolExportStrategy;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 
 import java.io.BufferedWriter;

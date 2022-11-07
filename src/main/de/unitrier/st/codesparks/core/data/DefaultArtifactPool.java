@@ -1,11 +1,8 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2021-2022.
  */
-package de.unitrier.st.codesparks.core;
+package de.unitrier.st.codesparks.core.data;
 
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.IThreadArtifactFilter;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 
 import java.lang.reflect.Constructor;

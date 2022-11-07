@@ -3,8 +3,8 @@
  */
 package de.unitrier.st.codesparks.core.visualization;
 
-import de.unitrier.st.codesparks.core.ArtifactPoolManager;
-import de.unitrier.st.codesparks.core.IArtifactPool;
+import de.unitrier.st.codesparks.core.data.ArtifactPoolManager;
+import de.unitrier.st.codesparks.core.data.IArtifactPool;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 
 import javax.swing.*;

@@ -1,10 +1,7 @@
 /*
- * Copyright (c) 2022. Oliver Moseler
+ * Copyright (c) 2022.
  */
-package de.unitrier.st.codesparks.core;
-
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
+package de.unitrier.st.codesparks.core.data;
 
 import java.util.List;
 import java.util.Map;

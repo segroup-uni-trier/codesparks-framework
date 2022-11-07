@@ -12,7 +12,7 @@ import java.awt.*;
 
 import static de.unitrier.st.codesparks.core.visualization.VisConstants.*;
 
-public final class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
+public class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
     private final IMetricValueColorCodingStrategy metricValueColorCodingStrategy;
 

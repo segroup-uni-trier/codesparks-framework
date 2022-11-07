@@ -13,8 +13,8 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import de.unitrier.st.codesparks.core.IArtifactPool;
-import de.unitrier.st.codesparks.core.IArtifactPoolToCodeMatcher;
+import de.unitrier.st.codesparks.core.data.IArtifactPool;
+import de.unitrier.st.codesparks.core.matching.IArtifactPoolToCodeMatcher;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 

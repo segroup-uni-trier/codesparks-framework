@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2021-2022.
  */
-package de.unitrier.st.codesparks.core;
+package de.unitrier.st.codesparks.core.data;
 
 public interface IArtifactPoolExportable
 {

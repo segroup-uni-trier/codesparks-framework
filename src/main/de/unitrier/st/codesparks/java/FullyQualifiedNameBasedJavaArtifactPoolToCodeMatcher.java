@@ -9,9 +9,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import de.unitrier.st.codesparks.core.AArtifactPoolToCodeMatcher;
-import de.unitrier.st.codesparks.core.ArtifactPoolToCodeMatcherUtil;
-import de.unitrier.st.codesparks.core.IArtifactPool;
+import de.unitrier.st.codesparks.core.matching.AArtifactPoolToCodeMatcher;
+import de.unitrier.st.codesparks.core.matching.ArtifactPoolToCodeMatcherUtil;
+import de.unitrier.st.codesparks.core.data.IArtifactPool;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
 

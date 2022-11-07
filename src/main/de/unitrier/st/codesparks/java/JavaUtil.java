@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.*;
 import de.unitrier.st.codesparks.core.CoreUtil;
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import org.jdom2.Element;
 
 import java.io.File;
@@ -359,7 +360,12 @@ public final class JavaUtil
 
 
 
+    public static boolean isClassArtifact(final AArtifact artifact)
+    {
 
+        // TODO check whether it has the JavaClassArtifact Attribute
+        return false;
+    }
 
 
 

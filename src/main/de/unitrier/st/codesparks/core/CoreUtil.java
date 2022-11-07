@@ -9,6 +9,8 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import de.unitrier.st.codesparks.core.data.ArtifactPoolManager;
+import de.unitrier.st.codesparks.core.data.IArtifactPool;
 import de.unitrier.st.codesparks.core.data.IPsiNavigable;
 import de.unitrier.st.codesparks.core.service.CodeSparksInstanceService;
 
