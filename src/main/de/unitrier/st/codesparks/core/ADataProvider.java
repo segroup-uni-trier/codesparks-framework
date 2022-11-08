@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core;
 
@@ -10,7 +10,7 @@ public abstract class ADataProvider implements IDataProvider
     private final IDataCollector profilingDataCollector;
     private final IDataProcessor profilingDataProcessor;
 
-    protected ADataProvider(IDataCollector profilingDataCollector, IDataProcessor profilingDataProcessor)
+    protected ADataProvider(final IDataCollector profilingDataCollector, final IDataProcessor profilingDataProcessor)
     {
         this.profilingDataCollector = profilingDataCollector;
         this.profilingDataProcessor = profilingDataProcessor;
@@ -26,5 +26,11 @@ public abstract class ADataProvider implements IDataProvider
     public final IArtifactPool processData()
     {
         return profilingDataProcessor.processData();
+    }
+
+    @Override
+    public void postProcess(final IArtifactPool artifactPool)
+    {
+        profilingDataProcessor.postProcess(artifactPool);
     }
 }
