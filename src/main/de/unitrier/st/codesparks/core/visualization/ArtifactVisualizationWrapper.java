@@ -34,9 +34,12 @@ public class ArtifactVisualizationWrapper extends AArtifactVisualization
         for (final AArtifactVisualizationLabelFactory factory : factories)
         {
             final Set<Class<?>> artifactClasses = factory.getArtifactClasses();
-            if (!artifactClasses.isEmpty() && !artifactClasses.contains(artifactClass))
+            if (artifactClasses != null)
             {
-                continue;
+                if (!artifactClasses.isEmpty() && !artifactClasses.contains(artifactClass))
+                {
+                    continue;
+                }
             }
 
             final JLabel artifactComponent = factory.createArtifactLabel(artifact);

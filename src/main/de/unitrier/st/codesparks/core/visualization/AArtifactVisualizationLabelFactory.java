@@ -28,6 +28,7 @@ public abstract class AArtifactVisualizationLabelFactory extends AVisualizationL
     protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
     {
         super(primaryMetricIdentifier, sequence);
+        init();
     }
 
     protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence, final Class<?>... artifactClasses)
@@ -39,6 +40,7 @@ public abstract class AArtifactVisualizationLabelFactory extends AVisualizationL
     protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence, final int xOffsetLeft)
     {
         super(primaryMetricIdentifier, sequence, xOffsetLeft);
+        init();
     }
 
     protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence, final int xOffsetLeft,
