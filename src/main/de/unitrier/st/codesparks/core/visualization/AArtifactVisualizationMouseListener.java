@@ -13,6 +13,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.components.JBPanel;
+import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.Processor;
@@ -79,14 +80,6 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
         final String popupTitle = createPopupTitle(artifact);
 
         final Processor<JBPopup> pinProcessor = jbPopup -> {
-            final String name = LocalizationUtil.getLocalizedString("codesparks.ui.artifactpopup.displayname");
-            final Project project = CoreUtil.getCurrentlyOpenedProject();
-            final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-            final ToolWindow toolWindow = toolWindowManager.getToolWindow(name);
-            if (toolWindow != null)
-            {
-                toolWindow.remove();
-            }
             final JBPanel<BorderLayoutPanel> pinPanel = new BorderLayoutPanel();
             final JBPanel<BorderLayoutPanel> titlePanel = new BorderLayoutPanel();
             titlePanel.add(new JLabel(popupTitle, JLabel.CENTER), BorderLayout.CENTER);
@@ -94,22 +87,37 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
             pinPanel.add(titlePanel, BorderLayout.NORTH);
             pinPanel.add(popupPanel, BorderLayout.CENTER);
 
-            //noinspection UnstableApiUsage
-            final ToolWindow popupToolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
-                    name
-                    , ToolWindowAnchor.RIGHT
-                    , null
-                    , true
-                    , true
-                    , true
-                    , true
-                    , null
-                    , IconLoader.getIcon("/icons/profiling_13x12.png", getClass())
-                    , () -> name
-            ));
+            final String name = LocalizationUtil.getLocalizedString("codesparks.ui.artifactpopup.displayname");
+            final Project project = CoreUtil.getCurrentlyOpenedProject();
+            final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+            ToolWindow popupToolWindow = toolWindowManager.getToolWindow(name);
+            if (popupToolWindow == null)
+            {//noinspection UnstableApiUsage
+                popupToolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
+                        name
+                        , ToolWindowAnchor.RIGHT
+                        , null
+                        , true
+                        , true
+                        , true
+                        , true
+                        , null
+                        , IconLoader.getIcon("/icons/profiling_13x12.png", getClass())
+                        , () -> "CodeSparks " + name
+                ));
+            }
 
             final ContentManager contentManager = popupToolWindow.getContentManager();
-            contentManager.addContent(ContentFactory.getInstance().createContent(pinPanel, "", true));
+            final ContentFactory contentFactory = ContentFactory.getInstance();
+            final String shortName = artifact.getShortName();
+            final Content content = contentFactory.createContent(pinPanel, shortName, true);
+            final Content formerContent = contentManager.findContent(shortName);
+            if (formerContent != null)
+            {
+                contentManager.removeContent(formerContent, true);
+            }
+            contentManager.addContent(content);
+            contentManager.setSelectedContent(content);
 
             jbPopup.cancel();
             popupToolWindow.show(() -> {});
@@ -143,8 +151,7 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
                     //System.out.println("should cancel?");
                     return true;
                 })
-                .setCouldPin(pinProcessor)
-                ;
+                .setCouldPin(pinProcessor);
         final JBPopup popup = componentPopupBuilder.createPopup();
         popup.setSize(dimension);
         popup.setMinimumSize(dimension);
@@ -156,7 +163,6 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
 
         popupPanel.registerPopup(popup); // In order to be able to close the popup in case the user
         // clicked on a caller/callee to navigate to it.
-
     }
 
     @Override
@@ -168,14 +174,12 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
     @Override
     public void mouseEntered(MouseEvent e)
     {
-        VisualizationUtil.setCursorRecursively(component, Cursor.getPredefinedCursor(Cursor
-                .HAND_CURSOR));
+        VisualizationUtil.setCursorRecursively(component, Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
     @Override
     public void mouseExited(MouseEvent e)
     {
-        VisualizationUtil.setCursorRecursively(component, Cursor.getPredefinedCursor(Cursor
-                .TEXT_CURSOR));
+        VisualizationUtil.setCursorRecursively(component, Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
     }
 }

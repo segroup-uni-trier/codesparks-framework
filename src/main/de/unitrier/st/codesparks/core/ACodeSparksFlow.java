@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 
 package de.unitrier.st.codesparks.core;
@@ -14,10 +14,9 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.RegisterToolWindowTask;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.messages.MessageBus;
@@ -43,7 +42,6 @@ import de.unitrier.st.codesparks.core.visualization.ADataVisualizer;
 import de.unitrier.st.codesparks.core.visualization.ArtifactVisualizationLabelFactoryCache;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -56,9 +54,10 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
     protected IArtifactPool artifactPool;
     protected final Project project;
 
-    protected ACodeSparksFlow(Project project)
+    protected ACodeSparksFlow(final Project project)
     {
         this.project = project;
+        // CodeSparksLogger.setup(project);
         EditorCoverLayerManager.getInstance(project).setEditorCoverLayerUpdater(this);
         CodeSparksFlowManager.getInstance().setCurrentCodeSparksFlow(this);
         final MessageBus messageBus = project.getMessageBus();
@@ -93,7 +92,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
     }
 
     @Override
-    public void updateEditorCoverLayerFor(VirtualFile virtualFile)
+    public void updateEditorCoverLayerFor(final VirtualFile virtualFile)
     {
         synchronized (uiLock)
         {
@@ -140,7 +139,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         }
     }
 
-    private Collection<EditorCoverLayerItem> createVisualization(Collection<AArtifact> matchedArtifacts)
+    private Collection<EditorCoverLayerItem> createVisualization(final Collection<AArtifact> matchedArtifacts)
     {
         if (dataVisualizer != null)
         {
@@ -152,7 +151,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         }
     }
 
-    private Collection<AArtifact> matchArtifactsToCodeFiles(VirtualFile... virtualFiles)
+    private Collection<AArtifact> matchArtifactsToCodeFiles(final VirtualFile... virtualFiles)
     {
         if (matcher != null)
         {
@@ -268,48 +267,30 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         }
     }
 
+    private static Content currentArtifactOverViewContent;
+
     private void displayArtifactOverview()
     {
-        final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-        final String toolWindowIdName = LocalizationUtil.getLocalizedString("codesparks.ui.artifactoverview.displayname");
-        UIUtil.invokeLaterIfNeeded(() -> {
-            ToolWindow toolWindow = toolWindowManager.getToolWindow(toolWindowIdName);
-            if (toolWindow == null)
-            {
-                final ImageIcon defaultImageIcon = CoreUtil.getDefaultImageIcon();
-                toolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
-                        toolWindowIdName
-                        , ToolWindowAnchor.RIGHT
-                        , null
-                        , true
-                        , true
-                        , true
-                        , true
-                        , null
-                        , defaultImageIcon
-                        , () -> toolWindowIdName
-                ));
-            }
-            addArtifactsTo(toolWindow);
-            toolWindow.show();
-        });
-    }
-
-    private void addArtifactsTo(ToolWindow toolWindow)
-    {
-        final ContentManager contentManager = toolWindow.getContentManager();
-        contentManager.removeAllContents(true);
-
+        final ToolWindow codeSparksToolWindow = CoreUtil.getCodeSparksToolWindow(project);
+        final ContentManager contentManager = codeSparksToolWindow.getContentManager();
         final ArtifactOverview artifactOverview = ArtifactOverview.getInstance();
-
+        artifactOverview.setArtifactPool(artifactPool);
         final Boolean threadVisualizationsEnabled = PropertiesUtil.getBooleanPropertyValueOrDefault(PropertiesFile.USER_INTERFACE_PROPERTIES,
                 PropertyKey.THREAD_VISUALIZATIONS_ENABLED, true);
-
         artifactOverview.setFilterByThreadPanelVisible(threadVisualizationsEnabled);
-        artifactOverview.setArtifactPool(artifactPool);
-
-        contentManager.addContent(ContentFactory.getInstance().createContent
-                (artifactOverview.getRootPanel(), "", true));
+        final String artifactOverviewDisplayName = LocalizationUtil.getLocalizedString("codesparks.ui.artifactoverview.displayname");
+        final ContentFactory contentFactory = ContentFactory.getInstance();
+        final Content content = contentFactory.createContent(artifactOverview.getRootPanel(), artifactOverviewDisplayName, true);
+        UIUtil.invokeLaterIfNeeded(() -> {
+            if (currentArtifactOverViewContent != null)
+            {
+                contentManager.removeContent(currentArtifactOverViewContent, true);
+            }
+            contentManager.addContent(content);
+            currentArtifactOverViewContent = content;
+            contentManager.setSelectedContent(content);
+            codeSparksToolWindow.show();
+        });
     }
 
     private void clearArtifactPool()

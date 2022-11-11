@@ -1,88 +1,70 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.logging;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.*;
+import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 
-import javax.swing.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class CodeSparksLogger
 {
     private CodeSparksLogger() {}
 
-    private static ToolWindow codeSparksLogToolWindow;
+    private static final Map<Project, ITextView> textViewMap = new HashMap<>(4);
 
-    private static final String CODESPARKS_LOG_TOOL_WINDOW_ID = "CodeSparksLogToolWindow";
-    private static ITextView loggingTextView;
+    private static ITextView getTextView()
+    {
+        final Project project = CoreUtil.getCurrentlyOpenedProject();
+        if (project == null)
+        {
+            System.err.println("Project is null");
+            return null;
+        }
+        ITextView loggingTextView = textViewMap.get(project);
+        if (loggingTextView == null)
+        {
+            loggingTextView = new LoggingTextView();
+            textViewMap.put(project, loggingTextView);
+            final ToolWindow codeSparksToolWindow = CoreUtil.getCodeSparksToolWindow(project);
+            final String displayName = LocalizationUtil.getLocalizedString("codesparks.logger.view.displayname");
+            // Content createContent(@Nullable JComponent component, @Nullable @NlsContexts.TabTitle String displayName, boolean isLockable);
+            final Content content = ContentFactory.getInstance().createContent(loggingTextView.getRootPanel(), displayName, true);
+            final ContentManager contentManager = codeSparksToolWindow.getContentManager();
+            ApplicationManager.getApplication().invokeLater(() -> contentManager.addContent(content));
+        }
+        return loggingTextView;
+    }
 
-    public static void setup(Project project)
+    public static void addText(final String text)
     {
         synchronized (CodeSparksLogger.class)
         {
-            if (codeSparksLogToolWindow == null)
+            final ITextView textView = getTextView();
+            if (textView != null)
             {
-                final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-                final String toolWindowIdName = LocalizationUtil.getLocalizedString("codesparks.logger.view.displayname");
-                ImageIcon defaultImageIcon = CoreUtil.getDefaultImageIcon();
-                // To test
-//                final RegisterToolWindowTaskBuilder toolWindowTaskBuilder = new RegisterToolWindowTaskBuilder(toolWindowIdName);
-//                toolWindowTaskBuilder.anchor = ToolWindowAnchor.RIGHT;
-//                toolWindowTaskBuilder.sideTool = true;
-//                toolWindowTaskBuilder.canCloseContent = true;
-//                toolWindowTaskBuilder.shouldBeAvailable = true;
-//                toolWindowTaskBuilder.icon = defaultImageIcon;
-//                toolWindowTaskBuilder.stripeTitle = () -> toolWindowIdName;
-//                @SuppressWarnings("KotlinInternalInJava") final RegisterToolWindowTask registerToolWindowTask = toolWindowTaskBuilder.build();
-//                toolWindowManager.registerToolWindow(registerToolWindowTask);
-                // Working
-                codeSparksLogToolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
-                        toolWindowIdName
-                        , ToolWindowAnchor.RIGHT
-                        , null
-                        , true
-                        , true
-                        , true
-                        , true
-                        , null
-                        , defaultImageIcon//IconLoader.getIcon("/icons/codesparks.png") // TODO: CodeSparks Logo
-                        , () -> toolWindowIdName
-                ));
-                loggingTextView = new LoggingTextView();
-                Content content = ContentFactory.getInstance().createContent(loggingTextView.getRootPanel(), "", true);
-                ContentManager contentManager = codeSparksLogToolWindow.getContentManager();
-                contentManager.addContent(content);
+                textView.addText(text);
             }
         }
     }
 
-    public static void addText(String text)
+    public static void addText(final String format, final Object... args)
     {
         synchronized (CodeSparksLogger.class)
         {
-            if (loggingTextView == null)
+            final ITextView textView = getTextView();
+            if (textView != null)
             {
-                return;
+                textView.addText(String.format(format, args));
             }
-            loggingTextView.addText(text);
-        }
-    }
-
-    public static void addText(String format, Object... args)
-    {
-        synchronized (CodeSparksLogger.class)
-        {
-            if (loggingTextView == null)
-            {
-                return;
-            }
-            loggingTextView.addText(String.format(format, args));
         }
     }
 }

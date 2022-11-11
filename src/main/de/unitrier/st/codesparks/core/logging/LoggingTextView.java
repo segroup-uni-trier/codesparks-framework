@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.logging;
 
@@ -7,6 +7,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.components.JBScrollPane;
 
 import javax.swing.*;
+import javax.swing.text.Document;
 import java.awt.*;
 
 public class LoggingTextView implements ITextView
@@ -22,6 +23,7 @@ public class LoggingTextView implements ITextView
         rootPanel.add(scrollPane, BorderLayout.CENTER);
         textArea = new JTextArea();
         textArea.setEditable(false);
+        textArea.setLineWrap(true);
         scrollPane.setViewportView(textArea);
     }
 
@@ -34,7 +36,9 @@ public class LoggingTextView implements ITextView
         }
         ApplicationManager.getApplication().invokeLater(() -> {
             textArea.append("\n" + str);
-            textArea.setCaretPosition(textArea.getDocument().getLength());
+            final Document document = textArea.getDocument();
+            final int length = document.getLength();
+            textArea.setCaretPosition(length);
         });
     }
 

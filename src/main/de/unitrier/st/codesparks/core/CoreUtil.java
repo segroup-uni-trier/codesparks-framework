@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core;
 
@@ -9,6 +9,11 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.wm.RegisterToolWindowTask;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowAnchor;
+import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.ArtifactPoolManager;
 import de.unitrier.st.codesparks.core.data.IArtifactPool;
 import de.unitrier.st.codesparks.core.data.IPsiNavigable;
@@ -17,7 +22,6 @@ import de.unitrier.st.codesparks.core.service.CodeSparksInstanceService;
 import javax.swing.*;
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Optional;
 
 public final class CoreUtil
@@ -123,16 +127,6 @@ public final class CoreUtil
         return reduceToLength(str, len, "...");
     }
 
-    @SuppressWarnings("unused")
-    public static void appendAll(final StringBuilder stringBuilder, final Collection<String> col)
-    {
-        for (final String str : col)
-        {
-            stringBuilder.append(str).append(",");
-        }
-        stringBuilder.delete(stringBuilder.length() - 1, stringBuilder.length());
-    }
-
     public static Project getCurrentlyOpenedProject()
     {
         final Optional<Project> first = Arrays.stream(ProjectManager.getInstance().getOpenProjects()).filter(Project::isOpen)
@@ -145,6 +139,44 @@ public final class CoreUtil
         final CodeSparksInstanceService service = CodeSparksInstanceService.getInstance();
         assert service != null;
         return service.getDefaultPluginImageIcon();
+    }
+
+    public static ToolWindow getOrCreateToolWindowWithId(final Project project, final String toolWindowId)
+    {
+        final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+        //noinspection UnnecessaryLocalVariable
+        final ToolWindow toolWindow =
+                UIUtil.invokeAndWaitIfNeeded(() ->
+                        {
+                            ToolWindow tw = toolWindowManager.getToolWindow(toolWindowId);
+                            if (tw == null)
+                            {
+                                final ImageIcon defaultImageIcon = CoreUtil.getDefaultImageIcon();
+                                //noinspection UnstableApiUsage
+                                tw = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
+                                                toolWindowId
+                                                , ToolWindowAnchor.RIGHT
+                                                , null
+                                                , true
+                                                , false
+                                                , true
+                                                , true
+                                                , null
+                                                , defaultImageIcon
+                                                , () -> "CodeSparks"
+                                        )
+                                );
+                            }
+                            return tw;
+                        }
+                );
+        return toolWindow;
+    }
+
+    public static ToolWindow getCodeSparksToolWindow(final Project project)
+    {
+        final String toolWindowId = "CodeSparks-ToolWindow-Id";
+        return getOrCreateToolWindowWithId(project, toolWindowId);
     }
 
     public static EditorEx getSelectedFileEditor(final Project project)
