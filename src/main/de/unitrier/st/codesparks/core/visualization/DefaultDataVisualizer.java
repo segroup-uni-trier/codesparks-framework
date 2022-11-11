@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.visualization;
 
@@ -48,8 +48,8 @@ public class DefaultDataVisualizer extends ADataVisualizer
 
     @Override
     public Collection<EditorCoverLayerItem> createVisualizations(
-            final Project project
-            , final Collection<AArtifact> matchedArtifacts
+            final Project project,
+            final Collection<AArtifact> matchedArtifacts
     )
     {
         // TODO: possible parallelization applicable?
@@ -59,8 +59,10 @@ public class DefaultDataVisualizer extends ADataVisualizer
         {
             ApplicationManager.getApplication().runReadAction(() -> {
 
-                final AArtifactVisualization artifactVisualization = artifactVisualizer.createArtifactVisualization(artifact,
-                        artifactLabelFactories);
+                final AArtifactVisualization artifactVisualization = artifactVisualizer.createArtifactVisualization(
+                        artifact,
+                        artifactLabelFactories
+                );
 
                 final PsiElement psiElement = artifact.getVisPsiElement();
                 final EditorCoverLayerItem layerItem = new EditorCoverLayerItem(psiElement, artifactVisualization);

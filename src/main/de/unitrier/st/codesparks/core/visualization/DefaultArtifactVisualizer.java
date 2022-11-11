@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.visualization;
 
@@ -28,8 +28,8 @@ public class DefaultArtifactVisualizer implements IArtifactVisualizer
 
     @Override
     public final AArtifactVisualization createArtifactVisualization(
-            final AArtifact artifact
-            , final AArtifactVisualizationLabelFactory... factories
+            final AArtifact artifact,
+            final AArtifactVisualizationLabelFactory... factories
     )
     {
         return new ArtifactVisualizationWrapper(artifact, factories);

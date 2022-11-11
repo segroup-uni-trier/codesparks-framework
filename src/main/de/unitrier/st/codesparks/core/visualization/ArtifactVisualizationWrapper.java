@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.visualization;
 
@@ -8,6 +8,7 @@ import de.unitrier.st.codesparks.core.data.AArtifact;
 import javax.swing.*;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Set;
 
 public class ArtifactVisualizationWrapper extends AArtifactVisualization
 {
@@ -28,8 +29,16 @@ public class ArtifactVisualizationWrapper extends AArtifactVisualization
 
         Arrays.sort(factories, Comparator.comparingInt(AArtifactVisualizationLabelFactory::getSequence));
 
+        final Class<? extends AArtifact> artifactClass = artifact.getClass();
+
         for (final AArtifactVisualizationLabelFactory factory : factories)
         {
+            final Set<Class<?>> artifactClasses = factory.getArtifactClasses();
+            if (!artifactClasses.isEmpty() && !artifactClasses.contains(artifactClass))
+            {
+                continue;
+            }
+
             final JLabel artifactComponent = factory.createArtifactLabel(artifact);
 //            ArtifactVisualizationLabelFactoryCache.getInstance().addToCache(artifact.getIdentifier(), factory.getClass(),
 //                    artifactComponent);
