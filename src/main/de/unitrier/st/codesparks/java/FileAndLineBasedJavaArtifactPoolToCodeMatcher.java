@@ -45,7 +45,7 @@ public final class FileAndLineBasedJavaArtifactPoolToCodeMatcher implements IArt
         }
 
         final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
-
+        final PsiManager psiManager = PsiManager.getInstance(project);
         for (final VirtualFile file : files)
         {
             final String canonicalPath = file.getCanonicalPath();
@@ -54,7 +54,6 @@ public final class FileAndLineBasedJavaArtifactPoolToCodeMatcher implements IArt
             final String fileName = canonicalPath.replace('/', '\\');
 
             final PsiFile psiFile = ApplicationManager.getApplication().runReadAction((Computable<PsiFile>) () -> {
-                final PsiManager psiManager = PsiManager.getInstance(project);
                 //noinspection UnnecessaryLocalVariable
                 final PsiFile thePsiFile = psiManager.findFile(file);
                 return thePsiFile;

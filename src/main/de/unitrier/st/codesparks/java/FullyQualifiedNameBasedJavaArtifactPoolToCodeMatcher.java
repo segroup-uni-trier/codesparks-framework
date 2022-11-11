@@ -76,10 +76,10 @@ public final class FullyQualifiedNameBasedJavaArtifactPoolToCodeMatcher extends 
 
         // Should only be used once per matching procedure because it has an internal state.
         final JavaPsiClassNameHelper javaPsiClassNameHelper = new JavaPsiClassNameHelper();
+        final PsiManager psiManager = PsiManager.getInstance(project);
         for (final VirtualFile file : files)
         {
             final PsiFile psiFile = ApplicationManager.getApplication().runReadAction((Computable<PsiFile>) () -> {
-                final PsiManager psiManager = PsiManager.getInstance(project);
                 //noinspection UnnecessaryLocalVariable
                 final PsiFile thePsiFile = psiManager.findFile(file);
                 return thePsiFile;
@@ -158,10 +158,11 @@ public final class FullyQualifiedNameBasedJavaArtifactPoolToCodeMatcher extends 
                     // line.
                     for (final Map.Entry<Integer, List<ANeighborArtifact>> successorEntry : successorMap.entrySet())
                     {
+                        final Integer lineNumber = successorEntry.getKey();
                         int lineStartOffset;
                         try
                         {
-                            lineStartOffset = document.getLineStartOffset(successorEntry.getKey());
+                            lineStartOffset = document.getLineStartOffset(lineNumber);
                         } catch (IndexOutOfBoundsException e)
                         {
                             continue;
