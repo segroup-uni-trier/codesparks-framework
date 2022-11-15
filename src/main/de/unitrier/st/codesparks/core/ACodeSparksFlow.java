@@ -21,10 +21,7 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.ui.UIUtil;
-import de.unitrier.st.codesparks.core.data.AArtifact;
-import de.unitrier.st.codesparks.core.data.ArtifactPoolManager;
-import de.unitrier.st.codesparks.core.data.IArtifactPool;
-import de.unitrier.st.codesparks.core.data.IThreadArtifactFilter;
+import de.unitrier.st.codesparks.core.data.*;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerItem;
 import de.unitrier.st.codesparks.core.editorcoverlayer.EditorCoverLayerManager;
 import de.unitrier.st.codesparks.core.editorcoverlayer.IEditorCoverLayerUpdater;
@@ -57,7 +54,6 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
     protected ACodeSparksFlow(final Project project)
     {
         this.project = project;
-        // CodeSparksLogger.setup(project);
         EditorCoverLayerManager.getInstance(project).setEditorCoverLayerUpdater(this);
         CodeSparksFlowManager.getInstance().setCurrentCodeSparksFlow(this);
         final MessageBus messageBus = project.getMessageBus();
@@ -175,6 +171,8 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                 artifactPool = processData();
                 if (artifactPool != null)
                 {
+                    artifactPool.registerArtifactClassDisplayNameProvider(artifactClassDisplayNameProvider);
+
                     final ArtifactPoolManager instance = ArtifactPoolManager.getInstance();
                     instance.setArtifactPool(artifactPool);
 
@@ -211,7 +209,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                     displayArtifactOverview();
                 } else
                 {
-                    CodeSparksLogger.addText("%s: No profiling results available.", getClass().getName());
+                    CodeSparksLogger.addText("%s: artifact pool is null.", getClass().getName());
                 }
             }
         } catch (Exception e)
@@ -367,5 +365,12 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
     )
     {
         ArtifactOverview.getInstance().registerArtifactClassVisualizationLabelFactory(artifactClass, factory);
+    }
+
+    private IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider;
+
+    public void registerArtifactClassDisplayNameProvider(final IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
+    {
+        this.artifactClassDisplayNameProvider = artifactClassDisplayNameProvider;
     }
 }

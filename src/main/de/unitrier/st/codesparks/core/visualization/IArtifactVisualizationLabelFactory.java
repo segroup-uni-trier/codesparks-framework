@@ -12,5 +12,5 @@ public interface IArtifactVisualizationLabelFactory
 {
     JLabel createArtifactLabel(final AArtifact artifact);
 
-    Set<Class<?>> getArtifactClasses();
+    Set<Class<? extends AArtifact>> getArtifactClasses();
 }

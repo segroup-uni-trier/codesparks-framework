@@ -31,4 +31,11 @@ public final class JavaArtifactPoolToCodeMatcherUtil
                 (Computable<Collection<PsiMethod>>) () -> PsiTreeUtil.findChildrenOfType(psiFile, PsiMethod.class)
         );
     }
+
+    public static PsiPackage getPackageDeclarationFrom(final PsiFile psiFile)
+    {
+        return ApplicationManager.getApplication().runReadAction(
+                (Computable<PsiPackage>) () -> PsiTreeUtil.findChildOfType(psiFile, PsiPackage.class)
+        );
+    }
 }

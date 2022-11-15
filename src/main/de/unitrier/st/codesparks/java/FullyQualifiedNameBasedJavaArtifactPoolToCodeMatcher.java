@@ -39,13 +39,14 @@ public final class FullyQualifiedNameBasedJavaArtifactPoolToCodeMatcher extends 
     }
 
     /**
-     *  All psi-class and psi-method elements form the PSI trees of each given (virtual) file are traversed.
-     *  Thereby, the fully qualified name of the psi elements are computed.
-     *  Finally, the artifact pool is queried for a matching artifact, i.e., with the computed fully qualified name (identifier).
+     * All psi-class and psi-method elements form the PSI trees of each given (virtual) file are traversed.
+     * Thereby, the fully qualified name of the psi elements are computed.
+     * Finally, the artifact pool is queried for a matching artifact, i.e., with the computed fully qualified name (identifier).
+     * Moreover, the successors of a method artifact are matched according to their line in the body of the corresponding method.
      *
      * @param artifactPool The artifact pool.
-     * @param project The corresponding project.
-     * @param files The virtual files. Typically, currently opened by the source-code editors.
+     * @param project      The corresponding project.
+     * @param files        The virtual files. Typically, currently opened by the source-code editors.
      * @return A list of matched artifacts. If a psi-class or psi-method element could not be matched, a dummy artifact is instantiated which will be
      * associated with the psi element.
      */
@@ -68,6 +69,9 @@ public final class FullyQualifiedNameBasedJavaArtifactPoolToCodeMatcher extends 
         // Find the concrete class that is annotated with 'JavaClassArtifact'.
         final Class<? extends AArtifact> classArtifactClass = ArtifactPoolToCodeMatcherUtil
                 .findClassWithAnnotation(JavaClassArtifact.class, artifactClasses);
+        // Find the concrete class that is annotated with 'JavaPackageArtifact'.
+        final Class<? extends AArtifact> packageArtifactClass = ArtifactPoolToCodeMatcherUtil
+                .findClassWithAnnotation(JavaPackageArtifact.class, artifactClasses);
 
 //        if (methodArtifactClass == null && classArtifactClass == null)
 //        {
@@ -142,7 +146,7 @@ public final class FullyQualifiedNameBasedJavaArtifactPoolToCodeMatcher extends 
                     methodArtifact.setVisPsiElement(parameterList);
                     matchedArtifacts.add(methodArtifact);
 
-                    // Match the callees of a method artifact; line based in the body of a method.
+                    // Match the successors, e.g. callees, of a method artifact; line based in the body of a method.
                     final Map<Integer, List<ANeighborArtifact>> successorMap = methodArtifact.getSuccessors();
                     if (successorMap.isEmpty())
                     {
@@ -154,8 +158,8 @@ public final class FullyQualifiedNameBasedJavaArtifactPoolToCodeMatcher extends 
                     {
                         continue;
                     }
-                    // The callees of a method are typically stored in a hashmap that associates a line in the body of a method to a list of callees in that
-                    // line.
+                    // The successors of a method are assumed to be stored in a hashmap that associates a line in the body of a method
+                    // to a list of successors in that line.
                     for (final Map.Entry<Integer, List<ANeighborArtifact>> successorEntry : successorMap.entrySet())
                     {
                         final Integer lineNumber = successorEntry.getKey();
@@ -198,6 +202,14 @@ public final class FullyQualifiedNameBasedJavaArtifactPoolToCodeMatcher extends 
                     classArtifact.setVisPsiElement(implementsList);
                     matchedArtifacts.add(classArtifact);
                 }
+            }
+            if (packageArtifactClass != null)
+            {
+                final PsiPackage packageDeclaration = JavaArtifactPoolToCodeMatcherUtil.getPackageDeclarationFrom(psiFile);
+                final String qualifiedName = packageDeclaration.getQualifiedName();
+
+                // TODO: match package artifacts
+
             }
         }
         return matchedArtifacts;

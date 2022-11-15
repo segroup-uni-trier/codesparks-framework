@@ -9,10 +9,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.*;
 import de.unitrier.st.codesparks.core.data.IArtifactPool;
 import de.unitrier.st.codesparks.core.matching.IArtifactPoolToCodeMatcher;
 import de.unitrier.st.codesparks.core.data.AArtifact;
@@ -44,6 +41,7 @@ public final class FileAndLineBasedJavaArtifactPoolToCodeMatcher implements IArt
             return matchedArtifacts;
         }
 
+        final List<AArtifact> artifacts = artifactPool.getAllArtifacts();
         final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
         final PsiManager psiManager = PsiManager.getInstance(project);
         for (final VirtualFile file : files)
@@ -53,16 +51,15 @@ public final class FileAndLineBasedJavaArtifactPoolToCodeMatcher implements IArt
 
             final String fileName = canonicalPath.replace('/', '\\');
 
+            final List<AArtifact> artifactsOfCurrentFile = artifacts.stream()
+                    .filter(artifact -> artifact.getFileName().equals(fileName))
+                    .collect(Collectors.toList());
+
             final PsiFile psiFile = ApplicationManager.getApplication().runReadAction((Computable<PsiFile>) () -> {
                 //noinspection UnnecessaryLocalVariable
                 final PsiFile thePsiFile = psiManager.findFile(file);
                 return thePsiFile;
             });
-
-            final List<AArtifact> artifacts = artifactPool.getAllArtifacts();
-            final List<AArtifact> artifactsOfCurrentFile = artifacts.stream()
-                    .filter(artifact -> artifact.getFileName().equals(fileName))
-                    .collect(Collectors.toList());
 
             final Document document = documentManager.getDocument(psiFile);
             assert document != null;
@@ -82,7 +79,13 @@ public final class FileAndLineBasedJavaArtifactPoolToCodeMatcher implements IArt
                 final PsiElement psiElement = ApplicationManager.getApplication().runReadAction(
                         (Computable<PsiElement>) () -> psiFile.findElementAt(lineStartOffset)
                 );
-                final PsiElement sibling = psiElement.getPrevSibling();
+
+                PsiElement sibling = psiElement.getPrevSibling();
+                while (sibling instanceof PsiWhiteSpace)
+                {
+                    sibling = sibling.getPrevSibling();
+                }
+
                 final PsiElement visPsiElement = sibling != null ? sibling : psiElement;
                 artifact.setVisPsiElement(visPsiElement);
                 matchedArtifacts.add(artifact);

@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2022. Oliver Moseler
  */
+
 package de.unitrier.st.codesparks.java;
 
 import java.lang.annotation.ElementType;
@@ -13,6 +14,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface JavaMethodArtifact
+public @interface JavaPackageArtifact
 {
 }

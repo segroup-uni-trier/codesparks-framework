@@ -3,6 +3,7 @@
  */
 package de.unitrier.st.codesparks.core.visualization;
 
+import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 
 import java.util.HashSet;
@@ -11,7 +12,7 @@ import java.util.Set;
 
 public abstract class AArtifactVisualizationLabelFactory extends AVisualizationLabelFactory implements IArtifactVisualizationLabelFactory
 {
-    protected Set<Class<?>> artifactClasses;
+    protected Set<Class<? extends AArtifact>> artifactClasses;
 
     protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier)
     {
@@ -19,45 +20,62 @@ public abstract class AArtifactVisualizationLabelFactory extends AVisualizationL
         init();
     }
 
-    protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final Class<?>... artifactClasses)
+    @SafeVarargs
+    protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier,
+                                                 final Class<? extends AArtifact>... artifactClasses
+    )
     {
         super(primaryMetricIdentifier);
         init(artifactClasses);
     }
 
-    protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence)
+    protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier,
+                                                 final int sequence
+    )
     {
         super(primaryMetricIdentifier, sequence);
         init();
     }
 
-    protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence, final Class<?>... artifactClasses)
+    @SafeVarargs
+    protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier,
+                                                 final int sequence,
+                                                 final Class<? extends AArtifact>... artifactClasses
+    )
     {
         super(primaryMetricIdentifier, sequence);
         init(artifactClasses);
     }
 
-    protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence, final int xOffsetLeft)
+    protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier,
+                                                 final int sequence,
+                                                 final int xOffsetLeft
+    )
     {
         super(primaryMetricIdentifier, sequence, xOffsetLeft);
         init();
     }
 
-    protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier, final int sequence, final int xOffsetLeft,
-                                                 final Class<?>... artifactClasses)
+    @SafeVarargs
+    protected AArtifactVisualizationLabelFactory(final AMetricIdentifier primaryMetricIdentifier,
+                                                 final int sequence,
+                                                 final int xOffsetLeft,
+                                                 final Class<? extends AArtifact>... artifactClasses
+    )
     {
         super(primaryMetricIdentifier, sequence, xOffsetLeft);
         init(artifactClasses);
     }
 
-    private void init(Class<?>... artifactClasses)
+    @SafeVarargs
+    private void init(Class<? extends AArtifact>... artifactClasses)
     {
         this.artifactClasses = new HashSet<>();
         this.artifactClasses.addAll(List.of(artifactClasses));
     }
 
     @Override
-    public Set<Class<?>> getArtifactClasses()
+    public Set<Class<? extends AArtifact>> getArtifactClasses()
     {
         return artifactClasses;
     }
