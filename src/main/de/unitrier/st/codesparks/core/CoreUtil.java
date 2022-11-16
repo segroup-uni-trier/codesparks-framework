@@ -20,6 +20,7 @@ import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.ArtifactPoolManager;
 import de.unitrier.st.codesparks.core.data.IArtifactPool;
 import de.unitrier.st.codesparks.core.data.IPsiNavigable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.net.URL;
@@ -133,9 +134,18 @@ public final class CoreUtil
 
     public static Project getCurrentlyOpenedProject()
     {
-        final Optional<Project> first = Arrays.stream(ProjectManager.getInstance().getOpenProjects()).filter(Project::isOpen)
-                .findFirst();
-        return first.orElse(null);
+        try
+        {
+            final ProjectManager projectManager = ProjectManager.getInstance();
+            final @NotNull Project[] openProjects = projectManager.getOpenProjects();
+            final Optional<Project> first = Arrays.stream(openProjects)
+                    .filter(Project::isOpen)
+                    .findFirst();
+            return first.orElse(null);
+        } catch (NullPointerException e)
+        { // Could occur when called from unit tests where an instance of ProjectManager is not available.
+            return null;
+        }
     }
 
     public static Path getPluginPath()
@@ -207,7 +217,8 @@ public final class CoreUtil
                             ToolWindow tw = toolWindowManager.getToolWindow(toolWindowId);
                             if (tw == null)
                             {
-                                final ImageIcon defaultImageIcon = CoreUtil.getDefaultImageIcon();
+                                final CodeSparksFlowManager codeSparksFlowManager = CodeSparksFlowManager.getInstance();
+                                final ImageIcon imageIcon = codeSparksFlowManager.getImageIcon();
                                 //noinspection UnstableApiUsage
                                 tw = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
                                                 toolWindowId
@@ -218,7 +229,7 @@ public final class CoreUtil
                                                 , true
                                                 , true
                                                 , null
-                                                , defaultImageIcon
+                                                , imageIcon
                                                 , () -> "CodeSparks"
                                         )
                                 );

@@ -28,7 +28,13 @@ public class DefaultArtifactPool implements IArtifactPool
     @Override
     public void registerArtifactClassDisplayNameProvider(final IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
     {
-        this.artifactClassDisplayNameProvider = artifactClassDisplayNameProvider;
+        if (artifactClassDisplayNameProvider != null)
+        {
+            this.artifactClassDisplayNameProvider = artifactClassDisplayNameProvider;
+        } else
+        {
+            CodeSparksLogger.addText("%s: artifactClassDisplayNameProvider already setup.", getClass().getName());
+        }
     }
 
     /*
@@ -130,8 +136,7 @@ public class DefaultArtifactPool implements IArtifactPool
     public List<AArtifact> getAllArtifacts()
     {
         final Map<Class<? extends AArtifact>, List<AArtifact>> mapOfArtifacts = getMapOfArtifacts();
-        @SuppressWarnings("UnnecessaryLocalVariable")
-        final List<AArtifact> artifactList = mapOfArtifacts.entrySet()
+        @SuppressWarnings("UnnecessaryLocalVariable") final List<AArtifact> artifactList = mapOfArtifacts.entrySet()
                 .stream()
                 .flatMap(entry -> entry.getValue().stream())
                 .collect(Collectors.toList());

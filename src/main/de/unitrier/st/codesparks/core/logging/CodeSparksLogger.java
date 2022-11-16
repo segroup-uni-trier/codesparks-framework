@@ -15,6 +15,8 @@ import de.unitrier.st.codesparks.core.localization.LocalizationUtil;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.System.err;
+
 public final class CodeSparksLogger
 {
     private CodeSparksLogger() {}
@@ -26,7 +28,7 @@ public final class CodeSparksLogger
         final Project project = CoreUtil.getCurrentlyOpenedProject();
         if (project == null)
         {
-            System.err.println("Project is null");
+            err.printf("%s: Project is null.\n", CodeSparksLogger.class);
             return null;
         }
         ITextView loggingTextView = textViewMap.get(project);

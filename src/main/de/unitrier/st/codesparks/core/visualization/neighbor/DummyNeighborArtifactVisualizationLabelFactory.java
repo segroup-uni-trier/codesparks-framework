@@ -26,13 +26,14 @@ public class DummyNeighborArtifactVisualizationLabelFactory extends ANeighborArt
 
     @Override
     public JLabel createNeighborArtifactLabel(
-            final AArtifact artifact
-            , final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
+            final AArtifact artifact,
+            final List<ANeighborArtifact> threadFilteredNeighborArtifactsOfLine
     )
     {
-        final ImageIcon imageIconFile = CoreUtil.getDefaultImageIcon();
-        final CodeSparksGraphics graphics = getGraphics(imageIconFile.getIconWidth(), imageIconFile.getIconHeight());
-        graphics.drawImage(imageIconFile.getImage(), 0, 0, null);
+        final ImageIcon imageIcon = CoreUtil.getDefaultImageIcon();
+        assert imageIcon != null;
+        final CodeSparksGraphics graphics = getGraphics(imageIcon.getIconWidth(), imageIcon.getIconHeight());
+        graphics.drawImage(imageIcon.getImage(), 0, 0, null);
         return makeLabel(graphics);
     }
 }

@@ -7,7 +7,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.RegisterToolWindowTask;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -18,6 +17,8 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.Processor;
 import com.intellij.util.ui.components.BorderLayoutPanel;
+import de.unitrier.st.codesparks.core.ACodeSparksFlow;
+import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
@@ -89,10 +90,14 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
 
             final String name = LocalizationUtil.getLocalizedString("codesparks.ui.artifactpopup.displayname");
             final Project project = CoreUtil.getCurrentlyOpenedProject();
+            assert project != null;
             final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
             ToolWindow popupToolWindow = toolWindowManager.getToolWindow(name);
             if (popupToolWindow == null)
-            {//noinspection UnstableApiUsage
+            {
+                final CodeSparksFlowManager codeSparksFlowManager = CodeSparksFlowManager.getInstance();
+                final ImageIcon imageIcon = codeSparksFlowManager.getImageIcon();
+                //noinspection UnstableApiUsage
                 popupToolWindow = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
                         name
                         , ToolWindowAnchor.RIGHT
@@ -102,7 +107,7 @@ public abstract class AArtifactVisualizationMouseListener extends MouseAdapter
                         , true
                         , true
                         , null
-                        , IconLoader.getIcon("/icons/profiling_13x12.png", getClass())
+                        , imageIcon
                         , () -> "CodeSparks " + name
                 ));
             }

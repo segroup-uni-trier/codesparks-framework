@@ -39,6 +39,7 @@ import de.unitrier.st.codesparks.core.visualization.ADataVisualizer;
 import de.unitrier.st.codesparks.core.visualization.ArtifactVisualizationLabelFactoryCache;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -372,5 +373,13 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
     public void registerArtifactClassDisplayNameProvider(final IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
     {
         this.artifactClassDisplayNameProvider = artifactClassDisplayNameProvider;
+    }
+
+    /**
+     * Override to replace the image icon, e.g. used by the tool windows.
+     */
+    protected ImageIcon getImageIcon()
+    {
+        return CoreUtil.getDefaultImageIcon();
     }
 }

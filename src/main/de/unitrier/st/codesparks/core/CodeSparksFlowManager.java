@@ -3,6 +3,8 @@
  */
 package de.unitrier.st.codesparks.core;
 
+import javax.swing.*;
+
 public final class CodeSparksFlowManager
 {
     private CodeSparksFlowManager() {}
@@ -24,21 +26,32 @@ public final class CodeSparksFlowManager
         return instance;
     }
 
-    private ACodeSparksFlow profilingFlow;
+    private ACodeSparksFlow codeSparksFlow;
 
     public ACodeSparksFlow getCurrentCodeSparksFlow()
     {
         synchronized (this)
         {
-            return profilingFlow;
+            return codeSparksFlow;
         }
     }
 
-    public void setCurrentCodeSparksFlow(ACodeSparksFlow profilingFlow)
+    public void setCurrentCodeSparksFlow(ACodeSparksFlow codeSparksFlow)
     {
         synchronized (this)
         {
-            this.profilingFlow = profilingFlow;
+            this.codeSparksFlow = codeSparksFlow;
+        }
+    }
+
+    public ImageIcon getImageIcon()
+    {
+        if (codeSparksFlow != null)
+        {
+            return codeSparksFlow.getImageIcon();
+        } else
+        {
+            return CoreUtil.getDefaultImageIcon();
         }
     }
 }

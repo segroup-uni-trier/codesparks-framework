@@ -11,7 +11,7 @@ import javax.swing.*;
 
 public class DummyArtifactVisualizationLabelFactory extends AArtifactVisualizationLabelFactory
 {
-    public DummyArtifactVisualizationLabelFactory() { super(null);}
+    public DummyArtifactVisualizationLabelFactory() {super(null);}
 
     public DummyArtifactVisualizationLabelFactory(final int sequence)
     {
@@ -21,9 +21,10 @@ public class DummyArtifactVisualizationLabelFactory extends AArtifactVisualizati
     @Override
     public JLabel createArtifactLabel(@NotNull final AArtifact artifact)
     {
-        final ImageIcon imageIconFile = CoreUtil.getDefaultImageIcon();
-        final CodeSparksGraphics graphics = getGraphics(imageIconFile.getIconWidth(), imageIconFile.getIconHeight());
-        graphics.drawImage(imageIconFile.getImage(), 0, 0, null);
+        final ImageIcon imageIcon = CoreUtil.getDefaultImageIcon();
+        assert imageIcon != null;
+        final CodeSparksGraphics graphics = getGraphics(imageIcon.getIconWidth(), imageIcon.getIconHeight());
+        graphics.drawImage(imageIcon.getImage(), 0, 0, null);
         return makeLabel(graphics);
     }
 }
