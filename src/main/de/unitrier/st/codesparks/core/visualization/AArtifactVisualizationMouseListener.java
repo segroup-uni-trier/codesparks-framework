@@ -17,7 +17,6 @@ import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.Processor;
 import com.intellij.util.ui.components.BorderLayoutPanel;
-import de.unitrier.st.codesparks.core.ACodeSparksFlow;
 import de.unitrier.st.codesparks.core.CodeSparksFlowManager;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;

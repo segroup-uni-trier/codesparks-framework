@@ -17,6 +17,7 @@ public class DefaultArtifactPool implements IArtifactPool
         this.artifacts = new HashMap<>();
     }
 
+    @SuppressWarnings("unused")
     public DefaultArtifactPool(final IArtifactClassDisplayNameProvider artifactClassDisplayNameProvider)
     {
         this.artifacts = new HashMap<>();

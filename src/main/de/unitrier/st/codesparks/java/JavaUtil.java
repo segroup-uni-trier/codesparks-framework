@@ -282,17 +282,12 @@ public final class JavaUtil
         final PsiParameter[] psiParameters =
                 ApplicationManager.getApplication().runReadAction((Computable<PsiParameter[]>) () -> method.getParameterList().getParameters());
         final Project project = CoreUtil.getCurrentlyOpenedProject();
+        assert project != null;
         for (final PsiParameter parameter : psiParameters)
         {
-            // final PsiParameter workParameter = parameter;
-
             String type = DumbService.getInstance(project).runReadActionInSmartMode(() -> {
-//            String type = ApplicationManager.getApplication().runReadAction((Computable<String>) () -> {
-//                PsiType parameterType = workParameter.getType();
                 final PsiType parameterType = parameter.getType();
-
                 String parameterTypeCanonicalText = parameterType.getCanonicalText();
-
                 if (!parameterTypeCanonicalText.contains("."))
                 {
                     for (final String typeName : primitiveDataTypeNames)
@@ -314,7 +309,6 @@ public final class JavaUtil
                     { // Is an array type!
                         return parameterTypeCanonicalText;
                     }
-//                    PsiFile containingFile = workParameter.getContainingFile();
                     final PsiFile containingFile = parameter.getContainingFile();
 
                     final String packageName = ((PsiJavaFile) containingFile).getPackageName();
@@ -359,21 +353,14 @@ public final class JavaUtil
         return psiParameterBuilder.toString();
     }
 
-
     public static boolean isClassArtifact(final AArtifact artifact)
     {
         return isArtifactOfType(artifact, JavaClassArtifact.class);
-//        final Class<? extends AArtifact> artifactClass = artifact.getClass();
-//        final boolean isClassArtifact = artifactClass.isAnnotationPresent(JavaClassArtifact.class);
-//        return isClassArtifact;
     }
 
     public static boolean isMethodArtifact(final AArtifact artifact)
     {
         return isArtifactOfType(artifact, JavaMethodArtifact.class);
-//        final Class<? extends AArtifact> artifactClass = artifact.getClass();
-//        final boolean isMethodArtifact = artifactClass.isAnnotationPresent(JavaMethodArtifact.class);
-//        return isMethodArtifact;
     }
 
     public static boolean isArtifactOfType(final AArtifact artifact, final Class<? extends Annotation> annotationType)

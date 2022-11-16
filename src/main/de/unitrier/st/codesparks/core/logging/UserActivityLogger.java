@@ -40,8 +40,8 @@ public final class UserActivityLogger implements IUserActivityLogger, IEditorCov
         synchronized (this)
         {
             final Project project = CoreUtil.getCurrentlyOpenedProject();
-
-            Calendar calendar = new GregorianCalendar();
+            assert project != null;
+            final String projectName = project.getName();
             String logFilePath =
                     System.getProperty("user.home")
                             .concat(File.separator)
@@ -49,19 +49,20 @@ public final class UserActivityLogger implements IUserActivityLogger, IEditorCov
                             .concat(File.separator)
                             .concat("user-activity-logging")
                             .concat(File.separator)
-                            .concat(project.getName())
+                            .concat(projectName)
                             .concat(File.separator);
 
-            Path path = Paths.get(logFilePath);
+            final Path path = Paths.get(logFilePath);
             try
             {
                 if (!Files.exists(path))
                 {
                     Files.createDirectories(path);
                 }
-                long time = calendar.getTime().getTime();
-                File file = new File(logFilePath.concat(String.valueOf(time)).concat("_user_activity.log"));
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                final Calendar calendar = new GregorianCalendar();
+                final long time = calendar.getTime().getTime();
+                final File file = new File(logFilePath.concat(String.valueOf(time)).concat("_user_activity.log"));
+                final FileOutputStream fileOutputStream = new FileOutputStream(file);
                 bw = new BufferedWriter(new OutputStreamWriter(fileOutputStream));
             } catch (IOException e)
             {
