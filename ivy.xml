@@ -12,6 +12,8 @@
         <dependency org="org.apache.commons" name="commons-math3" rev="3.6.1" transitive="false"/>
         <!-- Kernel Based Density Estimation; TODO: Move to JPT -->
         <dependency org="com.github.haifengl" name="smile-math" rev="2.6.0" transitive="false"/>
+        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <dependency org="commons-io" name="commons-io" rev="2.11.0" transitive="false"/>
 
         <!-- https://mvnrepository.com/artifact/com.jetbrains.intellij.python/python-psi -->
         <!--

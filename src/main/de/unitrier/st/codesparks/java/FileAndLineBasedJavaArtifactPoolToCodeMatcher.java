@@ -10,10 +10,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.IArtifactPool;
 import de.unitrier.st.codesparks.core.matching.IArtifactPoolToCodeMatcher;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
+import org.apache.commons.io.FilenameUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,7 +51,7 @@ public final class FileAndLineBasedJavaArtifactPoolToCodeMatcher implements IArt
             final String canonicalPath = file.getCanonicalPath();
             assert canonicalPath != null;
 
-            final String fileName = canonicalPath.replace('/', '\\');
+            final String fileName = FilenameUtils.separatorsToSystem(canonicalPath);
 
             final List<AArtifact> artifactsOfCurrentFile = artifacts.stream()
                     .filter(artifact -> artifact.getFileName().equals(fileName))
