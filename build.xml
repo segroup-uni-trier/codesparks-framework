@@ -127,6 +127,7 @@
     </target>
 
     <property name="codesparks-core.jar" value="codesparks-core.jar"/>
+    <property name="codesparks-core-sources.jar" value="codesparks-core-sources.jar"/>
 
     <target name="jar" depends="compile">
         <delete file="${codesparks-core.jar}"/>
@@ -134,6 +135,12 @@
              destfile="${codesparks-core.jar}"
         >
             <fileset dir="${resources.dir}"/>
+        </jar>
+        <delete file="${codesparks-core-sources.jar}"/>
+        <jar basedir="${src.dir}"
+             destfile="${codesparks-core-sources.jar}"
+        >
+        
         </jar>
     </target>
 
