@@ -3,7 +3,7 @@
  */
 package de.unitrier.st.codesparks.core.properties;
 
-import de.unitrier.st.codesparks.core.service.CodeSparksInstanceService;
+import de.unitrier.st.codesparks.core.CoreUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,16 +19,12 @@ public final class PropertiesUtil
 
     static
     {
-        String errMessage = "There is no implementation of the interface " + CodeSparksInstanceService.class + "! Please create an implementation " +
-                "and register that implementation as 'applicationService' in the plugin-xml. See https://jetbrains" +
-                ".org/intellij/sdk/docs/basics/plugin_structure/plugin_services.html";
         try
         {
-            final CodeSparksInstanceService instance = CodeSparksInstanceService.getInstance();
-            PLUGIN_PATH = instance.getPluginPathString();
+            PLUGIN_PATH = CoreUtil.getPluginPathString();
         } catch (NullPointerException e)
         {
-            System.err.println(errMessage);
+            e.printStackTrace();
             PLUGIN_PATH = "";
         }
     }

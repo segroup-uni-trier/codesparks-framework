@@ -3,8 +3,11 @@
  */
 package de.unitrier.st.codesparks.core;
 
+import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
+import com.intellij.openapi.extensions.PluginDescriptor;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
@@ -17,9 +20,10 @@ import com.intellij.util.ui.UIUtil;
 import de.unitrier.st.codesparks.core.data.ArtifactPoolManager;
 import de.unitrier.st.codesparks.core.data.IArtifactPool;
 import de.unitrier.st.codesparks.core.data.IPsiNavigable;
-import de.unitrier.st.codesparks.core.service.CodeSparksInstanceService;
 
 import javax.swing.*;
+import java.net.URL;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Optional;
@@ -134,11 +138,63 @@ public final class CoreUtil
         return first.orElse(null);
     }
 
+    public static Path getPluginPath()
+    {
+        final PluginDescriptor pluginDescriptor = PluginManager.getPluginByClass(CoreUtil.class);
+        if (pluginDescriptor == null)
+        {
+            return null;
+        }
+        //noinspection UnnecessaryLocalVariable
+        final Path pluginPath = pluginDescriptor.getPluginPath();
+        return pluginPath;
+    }
+
+    public static String getAbsolutePluginPathString()
+    {
+        final Path pluginPath = getPluginPath();
+        if (pluginPath == null)
+        {
+            return null;
+        }
+
+        //noinspection UnnecessaryLocalVariable
+        final String pluginPathString = pluginPath.toAbsolutePath().toString();
+        return pluginPathString;
+    }
+
+    public static String getPluginPathString()
+    {
+        final Path pluginPath = getPluginPath();
+        if (pluginPath == null)
+        {
+            return null;
+        }
+        //noinspection UnnecessaryLocalVariable
+        final String pluginPathString = pluginPath.toString();
+        return pluginPathString;
+    }
+
+    public static PluginId getPluginId()
+    {
+        final PluginDescriptor pluginDescriptor = PluginManager.getPluginByClass(CoreUtil.class);
+        if (pluginDescriptor == null)
+        {
+            return null;
+        }
+        //noinspection UnnecessaryLocalVariable
+        final PluginId pluginId = pluginDescriptor.getPluginId();
+        return pluginId;
+    }
+
     public static ImageIcon getDefaultImageIcon()
     {
-        final CodeSparksInstanceService service = CodeSparksInstanceService.getInstance();
-        assert service != null;
-        return service.getDefaultPluginImageIcon();
+        final URL resource = CoreUtil.class.getResource("/icons/codesparks.png");
+        if (resource == null)
+        {
+            return null;
+        }
+        return new ImageIcon(resource);
     }
 
     public static ToolWindow getOrCreateToolWindowWithId(final Project project, final String toolWindowId)
