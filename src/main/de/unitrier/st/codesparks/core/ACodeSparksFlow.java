@@ -274,9 +274,12 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         final ContentManager contentManager = codeSparksToolWindow.getContentManager();
         final ArtifactOverview artifactOverview = ArtifactOverview.getInstance();
         artifactOverview.setArtifactPool(artifactPool);
-        final Boolean threadVisualizationsEnabled = PropertiesUtil.getBooleanPropertyValueOrDefault(PropertiesFile.USER_INTERFACE_PROPERTIES,
-                PropertyKey.THREAD_VISUALIZATIONS_ENABLED, true);
-        artifactOverview.setFilterByThreadPanelVisible(threadVisualizationsEnabled);
+        final Boolean threadFilterAreaVisible = PropertiesUtil.getBooleanPropertyValueOrDefault(
+                PropertiesFile.USER_INTERFACE_PROPERTIES,
+                PropertyKey.OVERVIEW_WINDOW_THREAD_FILTER_AREA_VISIBLE,
+                true
+        );
+        artifactOverview.setFilterByThreadPanelVisible(threadFilterAreaVisible);
         final String artifactOverviewDisplayName = LocalizationUtil.getLocalizedString("codesparks.ui.artifactoverview.displayname");
         final ContentFactory contentFactory = ContentFactory.getInstance();
         final Content content = contentFactory.createContent(artifactOverview.getRootPanel(), artifactOverviewDisplayName, true);

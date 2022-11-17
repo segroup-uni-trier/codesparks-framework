@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.visualization.settings;
 
@@ -19,7 +19,6 @@ public class ThreadVisualizationConfigurable implements Configurable
 {
     public ThreadVisualizationConfigurable()
     {
-        //final CodeSparksSettings service = ServiceManager.getService(CodeSparksSettings.class);
         final CodeSparksSettings codeSparksSettings = ApplicationManager.getApplication().getService(CodeSparksSettings.class);
         codeSparksSettings.registerConfigurable(this);
     }
@@ -41,7 +40,7 @@ public class ThreadVisualizationConfigurable implements Configurable
     @Override
     public boolean isModified()
     {
-        CheckBoxComponentWrapper instance = ThreadVisualizationConfigurableComponentWrapper.getInstance();
+        final CheckBoxComponentWrapper instance = ThreadVisualizationConfigurableComponentWrapper.getInstance();
         final boolean checkBoxValue = instance.getCheckBoxValue();
         final boolean formerCheckBoxValue = instance.getFormerCheckBoxValue();
         return checkBoxValue != formerCheckBoxValue;
@@ -50,9 +49,9 @@ public class ThreadVisualizationConfigurable implements Configurable
     @Override
     public void apply()
     {
-        CheckBoxComponentWrapper instance = ThreadVisualizationConfigurableComponentWrapper.getInstance();
+        final CheckBoxComponentWrapper instance = ThreadVisualizationConfigurableComponentWrapper.getInstance();
         final boolean checkBoxValue = instance.getCheckBoxValue();
-        PropertiesUtil.setPropertyValue(PropertiesFile.USER_INTERFACE_PROPERTIES, PropertyKey.THREAD_VISUALIZATIONS_ENABLED, checkBoxValue);
+        PropertiesUtil.setPropertyValue(PropertiesFile.USER_INTERFACE_PROPERTIES, PropertyKey.OVERVIEW_WINDOW_THREAD_FILTER_AREA_VISIBLE, checkBoxValue);
         instance.setFormerCheckBoxValue(checkBoxValue);
     }
 }
