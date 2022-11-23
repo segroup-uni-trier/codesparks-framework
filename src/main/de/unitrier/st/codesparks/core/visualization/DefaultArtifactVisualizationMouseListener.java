@@ -18,7 +18,7 @@ public class DefaultArtifactVisualizationMouseListener extends AArtifactVisualiz
             final AMetricIdentifier primaryMetricIdentifier
     )
     {
-        super(component, new Dimension(550, 175), artifact, primaryMetricIdentifier);
+        super(component, new Dimension(550, 70), artifact, primaryMetricIdentifier);
     }
 
     @Override

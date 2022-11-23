@@ -1,8 +1,9 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.visualization;
 
+import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.AMetricIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -16,13 +17,34 @@ public class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualiza
 {
     private final IMetricValueColorCodingStrategy metricValueColorCodingStrategy;
 
+    @SafeVarargs
+    public DefaultArtifactVisualizationLabelFactory(
+            final AMetricIdentifier primaryMetricIdentifier,
+            final int sequence,
+            final int xOffsetLeft,
+            final IMetricValueColorCodingStrategy metricValueColorCodingStrategy,
+            final Class<? extends AArtifact>... artifactClasses
+    )
+    {
+        super(primaryMetricIdentifier, sequence, xOffsetLeft, artifactClasses);
+        this.metricValueColorCodingStrategy = metricValueColorCodingStrategy;
+    }
+
     public DefaultArtifactVisualizationLabelFactory(
             final AMetricIdentifier primaryMetricIdentifier,
             final IMetricValueColorCodingStrategy metricValueColorCodingStrategy
     )
     {
-        super(primaryMetricIdentifier, 0);
+        super(primaryMetricIdentifier);
         this.metricValueColorCodingStrategy = metricValueColorCodingStrategy;
+    }
+
+    public DefaultArtifactVisualizationLabelFactory(
+            final AMetricIdentifier primaryMetricIdentifier
+    )
+    {
+        super(primaryMetricIdentifier);
+        this.metricValueColorCodingStrategy = null;
     }
 
     @Override
@@ -37,7 +59,7 @@ public class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualiza
          */
 
         final Object metricValue = artifact.getMetricValue(primaryMetricIdentifier);
-        final String metricValueText = primaryMetricIdentifier.getValueDisplayString(metricValue);
+        final String metricValueText = primaryMetricIdentifier.getShortDisplayString() + ": " + primaryMetricIdentifier.getValueDisplayString(metricValue);
         final CodeSparksGraphics graphics = getGraphics(lineHeight);
         final double metricValueTextWidth = graphics.stringWidth(metricValueText);
         /*
@@ -46,7 +68,14 @@ public class DefaultArtifactVisualizationLabelFactory extends AArtifactVisualiza
         final int HORIZONTAL_PADDING = 6;
         final int rectangleWidth = (int) (HORIZONTAL_PADDING + metricValueTextWidth + HORIZONTAL_PADDING);
         final Rectangle frame = new Rectangle(X_OFFSET, Y_OFFSET, rectangleWidth, lineHeight - 3);
-        final Color metricValueColor = metricValueColorCodingStrategy.getMetricValueColor(metricValue);
+        final Color metricValueColor;
+        if (metricValueColorCodingStrategy != null)
+        {
+            metricValueColor = metricValueColorCodingStrategy.getMetricValueColor(metricValue);
+        } else
+        {
+            metricValueColor = JBColor.LIGHT_GRAY;
+        }
         graphics.setColor(metricValueColor);
         graphics.fillRectangle(frame);
         /*
