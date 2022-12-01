@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
@@ -135,7 +135,8 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
             startAngle -= arcRatio; // rotate the startAngle
         }
 
-        graphics.setColor(JBColor.DARK_GRAY);
+        graphics.setColor(JBColor.GRAY);
+//        graphics.setColor(Color.decode("#404040"));
         graphics.drawOval((ThreadRadarConstants.CIRCLE_FRAMESIZE / 2) - (ThreadRadarConstants.CIRCLESIZE / 2),
                 (ThreadRadarConstants.CIRCLE_FRAMESIZE / 2) - (ThreadRadarConstants.CIRCLESIZE / 2),
                 ThreadRadarConstants.CIRCLESIZE, ThreadRadarConstants.CIRCLESIZE);
@@ -145,6 +146,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
         final Font currentFont = graphics.getFont();
         final Font newFont = currentFont.deriveFont(currentFont.getSize() * ThreadRadarConstants.CIRCLESIZE * 0.02f);
         graphics.setFont(newFont);
+        graphics.setColor(JBColor.DARK_GRAY);
         int labelStartAngle = (int) (ThreadVisualizationUtil.getStartAngle(ThreadRadarConstants.RADIUS,
                 ThreadRadarConstants.LABELRADIUS) * -1);//calcStartAngle() * -1; //-65
         final int arcAngle = 32;
@@ -200,7 +202,7 @@ public class ThreadRadarLabelFactory extends AArtifactVisualizationLabelFactory
         final JLabel jLabel = makeLabel(graphics);
 
         for (final MouseListener mouseListener : jLabel.getMouseListeners())
-        {// Is necessary since there is some kind of caching implemented in the jetbrains ide core. Otherwise every listener would
+        {// Is necessary since there is some kind of caching implemented in the jetbrains ide core. Otherwise, every listener would
             // trigger each time a click occurs. For each click a new listener will be attached!
             jLabel.removeMouseListener(mouseListener);
         }

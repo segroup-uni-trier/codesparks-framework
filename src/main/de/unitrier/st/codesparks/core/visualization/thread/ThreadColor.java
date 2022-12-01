@@ -14,14 +14,11 @@ public final class ThreadColor
 {
     private ThreadColor() {}
 
-//    private static final int nrOfColors = 3;
-    private static final int nrOfColors = 6;
-
     private static final JBColor[] enabledColors = {
-//            new JBColor(Color.decode("#3E877F"), Color.decode("#3E877F")), // Green
 //            new JBColor(Color.decode("#B25283"), Color.decode("#B25283")), // Red
+//            new JBColor(Color.decode("#3E877F"), Color.decode("#3E877F")), // Green
 //            new JBColor(Color.decode("#5F4E95"), Color.decode("#5F4E95")), // Purple
-            // Don't forget to change the 'nrOfColors' accordingly
+//##############
             new JBColor(Color.decode("#1b9e77"), Color.decode("#1b9e77")), // greenish more into blue
             new JBColor(Color.decode("#7570b3"), Color.decode("#7570b3")), // purple
             new JBColor(Color.decode("#d95f02"), Color.decode("#d95f02")), // orange
@@ -34,7 +31,7 @@ public final class ThreadColor
 //            new JBColor(Color.decode("#999999"), Color.decode("#999999")),
 //            new JBColor(Color.decode("#777777"), Color.decode("#777777")),
 //            new JBColor(Color.decode("#555555"), Color.decode("#555555"))
-
+//##############
             new JBColor(Color.decode("#d9d9d9"), Color.decode("#d9d9d9")),
             new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd")),
             new JBColor(Color.decode("#969696"), Color.decode("#969696")),
@@ -50,6 +47,14 @@ public final class ThreadColor
 //            new JBColor(Color.decode("#bdbdbd"), Color.decode("#bdbdbd"))
     };
 
+    private static final int nrOfColors;
+
+    static
+    {
+        //noinspection ConstantConditions
+        nrOfColors = Math.min(enabledColors.length, disabledColors.length);
+    }
+
     private static final Map<JBColor, JBColor> toDisabledMap = new HashMap<>(nrOfColors);
 
     private static final Map<JBColor, JBColor> toEnabledMap = new HashMap<>(nrOfColors);
@@ -61,8 +66,7 @@ public final class ThreadColor
             toDisabledMap.put(enabledColors[i], disabledColors[i]);
             toEnabledMap.put(disabledColors[i], enabledColors[i]);
         }
-
-       // assert enabledColors.length == disabledColors.length;
+        // assert enabledColors.length == disabledColors.length;
     }
 
     public static JBColor getNextColor(final int i)
