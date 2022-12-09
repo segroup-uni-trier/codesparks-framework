@@ -46,15 +46,17 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
 
     public int sizeAccordingToCurrentThreadSelection()
     {
-        final long count = this.stream().filter(cluster -> cluster.stream()
-                .anyMatch(AThreadArtifact::isSelected)).count();
+        final long count = this.stream()
+                .filter(cluster -> cluster.stream().anyMatch(AThreadArtifact::isSelected))
+                .count();
         return (int) count;
     }
 
     public int sizeAccordingToCurrentThreadSelection(final IThreadSelectable threadSelectable)
     {
-        final long count = this.stream().filter(cluster ->
-                !threadSelectable.getSelectedThreadArtifactsOfCluster(cluster).isEmpty()).count();
+        final long count = this.stream()
+                .filter(cluster -> !threadSelectable.getSelectedThreadArtifactsOfCluster(cluster).isEmpty())
+                .count();
         return (int) count;
     }
 
@@ -67,9 +69,6 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
     /**
      * The distance ...
      *
-     * @param thr
-     * @param metricIdentifier
-     * @return
      */
     public double distToNearestCluster(final AThreadArtifact thr, final AMetricIdentifier metricIdentifier)
     {
@@ -86,9 +85,6 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
     }
 
     /**
-     * @param thr
-     * @param clusterOfThr
-     * @param metricIdentifier
      * @return A value of the fixed interval [-1,1]. A value close to 1 means that the data is appropriately clustered.
      */
     public double silhouette(final AThreadArtifact thr, final ThreadArtifactCluster clusterOfThr, final AMetricIdentifier metricIdentifier)
@@ -116,9 +112,6 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
     /**
      * The mean silhouette over all points of a cluster is a measure of how tightly grouped all the points in the cluster are.
      *
-     * @param cluster
-     * @param metricIdentifier
-     * @return
      */
     public double meanSilhouetteCoefficientOfCluster(final ThreadArtifactCluster cluster, final AMetricIdentifier metricIdentifier)
     {
@@ -140,8 +133,6 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
      * there are too many or too few clusters, as may occur when a poor choice of k is used in the clustering algorithm (e.g.: k-means),
      * some of the clusters will typically display much narrower silhouettes than the rest.
      *
-     * @param metricIdentifier
-     * @return
      */
     public double silhouetteCoefficientAsMeanOfEachElementSilhouette(final AMetricIdentifier metricIdentifier)
     {
@@ -162,8 +153,6 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
     /**
      * This is how it is implemented in the R package.
      *
-     * @param metricIdentifier
-     * @return
      */
     public double silhouetteCoefficientAsMeanOfEachClusterSilhouette(final AMetricIdentifier metricIdentifier)
     {
@@ -178,12 +167,14 @@ public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>
 
     public String toString(final AMetricIdentifier metricIdentifier)
     {
-        StringBuilder strb = new StringBuilder();
-        int cl = 0;
-        for (final ThreadArtifactCluster aThreadArtifacts : this)
+        final StringBuilder strb = new StringBuilder();
+//        int cl = 0;
+        for (final ThreadArtifactCluster cluster : this)
         {
-            strb.append("Cluster-").append(++cl).append("\n");
-            for (final AThreadArtifact aThreadArtifact : aThreadArtifacts)
+            final long id = cluster.getId();
+//            strb.append("Cluster-").append(++cl).append("\n");
+            strb.append("Cluster-").append(id).append("\n");
+            for (final AThreadArtifact aThreadArtifact : cluster)
             {
                 strb.append(aThreadArtifact.getIdentifier())
                         .append(" : ")
