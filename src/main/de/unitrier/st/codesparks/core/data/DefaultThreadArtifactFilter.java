@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
 package de.unitrier.st.codesparks.core.data;
 
@@ -10,7 +10,7 @@ public class DefaultThreadArtifactFilter implements IThreadArtifactFilter
 
     private final IThreadSelectable iThreadSelectable;
 
-    public DefaultThreadArtifactFilter(IThreadSelectable iThreadSelectable)
+    public DefaultThreadArtifactFilter(final IThreadSelectable iThreadSelectable)
     {
         this.iThreadSelectable = iThreadSelectable;
     }

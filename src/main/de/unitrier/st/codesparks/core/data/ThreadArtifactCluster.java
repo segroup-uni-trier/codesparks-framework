@@ -16,7 +16,7 @@ public class ThreadArtifactCluster extends ArrayList<AThreadArtifact>
 
     private final long id;
 
-    ThreadArtifactCluster()
+    public ThreadArtifactCluster()
     {
         id = getNextId();
     }
