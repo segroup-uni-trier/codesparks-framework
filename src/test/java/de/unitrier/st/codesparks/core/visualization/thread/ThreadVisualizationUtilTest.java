@@ -3,6 +3,8 @@
  */
 package de.unitrier.st.codesparks.core.visualization.thread;
 
+import de.unitrier.st.codesparks.core.data.KernelBasedDensityEstimationClustering;
+import de.unitrier.st.codesparks.core.data.ThreadArtifactClustering;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -38,6 +40,16 @@ public final class ThreadVisualizationUtilTest
     {
         final int discreteXValuedScaleWidth = ThreadVisualizationUtil.getDiscreteXValuedScaleWidth(5, 1D, 125);
         Assert.assertEquals(125, discreteXValuedScaleWidth);
+    }
+
+    @Test
+    public void testGetDrawPositions()
+    {
+//        PerformanceMetrics.RELATIVE_ARTIFACT_RUNTIME_TOTAL_RUNNABLE;
+//        KernelBasedDensityEstimationClustering.getInstance()
+//        ThreadArtifactClustering clustering = new ThreadArtifactClustering();
+//
+//        VisualThreadClusterPropertiesManager.getInstance()
     }
 
 }

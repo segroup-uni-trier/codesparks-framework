@@ -27,7 +27,8 @@ public final class ThreadVisualizationUtil
             if (cluster.stream().anyMatch(AThreadArtifact::isSelected))
             {
                 final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(cluster, i);
-                map.put(cluster, properties.getPosition());
+                final int position = properties.getPosition();
+                map.put(cluster, position);
             }
         }
 
@@ -44,7 +45,8 @@ public final class ThreadVisualizationUtil
             {
                 final ThreadArtifactCluster cluster = clustering.get(i);
                 final VisualThreadClusterProperties properties = propertiesManager.getOrDefault(cluster, i);
-                retMap.put(cluster, properties.getPosition());
+                final int position = properties.getPosition();
+                retMap.put(cluster, position);
             }
             return retMap;
         }

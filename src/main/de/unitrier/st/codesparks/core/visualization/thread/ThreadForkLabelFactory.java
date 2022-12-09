@@ -5,10 +5,12 @@ package de.unitrier.st.codesparks.core.visualization.thread;
 
 import com.intellij.ui.JBColor;
 import de.unitrier.st.codesparks.core.data.*;
+import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
 import de.unitrier.st.codesparks.core.visualization.AArtifactVisualizationLabelFactory;
 import de.unitrier.st.codesparks.core.visualization.CodeSparksGraphics;
 import de.unitrier.st.codesparks.core.visualization.VisConstants;
 import de.unitrier.st.codesparks.core.visualization.VisualizationUtil;
+import org.apache.commons.lang.ObjectUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -122,6 +124,17 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
         int clusterNum = 0;
         for (final ThreadArtifactCluster threadCluster : selectedClustering)
         {
+            if (!drawPositions.containsKey(threadCluster))
+            { // Workaround for the NullPointerException issue below.
+                System.err.println("ThreadCluster not in draw-positions map");
+                CodeSparksLogger.addText("ThreadCluster not in draw-positions map");
+                for (final AThreadArtifact threadArtifact : threadCluster)
+                {
+                    System.err.println(threadArtifact.getIdentifier());
+                    CodeSparksLogger.addText(threadArtifact.getIdentifier());
+                }
+            }
+
             if (!createDisabledViz && threadCluster.stream().noneMatch(AThreadArtifact::isSelected))
             { // In case the density based classification approach yields more than 3 clusters but only upt to three of them contain
                 // selected threads, skip
@@ -137,7 +150,15 @@ public final class ThreadForkLabelFactory extends AArtifactVisualizationLabelFac
                 clusterColor = ThreadColor.getDisabledColor(clusterColor);
             }
 
-            final int positionToDrawCluster = drawPositions.get(threadCluster);
+            Integer positionToDrawCluster;
+            // For some reason this statement sometimes causes a NullPointerException.
+            positionToDrawCluster = drawPositions.get(threadCluster);
+            if (positionToDrawCluster == null)
+            {   // The Workaround it to check whether the map contains a value for the threadCluster beforehand. See beginning of the loop.
+                System.err.println("'positionToDrawCluster' is null");
+                CodeSparksLogger.addText("'positionToDrawCluster' is null");
+                CodeSparksLogger.addText("Map 'drawPositions contains entry for the threadCluster='" + drawPositions.containsKey(threadCluster));
+            }
 
             final int clusterYPos = TOP_OFFSET + threadSquareYPos - positionToDrawCluster * threadSquareOffset;
 
