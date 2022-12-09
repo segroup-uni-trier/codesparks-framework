@@ -3,8 +3,6 @@
  */
 package de.unitrier.st.codesparks.core.data;
 
-import de.unitrier.st.codesparks.core.visualization.popup.IThreadSelectable;
-
 import java.util.*;
 
 public class ThreadArtifactClustering extends ArrayList<ThreadArtifactCluster>

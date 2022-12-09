@@ -1,10 +1,7 @@
 /*
- * Copyright (c) 2021. Oliver Moseler
+ * Copyright (c) 2022. Oliver Moseler
  */
-package de.unitrier.st.codesparks.core.visualization.popup;
-
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+package de.unitrier.st.codesparks.core.data;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -14,7 +11,7 @@ import java.util.stream.Collectors;
 
 public abstract class AThreadSelectable implements IThreadSelectable
 {
-    AThreadSelectable()
+    protected AThreadSelectable()
     {
         componentsToRepaintOnSelection = new ArrayList<>();
     }

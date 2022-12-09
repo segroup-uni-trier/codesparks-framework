@@ -2,10 +2,7 @@
  * Copyright (c) 2021. Oliver Moseler
  */
 
-package de.unitrier.st.codesparks.core.visualization.popup;
-
-import de.unitrier.st.codesparks.core.data.AThreadArtifact;
-import de.unitrier.st.codesparks.core.data.ThreadArtifactCluster;
+package de.unitrier.st.codesparks.core.data;
 
 import java.util.Set;
 
