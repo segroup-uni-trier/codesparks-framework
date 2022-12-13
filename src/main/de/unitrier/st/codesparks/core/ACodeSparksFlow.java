@@ -76,6 +76,7 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
                 ArtifactOverview.getInstance().filterOverView();
             }
         });
+        CodeSparksLogger.addText("Initialised CodeSparks flow.");
     }
 
     public Project getProject()

@@ -75,19 +75,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="commons-math3-3.6.1">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/commons-math3-3.6.1.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MODULE_DIR$/lib/commons-math3-3.6.1-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/commons-math3-3.6.1-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="commons-io-2.11.0">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/commons-io-2.11.0.jar!/" />
