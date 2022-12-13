@@ -106,9 +106,6 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
     private boolean collectData()
     {
-//        if (dataProvider != null)
-//        {
-//            return dataProvider.collectData();
         if (dataCollector != null)
         {
             return dataCollector.collectData();
@@ -121,9 +118,6 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
     private IArtifactPool processData()
     {
-//        if (dataProvider != null)
-//        {
-//            return dataProvider.processData();
         if (dataProcessor != null)
         {
             return dataProcessor.processData();
@@ -136,9 +130,6 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
     private void postProcess(final IArtifactPool artifactPool)
     {
-//        if (dataProvider != null)
-//        {
-//            dataProvider.postProcess(artifactPool);
         if (dataProcessor != null)
         {
             dataProcessor.postProcess(artifactPool);

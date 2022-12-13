@@ -5,23 +5,14 @@ package de.unitrier.st.codesparks.core;
 
 public abstract class ADataProvider implements IDataProvider
 {
-    private IDataCollector dataCollector;
-    private IDataProcessor dataProcessor;
-
     public IDataCollector getDataCollector()
     {
-        return dataCollector;
+        return this;
     }
 
     public IDataProcessor getDataProcessor()
     {
-        return dataProcessor;
-    }
-
-    protected ADataProvider(final IDataCollector dataCollector, final IDataProcessor dataProcessor)
-    {
-        this.dataCollector = dataCollector;
-        this.dataProcessor = dataProcessor;
+        return this;
     }
 
     protected ADataProvider() { }
