@@ -7,30 +7,40 @@ import de.unitrier.st.codesparks.core.data.IArtifactPool;
 
 public abstract class ADataProvider implements IDataProvider
 {
-    private final IDataCollector profilingDataCollector;
-    private final IDataProcessor profilingDataProcessor;
+    private final IDataCollector dataCollector;
+    private final IDataProcessor dataProcessor;
 
-    protected ADataProvider(final IDataCollector profilingDataCollector, final IDataProcessor profilingDataProcessor)
+    public IDataCollector getDataCollector()
     {
-        this.profilingDataCollector = profilingDataCollector;
-        this.profilingDataProcessor = profilingDataProcessor;
+        return dataCollector;
+    }
+
+    public IDataProcessor getDataProcessor()
+    {
+        return dataProcessor;
+    }
+
+    protected ADataProvider(final IDataCollector dataCollector, final IDataProcessor dataProcessor)
+    {
+        this.dataCollector = dataCollector;
+        this.dataProcessor = dataProcessor;
     }
 
     @Override
     public final boolean collectData()
     {
-        return profilingDataCollector.collectData();
+        return dataCollector.collectData();
     }
 
     @Override
     public final IArtifactPool processData()
     {
-        return profilingDataProcessor.processData();
+        return dataProcessor.processData();
     }
 
     @Override
     public void postProcess(final IArtifactPool artifactPool)
     {
-        profilingDataProcessor.postProcess(artifactPool);
+        dataProcessor.postProcess(artifactPool);
     }
 }

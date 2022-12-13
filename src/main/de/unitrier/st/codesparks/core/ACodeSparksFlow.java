@@ -46,9 +46,11 @@ import java.util.Collection;
 
 public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpdater
 {
-    protected IDataProvider dataProvider;
-    protected ADataVisualizer dataVisualizer;
+    protected IDataCollector dataCollector;
+    protected IDataProcessor dataProcessor;
     protected IArtifactPoolToCodeMatcher matcher;
+    protected ADataVisualizer dataVisualizer;
+
     protected IArtifactPool artifactPool;
     protected final Project project;
 
@@ -84,10 +86,10 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         return project;
     }
 
-    public ADataVisualizer getDataVisualizer()
-    {
-        return dataVisualizer;
-    }
+//    public ADataVisualizer getDataVisualizer()
+//    {
+//        return dataVisualizer;
+//    }
 
     @Override
     public void updateEditorCoverLayerFor(final VirtualFile virtualFile)
@@ -104,9 +106,12 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
     private boolean collectData()
     {
-        if (dataProvider != null)
+//        if (dataProvider != null)
+//        {
+//            return dataProvider.collectData();
+        if (dataCollector != null)
         {
-            return dataProvider.collectData();
+            return dataCollector.collectData();
         } else
         {
             CodeSparksLogger.addText(String.format("%s: data collector not setup!", getClass()));
@@ -116,9 +121,12 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
     private IArtifactPool processData()
     {
-        if (dataProvider != null)
+//        if (dataProvider != null)
+//        {
+//            return dataProvider.processData();
+        if (dataProcessor != null)
         {
-            return dataProvider.processData();
+            return dataProcessor.processData();
         } else
         {
             CodeSparksLogger.addText(String.format("%s: data processor not setup!", getClass()));
@@ -128,9 +136,12 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
     private void postProcess(final IArtifactPool artifactPool)
     {
-        if (dataProvider != null)
+//        if (dataProvider != null)
+//        {
+//            dataProvider.postProcess(artifactPool);
+        if (dataProcessor != null)
         {
-            dataProvider.postProcess(artifactPool);
+            dataProcessor.postProcess(artifactPool);
         } else
         {
             CodeSparksLogger.addText(String.format("%s: data processor not setup!", getClass()));
