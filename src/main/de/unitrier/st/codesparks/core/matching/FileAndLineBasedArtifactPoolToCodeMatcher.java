@@ -54,7 +54,7 @@ public final class FileAndLineBasedArtifactPoolToCodeMatcher implements IArtifac
             final String fileName = FilenameUtils.separatorsToSystem(canonicalPath);
 
             final List<AArtifact> artifactsOfCurrentFile = artifacts.stream()
-                    .filter(artifact -> artifact.getFileName().equals(fileName))
+                    .filter(artifact -> FilenameUtils.separatorsToSystem(artifact.getFileName()).equals(fileName))
                     .collect(Collectors.toList());
 
             final PsiFile psiFile = ApplicationManager.getApplication().runReadAction((Computable<PsiFile>) () -> {

@@ -4,19 +4,14 @@
 
 package de.unitrier.st.codesparks.java;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import de.unitrier.st.codesparks.core.CoreUtil;
+import de.unitrier.st.codesparks.core.navigation.ArtifactNavigationUtil;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 
 public final class JavaArtifactNavigationUtil
@@ -24,30 +19,8 @@ public final class JavaArtifactNavigationUtil
     private JavaArtifactNavigationUtil() {}
 
     /**
-     * Only for class internal use. Try to navigate to the psi element given as parameter.
-     * If this is not possible, find the next parent that is navigatable and try to navigate to that psi element.
+     * Navigate (GoTo) to a Java method.
      *
-     * @param elementAt The psi element to navigate to.
-     */
-    private static boolean navigateToNextNavigatablePsi(final PsiElement elementAt)
-    {
-        if (elementAt instanceof NavigatablePsiElement)
-        {
-            ((NavigatablePsiElement) elementAt).navigate(true);
-        } else
-        {
-            final NavigatablePsiElement navigatablePsiElement = PsiTreeUtil.getParentOfType(elementAt, NavigatablePsiElement.class);
-            if (navigatablePsiElement == null)
-            {
-                return false;
-            }
-            // assert navigatablePsiElement != null;
-            navigatablePsiElement.navigate(true);
-        }
-        return true;
-    }
-
-    /**
      * @param methodIdentifier Fully qualified name of the method.
      * @return Whether a navigation could be performed.
      */
@@ -170,6 +143,8 @@ public final class JavaArtifactNavigationUtil
     }
 
     /**
+     * Navigate (GoTo) to a Java class.
+     *
      * @param clazzIdentifier The fully qualified class name.
      * @return Whether a navigation could be performed.
      */
@@ -191,51 +166,10 @@ public final class JavaArtifactNavigationUtil
     }
 
     /**
-     * @param fileName   The canonical path of the Java file.
-     * @param lineNumber The line number within the Java file.
-     * @return Whether a navigation could be performed.
-     */
-    public static boolean navigateToLineInFile(final String fileName, final int lineNumber)
-    {
-        final VirtualFileManager virtualFileManager = VirtualFileManager.getInstance();
-        final Path path = Paths.get(fileName);
-        final VirtualFile virtualFile = virtualFileManager.findFileByNioPath(path);
-        if (virtualFile == null)
-        {
-            return false;
-        }
-        final Project project = CoreUtil.getCurrentlyOpenedProject();
-        if (project == null)
-        {
-            return false;
-        }
-        final PsiManager psiManager = PsiManager.getInstance(project);
-        final PsiFile psiFile = psiManager.findFile(virtualFile);
-        if (psiFile == null)
-        {
-            return false;
-        }
-        final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
-        final Document document = psiDocumentManager.getDocument(psiFile);
-        if (document == null)
-        {
-            return false;
-        }
-        final int lineCount = document.getLineCount();
-        if (lineNumber > lineCount)
-        {
-            return false;
-        }
-        final int lineStartOffset = document.getLineStartOffset(lineNumber);
-        final PsiElement psiElement = ApplicationManager.getApplication().runReadAction(
-                (Computable<PsiElement>) () -> psiFile.findElementAt(lineStartOffset)
-        );
-        return navigateToNextNavigatablePsi(psiElement);
-    }
-
-    /**
+     * Navigate (GoTo) to a specific line in a Java class.
+     *
      * @param clazzIdentifier The fully qualified class name.
-     * @param lineNumber      The line number within the Java class.
+     * @param lineNumber      The line number within the class.
      * @return Whether a navigation could be performed.
      */
     public static boolean navigateToLineInClass(final String clazzIdentifier, final int lineNumber)
@@ -265,10 +199,12 @@ public final class JavaArtifactNavigationUtil
         }
         final int lineOffset = document.getLineStartOffset(lineNumber - 2);
         final PsiElement elementAt = psiClass.findElementAt(lineOffset);
-        return navigateToNextNavigatablePsi(elementAt);
+        return ArtifactNavigationUtil.navigateToNextNavigatablePsi(elementAt);
     }
 
     /**
+     * Navigate to a lambda expression within a class determined by a line number. Very simple heuristic!
+     *
      * @param clazzIdentifier The fully qualified name of the class in which the lambda is defined.
      * @param lineNumber      The line number that is somewhere in the body of the searched lambda expression.
      * @return Whether a navigation could be performed.

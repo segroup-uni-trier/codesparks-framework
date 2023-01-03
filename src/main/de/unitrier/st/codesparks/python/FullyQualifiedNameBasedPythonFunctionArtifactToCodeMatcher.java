@@ -1,4 +1,7 @@
-package java_code.core.matching;
+/*
+ * Copyright (c) 2022. Oliver Moseler
+ */
+package de.unitrier.st.codesparks.python;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -11,31 +14,46 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.python.psi.PyClass;
 import com.jetbrains.python.psi.PyFunction;
-import de.unitrier.st.insituprofiling.core.IProfilingResult;
-import de.unitrier.st.insituprofiling.core.IProfilingResultToCodeMatcher;
-import de.unitrier.st.insituprofiling.core.data.AProfilingArtifact;
-import java_code.core.PythonProfilingFunction;
+import de.unitrier.st.codesparks.core.data.AArtifact;
+import de.unitrier.st.codesparks.core.data.IArtifactPool;
+import de.unitrier.st.codesparks.core.matching.AArtifactPoolToCodeMatcher;
+import de.unitrier.st.codesparks.core.matching.ArtifactPoolToCodeMatcherUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Lucas Kreber, 2019
- * @author Oliver Moseler, 2023
+ * @author Oliver Moseler, 2022
  */
-public class FullyQualifiedNameBasedPythonFunctionArtifactToCodeMatcher implements IProfilingResultToCodeMatcher
+public class FullyQualifiedNameBasedPythonFunctionArtifactToCodeMatcher extends AArtifactPoolToCodeMatcher
 {
+    /**
+     * @param classes The classes extending AArtifact.
+     */
+    @SafeVarargs
+    public FullyQualifiedNameBasedPythonFunctionArtifactToCodeMatcher(final Class<? extends AArtifact>... classes)
+    {
+        super(classes);
+    }
+
     @Override
-    public Collection<AProfilingArtifact> matchResultsToCodeFiles(
-            final IProfilingResult profilingResult,
+    public Collection<AArtifact> matchArtifactsToCodeFiles(
+            final IArtifactPool artifactPool,
             final Project project,
             final VirtualFile... files
     )
     {
-        final Collection<AProfilingArtifact> matchingResults = new ArrayList<>();
-        if (profilingResult == null)
+        final Collection<AArtifact> matchingResults = new ArrayList<>();
+        if (artifactPool == null)
         {
             return matchingResults;
         }
+
+        final Class<? extends AArtifact> pythonFunctionArtifactClass = ArtifactPoolToCodeMatcherUtil
+                .findClassWithAnnotation(PythonFunctionArtifact.class, artifactClasses);
 
         final PsiManager psiManager = PsiManager.getInstance(project);
 
@@ -60,11 +78,15 @@ public class FullyQualifiedNameBasedPythonFunctionArtifactToCodeMatcher implemen
                 int lineNumber = StringUtil.offsetToLineNumber(psiFileText, pyFunctionTextOffset);
                 final String pyFunctionName = pyFunction.getName();
                 final String identifier = getPythonFunctionArtifactIdentifier(filePath, lineNumber, pyFunctionName);
-                AProfilingArtifact artifact = profilingResult.getArtifact(identifier);
+                AArtifact artifact = artifactPool.getArtifact(identifier);
                 if (artifact == null)
                 {
-                    artifact = new PythonProfilingFunction(pyFunctionName, identifier);
+                    // Note, the following function call assumes that there exists a constructor with exactly two parameters.
+                    // Here, 'pyFunctionName' and 'identifier'.
+                    artifact = ArtifactPoolToCodeMatcherUtil.instantiateArtifact(pythonFunctionArtifactClass, identifier, pyFunctionName);
                 }
+                // Alternatively:
+                // final AArtifact artifactPoolOrCreateArtifact = artifactPool.getOrCreateArtifact(pythonFunctionArtifactClass, identifier, pyFunctionName);
                 final PsiElement firstChild = pyFunction.getFirstChild();
                 artifact.setVisPsiElement(firstChild);
                 matchingResults.add(artifact);
@@ -94,8 +116,8 @@ public class FullyQualifiedNameBasedPythonFunctionArtifactToCodeMatcher implemen
      * <p>
      * Note, extend this class and override this method if a different identifier format is required, e.g., using '__qualname__' of Python functions.
      *
-     * @param filePath The path of the file (module) in which the function is defined.
-     * @param lineNumber The corresponding line number of the function in the file.
+     * @param filePath       The path of the file (module) in which the function is defined.
+     * @param lineNumber     The corresponding line number of the function in the file.
      * @param pyFunctionName The name of the Pythin function.
      * @return A string representing the fully qualified name of a python function with respect to the given parameters.
      */
