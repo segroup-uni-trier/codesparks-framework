@@ -3,37 +3,12 @@
     <dependencies>
         <!-- XML -->
         <dependency org="org.jdom" name="jdom2" rev="2.0.6" transitive="false"/>
-        <!-- Graphs, CCTs, Tries, Trees -->
-        <dependency org="org.jgrapht" name="jgrapht-core" rev="1.3.1" transitive="false"/>
-        <dependency org="org.jgrapht" name="jgrapht-io" rev="1.3.1" transitive="false"/>
-        <!-- MultiSet, see class ArtifactTrie -->
-        <dependency org="com.google.guava" name="guava" rev="30.1-jre" transitive="false"/>
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <!-- FilenameUtils -->
         <dependency org="commons-io" name="commons-io" rev="2.11.0" transitive="false"/>
-
         <!-- https://mvnrepository.com/artifact/com.jetbrains.intellij.python/python-psi -->
-        <!--
+        <!-- Python Psi Classes -->
         <dependency org="com.jetbrains.intellij.python" name="python-psi" rev="211.7628.21"/>
-        -->
-
-        <!-- Experiments -->
-        <!--
-        <dependency org="org.nd4j" name="nd4j-api" rev="1.0.0-beta7" transitive="true"/>
-        <dependency org="org.nd4j" name="nd4j-common" rev="1.0.0-beta7" transitive="true"/>
-        <dependency org="org.nd4j" name="nd4j-native" rev="1.0.0-beta7" transitive="true"/>
-        <dependency org="org.deeplearning4j" name="deeplearning4j-common" rev="1.0.0-beta7" transitive="false"/>
-        <dependency org="org.nd4j" name="nd4j-native-platform" rev="1.0.0-beta7" transitive="true"/>
-        <dependency org="org.bytedeco" name="javacpp" rev="1.5.3" transitive="false"/>
-        <dependency org="org.deeplearning4j" name="nearestneighbor-core" rev="1.0.0-beta7" transitive="false"/>
-        <dependency org="nz.ac.waikato.cms.weka" name="weka-stable" rev="3.8.5" transitive="false"/>
-        <dependency org="nz.ac.waikato.cms.weka.thirdparty" name="bounce" rev="0.18" transitive="false"/>
-        <dependency org="org.apache.spark" name="spark-network-common_2.12" rev="3.1.1" transitive="false"/>
-        <dependency org="org.apache.hadoop" name="hadoop-common" rev="3.3.0" transitive="false"/>
-        <dependency org="org.apache.spark" name="spark-unsafe_2.12" rev="3.1.1" transitive="false"/>
-        <dependency org="org.apache.spark" name="spark-mllib_2.12" rev="3.1.1" transitive="false"/>
-        <dependency org="org.apache.spark" name="spark-core_2.12" rev="3.1.1" transitive="false"/>
-        <dependency org="org.apache.hadoop" name="hadoop-mapreduce-client-core" rev="3.3.0" transitive="false"/>
-        <dependency org="org.scala-lang" name="scala-library" rev="2.12.13" transitive="false"/>
-        -->
+        <!-- https://mvnrepository.com/artifact/com.jetbrains.intellij.python/python-psi -->
     </dependencies>
 </ivy-module>

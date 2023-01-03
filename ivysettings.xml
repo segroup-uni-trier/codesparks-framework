@@ -1,0 +1,17 @@
+<ivysettings>
+    <settings defaultResolver="multiresolver"/>
+    <include url="ivysettings-public.xml"/>
+    <include url="ivysettings-shared.xml"/>
+    <include url="ivysettings-local.xml"/>
+    <include url="ivysettings-main-chain.xml"/>
+    <include url="ivysettings-default-chain.xml"/>
+    <resolvers>
+        <chain name="multiresolver">
+            <resolver ref="default"/>
+            <url name="jetbrains">
+                <artifact
+                        pattern="https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/python/[module]/[revision]/[artifact]-[revision].[ext]"/>
+            </url>
+        </chain>
+    </resolvers>
+</ivysettings>

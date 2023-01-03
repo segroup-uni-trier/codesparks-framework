@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="codesparks-core" basedir="." default="retrieve" xmlns:ivy="antlib:org.apache.ivy.ant">
 
+    <!-- Semantic Versioning, https://semver.org/ -->
+
+    <property name="major" value="1"/>
+    <property name="minor" value="0"/>
+    <property name="patch" value="0"/>
+
+    <property name="version" value="${major}.${minor}.${patch}"/>
+
     <!-- General Properties -->
 
     <property name="src.dir" value="src/main"/>
@@ -55,10 +63,12 @@
     </target>
 
     <target name="retrieve" depends="ivy-init" description="retrieve dependencies with ivy">
+        <ivy:settings file="ivysettings.xml"/>
         <ivy:retrieve/> <!-- Includes resolve -->
     </target>
 
-    <!-- Libs -->
+    <!-- Libs/Dependencies -->
+
     <property name="idea.version.windows" value="2022.2.4"/>
     <property name="idea.version.linux" value="222.4459.24"/>
     <property name="idea.version.mac" value="212.5284.40"/>
@@ -105,11 +115,11 @@
 
     <property environment="env"/>
 
-    <target name="compile" depends="clean-classes, def-libs, kotlin-init" unless="compilation-executed">
+    <target name="compile" depends="clean-classes, def-libs" unless="compilation-executed">
         <echo message="${jdk.home.intellij_idea}"/>
-        <echo message="OS Name is:         ${os.name}" />
-        <echo message="OS Architecture is: ${os.arch}" />
-        <echo message="OS Version is:      ${os.version}" />
+        <echo message="OS Name is:         ${os.name}"/>
+        <echo message="OS Architecture is: ${os.arch}"/>
+        <echo message="OS Version is:      ${os.version}"/>
         <!--
         <echo message="${is-mac}"/>
         <echo message="${is-linux}"/>
@@ -120,55 +130,91 @@
             <classpath>
                 <path refid="libs"/>
             </classpath>
-            <compilerarg line="-encoding UTF-8 -source 11 --system &quot;${env.JAVA_HOME}&quot; -target 11 -Xlint:-unchecked"/>
-            <withKotlin/>
+            <compilerarg
+                    line="-encoding UTF-8 -source 11 --system &quot;${env.JAVA_HOME}&quot; -target 11 -Xlint:-unchecked"/>
         </javac>
         <property name="compilation-executed" value="true"/>
     </target>
 
-    <property name="codesparks-core.jar" value="codesparks-core.jar"/>
-    <property name="codesparks-core-sources.jar" value="codesparks-core-sources.jar"/>
+    <!-- Jar -->
 
-    <target name="jar" depends="compile">
+    <property name="codesparks-core.jar" value="codesparks-core-${version}.jar"/>
+    <property name="codesparks-java.jar" value="codesparks-java-${version}.jar"/>
+    <property name="codesparks-python.jar" value="codesparks-python-${version}.jar"/>
+    <property name="codesparks-core-sources.jar" value="codesparks-core-${version}-sources.jar"/>
+    <property name="codesparks-java-sources.jar" value="codesparks-java-${version}-sources.jar"/>
+    <property name="codesparks-python-sources.jar" value="codesparks-python-${version}-sources.jar"/>
+
+    <property name="base.package.path" value="de/unitrier/st/codesparks"/>
+
+    <property name="codesparks-core.package.path" value="${base.package.path}/core"/>
+    <property name="codesparks-java.package.path" value="${base.package.path}/java"/>
+    <property name="codesparks-python.package.path" value="${base.package.path}/python"/>
+
+    <target name="jar-codesparks-core">
         <delete file="${codesparks-core.jar}"/>
         <jar basedir="${classes.dir}"
              destfile="${codesparks-core.jar}"
+             includes="${codesparks-core.package.path}/**/*"
         >
-            <fileset dir="${resources.dir}"/>
+            <fileset dir="${resources.dir}"
+                     includes="LICENCE.txt,
+                                NOTICE.txt
+                                icons/codesparks.png,
+                                icons/codesparks_not_visible_20x14.png,
+                                icons/codesparks_visible_20x13.png,
+                                svg/codesparks.svg,
+                                svg/codesparks_not_visible.svg,
+                                svg/codesparks_visible.svg
+                     "/>
         </jar>
         <delete file="${codesparks-core-sources.jar}"/>
         <jar basedir="${src.dir}"
              destfile="${codesparks-core-sources.jar}"
+             includes="${codesparks-core.package.path}/**/*"
         >
-        
         </jar>
     </target>
 
-    <!-- Kotlin -->
-
-    <property name="kotlin-compiler.version" value="1.7.10"/>
-    <property name="kotlin-compiler.file" value="${lib.dir}/kotlin-compiler-${kotlin-compiler.version}.zip"/>
-
-    <target name="kotlin-compiler-available">
-        <available file="${kotlin-compiler.file}" property="kotlin-compiler.available"/>
+    <target name="jar-codesparks-java">
+        <delete file="${codesparks-java.jar}"/>
+        <jar basedir="${classes.dir}"
+             destfile="${codesparks-java.jar}"
+             includes="${codesparks-java.package.path}/**/*"
+        >
+            <fileset dir="${resources.dir}"
+                     includes="LICENCE.txt,
+                                NOTICE.txt
+            "/>
+        </jar>
+        <delete file="${codesparks-java-sources.jar}"/>
+        <jar basedir="${src.dir}"
+             destfile="${codesparks-java-sources.jar}"
+             includes="${codesparks-java.package.path}/**/*"
+        >
+        </jar>
     </target>
 
-    <target name="kotlin-download" depends="kotlin-compiler-available" unless="kotlin-compiler.available">
-        <get
-                src="https://github.com/JetBrains/kotlin/releases/download/v${kotlin-compiler.version}/kotlin-compiler-${kotlin-compiler.version}.zip"
-                dest="${kotlin-compiler.file}" usetimestamp="true"/>
+    <target name="jar-codesparks-python">
+        <delete file="${codesparks-python.jar}"/>
+        <jar basedir="${classes.dir}"
+             destfile="${codesparks-python.jar}"
+             includes="${codesparks-python.package.path}/**/*"
+        >
+            <fileset dir="${resources.dir}"
+                     includes="LICENCE.txt,
+                                NOTICE.txt
+            "/>
+        </jar>
+        <delete file="${codesparks-python-sources.jar}"/>
+        <jar basedir="${src.dir}"
+             destfile="${codesparks-python-sources.jar}"
+             includes="${codesparks-python.package.path}/**/*"
+        >
+        </jar>
     </target>
 
-    <target name="kotlin-init" depends="kotlin-download">
-        <property name="kotlin-ant.jar" value="kotlin-ant.jar"/>
-        <unzip src="${kotlin-compiler.file}" dest="${lib.dir}" overwrite="false">
-            <patternset>
-                <include name="kotlinc/lib/*.jar"/>
-            </patternset>
-        </unzip>
-        <property name="kotlin.lib" value="${lib.dir}/kotlinc/lib/${kotlin-ant.jar}"/>
-        <typedef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}"/>
-    </target>
+    <target name="jar" depends="compile, jar-codesparks-core, jar-codesparks-java, jar-codesparks-python"/>
 
     <!-- Tests -->
 
@@ -184,35 +230,24 @@
         <echo message="Cleaned test class files"/>
     </target>
 
-    <!--
-    <path id="test-sources">
-        <pathelement location="${test.src.dir}"/>
-        <pathelement location="${src.dir}"/>
-    </path>
-    -->
-
     <!-- Used in the run-tests task of the build file from codesparks-jpt -->
-    <target name="compile-tests-only" depends="clean-test-classes, def-libs, kotlin-init">
+    <target name="compile-tests-only" depends="clean-test-classes, def-libs">
         <mkdir dir="${test.classes.dir}"/>
         <javac srcdir="${test.src.dir}" destdir="${test.classes.dir}" includeantruntime="false">
-            <!--<src refid="test-sources"/>-->
             <classpath>
                 <path refid="libs"/>
                 <pathelement location="${classes.dir}"/>
             </classpath>
-            <withKotlin/>
         </javac>
     </target>
 
     <target name="compile-tests" depends="clean-test-classes, compile">
         <mkdir dir="${test.classes.dir}"/>
         <javac srcdir="${test.src.dir}" destdir="${test.classes.dir}" includeantruntime="false">
-            <!--<src refid="test-sources"/>-->
             <classpath>
                 <path refid="libs"/>
                 <pathelement location="${classes.dir}"/>
             </classpath>
-            <withKotlin/>
         </javac>
     </target>
 
@@ -227,9 +262,7 @@
                 <fileset dir="${test.classes.dir}">
                     <include name="de/unitrier/st/codesparks/core/**/*Test*.class"/>
                     <!-- -->
-                    <exclude name="de/unitrier/st/codesparks/core/**/*de.unitrier.st.codesparks.jpt.stacksampling.TestUtil*.class"/>
                     <exclude name="de/unitrier/st/codesparks/core/**/ThreadClusterSilhouetteTest$1.class"/>
-                    <exclude name="de/unitrier/st/codesparks/core/**/ArtifactTrieTestUtil.class"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -246,9 +279,7 @@
                 <fileset dir="${test.classes.dir}">
                     <include name="de/unitrier/st/codesparks/core/**/*Test*.class"/>
                     <!-- -->
-                    <exclude name="de/unitrier/st/codesparks/core/**/*de.unitrier.st.codesparks.jpt.stacksampling.TestUtil*.class"/>
                     <exclude name="de/unitrier/st/codesparks/core/**/ThreadClusterSilhouetteTest$1.class"/>
-                    <exclude name="de/unitrier/st/codesparks/core/**/ArtifactTrieTestUtil.class"/>
                 </fileset>
             </batchtest>
         </junit>
