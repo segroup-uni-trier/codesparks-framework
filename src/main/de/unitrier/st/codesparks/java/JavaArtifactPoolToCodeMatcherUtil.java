@@ -32,10 +32,12 @@ public final class JavaArtifactPoolToCodeMatcherUtil
         );
     }
 
-    public static PsiPackage getPackageDeclarationFrom(final PsiFile psiFile)
+    public static Collection<PsiPackageStatement> getPackageStatementsFrom(final PsiFile psiFile)
     {
-        return ApplicationManager.getApplication().runReadAction(
-                (Computable<PsiPackage>) () -> PsiTreeUtil.findChildOfType(psiFile, PsiPackage.class)
-        );
+        //noinspection UnnecessaryLocalVariable
+        final Collection<PsiPackageStatement> psiPackageStatements =
+                ApplicationManager.getApplication().runReadAction((Computable<Collection<PsiPackageStatement>>) () ->
+                        PsiTreeUtil.findChildrenOfType(psiFile, PsiPackageStatement.class));
+        return psiPackageStatements;
     }
 }

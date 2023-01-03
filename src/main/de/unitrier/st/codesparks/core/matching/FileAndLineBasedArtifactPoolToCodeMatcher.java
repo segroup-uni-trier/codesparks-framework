@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Oliver Moseler
  */
 
-package de.unitrier.st.codesparks.java;
+package de.unitrier.st.codesparks.core.matching;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
@@ -13,7 +13,6 @@ import com.intellij.psi.*;
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.IArtifactPool;
 import de.unitrier.st.codesparks.core.logging.CodeSparksLogger;
-import de.unitrier.st.codesparks.core.matching.IArtifactPoolToCodeMatcher;
 import org.apache.commons.io.FilenameUtils;
 
 import java.util.ArrayList;
@@ -22,12 +21,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * It is assumed that each artifact stores the name of the canonical file (retrieved via getFileName())
+ * Each artifact is assumed to store the name of the canonical file (retrieved via getFileName())
  * and the line number within that file (retrieved via getLineNumber()) in which the artifact is defined.
+ * <p>
+ * Works for both, Python and Java artifacts.
  *
  * @author Oliver Moseler
  */
-public final class FileAndLineBasedJavaArtifactPoolToCodeMatcher implements IArtifactPoolToCodeMatcher
+public final class FileAndLineBasedArtifactPoolToCodeMatcher implements IArtifactPoolToCodeMatcher
 {
     @Override
     public Collection<AArtifact> matchArtifactsToCodeFiles(

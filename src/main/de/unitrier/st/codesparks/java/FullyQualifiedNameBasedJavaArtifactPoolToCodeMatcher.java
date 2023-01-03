@@ -63,22 +63,17 @@ public final class FullyQualifiedNameBasedJavaArtifactPoolToCodeMatcher extends 
             return matchedArtifacts;
         }
 
-        // Find the concrete class that is annotated with 'JavaMethodArtifact'.
+        // Find the concrete artifact class that is annotated with 'JavaMethodArtifact'.
         final Class<? extends AArtifact> methodArtifactClass = ArtifactPoolToCodeMatcherUtil
                 .findClassWithAnnotation(JavaMethodArtifact.class, artifactClasses);
-        // Find the concrete class that is annotated with 'JavaClassArtifact'.
+        // Find the concrete artifact class that is annotated with 'JavaClassArtifact'.
         final Class<? extends AArtifact> classArtifactClass = ArtifactPoolToCodeMatcherUtil
                 .findClassWithAnnotation(JavaClassArtifact.class, artifactClasses);
-        // Find the concrete class that is annotated with 'JavaPackageArtifact'.
+        // Find the concrete artifact class that is annotated with 'JavaPackageArtifact'.
         final Class<? extends AArtifact> packageArtifactClass = ArtifactPoolToCodeMatcherUtil
                 .findClassWithAnnotation(JavaPackageArtifact.class, artifactClasses);
 
-//        if (methodArtifactClass == null && classArtifactClass == null)
-//        {
-//            return matchedArtifacts;
-//        }
-
-        // Should only be used once per matching procedure because it has an internal state.
+        // An instance of 'JavaPsiClassNameHelper' should only be used once per matching procedure because it has an internal state.
         final JavaPsiClassNameHelper javaPsiClassNameHelper = new JavaPsiClassNameHelper();
         final PsiManager psiManager = PsiManager.getInstance(project);
         for (final VirtualFile file : files)
@@ -203,13 +198,22 @@ public final class FullyQualifiedNameBasedJavaArtifactPoolToCodeMatcher extends 
                     matchedArtifacts.add(classArtifact);
                 }
             }
+            // Match packages in the file
             if (packageArtifactClass != null)
             {
-                final PsiPackage packageDeclaration = JavaArtifactPoolToCodeMatcherUtil.getPackageDeclarationFrom(psiFile);
-                final String qualifiedName = packageDeclaration.getQualifiedName();
-
-                // TODO: match package artifacts
-
+                final Collection<PsiPackageStatement> psiPackageStatements = JavaArtifactPoolToCodeMatcherUtil.getPackageStatementsFrom(psiFile);
+                for (final PsiPackageStatement psiPackage : psiPackageStatements)
+                {
+                    final String packageName = psiPackage.getPackageName();
+                    AArtifact packageArtifact = artifactPool.getArtifact(packageName);
+                    if (packageArtifact == null)
+                    {
+                        packageArtifact = ArtifactPoolToCodeMatcherUtil.instantiateArtifact(packageArtifactClass, packageName);
+                    }
+                    final PsiElement lastChild = psiPackage.getLastChild();
+                    packageArtifact.setVisPsiElement(lastChild);
+                    matchedArtifacts.add(packageArtifact);
+                }
             }
         }
         return matchedArtifacts;
