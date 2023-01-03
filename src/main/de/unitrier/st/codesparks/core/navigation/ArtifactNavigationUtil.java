@@ -29,6 +29,8 @@ public final class ArtifactNavigationUtil
     public static boolean navigateToLineInFile(final String fileName, final int lineNumber)
     {
         final VirtualFileManager virtualFileManager = VirtualFileManager.getInstance();
+        // Alternative:
+//        final VirtualFile virtualFile = virtualFileManager.findFileByUrl("file://" + fileName);
         final Path path = Paths.get(fileName);
         final VirtualFile virtualFile = virtualFileManager.findFileByNioPath(path);
         if (virtualFile == null)
