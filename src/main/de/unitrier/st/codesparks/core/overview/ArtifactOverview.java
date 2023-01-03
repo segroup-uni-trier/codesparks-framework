@@ -665,40 +665,44 @@ public class ArtifactOverview
 
         tableModel.sortArtifacts(enabledArtifactMetricComparator); // Sort the artifacts in the table
 
-        //noinspection Convert2Lambda
-        artifactSortingComboBox.addItemListener(new ItemListener()
+        final int itemCount = artifactSortingComboBox.getItemCount();
+        if (itemCount <= 1)
         {
-            @Override
-            public void itemStateChanged(final ItemEvent e)
+            artifactSortingComboBox.setEnabled(false);
+        } else
+        {   //noinspection Convert2Lambda
+            artifactSortingComboBox.addItemListener(new ItemListener()
             {
-                final int stateChange = e.getStateChange();
-                final ArtifactMetricComparator artifactMetricComparator = (ArtifactMetricComparator) e.getItem();
-                if (stateChange == ItemEvent.SELECTED)
+                @Override
+                public void itemStateChanged(final ItemEvent e)
                 {
-                    artifactMetricComparator.setEnabled(true);
-                    //noinspection ConstantConditions
-                    if (tableModel != null)
+                    final int stateChange = e.getStateChange();
+                    final ArtifactMetricComparator artifactMetricComparator = (ArtifactMetricComparator) e.getItem();
+                    if (stateChange == ItemEvent.SELECTED)
                     {
-                        tableModel.sortArtifacts(artifactMetricComparator);
-                        UserActivityLogger.getInstance().log(UserActivityEnum.OverviewArtifactsSorted,
-                                artifactPool.getArtifactClassDisplayName(artifactClass), artifactMetricComparator.getMetricIdentifier().getDisplayString());
-                        jbTable.repaint();
-                    }
-                } else
-                {
-                    if (stateChange == ItemEvent.DESELECTED)
+                        artifactMetricComparator.setEnabled(true);
+                        //noinspection ConstantConditions
+                        if (tableModel != null)
+                        {
+                            tableModel.sortArtifacts(artifactMetricComparator);
+                            UserActivityLogger.getInstance().log(UserActivityEnum.OverviewArtifactsSorted,
+                                    artifactPool.getArtifactClassDisplayName(artifactClass), artifactMetricComparator.getMetricIdentifier().getDisplayString());
+                            jbTable.repaint();
+                        }
+                    } else
                     {
-                        artifactMetricComparator.setEnabled(false);
+                        if (stateChange == ItemEvent.DESELECTED)
+                        {
+                            artifactMetricComparator.setEnabled(false);
+                        }
                     }
                 }
-            }
-        });
-
+            });
+        }
         sortArtifactsPanelWrapper.add(artifactSortingComboBox);
         sortArtifactsPanel.add(sortArtifactsPanelWrapper, BorderLayout.NORTH);
 
         tabPanel.add(sortArtifactsPanelWrapper, BorderLayout.NORTH);
-
 
         /*
          * Build the artifact table and add it to the tab panel
