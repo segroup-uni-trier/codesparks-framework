@@ -159,7 +159,8 @@
         >
             <fileset dir="${resources.dir}"
                      includes="LICENCE.txt,
-                                NOTICE.txt
+                                NOTICE.txt,
+                                codesparks-strings.properties,
                                 icons/codesparks.png,
                                 icons/codesparks_not_visible_20x14.png,
                                 icons/codesparks_visible_20x13.png,
