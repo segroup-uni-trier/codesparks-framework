@@ -205,10 +205,24 @@ public final class FullyQualifiedNameBasedJavaArtifactPoolToCodeMatcher extends 
             }
             if (packageArtifactClass != null)
             {
-                final PsiPackage packageDeclaration = JavaArtifactPoolToCodeMatcherUtil.getPackageDeclarationFrom(psiFile);
-                final String qualifiedName = packageDeclaration.getQualifiedName();
+                final Collection<PsiPackageStatement> psiPackageStatements = JavaArtifactPoolToCodeMatcherUtil.getPackageStatementsFrom(psiFile);
+                for (final PsiPackageStatement psiPackage : psiPackageStatements)
+                {
+                    final String packageName = psiPackage.getPackageName();
+                    AArtifact packageArtifact = artifactPool.getArtifact(packageName);
+                    if (packageArtifact == null)
+                    {
+                        packageArtifact = ArtifactPoolToCodeMatcherUtil.instantiateArtifact(packageArtifactClass, packageName);
+                    }
 
-                // TODO: match package artifacts
+
+                    //if (packageArtifact != null)
+                    //{
+                        final PsiElement lastChild = psiPackage.getLastChild();
+                        packageArtifact.setVisPsiElement(lastChild);
+                        matchedArtifacts.add(packageArtifact);
+                    //}
+                }
 
             }
         }
