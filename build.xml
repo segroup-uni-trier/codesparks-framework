@@ -158,9 +158,7 @@
              includes="${codesparks-core.package.path}/**/*"
         >
             <fileset dir="${resources.dir}"
-                     includes="LICENCE.txt,
-                                NOTICE.txt,
-                                codesparks-strings.properties,
+                     includes="codesparks-strings.properties,
                                 icons/codesparks.png,
                                 icons/codesparks_not_visible_20x14.png,
                                 icons/codesparks_visible_20x13.png,
@@ -168,6 +166,10 @@
                                 svg/codesparks_not_visible.svg,
                                 svg/codesparks_visible.svg
                      "/>
+            <metainf dir="${basedir}"
+                     includes="LICENSE.txt,
+                                    NOTICE.txt
+            "/>
         </jar>
         <delete file="${codesparks-core-sources.jar}"/>
         <jar basedir="${src.dir}"
@@ -184,8 +186,11 @@
              includes="${codesparks-java.package.path}/**/*"
         >
             <fileset dir="${resources.dir}"
-                     includes="LICENCE.txt,
-                                NOTICE.txt
+                     includes="
+            "/>
+            <metainf dir="${basedir}"
+                     includes="LICENSE.txt,
+                                    NOTICE.txt
             "/>
         </jar>
         <delete file="${codesparks-java-sources.jar}"/>
@@ -203,8 +208,11 @@
              includes="${codesparks-python.package.path}/**/*"
         >
             <fileset dir="${resources.dir}"
-                     includes="LICENCE.txt,
-                                NOTICE.txt
+                     includes="
+            "/>
+            <metainf dir="${basedir}"
+                     includes="LICENSE.txt,
+                                    NOTICE.txt
             "/>
         </jar>
         <delete file="${codesparks-python-sources.jar}"/>
