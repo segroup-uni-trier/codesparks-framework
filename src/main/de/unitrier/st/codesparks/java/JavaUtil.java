@@ -11,14 +11,8 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.psi.*;
 import de.unitrier.st.codesparks.core.CoreUtil;
 import de.unitrier.st.codesparks.core.data.AArtifact;
-import org.jdom2.Element;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public final class JavaUtil
 {
@@ -59,159 +53,13 @@ public final class JavaUtil
         return methodString.replaceFirst(toReplace, constructorName);
     }
 
-    private static int appendArrayBraces(final StringBuilder strb, int nr)
-    {
-        while (nr > 0)
-        {
-            strb.append("[]");
-            nr--;
-        }
-        return nr;
-    }
-
-    public static String retrieveMethodSignature(final Element method)
-    {
-        String methodSig = method.getAttributeValue("signature");
-        int index = methodSig.lastIndexOf(')');
-
-        if (index > 0)
-        { // Cut off return value
-            methodSig = methodSig.substring(0, index + 1);
-        }
-        //methodSig = methodSig.replaceAll("I", "int");
-        methodSig = methodSig.replaceAll("/", ".");
-
-
-        char[] chars = methodSig.toCharArray();
-        int numberOfBraces = 0;
-
-        StringBuilder strb = new StringBuilder();
-
-        for (int i = 0; i < chars.length; i++)
-        {
-            char c = chars[i];
-            switch (c)
-            {
-                case '(':
-                    strb.append(c);
-                    break;
-                case (')'):
-                    if (strb.length() > 1)
-                    {
-                        strb.delete(strb.length() - 2, strb.length()); // cut off last parameter comma
-                    }
-                    strb.append(c);
-                    break;
-                case ('L'):
-                    int startOverIndex = methodSig.indexOf(';', i);
-                    String referenceType = methodSig.substring(i + 1, startOverIndex);
-                    strb.append(referenceType);
-                    numberOfBraces = appendArrayBraces(strb, numberOfBraces);
-                    strb.append(", ");
-                    i = startOverIndex; // Skip the rest of the reference type information
-                    break;
-                case ('I'):
-                    strb.append("int");
-                    numberOfBraces = appendArrayBraces(strb, numberOfBraces);
-                    strb.append(", ");
-                    break;
-                case ('Z'):
-                    strb.append("boolean");
-                    numberOfBraces = appendArrayBraces(strb, numberOfBraces);
-                    strb.append(", ");
-                    break;
-                case ('J'):
-                    strb.append("long");
-                    numberOfBraces = appendArrayBraces(strb, numberOfBraces);
-                    strb.append(", ");
-                    break;
-                case ('B'):
-                    strb.append("byte");
-                    numberOfBraces = appendArrayBraces(strb, numberOfBraces);
-                    strb.append(", ");
-                    break;
-                case ('C'):
-                    strb.append("char");
-                    numberOfBraces = appendArrayBraces(strb, numberOfBraces);
-                    strb.append(", ");
-                    break;
-                case ('D'):
-                    strb.append("double");
-                    numberOfBraces = appendArrayBraces(strb, numberOfBraces);
-                    strb.append(", ");
-                    break;
-                case ('F'):
-                    strb.append("float");
-                    numberOfBraces = appendArrayBraces(strb, numberOfBraces);
-                    strb.append(", ");
-                    break;
-                case ('S'):
-                    strb.append("short");
-                    numberOfBraces = appendArrayBraces(strb, numberOfBraces);
-                    strb.append(", ");
-                    break;
-                case ('['):
-                    numberOfBraces++;
-                    break;
-                default:
-                    break;
-            }
-        }
-        return strb.toString();
-    }
-
-    public static String retrieveFullyQualifiedClassName(final Element method)
-    {
-        String fullyQualifiedClassName = method.getAttributeValue("class");
-        fullyQualifiedClassName = fullyQualifiedClassName.substring(1, fullyQualifiedClassName.length() - 1);
-        fullyQualifiedClassName = fullyQualifiedClassName.replaceAll("/", ".");
-        return fullyQualifiedClassName;
-    }
-
-    public static String retrieveMethodName(final Element method)
-    {
-        if (method == null)
-        {
-            return "";
-        }
-        final String text = method.getText();
-        if (text == null)
-        {
-            return "";
-        }
-        return text;
-    }
-
     public static String computeMethodIdentifier(final String name, final String parameters, final String fullyQualifiedClassName)
     {
         String identifier = String.format("%s.%s%s", fullyQualifiedClassName, name, parameters);
         return checkInnerClassConstructorsFirstParameter(identifier);
     }
 
-    public static String computeMethodIdentifier(final Element methodElement)
-    {
-        String methodSignature = JavaUtil.retrieveMethodSignature(methodElement);
-        String fullyQualifiedClassName = JavaUtil.retrieveFullyQualifiedClassName(methodElement);
-        String methodName = JavaUtil.retrieveMethodName(methodElement);
-        String identifier = String.format("%s.%s%s", fullyQualifiedClassName, methodName, methodSignature);
-        return checkInnerClassConstructorsFirstParameter(identifier);
-    }
-
-    public static String computeProfilingClassIdentifier(final Element methodElement)
-    {
-        final String fullyQualifiedClassName = JavaUtil.retrieveFullyQualifiedClassName(methodElement);
-        return computeProfilingClassIdentifier(fullyQualifiedClassName);
-    }
-
-    public static String computeProfilingClassIdentifier(final String fullyQualifiedClassName)
-    {  // Need to replace the $ sign here because in the psi tree gives a qualified name with '.' instead of '$'
-        // for inner classes
-        //noinspection UnnecessaryLocalVariable
-        final String classIdentifier = fullyQualifiedClassName.replaceAll("\\$", ".");
-        return classIdentifier;
-    }
-
-    private static String checkInnerClassConstructorsFirstParameter(final String identifier)
+    public static String checkInnerClassConstructorsFirstParameter(final String identifier)
     {
         int braceIndex = identifier.indexOf("(");
         String classAndMethodName = identifier.substring(0, braceIndex);
@@ -250,30 +98,6 @@ public final class JavaUtil
             return String.format("%s.%s%s", fullyQualifiedClassName, methodName, parameters);
         }
         return identifier;
-    }
-
-    public static String getSampleFilePath(final Project project)
-    {
-        final String sampleFilePath =
-                System.getProperty("user.home")
-                        .concat(File.separator)
-                        .concat(".codesparks")
-                        .concat(File.separator)
-                        .concat("stack-sampling")
-                        .concat(File.separator)
-                        .concat(project.getName());
-        try
-        {
-            final Path path = Paths.get(sampleFilePath);
-            if (!Files.exists(path))
-            {
-                Files.createDirectories(path);
-            }
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return sampleFilePath;
     }
 
     public static String computePsiMethodParameterString(final PsiMethod method)
