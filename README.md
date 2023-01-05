@@ -7,10 +7,10 @@ Prerequisites:
 1. Apache Ant (>=1.10)
 2. JDK 11
 3. IntelliJ IDEA Community Edition 2022.2.4 (or comparable)
-3. Specify the path to the IntelliJ IDEA installation directory in the `idea.properties` file.
+4. Specify the path to the IntelliJ IDEA installation directory in the `idea.properties` file.
 
-To create the CodeSparks libraries, namely `codesparks-core`, `codesparks-java` and `codesparks-python` simply `ant jar`
-in the terminal.
+To create the CodeSparks framework libraries, namely `codesparks-core`, `codesparks-java` and `codesparks-python` run 
+`ant` (default target=`jar`) in the terminal.
 
 ## Use
 

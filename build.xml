@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="codesparks-core" basedir="." default="retrieve" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="codesparks-core" basedir="." default="jar" xmlns:ivy="antlib:org.apache.ivy.ant"
+         xmlns:unless="ant:unless" xmlns:if="ant:if">
 
     <!-- Semantic Versioning, https://semver.org/ -->
 
@@ -67,34 +68,46 @@
         <ivy:retrieve/> <!-- Includes resolve -->
     </target>
 
-    <!-- Libs/Dependencies -->
+    <!-- Libs -->
 
-    <property name="idea.version.windows" value="2022.2.4"/>
-    <property name="idea.version.linux" value="222.4459.24"/>
+    <property file="idea.properties"/>
+
+    <!-- macOS is currently unsupported -->
     <property name="idea.version.mac" value="212.5284.40"/>
-    <!--    <property name="jdk.home.intellij_idea" value=""/>-->
-
     <target name="intellij-path-mac" if="is-mac">
         <property name="jdk.home.intellij_idea"
                   value="/Applications/IntelliJ IDEA CE.app/Contents"/>
     </target>
 
     <target name="intellij-path-linux" if="is-linux">
-        <property name="jdk.home.intellij_idea"
+        <property unless:set="jdk.home.intellij_idea.linux"
+                  name="jdk.home.intellij_idea.linux"
                   value="/opt/idea-IC-${idea.version.linux}"/>
+        <property name="jdk.home.intellij_idea" value="${jdk.home.intellij_idea.linux}"/>
     </target>
 
     <target name="intellij-path-windows" if="is-windows">
-        <property name="jdk.home.intellij_idea"
+        <property unless:set="jdk.home.intellij_idea.windows"
+                  name="jdk.home.intellij_idea.windows"
                   value="C:/Program Files/JetBrains/IntelliJ IDEA Community Edition ${idea.version.windows}"/>
+        <property name="jdk.home.intellij_idea" value="${jdk.home.intellij_idea.windows}"/>
     </target>
 
-    <target name="def-libs" depends="intellij-path-linux, intellij-path-windows, intellij-path-mac, retrieve">
+    <target name="set-intellij-path" depends="intellij-path-linux, intellij-path-windows">
+        <echo message="${jdk.home.intellij_idea}"/>
+    </target>
+
+    <target name="def-libs" depends="set-intellij-path, retrieve">
         <!--        <echo message="${jdk.home.intellij_idea}"/>-->
         <path id="libs">
             <fileset dir="${lib.dir}" includes="*.jar"/>
-            <fileset dir="${jdk.home.intellij_idea}/lib" includes="**/*.jar"
-                     excludes="kotlin-stdlib-jdk8.jar,kotlin-reflect-*,ant/lib/ant.jar,3rd-party-rt.jar"/>
+            <fileset dir="${jdk.home.intellij_idea}/lib"
+                     includes="**/*.jar"
+                     excludes="kotlin-stdlib-jdk8.jar,
+                                kotlin-reflect-*,
+                                ant/lib/ant.jar,
+                                3rd-party-rt.jar
+            "/>
             <fileset dir="${jdk.home.intellij_idea}/plugins/java"
                      includes="**/*.jar"/> <!-- Although it compiles without these dependencies, it is required for, e.g. the class 'PsiClass' which is contained in the IntelliJ Plugin Development's internal 'Java Plugin'. So don't remove it!!! -->
         </path>
@@ -120,11 +133,7 @@
         <echo message="OS Name is:         ${os.name}"/>
         <echo message="OS Architecture is: ${os.arch}"/>
         <echo message="OS Version is:      ${os.version}"/>
-        <!--
-        <echo message="${is-mac}"/>
-        <echo message="${is-linux}"/>
-        <echo message="${is-windows}"/>
-        -->
+
         <mkdir dir="${classes.dir}"/>
         <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true" includeantruntime="false">
             <classpath>
@@ -157,25 +166,30 @@
              destfile="${codesparks-core.jar}"
              includes="${codesparks-core.package.path}/**/*"
         >
+            <zipgroupfileset dir="${lib.dir}"
+                             includes="commons-io-2.11.0.jar"
+                             excludes="**/*javadoc.jar,**/*sources.jar"/>
             <fileset dir="${resources.dir}"
                      includes="codesparks-strings.properties,
-                                icons/codesparks.png,
-                                icons/codesparks_not_visible_20x14.png,
-                                icons/codesparks_visible_20x13.png,
-                                svg/codesparks.svg,
-                                svg/codesparks_not_visible.svg,
-                                svg/codesparks_visible.svg
+                               icons/codesparks.png,
+                               icons/codesparks_not_visible_20x14.png,
+                               icons/codesparks_visible_20x13.png,
+                               svg/codesparks.svg,
+                               svg/codesparks_not_visible.svg,
+                               svg/codesparks_visible.svg
                      "/>
             <metainf dir="${basedir}"
                      includes="LICENSE.txt,
-                                    NOTICE.txt
+                               NOTICE.txt
             "/>
         </jar>
         <delete file="${codesparks-core-sources.jar}"/>
         <jar basedir="${src.dir}"
              destfile="${codesparks-core-sources.jar}"
-             includes="${codesparks-core.package.path}/**/*"
-        >
+             includes="${codesparks-core.package.path}/**/*">
+            <metainf dir="${basedir}"
+                     includes="LICENSE.txt
+                    "/>
         </jar>
     </target>
 
@@ -189,15 +203,16 @@
                      includes="
             "/>
             <metainf dir="${basedir}"
-                     includes="LICENSE.txt,
-                                    NOTICE.txt
+                     includes="LICENSE.txt
             "/>
         </jar>
         <delete file="${codesparks-java-sources.jar}"/>
         <jar basedir="${src.dir}"
              destfile="${codesparks-java-sources.jar}"
-             includes="${codesparks-java.package.path}/**/*"
-        >
+             includes="${codesparks-java.package.path}/**/*">
+            <metainf dir="${basedir}"
+                     includes="LICENSE.txt
+                    "/>
         </jar>
     </target>
 
@@ -211,15 +226,16 @@
                      includes="
             "/>
             <metainf dir="${basedir}"
-                     includes="LICENSE.txt,
-                                    NOTICE.txt
+                     includes="LICENSE.txt
             "/>
         </jar>
         <delete file="${codesparks-python-sources.jar}"/>
         <jar basedir="${src.dir}"
              destfile="${codesparks-python-sources.jar}"
-             includes="${codesparks-python.package.path}/**/*"
-        >
+             includes="${codesparks-python.package.path}/**/*">
+            <metainf dir="${basedir}"
+                     includes="LICENSE.txt
+                    "/>
         </jar>
     </target>
 
