@@ -1,5 +1,8 @@
 # The CodeSparks Framework
 
+The CodeSparks framework aims to facilitate the integration of software analysis tools into the IDE such that their
+results are shown as glyph-based visualizations in the source code.
+
 ## Build
 
 Prerequisites:
@@ -9,7 +12,7 @@ Prerequisites:
 3. IntelliJ IDEA Community Edition 2022.2.4 (or comparable)
 4. Specify the path to the IntelliJ IDEA installation directory in the `idea.properties` file.
 
-To create the CodeSparks framework libraries, namely `codesparks-core`, `codesparks-java` and `codesparks-python` run 
+To create the CodeSparks framework libraries, namely `codesparks-core`, `codesparks-java` and `codesparks-python` run
 `ant` (default target=`jar`) in the terminal.
 
 ## Use
@@ -32,7 +35,7 @@ IntelliJ IDEA versions:
 ## Demo Implementation
 
 A CodeSparks Demo Plugin that targets the Java programming language is available here:
-[CodeSparks Demo Plugin](https://github.com/segroup-uni-trier/codesparks-pmd-demo) 
+[CodeSparks Demo Plugin](https://github.com/segroup-uni-trier/codesparks-pmd-demo)
 
 ## License
 
