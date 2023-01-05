@@ -1,10 +1,9 @@
 ## Custom
-.idea/*
-!.idea/modules.xml
-!.idea/*.iml
 build
 lib
-out
+
+*.iml
+!codesparks-framework.iml
 
 # Compiled class file
 *.class
