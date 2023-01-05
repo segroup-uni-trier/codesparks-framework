@@ -1,7 +1,6 @@
 ## Custom
 .idea/*
 !.idea/modules.xml
-!.idea/libraries
 !.idea/*.iml
 build
 lib
