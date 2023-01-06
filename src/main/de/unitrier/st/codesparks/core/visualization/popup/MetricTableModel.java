@@ -42,7 +42,7 @@ public class MetricTableModel extends DefaultTableModel
                 .stream()
                 .filter(npa -> npa.getThreadArtifacts()
                         .stream()
-                        .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
+                        .anyMatch(AThreadArtifact::isNotFiltered))
                 .collect(Collectors.toList());
         predecessors.sort(comparator);
         successors = artifact.getSuccessorsList()
@@ -50,7 +50,7 @@ public class MetricTableModel extends DefaultTableModel
                 .filter(npa -> !npa.getShortName().toLowerCase().startsWith("self"))
                 .filter(npa -> npa.getThreadArtifacts()
                         .stream()
-                        .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))
+                        .anyMatch(AThreadArtifact::isNotFiltered))
                 .collect(Collectors.toList());
         successors.sort(comparator);
         preSize = predecessors.size();

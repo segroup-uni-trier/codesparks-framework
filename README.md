@@ -41,4 +41,4 @@ A CodeSparks Demo Plugin that targets the Java programming language is available
 
 The CodeSparks Framework is Open Source software released under the
 [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0). Note, some parts of this software, such as the
-compile and runtime dependencies, may have different licenses (see NOTICE.txt).
+compilation and runtime dependencies, may have different licenses (see NOTICE.txt).

@@ -98,11 +98,6 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
         return project;
     }
 
-//    public ADataVisualizer getDataVisualizer()
-//    {
-//        return dataVisualizer;
-//    }
-
     @Override
     public void updateEditorCoverLayerFor(final VirtualFile virtualFile)
     {
@@ -320,10 +315,6 @@ public abstract class ACodeSparksFlow implements Runnable, IEditorCoverLayerUpda
 
     private void clearVisualizations()
     {
-//        VisualThreadClusterPropertiesManager.clearInstances(); // TODO: remove since it has an empty method body
-//        final VisualThreadClusterPropertiesManager propertiesManager = VisualThreadClusterPropertiesManager.getInstance();
-//        propertiesManager.clearProperties();
-
         final EditorCoverLayerManager editorCoverLayerManager = EditorCoverLayerManager.getInstance(project);
         editorCoverLayerManager.clearAllEditorCoverLayers();
 

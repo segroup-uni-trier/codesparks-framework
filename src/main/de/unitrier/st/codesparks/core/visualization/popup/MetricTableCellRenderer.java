@@ -128,23 +128,6 @@ public class MetricTableCellRenderer extends JTextArea implements TableCellRende
                 String text = value.toString();
                 if (!getText().equals(text))
                 {
-//                    int i = text.length();//graphics.getFontMetrics().stringWidth(text);
-//                    int columnWidth = 50;
-//                    if (i > columnWidth)
-//                    {
-//                        int percentIndex = text.indexOf("%");
-//                        int atIndex = text.indexOf("@");
-//
-//                        String sub = text.substring(percentIndex + 1, atIndex).trim();
-//
-//                        int toCut = i - columnWidth + 7 + 11 + 3;
-//                        sub = sub.substring(toCut);
-//                        sub = "..." + sub;
-//                        setText(sub);
-//                    } else
-//                    {
-//                        setText(text);
-//                    }
                     setText(text);
                 }
                 if (getText() == null || "".equals(getText()))

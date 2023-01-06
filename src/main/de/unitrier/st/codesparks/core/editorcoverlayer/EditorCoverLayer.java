@@ -28,13 +28,11 @@ import java.util.concurrent.ConcurrentHashMap;
 class EditorCoverLayer extends JComponent
 {
     /*
-    Although the editorCoverLayerItem holds a reference to the respective JComponent to draw, we need to store the JComponents twice in the
-    following map because we run into a ConcurrentModificationException when repainting the items. See therefore the
-    method paint. So in the case an user would rerun
-    the profiling, the editor layer
-    items will be removed from the list but also repainted
-    from the ui thread which results in concurrency problems. We also cannot add synchronization to the add method since we would end up in
-    a deadlock.
+    Although the 'editorCoverLayerItem' holds a reference to the respective JComponent, we need to store the JComponents twice in the
+    following map because we run into a 'ConcurrentModificationException' when repainting the items (see method 'paint').
+    So in the case a user would rerun the program analysis, the editor-layer items will be removed from the list but also repainted
+    by the UI thread which results in concurrency problems.
+    We also cannot add synchronization to the add method since we would end up in a deadlock.
      */
     private final Map<EditorCoverLayerItem, EditorCoverLayerComponentWrapper> layerItems;
     private final Editor editor;

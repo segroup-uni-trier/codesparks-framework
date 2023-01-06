@@ -43,10 +43,13 @@ public abstract class AThreadArtifact extends AArtifact
         this.callSiteIdentifier = callSiteIdentifier;
     }
 
-    public boolean isFiltered()
-    {
-        return filtered;
-    }
+    public boolean isFiltered() {return filtered;}
+
+    /*
+     This method is additionally added and used to enhance code readability depending on the concrete context.
+     For instance, sometimes it makes more sense to ask whether a thread is 'not filtered' instead of 'selected' and vice versa.
+     */
+    public boolean isNotFiltered() {return !filtered;}
 
     public void setFiltered(final boolean filtered)
     {

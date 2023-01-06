@@ -117,7 +117,8 @@ public class DefaultNeighborArtifactVisualizationLabelFactory extends ANeighborA
             final Collection<AThreadArtifact> threadArtifacts = neighborArtifact.getThreadArtifacts();
             for (final AThreadArtifact threadArtifact : threadArtifacts)
             {
-                if (!threadArtifact.isFiltered())
+//                if (!threadArtifact.isFiltered())
+                if (threadArtifact.isSelected())
                 {
                     neighborRuntime += threadArtifact.getNumericalMetricValue(primaryMetricIdentifier)
                             * neighborArtifact.getNumericalMetricValue(primaryMetricIdentifier);

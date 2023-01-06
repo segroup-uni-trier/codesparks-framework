@@ -54,12 +54,6 @@ public class NumberOfThreadsArtifactMetricComparator extends ArtifactMetricCompa
                 return Double.class;
             }
 
-            //            @Override
-//            public boolean isNumerical()
-//            {
-//                return true;
-//            }
-
             @Override
             public boolean isRelative()
             {

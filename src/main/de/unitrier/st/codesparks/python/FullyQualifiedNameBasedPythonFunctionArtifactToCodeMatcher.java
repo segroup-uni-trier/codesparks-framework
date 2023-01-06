@@ -126,7 +126,7 @@ public class FullyQualifiedNameBasedPythonFunctionArtifactToCodeMatcher extends 
      *
      * @param filePath       The path of the file (module) in which the function is defined.
      * @param lineNumber     The corresponding line number of the function in the file.
-     * @param pyFunctionName The name of the Pythin function.
+     * @param pyFunctionName The name of the Python function.
      * @return A string representing the fully qualified name of a python function with respect to the given parameters.
      */
     protected String getPythonFunctionArtifactIdentifier(

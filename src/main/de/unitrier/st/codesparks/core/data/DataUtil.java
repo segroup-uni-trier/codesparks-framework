@@ -19,10 +19,9 @@ public final class DataUtil
 {
     private DataUtil() {}
 
-    //TODO: inline in method below
     private static double getThreadFilteredRelativeNumericMetricValueRatioOfArtifact(
-            final AArtifact artifact
-            , final AMetricIdentifier metricIdentifier
+            final AArtifact artifact,
+            final AMetricIdentifier metricIdentifier
     )
     {
         if (!metricIdentifier.isNumerical() || !metricIdentifier.isRelative())
@@ -32,7 +31,8 @@ public final class DataUtil
         double ratio = 0D;
         for (final AThreadArtifact threadArtifact : artifact.getThreadArtifacts())
         {
-            if (!threadArtifact.isFiltered())
+//            if (!threadArtifact.isFiltered())
+            if (threadArtifact.isSelected())
             {
                 final double metricValue = threadArtifact.getNumericalMetricValue(metricIdentifier);
                 if (metricValue > 0)
@@ -41,21 +41,13 @@ public final class DataUtil
                 }
             }
         }
-//        final double ratio =
-//                artifact.getThreadArtifacts()
-//                        .stream()
-//                        .filter(threadArtifact ->
-//                                !threadArtifact.isFiltered() && (threadArtifact.getNumericalMetricValue(metricIdentifier) > 0)
-//                        )
-//                        .mapToDouble(threadArtifact -> threadArtifact.getNumericalMetricValue(metricIdentifier))
-//                        .reduce(0d, Double::sum);
         assert !Double.isNaN(ratio) : "Ratio is NaN!";
         return ratio;
     }
 
     public static double getThreadFilteredRelativeNumericMetricValueOf(
-            final AArtifact artifact
-            , final AMetricIdentifier metricIdentifier
+            final AArtifact artifact,
+            final AMetricIdentifier metricIdentifier
     )
     {
         if (artifact == null || metricIdentifier == null)
@@ -68,10 +60,6 @@ public final class DataUtil
         {
             ratio = DataUtil.getThreadFilteredRelativeNumericMetricValueRatioOfArtifact(artifact, metricIdentifier);
         }
-//        if (Double.isNaN(ratio))
-//        {
-//            ratio = 1d;
-//        }
         //noinspection UnnecessaryLocalVariable : Not inlined because of debugging reasons
         final double threadFilteredMetricValue = metricValue * ratio;
         return threadFilteredMetricValue;

@@ -194,51 +194,6 @@ public class DefaultArtifactPool implements IArtifactPool
         }
     }
 
-//    public static List<?> getIntersection(Collection<?> col1, Collection<?> col2) {
-//
-//        // Call of the critical method.
-//        return ListUtils.retainAll(col1, col2);
-//    }
-//
-//    public static void wasteTime(int seconds) {
-//
-//        // Simulation of more calls.
-//        TestUtils.wasteTime(seconds);
-//    }
-
-//    public static int multiply(int x, int y) {
-//
-//        return x * y;}
-//
-//
-//
-//    public static void fillData() {
-//
-//        }
-//
-//        final static class TestUtils{
-//
-//        public static void wasteTime(int seconds){
-//            long nanos = seconds * 1000000000L;
-//            final long now = System.nanoTime();
-//            while((System.nanoTime() - now) < nanos)
-//            {
-//                nanos = ((nanos + 10) * 10) / 10 - 10;
-//            }
-//        }
-//
-//        }
-//
-//
-//    public static void doIt()
-//    {
-//        final List<?> intersection = getIntersection(new ArrayList<>(), new ArrayList<>());
-//        final int multiply = multiply(1, 2);
-//        wasteTime(5);
-//        fillData();
-//    }
-
-
     @Override
     public final AArtifact getOrCreateArtifact(final Class<? extends AArtifact> artifactClass, final String identifier, final Object... arguments)
     {

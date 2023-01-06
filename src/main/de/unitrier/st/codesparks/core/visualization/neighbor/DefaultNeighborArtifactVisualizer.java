@@ -17,6 +17,7 @@ package de.unitrier.st.codesparks.core.visualization.neighbor;
 
 import de.unitrier.st.codesparks.core.data.AArtifact;
 import de.unitrier.st.codesparks.core.data.ANeighborArtifact;
+import de.unitrier.st.codesparks.core.data.AThreadArtifact;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -61,14 +62,14 @@ public class DefaultNeighborArtifactVisualizer implements INeighborArtifactVisua
                         integerListEntry.getValue().stream().anyMatch(aNeighborProfilingArtifact ->
                                 aNeighborProfilingArtifact.getThreadArtifacts()
                                         .stream()
-                                        .anyMatch(threadArtifact -> !threadArtifact.isFiltered()))).collect(Collectors.toSet());
+                                        .anyMatch(AThreadArtifact::isNotFiltered))).collect(Collectors.toSet());
 
         for (final Map.Entry<Integer, List<ANeighborArtifact>> entry : threadFilteredSuccessors)
         {
             final List<ANeighborArtifact> threadFilteredNeighborsOfCurrentLine = entry.getValue()
                     .stream()
                     .filter(aNeighborProfilingArtifact -> aNeighborProfilingArtifact.getThreadArtifacts()
-                            .stream().anyMatch(threadArtifact -> !threadArtifact.isFiltered())).collect(Collectors.toList());
+                            .stream().anyMatch(AThreadArtifact::isNotFiltered)).collect(Collectors.toList());
 
             final NeighborArtifactVisualizationWrapper neighborArtifactVisualizationWrapper =
                     new NeighborArtifactVisualizationWrapper(artifact, threadFilteredNeighborsOfCurrentLine, neighborFactories);

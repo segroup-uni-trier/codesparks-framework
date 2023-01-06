@@ -171,61 +171,13 @@ public class ArtifactOverview
         filterPanelWrapper.add(filterByIdentifierPanel);
 
         /*
-         * Thread clusters and filter panel
+         * Thread filter panel
          */
-
         threadsPanel = new BorderLayoutPanel();
         threadsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                "Thread clusters and filtering"));
+                "Thread filtering"));
         final JBPanel<BorderLayoutPanel> threadsPanelWrapper = new JBPanel<>();
         threadsPanelWrapper.setLayout(new BoxLayout(threadsPanelWrapper, BoxLayout.Y_AXIS));
-
-//        final JBPanel<BorderLayoutPanel> threadClusterPanel = new JBPanel<>();
-//        threadClusterPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 4, 2));
-//        threadClusterPanel.setLayout(new BoxLayout(threadClusterPanel, BoxLayout.Y_AXIS));
-
-        // Number of clusters panel
-//        final JBPanel<BorderLayoutPanel> numberOfClustersPanel = new JBPanel<>();
-//        numberOfClustersPanel.setLayout(new BoxLayout(numberOfClustersPanel, BoxLayout.X_AXIS));
-
-//        final JBLabel jbLabel = new JBLabel("Compute a maximum number of (k) clusters: ");
-//        numberOfClustersPanel.add(jbLabel);
-
-//        final ComboBox<Integer> numberOfClustersComboBox = new ComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6});
-//        numberOfClustersComboBox.setSelectedIndex(2);
-//        numberOfClustersPanel.add(numberOfClustersComboBox);
-
-//        threadClusterPanel.add(numberOfClustersPanel);
-
-        // Cluster selection strategy for in-situ visualization
-//        final JBPanel<BorderLayoutPanel> clusterSelectionPanel = new JBPanel<>();
-//        clusterSelectionPanel.setLayout(new BoxLayout(clusterSelectionPanel, BoxLayout.X_AXIS));
-
-//        final JBLabel jbLabel1 = new JBLabel("In-situ visualization cluster selection: ");
-//        clusterSelectionPanel.add(jbLabel1);
-
-//        final ComboBox<String> clusterSelectionComboBox = new ComboBox<>(new String[]{"TODO-1", "TODO-2", "TODO-3"});
-//        clusterSelectionComboBox.setEnabled(false);
-//        clusterSelectionPanel.add(clusterSelectionComboBox);
-
-//        threadClusterPanel.add(clusterSelectionPanel);
-
-        //        numberOfClustersComboBox.addItemListener(e -> {
-//            final int stateChange = e.getStateChange();
-//            final Integer item = (Integer) e.getItem();
-//            if (stateChange == ItemEvent.SELECTED)
-//            {
-//                clusterSelectionComboBox.setEnabled(item > 3);
-//            }
-//        });
-
-        // Add the cluster panel
-//        threadsPanelWrapper.add(threadClusterPanel);
-
-        /*
-
-         */
-
 
         // TODO: Only for the clex study!
         //threadsPanel.setVisible(false);
@@ -254,8 +206,7 @@ public class ArtifactOverview
 
         threadFilterPanel.add(threadFilterControlsPanel);
 
-
-        // TODO: thread state filters are still disabled
+        // TODO: thread-state filters are still disabled
         if (threadStateFilterWrapper == null)
         {
             threadStateFilterWrapper = new BorderLayoutPanel();
@@ -338,7 +289,6 @@ public class ArtifactOverview
     /*
      * Artifact tabbed pane change listener inner class
      */
-
     private static class ArtifactTabbedPaneChangeListener implements ChangeListener
     {
         private final IUserActivityLogger userActivityLogger;
@@ -597,11 +547,6 @@ public class ArtifactOverview
             {
                 final Class<? extends AArtifact> artifactClass = entry.getKey();
                 List<AArtifact> artifacts = entry.getValue();
-//                final ArtifactMetricComparator enabledArtifactMetricComparator = getEnabledArtifactMetricComparator(artifactClass);
-//                artifacts = artifacts
-//                        .stream()
-//                        .filter(aArtifact -> aArtifact.getNumericalMetricValue(enabledArtifactMetricComparator.getMetricIdentifier()) > 0)
-//                        .collect(Collectors.toList());
                 artifacts = filterArtifacts(artifacts, includeFilters, excludeFilters);
 
                 addTab(artifactClass, artifacts);
@@ -787,15 +732,13 @@ public class ArtifactOverview
 
     public void registerThreadStateArtifactFilter(final AThreadStateArtifactFilter threadStateArtifactFilter)
     {
-        // This method is currently disabled because the feature of differentiating between the runtime components: running, blocked, waiting, sleeping is
-        // not yet implemented!
-
+        // TODO: The thread-state filter feature is not in use yet.
 //        if (threadStateFilterWrapper == null)
 //        {
 //            return;
 //        }
 //        if (threadStateFilterWrapper.getComponentCount() > 0)
-//        { // Check if the threadStateFilterWrapper has already been set up. Necessary when profiling is started multiple times.
+//        { // Check if the threadStateFilterWrapper has already been set up. Necessary when analysis is started multiple times.
 //            return;
 //        }
 //        this.threadStateArtifactFilter = threadStateArtifactFilter;

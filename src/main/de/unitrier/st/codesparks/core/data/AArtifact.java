@@ -631,34 +631,6 @@ public abstract class AArtifact implements IDisplayable, IPsiNavigable, IThreadA
         return clustering;
     }
 
-//    public ThreadArtifactClustering getConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
-//    {
-//        return lookupClustering(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
-//    }
-//
-//    public ThreadArtifactClustering getSortedConstraintKMeansWithAMaximumOfThreeClustersThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
-//    {
-//        final ThreadArtifactClustering constraintKMeansClustering =
-//                lookupClustering(ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier));
-//        final Comparator<ThreadArtifactCluster> threadArtifactClusterComparator =
-//                ThreadArtifactClusterNumericalMetricSumComparator.getInstance(metricIdentifier);
-//        constraintKMeansClustering.sort(threadArtifactClusterComparator);
-//        return constraintKMeansClustering;
-//    }
-
-//    public void initDefaultThreadArtifactClustering(final AMetricIdentifier metricIdentifier)
-//    {
-//        final IThreadArtifactClusteringStrategy instance = ConstraintKMeansWithAMaximumOfThreeClusters.getInstance(metricIdentifier);
-//        synchronized (clusterings)
-//        {
-//            ThreadArtifactClustering threadArtifactClusters = clusterings.get(instance);
-//            if (threadArtifactClusters == null)
-//            {
-//                threadArtifactClusters = instance.clusterThreadArtifacts(getThreadArtifacts());
-//                clusterings.put(instance, threadArtifactClusters);
-//            }
-//        }
-//    }
     /*
      * Predecessors
      */

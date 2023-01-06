@@ -55,8 +55,6 @@ public class ArtifactVisualizationWrapper extends AArtifactVisualization
             }
 
             final JLabel artifactComponent = factory.createArtifactLabel(artifact);
-//            ArtifactVisualizationLabelFactoryCache.getInstance().addToCache(artifact.getIdentifier(), factory.getClass(),
-//                    artifactComponent);
             final Icon icon = artifactComponent.getIcon();
             if (icon == null)
             {

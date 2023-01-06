@@ -293,16 +293,6 @@ final class ColorScale
         {
             value = Math.max(0D, value);
             value = Math.min(value, 1D);
-//            if (value < 0d)
-//            {
-//                value = 0d;
-//            } else
-//            {
-//                if (value > 1d)
-//                {
-//                    value = 1d;
-//                }
-//            }
         }
         value = 0.9 - value * 0.5;
         int index = (int) (colors.length * value);

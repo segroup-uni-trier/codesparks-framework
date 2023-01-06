@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2021. Oliver Moseler
- */
-
 package de.unitrier.st.codesparks.core.data;
 
 import org.junit.Assert;
@@ -41,12 +37,6 @@ public final class ThreadClusterSilhouetteTest
         {
             return Double.class;
         }
-
-//        @Override
-//        public boolean isNumerical()
-//        {
-//            return true;
-//        }
 
         @Override
         public boolean isRelative()

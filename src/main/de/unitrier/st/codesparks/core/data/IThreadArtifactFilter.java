@@ -19,10 +19,7 @@ import java.util.Set;
 
 public interface IThreadArtifactFilter
 {
-    //    boolean filterThreadArtifact(ThreadArtifact threadArtifact);
-    //    boolean filterThreadArtifact(AProfilingArtifact artifact);
     Set<String> getFilteredThreadIdentifiers();
 
     Set<String> getSelectedThreadIdentifiers();
-
 }

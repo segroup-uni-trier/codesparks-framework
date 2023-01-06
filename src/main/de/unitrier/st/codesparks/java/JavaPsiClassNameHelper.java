@@ -78,18 +78,6 @@ final class JavaPsiClassNameHelper
                             return "";
                         }
                     }
-//                    else
-//                    {
-//                        // From the Java docs:
-//                        // /**
-//                        //   * Returns the PSI member in which the class has been declared (for example,
-//                        //   * the method containing the anonymous inner class, or the file containing a regular
-//                        //   * class, or the class owning a type parameter).
-//                        //   *
-//                        //   * @return the member in which the class has been declared.
-//                        //   */
-//                        // TODO:
-//                    }
                 }
 
                 final PsiClass clazzScope = (PsiClass) scope;

@@ -115,35 +115,14 @@ public class ArtifactOverViewTableModel implements TableModel
         switch (columnIndex)
         {
             case 0:
-
                 final ArtifactOverview overview = ArtifactOverview.getInstance();
-
-                final AArtifactVisualizationLabelFactory labelFactory = overview.getArtifactClassVisualizationLabelFactory(artifact.getClass());
-
+                AArtifactVisualizationLabelFactory labelFactory = overview.getArtifactClassVisualizationLabelFactory(artifact.getClass());
                 if (labelFactory == null)
                 {
-//                    final CodeSparksFlowManager codeSparksFlowManager = CodeSparksFlowManager.getInstance();
-//                    final ACodeSparksFlow flow = codeSparksFlowManager.getCurrentCodeSparksFlow();
-//                    final ADataVisualizer dataVisualizer = flow.getDataVisualizer();
-//                    labelFactory = dataVisualizer.getFirstArtifactVisualizationLabelFactory();
-//                    if (labelFactory == null)
-//                    {
-                    DummyArtifactVisualizationLabelFactory dummyArtifactVisualizationLabelFactory =
-                            new DummyArtifactVisualizationLabelFactory();
-                    return dummyArtifactVisualizationLabelFactory.createArtifactLabel(artifact);
-//                    }
+                    labelFactory = new DummyArtifactVisualizationLabelFactory();
                 }
-
-                // TODO: enable caching again. A memory dump revealed that the cache had become about 1.35GB. There must be an error in the caching strategy!
-                // Not inlined because og debugging purposes
-//                JLabel cachedArtifactVisualizationLabel =
-//                        ArtifactVisualizationLabelFactoryCache.getInstance()
-//                                .getCachedArtifactVisualizationLabel(artifact.getIdentifier(), labelFactory, true);
-//
-//                return cachedArtifactVisualizationLabel;
                 return labelFactory.createArtifactLabel(artifact);
             case 1:
-//                return CoreUtil.reduceToLength(artifact.getIdentifier(), 55, "...");
                 return CoreUtil.reduceToLength(artifact.getName(), 55, "...");
             default:
                 break;
@@ -152,11 +131,11 @@ public class ArtifactOverViewTableModel implements TableModel
     }
 
     @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) { }
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
 
     @Override
-    public void addTableModelListener(TableModelListener l) { }
+    public void addTableModelListener(TableModelListener l) {}
 
     @Override
-    public void removeTableModelListener(TableModelListener l) { }
+    public void removeTableModelListener(TableModelListener l) {}
 }

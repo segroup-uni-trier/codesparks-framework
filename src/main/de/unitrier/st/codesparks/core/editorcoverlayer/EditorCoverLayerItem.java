@@ -75,7 +75,7 @@ public class EditorCoverLayerItem
     }
 
     /**
-     * @return The offset of the current editor cover layer item within the underling editor. Indeed will return the offset of the
+     * @return The offset of the current editor-cover layer item within the underling editor. Indeed, will return the offset of the
      * respective end of the line where the text range of the psi element ends.
      */
     int getOffset(final Editor editor)
