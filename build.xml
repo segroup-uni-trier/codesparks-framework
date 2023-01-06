@@ -215,7 +215,7 @@
         </jar>
     </target>
 
-    <target name="jar" depends="compile, jar-codesparks-core, jar-codesparks-java, jar-codesparks-python"/>
+    <target name="jar" depends="compile, jar-codesparks-core, jar-codesparks-java, jar-codesparks-python, doc"/>
 
     <!-- Tests -->
 
@@ -284,6 +284,119 @@
                 </fileset>
             </batchtest>
         </junit>
+    </target>
+
+    <!-- Java Docs -->
+
+    <property name="core-doc.dir" value="core-doc"/>
+    <property name="java-doc.dir" value="java-doc"/>
+    <property name="python-doc.dir" value="python-doc"/>
+
+    <available file="${core-doc.dir}" type="dir" property="core-doc.dir.exists"/>
+    <available file="${java-doc.dir}" type="dir" property="java-doc.dir.exists"/>
+    <available file="${python-doc.dir}" type="dir" property="python-doc.dir.exists"/>
+
+    <property name="codesparks-core-javadoc.jar" value="codesparks-core-${version}-javadoc.jar"/>
+    <property name="codesparks-java-javadoc.jar" value="codesparks-java-${version}-javadoc.jar"/>
+    <property name="codesparks-python-javadoc.jar" value="codesparks-python-${version}-javadoc.jar"/>
+
+    <target name="doc" depends="" description="Generate Java docs">
+        <!-- Core -->
+        <delete includeemptydirs="true" if:set="core-doc.dir.exists">
+            <fileset dir="${core-doc.dir}" includes="**/*" excludes="*.*"/>
+        </delete>
+        <mkdir dir="${core-doc.dir}"/>
+        <javadoc encoding="UTF-8"
+                 verbose="false"
+                 packagenames="de.unitrier.st.codesparks.core.*"
+                 sourcepath="${src.dir}"
+                 classpath="${classes.dir}"
+                 destdir="${core-doc.dir}"
+                 author="true"
+                 version="true"
+                 use="true"
+                 windowtitle="The CodeSparks Framework - Core Javadoc"
+                 additionalparam="-Xdoclint:none"
+        >
+            <classpath>
+                <path refid="libs"/>
+            </classpath>
+        </javadoc>
+
+        <jar basedir="${core-doc.dir}"
+             destfile="${codesparks-core-javadoc.jar}"
+             includes="/**/*">
+            <metainf dir="${basedir}"
+                     includes="LICENSE.txt
+                    "/>
+        </jar>
+
+        <delete dir="${core-doc.dir}"/>
+
+        <!-- Java -->
+        <delete includeemptydirs="true" if:set="java-doc.dir.exists">
+            <fileset dir="${java-doc.dir}" includes="**/*" excludes="*.*"/>
+        </delete>
+        <mkdir dir="${java-doc.dir}"/>
+        <javadoc encoding="UTF-8"
+                 verbose="false"
+                 packagenames="de.unitrier.st.codesparks.java.*"
+                 sourcepath="${src.dir}"
+                 classpath="${classes.dir}"
+                 destdir="${java-doc.dir}"
+                 author="true"
+                 version="true"
+                 use="true"
+                 windowtitle="The CodeSparks Framework - Java Javadoc"
+                 additionalparam="-Xdoclint:none"
+        >
+            <classpath>
+                <path refid="libs"/>
+            </classpath>
+        </javadoc>
+
+        <jar basedir="${java-doc.dir}"
+             destfile="${codesparks-java-javadoc.jar}"
+             includes="/**/*">
+            <metainf dir="${basedir}"
+                     includes="LICENSE.txt
+                    "/>
+        </jar>
+
+        <delete dir="${java-doc.dir}"/>
+
+        <!-- Python -->
+        <delete includeemptydirs="true" if:set="python-doc.dir.exists">
+            <fileset dir="${python-doc.dir}" includes="**/*" excludes="*.*"/>
+        </delete>
+        <mkdir dir="${python-doc.dir}"/>
+        <javadoc encoding="UTF-8"
+                 verbose="false"
+                 packagenames="de.unitrier.st.codesparks.python.*"
+                 sourcepath="${src.dir}"
+                 classpath="${classes.dir}"
+                 destdir="${python-doc.dir}"
+                 author="true"
+                 version="true"
+                 use="true"
+                 windowtitle="The CodeSparks Framework - Python Javadoc"
+                 additionalparam="-Xdoclint:none"
+        >
+            <classpath>
+                <path refid="libs"/>
+            </classpath>
+        </javadoc>
+
+        <jar basedir="${python-doc.dir}"
+             destfile="${codesparks-python-javadoc.jar}"
+             includes="/**/*">
+            <metainf dir="${basedir}"
+                     includes="LICENSE.txt
+                    "/>
+        </jar>
+
+        <delete dir="${python-doc.dir}"/>
+
     </target>
 
 </project>

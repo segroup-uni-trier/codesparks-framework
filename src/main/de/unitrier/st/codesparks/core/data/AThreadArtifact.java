@@ -22,7 +22,7 @@ public abstract class AThreadArtifact extends AArtifact
     /**
      * The callSiteIdentifier should contain an identifier of a method (lambda etc.) that is executed by the respective thread. That is:
      * &bull; The run method of a subclass of java.lang.Thread or anonymous and explicit Runnable implementations
-     * &bull; The lambda expression. In that case the identifier has the format: <classIdentifier>@<lineNumber>
+     * &bull; The lambda expression. In that case the identifier has the format: &lt;classIdentifier&gt;{@literal @}&lt;lineNumber&gt;
      */
     private String callSiteIdentifier;
     private boolean filtered;

@@ -24,9 +24,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by Oliver Moseler on 16.10.2014.
- */
 public class MetricTableCellRenderer extends JTextArea implements TableCellRenderer
 {
     private static Font defaultFont = null;

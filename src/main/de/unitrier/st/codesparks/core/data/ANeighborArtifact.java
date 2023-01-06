@@ -17,9 +17,6 @@ package de.unitrier.st.codesparks.core.data;
 
 import de.unitrier.st.codesparks.core.CoreUtil;
 
-/**
- * Created by Oliver Moseler on 22.09.2014.
- */
 public abstract class ANeighborArtifact extends AArtifact
 {
     protected ANeighborArtifact(
