@@ -49,10 +49,10 @@ public final class FullyQualifiedNameBasedJavaArtifactPoolToCodeMatcher extends 
     }
 
     /**
-     * All psi-class and psi-method elements form the PSI trees of each given (virtual) file are traversed.
-     * Thereby, the fully qualified name of the psi elements are computed.
-     * Finally, the artifact pool is queried for a matching artifact, i.e., with the computed fully qualified name (identifier).
-     * Moreover, the successors of a method artifact are matched according to their line in the body of the corresponding method.
+     * All psi-class and psi-method elements from the PSI trees of each given (virtual) file are traversed. Thereby, the fully qualified name of the psi
+     * elements are computed.
+     * Finally, the artifact pool is queried for a matching artifact, i.e., with the computed fully qualified name (identifier). Moreover, the successors of
+     * a method artifact are matched according to their line in the body of the corresponding method.
      *
      * @param artifactPool The artifact pool.
      * @param project      The corresponding project.

@@ -19,9 +19,6 @@ import com.intellij.ui.table.JBTable;
 
 import javax.swing.table.TableModel;
 
-/**
- * Created by Oliver Moseler on 16.10.2014.
- */
 public class MetricTable extends JBTable
 {
     private int enteredRow;

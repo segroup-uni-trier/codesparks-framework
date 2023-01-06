@@ -26,9 +26,6 @@ import javax.swing.table.TableModel;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Created by Oliver Moseler on 05.10.2014.
- */
 public class ArtifactOverViewTableModel implements TableModel
 {
     private final List<AArtifact> artifacts;
