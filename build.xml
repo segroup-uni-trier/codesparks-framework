@@ -144,7 +144,7 @@
         >
             <zipgroupfileset dir="${lib.dir}"
                              includes=""
-                             excludes="**/*javadoc.jar,**/*sources.jar"/>
+                             excludes="**/*javadoc.jar,**/*sources.jar,python-psi-211.7628.21.jar"/>
             <fileset dir="${resources.dir}"
                      includes="codesparks-strings.properties,
                                icons/codesparks.png,
@@ -164,7 +164,8 @@
              destfile="${codesparks-core-sources.jar}"
              includes="${codesparks-core.package.path}/**/*">
             <metainf dir="${basedir}"
-                     includes="LICENSE.txt
+                     includes="LICENSE.txt,
+                               NOTICE.txt
                     "/>
         </jar>
     </target>
@@ -179,7 +180,8 @@
                      includes="
             "/>
             <metainf dir="${basedir}"
-                     includes="LICENSE.txt
+                     includes="LICENSE.txt,
+                               NOTICE.txt
             "/>
         </jar>
         <delete file="${codesparks-java-sources.jar}"/>
@@ -187,7 +189,8 @@
              destfile="${codesparks-java-sources.jar}"
              includes="${codesparks-java.package.path}/**/*">
             <metainf dir="${basedir}"
-                     includes="LICENSE.txt
+                     includes="LICENSE.txt,
+                               NOTICE.txt
                     "/>
         </jar>
     </target>
@@ -202,7 +205,8 @@
                      includes="
             "/>
             <metainf dir="${basedir}"
-                     includes="LICENSE.txt
+                     includes="LICENSE.txt,
+                               NOTICE.txt
             "/>
         </jar>
         <delete file="${codesparks-python-sources.jar}"/>
@@ -210,7 +214,8 @@
              destfile="${codesparks-python-sources.jar}"
              includes="${codesparks-python.package.path}/**/*">
             <metainf dir="${basedir}"
-                     includes="LICENSE.txt
+                     includes="LICENSE.txt,
+                               NOTICE.txt
                     "/>
         </jar>
     </target>
@@ -327,7 +332,8 @@
              destfile="${codesparks-core-javadoc.jar}"
              includes="/**/*">
             <metainf dir="${basedir}"
-                     includes="LICENSE.txt
+                     includes="LICENSE.txt,
+                               NOTICE.txt
                     "/>
         </jar>
 
@@ -359,7 +365,8 @@
              destfile="${codesparks-java-javadoc.jar}"
              includes="/**/*">
             <metainf dir="${basedir}"
-                     includes="LICENSE.txt
+                     includes="LICENSE.txt,
+                               NOTICE.txt
                     "/>
         </jar>
 
@@ -391,7 +398,8 @@
              destfile="${codesparks-python-javadoc.jar}"
              includes="/**/*">
             <metainf dir="${basedir}"
-                     includes="LICENSE.txt
+                     includes="LICENSE.txt,
+                               NOTICE.txt
                     "/>
         </jar>
 
