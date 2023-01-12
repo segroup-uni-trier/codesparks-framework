@@ -10,19 +10,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
-      <library name="commons-io-2.11.0">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/commons-io-2.11.0.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="jar://$MODULE_DIR$/lib/commons-io-2.11.0-javadoc.jar!/" />
-        </JAVADOC>
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/commons-io-2.11.0-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="python-psi-211.7628.21">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/python-psi-211.7628.21.jar!/" />
