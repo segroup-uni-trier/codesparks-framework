@@ -231,6 +231,7 @@ public final class CoreUtil
                             {
                                 final CodeSparksFlowManager codeSparksFlowManager = CodeSparksFlowManager.getInstance();
                                 final ImageIcon imageIcon = codeSparksFlowManager.getImageIcon();
+                                final CodeSparksScalableIcon codeSparksScalableIcon = new CodeSparksScalableIcon(imageIcon);
                                 //noinspection UnstableApiUsage
                                 tw = toolWindowManager.registerToolWindow(new RegisterToolWindowTask(
                                                 toolWindowId
@@ -241,7 +242,7 @@ public final class CoreUtil
                                                 , true
                                                 , true
                                                 , null
-                                                , imageIcon
+                                                , codeSparksScalableIcon
                                                 , () -> "CodeSparks"
                                         )
                                 );
