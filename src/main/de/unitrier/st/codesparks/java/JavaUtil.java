@@ -17,7 +17,8 @@
 package de.unitrier.st.codesparks.java;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.application.NonBlockingReadAction;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.*;
@@ -121,7 +122,7 @@ public final class JavaUtil
         assert project != null;
         for (final PsiParameter parameter : psiParameters)
         {
-            String type = DumbService.getInstance(project).runReadActionInSmartMode(() -> {
+            final NonBlockingReadAction<String> stringNonBlockingReadAction = ReadAction.nonBlocking(() -> {
                 final PsiType parameterType = parameter.getType();
                 String parameterTypeCanonicalText = parameterType.getCanonicalText();
                 if (!parameterTypeCanonicalText.contains("."))
@@ -173,6 +174,7 @@ public final class JavaUtil
                 }
                 return parameterTypeCanonicalText;
             });
+            String type = stringNonBlockingReadAction.inSmartMode(project).executeSynchronously();
             if (type.contains("<"))
             {
                 type = type.substring(0, type.indexOf('<'));
